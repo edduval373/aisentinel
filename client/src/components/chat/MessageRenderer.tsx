@@ -9,35 +9,36 @@ interface MessageRendererProps {
 }
 
 export default function MessageRenderer({ content, className }: MessageRendererProps) {
-  // Enhanced detection for various structured data formats
-  const detectContentType = (text: string): { hasJSON: boolean; hasHTML: boolean; hasMarkdownTable: boolean } => {
-    try {
-      const detectors = {
-        hasJSON: [
-          /```json\s*\n([\s\S]*?)\n```/i,  // JSON code blocks
-          /```\s*\n(\{[\s\S]*?\}|\[[\s\S]*?\])\n```/,  // Generic code blocks with JSON
-          /(?:^|\n)(\{[\s\S]*?\})(?:\n|$)/,  // Objects
-          /(?:^|\n)(\[[\s\S]*?\])(?:\n|$)/,  // Arrays
-        ],
-        hasHTML: [
-          /```html\s*\n([\s\S]*?<table[\s\S]*?<\/table>[\s\S]*?)\n```/i,  // HTML tables in code blocks
-          /<table[\s\S]*?<\/table>/i,  // Raw HTML tables
-        ],
-        hasMarkdownTable: [
-          /\|[\s\S]*?\|[\s\S]*?\n[\s\S]*?\|[\s\S]*?-[\s\S]*?\|/,  // Markdown tables (| header | format)
-          /^\s*\|.*\|\s*$/m,  // Simple markdown table row detection
-        ]
-      };
-      
-      return {
-        hasJSON: detectors.hasJSON.some(pattern => pattern.test(text)),
-        hasHTML: detectors.hasHTML.some(pattern => pattern.test(text)),
-        hasMarkdownTable: detectors.hasMarkdownTable.some(pattern => pattern.test(text))
-      };
-    } catch {
-      return { hasJSON: false, hasHTML: false, hasMarkdownTable: false };
-    }
-  };
+  try {
+    // Enhanced detection for various structured data formats
+    const detectContentType = (text: string): { hasJSON: boolean; hasHTML: boolean; hasMarkdownTable: boolean } => {
+      try {
+        const detectors = {
+          hasJSON: [
+            /```json\s*\n([\s\S]*?)\n```/i,  // JSON code blocks
+            /```\s*\n(\{[\s\S]*?\}|\[[\s\S]*?\])\n```/,  // Generic code blocks with JSON
+            /(?:^|\n)(\{[\s\S]*?\})(?:\n|$)/,  // Objects
+            /(?:^|\n)(\[[\s\S]*?\])(?:\n|$)/,  // Arrays
+          ],
+          hasHTML: [
+            /```html\s*\n([\s\S]*?<table[\s\S]*?<\/table>[\s\S]*?)\n```/i,  // HTML tables in code blocks
+            /<table[\s\S]*?<\/table>/i,  // Raw HTML tables
+          ],
+          hasMarkdownTable: [
+            /\|[\s\S]*?\|[\s\S]*?\n[\s\S]*?\|[\s\S]*?-[\s\S]*?\|/,  // Markdown tables (| header | format)
+            /^\s*\|.*\|\s*$/m,  // Simple markdown table row detection
+          ]
+        };
+        
+        return {
+          hasJSON: detectors.hasJSON.some(pattern => pattern.test(text)),
+          hasHTML: detectors.hasHTML.some(pattern => pattern.test(text)),
+          hasMarkdownTable: detectors.hasMarkdownTable.some(pattern => pattern.test(text))
+        };
+      } catch {
+        return { hasJSON: false, hasHTML: false, hasMarkdownTable: false };
+      }
+    };
 
   // Enhanced content processor for multiple formats
   const processStructuredContent = (text: string): string => {
@@ -91,10 +92,20 @@ export default function MessageRenderer({ content, className }: MessageRendererP
   };
 
   const processHTMLTables = (text: string): string => {
-    return text.replace(/```html\s*\n([\s\S]*?<table[\s\S]*?<\/table>[\s\S]*?)\n```/gi, (match, htmlContent) => {
-      // Add styling classes to HTML tables
-      return htmlContent.replace(/<table([^>]*)>/gi, '<table class="json-table"$1>');
-    });
+    try {
+      return text.replace(/```html\s*\n([\s\S]*?<table[\s\S]*?<\/table>[\s\S]*?)\n```/gi, (match, htmlContent) => {
+        try {
+          // Add styling classes to HTML tables
+          return htmlContent.replace(/<table([^>]*)>/gi, '<table class="json-table"$1>');
+        } catch (error) {
+          console.error('Error processing HTML table:', error);
+          return match;
+        }
+      });
+    } catch (error) {
+      console.error('Error in processHTMLTables:', error);
+      return text;
+    }
   };
 
   const convertToTable = (data: any, originalMatch: string): string => {
@@ -267,4 +278,13 @@ ${data.map(item => `| ${keys.map(key => formatCellValue(item[key])).join(' | ')}
       </ReactMarkdown>
     </div>
   );
+  } catch (error) {
+    console.error('MessageRenderer error:', error);
+    // Fallback to simple text rendering if there's an error
+    return (
+      <div className={cn("text-sm text-slate-700", className)}>
+        <pre className="whitespace-pre-wrap">{content}</pre>
+      </div>
+    );
+  }
 }
