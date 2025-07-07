@@ -116,8 +116,10 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       return response.json();
     },
     onSuccess: (newMessage) => {
+      // Add the new message to the current messages
       setMessages(prev => [...prev, newMessage]);
-      queryClient.invalidateQueries({ queryKey: ['/api/chat/session', currentSession, 'messages'] });
+      // Also refresh the messages to get the most up-to-date view
+      messagesQuery.refetch();
     },
     onError: (error: any) => {
       if (isUnauthorizedError(error)) {
