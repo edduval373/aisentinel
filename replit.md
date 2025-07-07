@@ -117,6 +117,12 @@ AI Sentinel is a comprehensive enterprise AI governance platform that provides s
 ```
 Changelog:
 - July 07, 2025. Initial setup
+- July 07, 2025. Enhanced MessageRenderer with intelligent content detection:
+  * Added support for JSON table conversion (handles nested objects like Perplexity format)
+  * Enhanced HTML table rendering from code blocks
+  * Improved markdown table detection and styling
+  * Implemented model-specific content format handling
+  * Added responsive table design with scroll capability
 ```
 
 ## User Preferences
