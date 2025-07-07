@@ -9,36 +9,35 @@ interface MessageRendererProps {
 }
 
 export default function MessageRenderer({ content, className }: MessageRendererProps) {
-  try {
-    // Enhanced detection for various structured data formats
-    const detectContentType = (text: string): { hasJSON: boolean; hasHTML: boolean; hasMarkdownTable: boolean } => {
-      try {
-        const detectors = {
-          hasJSON: [
-            /```json\s*\n([\s\S]*?)\n```/i,  // JSON code blocks
-            /```\s*\n(\{[\s\S]*?\}|\[[\s\S]*?\])\n```/,  // Generic code blocks with JSON
-            /(?:^|\n)(\{[\s\S]*?\})(?:\n|$)/,  // Objects
-            /(?:^|\n)(\[[\s\S]*?\])(?:\n|$)/,  // Arrays
-          ],
-          hasHTML: [
-            /```html\s*\n([\s\S]*?<table[\s\S]*?<\/table>[\s\S]*?)\n```/i,  // HTML tables in code blocks
-            /<table[\s\S]*?<\/table>/i,  // Raw HTML tables
-          ],
-          hasMarkdownTable: [
-            /\|[\s\S]*?\|[\s\S]*?\n[\s\S]*?\|[\s\S]*?-[\s\S]*?\|/,  // Markdown tables (| header | format)
-            /^\s*\|.*\|\s*$/m,  // Simple markdown table row detection
-          ]
-        };
-        
-        return {
-          hasJSON: detectors.hasJSON.some(pattern => pattern.test(text)),
-          hasHTML: detectors.hasHTML.some(pattern => pattern.test(text)),
-          hasMarkdownTable: detectors.hasMarkdownTable.some(pattern => pattern.test(text))
-        };
-      } catch {
-        return { hasJSON: false, hasHTML: false, hasMarkdownTable: false };
-      }
-    };
+  // Enhanced detection for various structured data formats
+  const detectContentType = (text: string): { hasJSON: boolean; hasHTML: boolean; hasMarkdownTable: boolean } => {
+    try {
+      const detectors = {
+        hasJSON: [
+          /```json\s*\n([\s\S]*?)\n```/i,  // JSON code blocks
+          /```\s*\n(\{[\s\S]*?\}|\[[\s\S]*?\])\n```/,  // Generic code blocks with JSON
+          /(?:^|\n)(\{[\s\S]*?\})(?:\n|$)/,  // Objects
+          /(?:^|\n)(\[[\s\S]*?\])(?:\n|$)/,  // Arrays
+        ],
+        hasHTML: [
+          /```html\s*\n([\s\S]*?<table[\s\S]*?<\/table>[\s\S]*?)\n```/i,  // HTML tables in code blocks
+          /<table[\s\S]*?<\/table>/i,  // Raw HTML tables
+        ],
+        hasMarkdownTable: [
+          /\|[\s\S]*?\|[\s\S]*?\n[\s\S]*?\|[\s\S]*?-[\s\S]*?\|/,  // Markdown tables (| header | format)
+          /^\s*\|.*\|\s*$/m,  // Simple markdown table row detection
+        ]
+      };
+      
+      return {
+        hasJSON: detectors.hasJSON.some(pattern => pattern.test(text)),
+        hasHTML: detectors.hasHTML.some(pattern => pattern.test(text)),
+        hasMarkdownTable: detectors.hasMarkdownTable.some(pattern => pattern.test(text))
+      };
+    } catch {
+      return { hasJSON: false, hasHTML: false, hasMarkdownTable: false };
+    }
+  };
 
   // Enhanced content processor for multiple formats
   const processStructuredContent = (text: string): string => {
@@ -51,39 +50,33 @@ export default function MessageRenderer({ content, className }: MessageRendererP
       // 2. Process HTML tables in code blocks
       processedText = processHTMLTables(processedText);
       
-      // 3. Leave markdown tables to be handled by ReactMarkdown with remarkGfm
+      // 3. Final cleanup and enhancement
+      processedText = enhanceMarkdownTables(processedText);
       
       return processedText;
-    } catch {
+    } catch (error) {
+      console.error('Error processing structured content:', error);
       return text;
     }
   };
 
+  // Process JSON content and convert to HTML tables
   const processJSONContent = (text: string): string => {
-    const jsonRegexes = [
-      /```json\s*\n([\s\S]*?)\n```/gi,  // JSON code blocks
-      /```\s*\n(\{[\s\S]*?\}|\[[\s\S]*?\])\n```/g,  // Generic code blocks with JSON
-      /(?:^|\n)(\{[\s\S]*?\})(?=\n|$)/g,  // Standalone JSON objects
-      /(?:^|\n)(\[[\s\S]*?\])(?=\n|$)/g,  // Standalone JSON arrays
+    const jsonPatterns = [
+      /```json\s*\n([\s\S]*?)\n```/gi,
+      /```\s*\n(\{[\s\S]*?\}|\[[\s\S]*?\])\n```/g,
     ];
     
     let result = text;
     
-    jsonRegexes.forEach(regex => {
-      result = result.replace(regex, (match, ...groups) => {
+    jsonPatterns.forEach(pattern => {
+      result = result.replace(pattern, (match, jsonContent) => {
         try {
-          // Extract JSON content
-          let jsonContent = groups.find(group => group && (group.startsWith('{') || group.startsWith('['))) || match;
-          
-          if (match.includes('```')) {
-            const codeMatch = match.match(/```(?:json)?\s*\n([\s\S]*?)\n```/i);
-            if (codeMatch) jsonContent = codeMatch[1];
-          }
-          
-          const parsed = JSON.parse(jsonContent.trim());
-          return convertToTable(parsed, match);
-        } catch {
-          return match; // Return original if parsing fails
+          const parsedData = JSON.parse(jsonContent.trim());
+          return convertToTable(parsedData, match);
+        } catch (error) {
+          console.error('Error parsing JSON:', error);
+          return match;
         }
       });
     });
@@ -110,174 +103,144 @@ export default function MessageRenderer({ content, className }: MessageRendererP
 
   const convertToTable = (data: any, originalMatch: string): string => {
     try {
-      if (Array.isArray(data) && data.length > 0 && typeof data[0] === 'object') {
-        // Array of objects -> table
-        const keys = Object.keys(data[0]);
-        return generateTableHTML(keys, data);
-      } else if (typeof data === 'object' && data !== null) {
-        // Check for nested arrays of objects (like Perplexity's format)
-        for (const [key, value] of Object.entries(data)) {
-          if (Array.isArray(value) && value.length > 0 && typeof value[0] === 'object') {
-            const keys = Object.keys(value[0]);
-            return generateTableHTML(keys, value);
-          }
-        }
+      if (Array.isArray(data)) {
+        if (data.length === 0) return originalMatch;
         
-        // Single object -> key-value table
-        const entries = Object.entries(data);
-        return `
-
-| Key | Value |
-| --- | --- |
-${entries.map(([key, value]) => `| ${key} | ${formatCellValue(value)} |`).join('\n')}
-
-`;
+        const firstItem = data[0];
+        if (typeof firstItem === 'object' && firstItem !== null) {
+          // Array of objects - convert to table
+          const headers = Object.keys(firstItem);
+          const headerRow = headers.map(h => `<th>${h}</th>`).join('');
+          const bodyRows = data.map(item => 
+            headers.map(h => `<td>${item[h] || ''}</td>`).join('')
+          ).map(row => `<tr>${row}</tr>`).join('');
+          
+          return `<table class="json-table"><thead><tr>${headerRow}</tr></thead><tbody>${bodyRows}</tbody></table>`;
+        } else {
+          // Array of primitives
+          const rows = data.map(item => `<tr><td>${item}</td></tr>`).join('');
+          return `<table class="json-table"><thead><tr><th>Value</th></tr></thead><tbody>${rows}</tbody></table>`;
+        }
+      } else if (typeof data === 'object' && data !== null) {
+        // Single object - convert to key-value table
+        const rows = Object.entries(data).map(([key, value]) => {
+          const displayValue = typeof value === 'object' ? JSON.stringify(value) : String(value);
+          return `<tr><td><strong>${key}</strong></td><td>${displayValue}</td></tr>`;
+        }).join('');
+        
+        return `<table class="json-table"><thead><tr><th>Property</th><th>Value</th></tr></thead><tbody>${rows}</tbody></table>`;
       }
       
-      return originalMatch; // Return original if no table conversion possible
-    } catch {
+      return originalMatch;
+    } catch (error) {
+      console.error('Error converting to table:', error);
       return originalMatch;
     }
   };
 
-  const generateTableHTML = (keys: string[], data: any[]): string => {
-    return `
-
-| ${keys.join(' | ')} |
-| ${keys.map(() => '---').join(' | ')} |
-${data.map(item => `| ${keys.map(key => formatCellValue(item[key])).join(' | ')} |`).join('\n')}
-
-`;
+  const enhanceMarkdownTables = (text: string): string => {
+    try {
+      // Add responsive wrapper to markdown tables
+      return text.replace(/(\|[\s\S]*?\|[\s\S]*?\n[\s\S]*?\|[\s\S]*?-[\s\S]*?\|[\s\S]*?)(?=\n\n|\n$|$)/gm, (match) => {
+        return `<div class="table-container">\n\n${match}\n\n</div>`;
+      });
+    } catch (error) {
+      console.error('Error enhancing markdown tables:', error);
+      return text;
+    }
   };
 
-  const formatCellValue = (value: any): string => {
-    if (value === null || value === undefined) return '';
-    if (typeof value === 'string') return value.replace(/"/g, '');
-    if (typeof value === 'object') return JSON.stringify(value);
-    return String(value);
-  };
+  try {
+    const contentTypes = detectContentType(content);
+    const processedContent = (contentTypes.hasJSON || contentTypes.hasHTML) 
+      ? processStructuredContent(content) 
+      : content;
 
-  // Process the content based on detected types
-  const contentTypes = detectContentType(content);
-  const processedContent = (contentTypes.hasJSON || contentTypes.hasHTML) 
-    ? processStructuredContent(content) 
-    : content;
-
-  return (
-    <div className={cn("prose prose-sm max-w-none", className)}>
-      <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
-        rehypePlugins={[rehypeRaw]}
-        components={{
-          table: ({ children, ...props }) => (
-            <div className="table-container my-4">
-              <table 
-                className="json-table min-w-full border-collapse border border-slate-300 text-sm"
-                {...props}
-              >
+    return (
+      <div className={cn("prose prose-sm max-w-none", className)}>
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          rehypePlugins={[rehypeRaw]}
+          components={{
+            table: ({ children, ...props }) => (
+              <div className="table-container">
+                <table className="json-table" {...props}>
+                  {children}
+                </table>
+              </div>
+            ),
+            th: ({ children, ...props }) => (
+              <th className="bg-slate-50 font-semibold text-slate-900 border border-slate-200 px-3 py-2" {...props}>
                 {children}
-              </table>
-            </div>
-          ),
-          thead: ({ children, ...props }) => (
-            <thead className="bg-slate-50" {...props}>
-              {children}
-            </thead>
-          ),
-          th: ({ children, ...props }) => (
-            <th 
-              className="border border-slate-300 px-3 py-2 text-left font-medium text-slate-700"
-              {...props}
-            >
-              {children}
-            </th>
-          ),
-          td: ({ children, ...props }) => (
-            <td 
-              className="border border-slate-300 px-3 py-2 text-slate-600"
-              {...props}
-            >
-              {children}
-            </td>
-          ),
-          tbody: ({ children, ...props }) => (
-            <tbody {...props}>
-              {children}
-            </tbody>
-          ),
-          tr: ({ children, ...props }) => (
-            <tr className="hover:bg-slate-50" {...props}>
-              {children}
-            </tr>
-          ),
-          code: ({ inline, children, ...props }) => {
-            if (inline) {
+              </th>
+            ),
+            td: ({ children, ...props }) => (
+              <td className="border border-slate-200 px-3 py-2 text-slate-700" {...props}>
+                {children}
+              </td>
+            ),
+            pre: ({ children, ...props }) => (
+              <pre className="bg-slate-100 border rounded-md p-3 overflow-x-auto text-sm" {...props}>
+                {children}
+              </pre>
+            ),
+            code: ({ children, className, ...props }) => {
+              const isInline = !className?.includes('language-');
               return (
                 <code 
-                  className="bg-slate-100 text-slate-800 px-1 py-0.5 rounded text-xs font-mono"
+                  className={cn(
+                    isInline 
+                      ? "bg-slate-100 px-1 py-0.5 rounded text-sm font-mono text-slate-800" 
+                      : "text-sm font-mono",
+                    className
+                  )} 
                   {...props}
                 >
                   {children}
                 </code>
               );
-            }
-            return (
-              <pre className="bg-slate-100 p-3 rounded-lg overflow-x-auto">
-                <code className="text-slate-800 text-xs font-mono" {...props}>
-                  {children}
-                </code>
-              </pre>
-            );
-          },
-          p: ({ children, ...props }) => (
-            <p className="mb-2 last:mb-0" {...props}>
-              {children}
-            </p>
-          ),
-          ul: ({ children, ...props }) => (
-            <ul className="list-disc list-inside mb-2 space-y-1" {...props}>
-              {children}
-            </ul>
-          ),
-          ol: ({ children, ...props }) => (
-            <ol className="list-decimal list-inside mb-2 space-y-1" {...props}>
-              {children}
-            </ol>
-          ),
-          li: ({ children, ...props }) => (
-            <li className="text-slate-700" {...props}>
-              {children}
-            </li>
-          ),
-          blockquote: ({ children, ...props }) => (
-            <blockquote 
-              className="border-l-4 border-slate-300 pl-4 italic text-slate-600 my-2"
-              {...props}
-            >
-              {children}
-            </blockquote>
-          ),
-          h1: ({ children, ...props }) => (
-            <h1 className="text-lg font-bold mb-2 text-slate-800" {...props}>
-              {children}
-            </h1>
-          ),
-          h2: ({ children, ...props }) => (
-            <h2 className="text-md font-semibold mb-2 text-slate-800" {...props}>
-              {children}
-            </h2>
-          ),
-          h3: ({ children, ...props }) => (
-            <h3 className="text-sm font-semibold mb-1 text-slate-800" {...props}>
-              {children}
-            </h3>
-          ),
-        }}
-      >
-        {processedContent}
-      </ReactMarkdown>
-    </div>
-  );
+            },
+            p: ({ children, ...props }) => (
+              <p className="mb-2 text-sm text-slate-700 leading-relaxed" {...props}>
+                {children}
+              </p>
+            ),
+            ul: ({ children, ...props }) => (
+              <ul className="list-disc list-inside mb-2 text-sm text-slate-700" {...props}>
+                {children}
+              </ul>
+            ),
+            ol: ({ children, ...props }) => (
+              <ol className="list-decimal list-inside mb-2 text-sm text-slate-700" {...props}>
+                {children}
+              </ol>
+            ),
+            li: ({ children, ...props }) => (
+              <li className="mb-1" {...props}>
+                {children}
+              </li>
+            ),
+            h1: ({ children, ...props }) => (
+              <h1 className="text-lg font-bold mb-2 text-slate-900" {...props}>
+                {children}
+              </h1>
+            ),
+            h2: ({ children, ...props }) => (
+              <h2 className="text-base font-semibold mb-2 text-slate-900" {...props}>
+                {children}
+              </h2>
+            ),
+            h3: ({ children, ...props }) => (
+              <h3 className="text-sm font-semibold mb-1 text-slate-800" {...props}>
+                {children}
+              </h3>
+            ),
+          }}
+        >
+          {processedContent}
+        </ReactMarkdown>
+      </div>
+    );
   } catch (error) {
     console.error('MessageRenderer error:', error);
     // Fallback to simple text rendering if there's an error
