@@ -9,15 +9,16 @@ interface MessageRendererProps {
 }
 
 export default function MessageRenderer({ content, className }: MessageRendererProps) {
-  // Try to detect if the content contains JSON data
+  // Try to detect if the content contains JSON data or HTML tables
   const containsJSON = (text: string): boolean => {
     try {
-      // Look for JSON-like patterns including code blocks
+      // Look for JSON-like patterns including code blocks, or HTML tables
       const jsonPatterns = [
         /```json\s*\n([\s\S]*?)\n```/i,  // JSON code blocks
         /```\s*\n(\{[\s\S]*?\}|\[[\s\S]*?\])\n```/,  // Generic code blocks with JSON
         /\{[\s\S]*\}/,  // Objects
         /\[[\s\S]*\]/,  // Arrays
+        /```html\s*\n([\s\S]*?<table[\s\S]*?<\/table>[\s\S]*?)\n```/i,  // HTML tables in code blocks
       ];
       
       return jsonPatterns.some(pattern => pattern.test(text));
@@ -29,10 +30,11 @@ export default function MessageRenderer({ content, className }: MessageRendererP
   // Format JSON content into a table if possible
   const formatJSONAsTable = (text: string): string => {
     try {
-      // Try to find and parse JSON objects in the text, including code blocks
+      // Try to find and parse JSON objects in the text, including code blocks and HTML tables
       const jsonRegexes = [
         /```json\s*\n([\s\S]*?)\n```/gi,  // JSON code blocks
         /```\s*\n(\{[\s\S]*?\}|\[[\s\S]*?\])\n```/g,  // Generic code blocks with JSON
+        /```html\s*\n([\s\S]*?<table[\s\S]*?<\/table>[\s\S]*?)\n```/gi,  // HTML tables in code blocks
         /(\{[\s\S]*?\}|\[[\s\S]*?\])/g,  // Raw JSON objects/arrays
       ];
       
@@ -44,6 +46,19 @@ export default function MessageRenderer({ content, className }: MessageRendererP
         
         matches.forEach(match => {
           try {
+            // Handle HTML tables in code blocks first
+            if (match.includes('<table')) {
+              // Extract HTML content and apply styling
+              const htmlMatch = match.match(/```html\s*\n([\s\S]*?)\n```/i);
+              if (htmlMatch) {
+                let htmlContent = htmlMatch[1];
+                // Add our custom styling classes to tables
+                htmlContent = htmlContent.replace(/<table([^>]*)>/gi, '<table class="json-table"$1>');
+                formattedText = formattedText.replace(match, htmlContent);
+                return;
+              }
+            }
+            
             // Extract JSON content from match
             let jsonContent = match;
             if (match.includes('```')) {
@@ -77,8 +92,41 @@ export default function MessageRenderer({ content, className }: MessageRendererP
               `;
               formattedText = formattedText.replace(match, tableHTML);
             } else if (typeof parsed === 'object' && parsed !== null) {
-              // Convert single object to HTML table
-              const tableHTML = `
+              // Handle nested objects - check if any value is an array of objects
+              let hasArrayOfObjects = false;
+              let arrayData = null;
+              
+              for (const [key, value] of Object.entries(parsed)) {
+                if (Array.isArray(value) && value.length > 0 && typeof value[0] === 'object') {
+                  hasArrayOfObjects = true;
+                  arrayData = value;
+                  break;
+                }
+              }
+              
+              if (hasArrayOfObjects && arrayData) {
+                // Convert the array of objects to HTML table
+                const keys = Object.keys(arrayData[0]);
+                const tableHTML = `
+<table class="json-table">
+  <thead>
+    <tr>
+      ${keys.map(key => `<th>${key}</th>`).join('')}
+    </tr>
+  </thead>
+  <tbody>
+    ${arrayData.map(item => `
+      <tr>
+        ${keys.map(key => `<td>${item[key] !== undefined ? String(item[key]).replace(/"/g, '') : ''}</td>`).join('')}
+      </tr>
+    `).join('')}
+  </tbody>
+</table>
+                `;
+                formattedText = formattedText.replace(match, tableHTML);
+              } else {
+                // Convert single object to HTML table
+                const tableHTML = `
 <table class="json-table">
   <tbody>
     ${Object.entries(parsed).map(([key, value]) => `
@@ -89,8 +137,9 @@ export default function MessageRenderer({ content, className }: MessageRendererP
     `).join('')}
   </tbody>
 </table>
-              `;
-              formattedText = formattedText.replace(match, tableHTML);
+                `;
+                formattedText = formattedText.replace(match, tableHTML);
+              }
             }
           } catch (e) {
             // If parsing fails, leave the original text
@@ -107,11 +156,7 @@ export default function MessageRenderer({ content, className }: MessageRendererP
 
   // Process the content
   const hasJSON = containsJSON(content);
-  console.log('Content contains JSON:', hasJSON);
-  console.log('Original content:', content);
-  
   const processedContent = hasJSON ? formatJSONAsTable(content) : content;
-  console.log('Processed content:', processedContent);
 
   return (
     <div className={cn("prose prose-sm max-w-none", className)}>
