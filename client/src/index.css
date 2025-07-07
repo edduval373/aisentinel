@@ -186,7 +186,40 @@
   @apply bg-slate-50;
 }
 
-/* Improve chat message width for tables */
+/* Improve chat message width for tables with scrolling */
 .chat-message-content {
   @apply max-w-2xl lg:max-w-4xl;
+  overflow-x: auto;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+/* Enhanced table container with scroll */
+.table-container {
+  @apply overflow-x-auto overflow-y-auto max-h-96 border border-slate-200 rounded-lg;
+}
+
+.table-container table {
+  @apply min-w-full;
+}
+
+/* Ensure markdown tables are responsive */
+.prose table {
+  @apply block overflow-x-auto whitespace-nowrap;
+}
+
+.prose thead,
+.prose tbody,
+.prose tr {
+  @apply block;
+}
+
+.prose thead tr,
+.prose tbody tr {
+  @apply table w-full table-fixed;
+}
+
+.prose th,
+.prose td {
+  @apply px-3 py-2 border border-slate-300;
 }

@@ -115,16 +115,12 @@ export default function MessageRenderer({ content, className }: MessageRendererP
         // Single object -> key-value table
         const entries = Object.entries(data);
         return `
-<table class="json-table">
-  <tbody>
-    ${entries.map(([key, value]) => `
-      <tr>
-        <th>${key}</th>
-        <td>${formatCellValue(value)}</td>
-      </tr>
-    `).join('')}
-  </tbody>
-</table>`;
+
+| Key | Value |
+| --- | --- |
+${entries.map(([key, value]) => `| ${key} | ${formatCellValue(value)} |`).join('\n')}
+
+`;
       }
       
       return originalMatch; // Return original if no table conversion possible
@@ -135,20 +131,12 @@ export default function MessageRenderer({ content, className }: MessageRendererP
 
   const generateTableHTML = (keys: string[], data: any[]): string => {
     return `
-<table class="json-table">
-  <thead>
-    <tr>
-      ${keys.map(key => `<th>${key}</th>`).join('')}
-    </tr>
-  </thead>
-  <tbody>
-    ${data.map(item => `
-      <tr>
-        ${keys.map(key => `<td>${formatCellValue(item[key])}</td>`).join('')}
-      </tr>
-    `).join('')}
-  </tbody>
-</table>`;
+
+| ${keys.join(' | ')} |
+| ${keys.map(() => '---').join(' | ')} |
+${data.map(item => `| ${keys.map(key => formatCellValue(item[key])).join(' | ')} |`).join('\n')}
+
+`;
   };
 
   const formatCellValue = (value: any): string => {
@@ -171,7 +159,7 @@ export default function MessageRenderer({ content, className }: MessageRendererP
         rehypePlugins={[rehypeRaw]}
         components={{
           table: ({ children, ...props }) => (
-            <div className="overflow-x-auto my-4">
+            <div className="table-container my-4">
               <table 
                 className="json-table min-w-full border-collapse border border-slate-300 text-sm"
                 {...props}
