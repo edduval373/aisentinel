@@ -7,7 +7,7 @@ import { isUnauthorizedError } from "@/lib/authUtils";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Download, Wifi, WifiOff } from "lucide-react";
+import { Download, Wifi, WifiOff, Shield } from "lucide-react";
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
 import type { AiModel, ActivityType, ChatMessage as ChatMessageType } from "@shared/schema";
