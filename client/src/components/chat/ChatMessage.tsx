@@ -90,7 +90,7 @@ export default function ChatMessage({ message, aiModel, user }: ChatMessageProps
               </span>
             </div>
             <MessageRenderer 
-              content={message.response} 
+              content={message.response || ""} 
               className="text-sm text-slate-700"
             />
             <div className="flex items-center justify-between mt-1">

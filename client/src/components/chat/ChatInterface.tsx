@@ -116,6 +116,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       return await response.json();
     },
     onSuccess: (newMessage) => {
+      console.log('New message received:', newMessage);
       // Add the new message to the current messages
       setMessages(prev => [...prev, newMessage]);
       // Also refresh the messages to get the most up-to-date view

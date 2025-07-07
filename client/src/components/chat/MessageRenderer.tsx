@@ -151,6 +151,10 @@ export default function MessageRenderer({ content, className }: MessageRendererP
   };
 
   try {
+    if (!content) {
+      return <div className={cn("text-sm text-slate-700", className)}>No content to display</div>;
+    }
+
     const contentTypes = detectContentType(content);
     const processedContent = (contentTypes.hasJSON || contentTypes.hasHTML) 
       ? processStructuredContent(content) 
