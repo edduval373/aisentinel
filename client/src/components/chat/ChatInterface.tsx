@@ -113,7 +113,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   const sendMessageMutation = useMutation({
     mutationFn: async (data: { message: string; aiModelId: number; activityTypeId: number; sessionId: number }) => {
       const response = await apiRequest("POST", "/api/chat/message", data);
-      return response.json();
+      return await response.json();
     },
     onSuccess: (newMessage) => {
       // Add the new message to the current messages
