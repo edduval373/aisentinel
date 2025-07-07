@@ -1,0 +1,204 @@
+import {
+  users,
+  aiModels,
+  activityTypes,
+  userActivities,
+  chatSessions,
+  chatMessages,
+  type User,
+  type UpsertUser,
+  type AiModel,
+  type InsertAiModel,
+  type ActivityType,
+  type InsertActivityType,
+  type UserActivity,
+  type InsertUserActivity,
+  type ChatSession,
+  type InsertChatSession,
+  type ChatMessage,
+  type InsertChatMessage,
+} from "@shared/schema";
+import { db } from "./db";
+import { eq, desc, and, count, sql } from "drizzle-orm";
+
+// Interface for storage operations
+export interface IStorage {
+  // User operations (IMPORTANT: mandatory for Replit Auth)
+  getUser(id: string): Promise<User | undefined>;
+  upsertUser(user: UpsertUser): Promise<User>;
+  
+  // AI Models operations
+  getAiModels(): Promise<AiModel[]>;
+  getEnabledAiModels(): Promise<AiModel[]>;
+  createAiModel(model: InsertAiModel): Promise<AiModel>;
+  updateAiModel(id: number, model: Partial<InsertAiModel>): Promise<AiModel>;
+  
+  // Activity Types operations
+  getActivityTypes(): Promise<ActivityType[]>;
+  getEnabledActivityTypes(): Promise<ActivityType[]>;
+  createActivityType(activityType: InsertActivityType): Promise<ActivityType>;
+  updateActivityType(id: number, activityType: Partial<InsertActivityType>): Promise<ActivityType>;
+  
+  // User Activities operations
+  createUserActivity(activity: InsertUserActivity): Promise<UserActivity>;
+  getUserActivities(userId?: string, limit?: number): Promise<UserActivity[]>;
+  getActivityStats(): Promise<{
+    totalConversations: number;
+    securityBlocks: number;
+    activeUsers: number;
+    policyViolations: number;
+  }>;
+  
+  // Chat operations
+  createChatSession(session: InsertChatSession): Promise<ChatSession>;
+  getChatSession(id: number): Promise<ChatSession | undefined>;
+  createChatMessage(message: InsertChatMessage): Promise<ChatMessage>;
+  getChatMessages(sessionId: number): Promise<ChatMessage[]>;
+}
+
+export class DatabaseStorage implements IStorage {
+  // User operations (IMPORTANT: mandatory for Replit Auth)
+  async getUser(id: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
+  }
+
+  async upsertUser(userData: UpsertUser): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values(userData)
+      .onConflictDoUpdate({
+        target: users.id,
+        set: {
+          ...userData,
+          updatedAt: new Date(),
+        },
+      })
+      .returning();
+    return user;
+  }
+
+  // AI Models operations
+  async getAiModels(): Promise<AiModel[]> {
+    return await db.select().from(aiModels).orderBy(aiModels.name);
+  }
+
+  async getEnabledAiModels(): Promise<AiModel[]> {
+    return await db.select().from(aiModels).where(eq(aiModels.isEnabled, true)).orderBy(aiModels.name);
+  }
+
+  async createAiModel(model: InsertAiModel): Promise<AiModel> {
+    const [created] = await db.insert(aiModels).values(model).returning();
+    return created;
+  }
+
+  async updateAiModel(id: number, model: Partial<InsertAiModel>): Promise<AiModel> {
+    const [updated] = await db
+      .update(aiModels)
+      .set(model)
+      .where(eq(aiModels.id, id))
+      .returning();
+    return updated;
+  }
+
+  // Activity Types operations
+  async getActivityTypes(): Promise<ActivityType[]> {
+    return await db.select().from(activityTypes).orderBy(activityTypes.name);
+  }
+
+  async getEnabledActivityTypes(): Promise<ActivityType[]> {
+    return await db.select().from(activityTypes).where(eq(activityTypes.isEnabled, true)).orderBy(activityTypes.name);
+  }
+
+  async createActivityType(activityType: InsertActivityType): Promise<ActivityType> {
+    const [created] = await db.insert(activityTypes).values(activityType).returning();
+    return created;
+  }
+
+  async updateActivityType(id: number, activityType: Partial<InsertActivityType>): Promise<ActivityType> {
+    const [updated] = await db
+      .update(activityTypes)
+      .set(activityType)
+      .where(eq(activityTypes.id, id))
+      .returning();
+    return updated;
+  }
+
+  // User Activities operations
+  async createUserActivity(activity: InsertUserActivity): Promise<UserActivity> {
+    const [created] = await db.insert(userActivities).values(activity).returning();
+    return created;
+  }
+
+  async getUserActivities(userId?: string, limit: number = 50): Promise<UserActivity[]> {
+    const query = db.select().from(userActivities);
+    
+    if (userId) {
+      query.where(eq(userActivities.userId, userId));
+    }
+    
+    return await query.orderBy(desc(userActivities.timestamp)).limit(limit);
+  }
+
+  async getActivityStats(): Promise<{
+    totalConversations: number;
+    securityBlocks: number;
+    activeUsers: number;
+    policyViolations: number;
+  }> {
+    const [totalConversations] = await db
+      .select({ count: count() })
+      .from(userActivities);
+
+    const [securityBlocks] = await db
+      .select({ count: count() })
+      .from(userActivities)
+      .where(eq(userActivities.status, 'blocked'));
+
+    const [activeUsers] = await db
+      .select({ count: sql<number>`COUNT(DISTINCT ${userActivities.userId})` })
+      .from(userActivities)
+      .where(sql`${userActivities.timestamp} >= NOW() - INTERVAL '24 hours'`);
+
+    const [policyViolations] = await db
+      .select({ count: count() })
+      .from(userActivities)
+      .where(and(
+        eq(userActivities.status, 'blocked'),
+        sql`${userActivities.timestamp} >= NOW() - INTERVAL '7 days'`
+      ));
+
+    return {
+      totalConversations: totalConversations.count,
+      securityBlocks: securityBlocks.count,
+      activeUsers: activeUsers.count,
+      policyViolations: policyViolations.count,
+    };
+  }
+
+  // Chat operations
+  async createChatSession(session: InsertChatSession): Promise<ChatSession> {
+    const [created] = await db.insert(chatSessions).values(session).returning();
+    return created;
+  }
+
+  async getChatSession(id: number): Promise<ChatSession | undefined> {
+    const [session] = await db.select().from(chatSessions).where(eq(chatSessions.id, id));
+    return session;
+  }
+
+  async createChatMessage(message: InsertChatMessage): Promise<ChatMessage> {
+    const [created] = await db.insert(chatMessages).values(message).returning();
+    return created;
+  }
+
+  async getChatMessages(sessionId: number): Promise<ChatMessage[]> {
+    return await db
+      .select()
+      .from(chatMessages)
+      .where(eq(chatMessages.sessionId, sessionId))
+      .orderBy(chatMessages.timestamp);
+  }
+}
+
+export const storage = new DatabaseStorage();

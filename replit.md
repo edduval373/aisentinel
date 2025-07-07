@@ -1,0 +1,126 @@
+# AI Sentinel - Enterprise AI Governance Platform
+
+## Overview
+
+AI Sentinel is a comprehensive enterprise AI governance platform that provides secure, compliant, and monitored AI interactions for organizations. The application combines a React frontend with an Express.js backend, featuring real-time chat capabilities, content filtering, and administrative oversight.
+
+## System Architecture
+
+### Frontend Architecture
+- **Framework**: React 18 with TypeScript
+- **Styling**: Tailwind CSS with shadcn/ui components
+- **State Management**: TanStack Query for server state management
+- **Routing**: Wouter for client-side routing
+- **Build Tool**: Vite for development and production builds
+
+### Backend Architecture
+- **Runtime**: Node.js with Express.js
+- **Database**: PostgreSQL with Drizzle ORM
+- **Authentication**: Replit Auth with OpenID Connect
+- **Session Management**: Express sessions with PostgreSQL store
+- **Real-time Communication**: WebSocket support for live features
+
+### Key Design Decisions
+- **Monorepo Structure**: Shared schemas and types between client and server
+- **Database-First Approach**: PostgreSQL chosen for ACID compliance and complex queries
+- **Component-Based UI**: shadcn/ui for consistent, accessible components
+- **Type Safety**: Full TypeScript implementation across the stack
+
+## Key Components
+
+### Authentication System
+- **Provider**: Replit Auth integration
+- **Session Storage**: PostgreSQL-backed sessions for persistence
+- **Role-Based Access**: User and admin roles with route protection
+- **Security**: HTTP-only cookies with secure session management
+
+### AI Integration
+- **Multiple Providers**: OpenAI and Anthropic API support
+- **Model Management**: Configurable AI models with enable/disable controls
+- **Default Models**: Claude Sonnet 4 (latest) and GPT-4o
+- **Response Handling**: Structured error handling and rate limiting
+
+### Content Security
+- **Content Filtering**: Multi-layered security system
+- **PII Detection**: Pattern-based detection for sensitive information
+- **Security Flags**: Real-time flagging of policy violations
+- **Compliance Tracking**: Activity logging for audit trails
+
+### Administrative Features
+- **Real-time Dashboard**: Live monitoring of AI interactions
+- **Configuration Management**: Model and activity type administration
+- **Analytics**: Usage statistics and security metrics
+- **Export Capabilities**: Report generation for compliance
+
+## Data Flow
+
+### User Authentication Flow
+1. User accesses protected route
+2. Middleware checks session validity
+3. Redirects to Replit Auth if unauthenticated
+4. Creates/updates user record on successful auth
+5. Establishes session with role-based permissions
+
+### AI Interaction Flow
+1. User selects AI model and activity type
+2. Message passes through content filter
+3. Security flags applied if violations detected
+4. AI service processes approved messages
+5. Response filtered before delivery
+6. All interactions logged for audit
+
+### Real-time Updates
+1. WebSocket connections for live features
+2. Server-sent events for dashboard updates
+3. Optimistic updates with error rollback
+4. Connection status monitoring
+
+## External Dependencies
+
+### Core Services
+- **Database**: Neon PostgreSQL for managed database hosting
+- **Authentication**: Replit Auth for OIDC integration
+- **AI Providers**: OpenAI and Anthropic for language models
+
+### Development Tools
+- **Vite**: Build tool with hot module replacement
+- **Drizzle Kit**: Database migrations and schema management
+- **ESBuild**: Production bundling for server code
+
+### UI Libraries
+- **Radix UI**: Headless component primitives
+- **Tailwind CSS**: Utility-first styling framework
+- **Lucide React**: Icon library for consistent iconography
+
+## Deployment Strategy
+
+### Build Process
+1. **Client Build**: Vite compiles React app to static assets
+2. **Server Build**: ESBuild bundles Express server with externals
+3. **Database Migration**: Drizzle pushes schema changes
+4. **Asset Optimization**: Automatic code splitting and minification
+
+### Environment Configuration
+- **Development**: Local development with hot reloading
+- **Production**: Single-binary deployment with static serving
+- **Database**: Connection string-based configuration
+- **Secrets**: Environment variable management for API keys
+
+### Monitoring and Logging
+- **Request Logging**: Structured logging with response times
+- **Error Tracking**: Comprehensive error handling with stack traces
+- **Performance Metrics**: Response time and throughput monitoring
+- **Security Auditing**: All user activities logged with timestamps
+
+## Changelog
+
+```
+Changelog:
+- July 07, 2025. Initial setup
+```
+
+## User Preferences
+
+```
+Preferred communication style: Simple, everyday language.
+```
