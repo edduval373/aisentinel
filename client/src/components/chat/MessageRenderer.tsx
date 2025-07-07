@@ -250,7 +250,7 @@ export default function MessageRenderer({ content, className }: MessageRendererP
     // Fallback to simple text rendering if there's an error
     return (
       <div className={cn("text-sm text-slate-700", className)}>
-        <pre className="whitespace-pre-wrap">{content}</pre>
+        <pre className="whitespace-pre-wrap">{content || 'Error rendering content'}</pre>
       </div>
     );
   }

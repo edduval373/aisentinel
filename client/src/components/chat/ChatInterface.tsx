@@ -123,6 +123,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       messagesQuery.refetch();
     },
     onError: (error: any) => {
+      console.error('Send message error:', error);
       if (isUnauthorizedError(error)) {
         toast({
           title: "Unauthorized",

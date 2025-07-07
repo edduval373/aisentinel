@@ -89,10 +89,9 @@ export default function ChatMessage({ message, aiModel, user }: ChatMessageProps
                 {aiModel?.name || 'AI Assistant'}
               </span>
             </div>
-            <MessageRenderer 
-              content={message.response || ""} 
-              className="text-sm text-slate-700"
-            />
+            <div className="text-sm text-slate-700">
+              <pre className="whitespace-pre-wrap">{message.response || 'No response content'}</pre>
+            </div>
             <div className="flex items-center justify-between mt-1">
               <p className="text-xs text-slate-500">{timestamp}</p>
             </div>
