@@ -168,3 +168,25 @@
     transform: translateX(0);
   }
 }
+
+/* Custom styles for JSON tables */
+.json-table {
+  @apply min-w-full border-collapse border border-slate-300 text-sm my-4;
+}
+
+.json-table th {
+  @apply border border-slate-300 px-3 py-2 text-left font-medium text-slate-700 bg-slate-50;
+}
+
+.json-table td {
+  @apply border border-slate-300 px-3 py-2 text-slate-600;
+}
+
+.json-table tbody tr:hover {
+  @apply bg-slate-50;
+}
+
+/* Improve chat message width for tables */
+.chat-message-content {
+  @apply max-w-2xl lg:max-w-4xl;
+}
