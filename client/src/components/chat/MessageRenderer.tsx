@@ -12,8 +12,10 @@ export default function MessageRenderer({ content, className }: MessageRendererP
   // Try to detect if the content contains JSON data
   const containsJSON = (text: string): boolean => {
     try {
-      // Look for JSON-like patterns
+      // Look for JSON-like patterns including code blocks
       const jsonPatterns = [
+        /```json\s*\n([\s\S]*?)\n```/i,  // JSON code blocks
+        /```\s*\n(\{[\s\S]*?\}|\[[\s\S]*?\])\n```/,  // Generic code blocks with JSON
         /\{[\s\S]*\}/,  // Objects
         /\[[\s\S]*\]/,  // Arrays
       ];
@@ -27,22 +29,37 @@ export default function MessageRenderer({ content, className }: MessageRendererP
   // Format JSON content into a table if possible
   const formatJSONAsTable = (text: string): string => {
     try {
-      // Try to find and parse JSON objects in the text
-      const jsonRegex = /(\{[\s\S]*?\}|\[[\s\S]*?\])/g;
-      const matches = text.match(jsonRegex);
+      // Try to find and parse JSON objects in the text, including code blocks
+      const jsonRegexes = [
+        /```json\s*\n([\s\S]*?)\n```/gi,  // JSON code blocks
+        /```\s*\n(\{[\s\S]*?\}|\[[\s\S]*?\])\n```/g,  // Generic code blocks with JSON
+        /(\{[\s\S]*?\}|\[[\s\S]*?\])/g,  // Raw JSON objects/arrays
+      ];
       
-      if (!matches) return text;
-
       let formattedText = text;
       
-      matches.forEach(match => {
-        try {
-          const parsed = JSON.parse(match);
-          
-          if (Array.isArray(parsed) && parsed.length > 0 && typeof parsed[0] === 'object') {
-            // Convert array of objects to HTML table
-            const keys = Object.keys(parsed[0]);
-            const tableHTML = `
+      jsonRegexes.forEach(regex => {
+        const matches = text.match(regex);
+        if (!matches) return;
+        
+        matches.forEach(match => {
+          try {
+            // Extract JSON content from match
+            let jsonContent = match;
+            if (match.includes('```')) {
+              // Extract content between code blocks
+              const codeBlockMatch = match.match(/```(?:json)?\s*\n([\s\S]*?)\n```/i);
+              if (codeBlockMatch) {
+                jsonContent = codeBlockMatch[1];
+              }
+            }
+            
+            const parsed = JSON.parse(jsonContent);
+            
+            if (Array.isArray(parsed) && parsed.length > 0 && typeof parsed[0] === 'object') {
+              // Convert array of objects to HTML table
+              const keys = Object.keys(parsed[0]);
+              const tableHTML = `
 <table class="json-table">
   <thead>
     <tr>
@@ -52,32 +69,34 @@ export default function MessageRenderer({ content, className }: MessageRendererP
   <tbody>
     ${parsed.map(item => `
       <tr>
-        ${keys.map(key => `<td>${JSON.stringify(item[key] || '')}</td>`).join('')}
+        ${keys.map(key => `<td>${item[key] !== undefined ? String(item[key]).replace(/"/g, '') : ''}</td>`).join('')}
       </tr>
     `).join('')}
   </tbody>
 </table>
-            `;
-            formattedText = formattedText.replace(match, tableHTML);
-          } else if (typeof parsed === 'object' && parsed !== null) {
-            // Convert single object to HTML table
-            const tableHTML = `
+              `;
+              formattedText = formattedText.replace(match, tableHTML);
+            } else if (typeof parsed === 'object' && parsed !== null) {
+              // Convert single object to HTML table
+              const tableHTML = `
 <table class="json-table">
   <tbody>
     ${Object.entries(parsed).map(([key, value]) => `
       <tr>
         <th>${key}</th>
-        <td>${JSON.stringify(value)}</td>
+        <td>${value !== undefined ? String(value).replace(/"/g, '') : ''}</td>
       </tr>
     `).join('')}
   </tbody>
 </table>
-            `;
-            formattedText = formattedText.replace(match, tableHTML);
+              `;
+              formattedText = formattedText.replace(match, tableHTML);
+            }
+          } catch (e) {
+            // If parsing fails, leave the original text
+            console.log('JSON parsing failed:', e);
           }
-        } catch {
-          // If parsing fails, leave the original text
-        }
+        });
       });
       
       return formattedText;
@@ -87,7 +106,12 @@ export default function MessageRenderer({ content, className }: MessageRendererP
   };
 
   // Process the content
-  const processedContent = containsJSON(content) ? formatJSONAsTable(content) : content;
+  const hasJSON = containsJSON(content);
+  console.log('Content contains JSON:', hasJSON);
+  console.log('Original content:', content);
+  
+  const processedContent = hasJSON ? formatJSONAsTable(content) : content;
+  console.log('Processed content:', processedContent);
 
   return (
     <div className={cn("prose prose-sm max-w-none", className)}>
