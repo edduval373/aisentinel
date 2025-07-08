@@ -123,6 +123,12 @@ Changelog:
   * Improved markdown table detection and styling
   * Implemented model-specific content format handling
   * Added responsive table design with scroll capability
+- July 07, 2025. Redesigned layout with collapsible sidebar:
+  * Created collapsible sidebar that starts closed with menu button toggle
+  * Added comprehensive admin navigation with expandable sections
+  * Organized admin controls: AI Management, Activity Management, User Management, Monitoring, System Settings
+  * Fixed layout issues where header disappeared during content loading
+  * Improved mobile responsiveness with overlay and proper transitions
 ```
 
 ## User Preferences

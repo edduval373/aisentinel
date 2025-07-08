@@ -7,6 +7,9 @@ import { useAuth } from "@/hooks/useAuth";
 import Landing from "@/pages/landing";
 import Home from "@/pages/home";
 import Admin from "@/pages/admin";
+import AdminModels from "@/pages/admin/models";
+import AdminActivityTypes from "@/pages/admin/activity-types";
+import AdminUsers from "@/pages/admin/users";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -20,6 +23,9 @@ function Router() {
         <>
           <Route path="/" component={Home} />
           <Route path="/admin" component={Admin} />
+          <Route path="/admin/models" component={AdminModels} />
+          <Route path="/admin/activity-types" component={AdminActivityTypes} />
+          <Route path="/admin/users" component={AdminUsers} />
         </>
       )}
       <Route component={NotFound} />
