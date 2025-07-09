@@ -1,16 +1,28 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Users, Plus, Shield, Edit, Ban } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Users, Plus, Shield, Edit, Ban, Mail, UserPlus } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
 
 export default function AdminUsers() {
   const { toast } = useToast();
   const { isAuthenticated, isLoading, user } = useAuth();
+  const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
+  const [inviteForm, setInviteForm] = useState({
+    email: '',
+    name: '',
+    role: 'user',
+    message: ''
+  });
 
   // Redirect if not admin
   useEffect(() => {
@@ -94,14 +106,115 @@ export default function AdminUsers() {
     }
   };
 
+  const handleInviteUser = async () => {
+    if (!inviteForm.email || !inviteForm.name) {
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      toast({
+        title: "Invitation Sent",
+        description: `Invitation sent to ${inviteForm.email} successfully`,
+      });
+      
+      // Reset form and close dialog
+      setInviteForm({
+        email: '',
+        name: '',
+        role: 'user',
+        message: ''
+      });
+      setInviteDialogOpen(false);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to send invitation",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <AdminLayout title="User Management" subtitle="Manage user accounts, roles, and permissions">
       <div className="p-6 space-y-6">
         <div className="flex items-center justify-between">
-          <Button>
-            <Plus className="w-4 h-4 mr-2" />
-            Invite User
-          </Button>
+          <Dialog open={inviteDialogOpen} onOpenChange={setInviteDialogOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="w-4 h-4 mr-2" />
+                Invite User
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle className="flex items-center">
+                  <UserPlus className="w-5 h-5 mr-2" />
+                  Invite New User
+                </DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email Address *</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="user@company.com"
+                    value={inviteForm.email}
+                    onChange={(e) => setInviteForm({...inviteForm, email: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="name">Full Name *</Label>
+                  <Input
+                    id="name"
+                    placeholder="John Doe"
+                    value={inviteForm.name}
+                    onChange={(e) => setInviteForm({...inviteForm, name: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="role">Role</Label>
+                  <Select value={inviteForm.role} onValueChange={(value) => setInviteForm({...inviteForm, role: value})}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="user">User</SelectItem>
+                      <SelectItem value="moderator">Moderator</SelectItem>
+                      <SelectItem value="admin">Administrator</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="message">Welcome Message (Optional)</Label>
+                  <Textarea
+                    id="message"
+                    placeholder="Welcome to AI Sentinel! You've been invited to join our platform..."
+                    value={inviteForm.message}
+                    onChange={(e) => setInviteForm({...inviteForm, message: e.target.value})}
+                    rows={3}
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end space-x-2">
+                <Button variant="outline" onClick={() => setInviteDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={handleInviteUser}>
+                  <Mail className="w-4 h-4 mr-2" />
+                  Send Invitation
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
 
       {/* User Statistics */}
