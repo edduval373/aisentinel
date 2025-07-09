@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-import iconPath from "@assets/icononly_nobuffer_1752067577689.png";
+import iconPath from "@assets/image_1752068939553.png";
 
 // AI Sentinel Logo Component
 const AISentinelIcon = ({ className = "w-12 h-12" }) => (
