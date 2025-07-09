@@ -120,7 +120,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       // Add the new message to the current messages
       setMessages(prev => [...prev, newMessage]);
       // Also refresh the messages to get the most up-to-date view
-      messagesQuery.refetch();
+      queryClient.invalidateQueries({ queryKey: ['/api/chat/session', currentSession, 'messages'] });
     },
     onError: (error: any) => {
       console.error('Send message error:', error);
@@ -246,8 +246,8 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   const selectedActivityTypeData = activityTypes?.find(t => t.id === selectedActivityType);
 
   return (
-    <div className="flex-1 flex flex-col min-h-0">
-      {/* Chat Header */}
+    <div className="flex flex-col h-full">
+      {/* Chat Header - Fixed at top */}
       <div className="bg-white border-b border-slate-200 p-4 flex-shrink-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
@@ -303,8 +303,8 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
         </div>
       </div>
 
-      {/* Chat Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
+      {/* Chat Messages - Scrollable middle section */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 chat-messages-container">
         {/* System Message */}
         <div className="flex justify-center">
           <div className="bg-slate-100 rounded-lg px-4 py-2 text-sm text-slate-600">
@@ -344,8 +344,8 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Chat Input */}
-      <div className="flex-shrink-0">
+      {/* Chat Input - Fixed at bottom */}
+      <div className="flex-shrink-0 border-t border-slate-200">
         <ChatInput
           onSendMessage={handleSendMessage}
           disabled={!selectedModel || !selectedActivityType || !currentSession || sendMessageMutation.isPending}

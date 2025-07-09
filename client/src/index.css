@@ -154,6 +154,78 @@
   }
 }
 
+/* Enhanced table styling for all table types */
+.json-table,
+.markdown-table,
+table {
+  width: 100%;
+  max-width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 14px;
+  overflow-x: auto;
+  display: block;
+  white-space: nowrap;
+}
+
+.json-table thead,
+.markdown-table thead,
+table thead {
+  background-color: hsl(215, 28%, 17%);
+}
+
+.json-table th,
+.markdown-table th,
+table th {
+  background-color: hsl(215, 28%, 17%);
+  color: white;
+  padding: 12px 8px;
+  text-align: left;
+  font-weight: 600;
+  border: 1px solid hsl(215, 20%, 25%);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.json-table td,
+.markdown-table td,
+table td {
+  padding: 10px 8px;
+  border: 1px solid hsl(215, 20%, 85%);
+  background-color: white;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.json-table tbody tr:nth-child(even),
+.markdown-table tbody tr:nth-child(even),
+table tbody tr:nth-child(even) {
+  background-color: hsl(215, 20%, 98%);
+}
+
+.json-table tbody tr:hover,
+.markdown-table tbody tr:hover,
+table tbody tr:hover {
+  background-color: hsl(215, 20%, 95%);
+}
+
+/* Ensure tables don't break layout */
+.table-container {
+  max-width: 100%;
+  overflow-x: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Force proper scrolling behavior */
+.chat-messages-container {
+  overflow-y: auto !important;
+  height: 100%;
+  max-height: 100%;
+}
+
 .animate-slide-in {
   animation: slideIn 0.3s ease-in-out;
 }
