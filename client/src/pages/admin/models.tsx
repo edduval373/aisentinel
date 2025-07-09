@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -8,6 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Bot, Settings, Plus } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
 import type { AiModel } from "@shared/schema";
@@ -16,6 +20,13 @@ export default function AdminModels() {
   const { toast } = useToast();
   const { isAuthenticated, isLoading, user } = useAuth();
   const queryClient = useQueryClient();
+  const [isAddModelDialogOpen, setIsAddModelDialogOpen] = useState(false);
+  const [newModel, setNewModel] = useState({
+    name: '',
+    provider: '',
+    modelId: '',
+    isEnabled: true
+  });
 
   // Fetch AI models from database
   const { data: aiModels, isLoading: modelsLoading } = useQuery<AiModel[]>({
@@ -69,11 +80,59 @@ export default function AdminModels() {
     },
   });
 
+  // Add AI model mutation
+  const addAiModelMutation = useMutation({
+    mutationFn: async (modelData: typeof newModel) => {
+      const response = await apiRequest("POST", "/api/admin/ai-models", modelData);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/ai-models'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/ai-models'] });
+      toast({
+        title: "Success",
+        description: "AI model added successfully",
+      });
+      setIsAddModelDialogOpen(false);
+      setNewModel({ name: '', provider: '', modelId: '', isEnabled: true });
+    },
+    onError: (error) => {
+      if (isUnauthorizedError(error)) {
+        toast({
+          title: "Unauthorized",
+          description: "You are logged out. Logging in again...",
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          window.location.href = "/api/login";
+        }, 500);
+        return;
+      }
+      toast({
+        title: "Error",
+        description: "Failed to add AI model",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleModelToggle = (model: AiModel, enabled: boolean) => {
     updateAiModelMutation.mutate({
       id: model.id,
       data: { isEnabled: enabled }
     });
+  };
+
+  const handleAddModel = () => {
+    if (!newModel.name || !newModel.provider || !newModel.modelId) {
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      });
+      return;
+    }
+    addAiModelMutation.mutate(newModel);
   };
 
   const getProviderColor = (provider: string) => {
@@ -129,10 +188,67 @@ export default function AdminModels() {
     <AdminLayout title="AI Models" subtitle="Manage AI model configurations and availability">
       <div className="p-6 space-y-6">
         <div className="flex items-center justify-between">
-          <Button>
-            <Plus className="w-4 h-4 mr-2" />
-            Add Model
-          </Button>
+          <Dialog open={isAddModelDialogOpen} onOpenChange={setIsAddModelDialogOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="w-4 h-4 mr-2" />
+                Add Model
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add New AI Model</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="model-name">Model Name</Label>
+                  <Input
+                    id="model-name"
+                    value={newModel.name}
+                    onChange={(e) => setNewModel({ ...newModel, name: e.target.value })}
+                    placeholder="e.g., GPT-4 Turbo"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="model-provider">Provider</Label>
+                  <Select value={newModel.provider} onValueChange={(value) => setNewModel({ ...newModel, provider: value })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select provider" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="openai">OpenAI</SelectItem>
+                      <SelectItem value="anthropic">Anthropic</SelectItem>
+                      <SelectItem value="perplexity">Perplexity</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="model-id">Model ID</Label>
+                  <Input
+                    id="model-id"
+                    value={newModel.modelId}
+                    onChange={(e) => setNewModel({ ...newModel, modelId: e.target.value })}
+                    placeholder="e.g., gpt-4-turbo"
+                  />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    checked={newModel.isEnabled}
+                    onCheckedChange={(checked) => setNewModel({ ...newModel, isEnabled: checked })}
+                  />
+                  <Label>Enable model</Label>
+                </div>
+                <div className="flex justify-end space-x-2">
+                  <Button variant="outline" onClick={() => setIsAddModelDialogOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={handleAddModel} disabled={addAiModelMutation.isPending}>
+                    {addAiModelMutation.isPending ? 'Adding...' : 'Add Model'}
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
 
       <div className="grid gap-6">

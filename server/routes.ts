@@ -52,6 +52,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post('/api/admin/ai-models', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = await storage.getUser(req.user.claims.sub);
+      if (user?.role !== 'admin') {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+      const model = await storage.createAiModel(req.body);
+      res.json(model);
+    } catch (error) {
+      console.error("Error creating AI model:", error);
+      res.status(500).json({ message: "Failed to create AI model" });
+    }
+  });
+
   app.patch('/api/admin/ai-models/:id', isAuthenticated, async (req: any, res) => {
     try {
       const user = await storage.getUser(req.user.claims.sub);
