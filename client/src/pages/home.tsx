@@ -64,11 +64,11 @@ export default function Home() {
             variant="ghost"
             size="sm"
             onClick={() => setSidebarOpen(true)}
-            className="text-slate-600 hover:text-slate-900 hover:bg-slate-100 mr-2"
+            className="text-slate-600 hover:text-slate-900 hover:bg-slate-100 mr-1"
           >
             <AISentinelIcon className="w-10 h-10" />
           </Button>
-          <h1 className="text-lg font-semibold text-slate-800 ml-1">AI Sentinel Dashboard</h1>
+          <h1 className="text-lg font-semibold text-slate-800">AI Sentinel Dashboard</h1>
         </div>
         
         <ChatInterface 
