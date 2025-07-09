@@ -76,6 +76,7 @@ export default function AdminActivityTypes() {
         title: "Success",
         description: "Activity type created successfully",
       });
+      form.reset();
       setIsAddDialogOpen(false);
     },
     onError: (error) => {
@@ -90,6 +91,7 @@ export default function AdminActivityTypes() {
         }, 500);
         return;
       }
+      console.error("Create activity type error:", error);
       toast({
         title: "Error",
         description: "Failed to create activity type",
@@ -144,6 +146,7 @@ export default function AdminActivityTypes() {
   });
 
   const onSubmit = (data: z.infer<typeof activityTypeSchema>) => {
+    console.log("Form data being submitted:", data);
     createActivityTypeMutation.mutate(data);
   };
 
@@ -255,6 +258,32 @@ export default function AdminActivityTypes() {
                       </FormItem>
                     )}
                   />
+                  <div className="space-y-2">
+                    <FormLabel>Permissions</FormLabel>
+                    <div className="flex flex-wrap gap-2">
+                      {["read", "write", "analyze", "edit", "audit"].map((permission) => (
+                        <div key={permission} className="flex items-center space-x-2">
+                          <input
+                            type="checkbox"
+                            id={permission}
+                            checked={form.watch("permissions").includes(permission)}
+                            onChange={(e) => {
+                              const currentPermissions = form.getValues("permissions");
+                              if (e.target.checked) {
+                                form.setValue("permissions", [...currentPermissions, permission]);
+                              } else {
+                                form.setValue("permissions", currentPermissions.filter(p => p !== permission));
+                              }
+                            }}
+                            className="rounded border-gray-300"
+                          />
+                          <label htmlFor={permission} className="text-sm font-medium capitalize">
+                            {permission}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                   <div className="flex justify-end space-x-2">
                     <Button type="button" variant="outline" onClick={() => setIsAddDialogOpen(false)}>
                       Cancel
