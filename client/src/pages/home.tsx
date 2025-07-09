@@ -3,9 +3,46 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
 import Sidebar from "@/components/layout/Sidebar";
 import ChatInterface from "@/components/chat/ChatInterface";
+
+// AI Sentinel Logo Component
+const AISentinelIcon = ({ className = "w-5 h-5" }) => (
+  <svg 
+    className={className} 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <defs>
+      <linearGradient id="sentinelGradHome" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#3B82F6" />
+        <stop offset="100%" stopColor="#1E40AF" />
+      </linearGradient>
+    </defs>
+    {/* Shield outline */}
+    <path 
+      d="M12 2L4 6v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V6l-8-4z" 
+      stroke="url(#sentinelGradHome)" 
+      strokeWidth="2" 
+      fill="none"
+    />
+    {/* AI Eye/Core */}
+    <circle 
+      cx="12" 
+      cy="12" 
+      r="3" 
+      fill="url(#sentinelGradHome)"
+    />
+    {/* Neural network lines */}
+    <path 
+      d="M12 9v-2M12 17v-2M9 12h-2M17 12h-2M10.5 10.5l-1.5-1.5M15.5 13.5l1.5 1.5M13.5 10.5l1.5-1.5M10.5 13.5l-1.5 1.5" 
+      stroke="url(#sentinelGradHome)" 
+      strokeWidth="1.5" 
+      strokeLinecap="round"
+    />
+  </svg>
+);
 
 export default function Home() {
   const { toast } = useToast();
