@@ -9,7 +9,7 @@ import ChatInterface from "@/components/chat/ChatInterface";
 import iconPath from "@assets/icononly_nobuffer_1752067577689.png";
 
 // AI Sentinel Logo Component
-const AISentinelIcon = ({ className = "w-5 h-5" }) => (
+const AISentinelIcon = ({ className = "w-10 h-10" }) => (
   <img 
     src={iconPath} 
     alt="AI Sentinel" 
@@ -66,9 +66,9 @@ export default function Home() {
             onClick={() => setSidebarOpen(true)}
             className="text-slate-600 hover:text-slate-900 hover:bg-slate-100 mr-4"
           >
-            <AISentinelIcon className="w-5 h-5" />
+            <AISentinelIcon className="w-10 h-10" />
           </Button>
-          <h1 className="text-lg font-semibold text-slate-800">AI Sentinel Dashboard</h1>
+          <h1 className="text-lg font-semibold text-slate-800 ml-2">AI Sentinel Dashboard</h1>
         </div>
         
         <ChatInterface 

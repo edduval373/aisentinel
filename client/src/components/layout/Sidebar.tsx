@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 import iconPath from "@assets/icononly_nobuffer_1752067577689.png";
 
 // AI Sentinel Logo Component
-const AISentinelIcon = ({ className = "w-6 h-6" }) => (
+const AISentinelIcon = ({ className = "w-12 h-12" }) => (
   <img 
     src={iconPath} 
     alt="AI Sentinel" 
@@ -127,9 +127,9 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       )}>
         {/* Header */}
         <div className="flex items-center justify-between h-16 bg-slate-900 border-b border-slate-700 px-4">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-              <AISentinelIcon className="w-6 h-6" />
+          <div className="flex items-center space-x-1">
+            <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center">
+              <AISentinelIcon className="w-12 h-12" />
             </div>
             <h1 className="text-white font-semibold text-lg">AI Sentinel</h1>
           </div>
