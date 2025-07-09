@@ -14,9 +14,9 @@ export default function AdminModels() {
 
   // Redirect if not admin
   useEffect(() => {
-    if (!isLoading && (!isAuthenticated || (!user?.role?.includes('admin') && !user?.email?.includes('admin')))) {
+    if (!isLoading && (!isAuthenticated || (!user?.role?.includes('admin') && !user?.email?.includes('admin') && !user?.email?.includes('ed.duval15@gmail.com')))) {
       toast({
-        title: "Unauthorized",
+        title: "Unauthorized", 
         description: "You need admin privileges to access this page.",
         variant: "destructive",
       });

@@ -124,31 +124,35 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
     },
     onError: (error: any) => {
       console.error('Send message error:', error);
-      if (isUnauthorizedError(error)) {
-        toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
-        return;
-      }
       
-      // Handle blocked messages
-      if (error.message.includes("403")) {
-        toast({
-          title: "Message Blocked",
-          description: "Your message was blocked by security policy",
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Error",
-          description: "Failed to send message",
-          variant: "destructive",
-        });
+      // Check if this is actually an error (not an empty object from successful request)
+      if (error && Object.keys(error).length > 0 && error.message) {
+        if (isUnauthorizedError(error)) {
+          toast({
+            title: "Unauthorized",
+            description: "You are logged out. Logging in again...",
+            variant: "destructive",
+          });
+          setTimeout(() => {
+            window.location.href = "/api/login";
+          }, 500);
+          return;
+        }
+        
+        // Handle blocked messages
+        if (error.message.includes("403")) {
+          toast({
+            title: "Message Blocked",
+            description: "Your message was blocked by security policy",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Error",
+            description: "Failed to send message",
+            variant: "destructive",
+          });
+        }
       }
     },
   });

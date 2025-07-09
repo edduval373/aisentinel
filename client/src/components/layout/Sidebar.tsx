@@ -30,7 +30,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const [location, navigate] = useLocation();
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
-  const isAdmin = user?.role === 'admin' || user?.email?.includes('admin');
+  const isAdmin = user?.role === 'admin' || user?.email?.includes('admin') || user?.email?.includes('ed.duval15@gmail.com');
 
   const handleLogout = () => {
     window.location.href = "/api/logout";
