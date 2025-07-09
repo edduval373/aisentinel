@@ -106,6 +106,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post('/api/admin/activity-types', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = await storage.getUser(req.user.claims.sub);
+      if (user?.role !== 'admin') {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+      const activityType = await storage.createActivityType(req.body);
+      res.json(activityType);
+    } catch (error) {
+      console.error("Error creating activity type:", error);
+      res.status(500).json({ message: "Failed to create activity type" });
+    }
+  });
+
   app.patch('/api/admin/activity-types/:id', isAuthenticated, async (req: any, res) => {
     try {
       const user = await storage.getUser(req.user.claims.sub);
@@ -206,7 +220,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Get AI response
-      const aiResponse = await aiService.generateResponse(message, aiModelId);
+      const aiResponse = await aiService.generateResponse(message, aiModelId, activityTypeId);
 
       // Create chat message
       const chatMessage = await storage.createChatMessage({
@@ -332,26 +346,41 @@ async function initializeDefaultData() {
       await storage.createActivityType({
         name: "General Inquiry",
         description: "General questions and inquiries",
+        prePrompt: "You are a helpful assistant providing accurate and informative responses to general inquiries. Be concise, professional, and ensure your information is current and accurate.",
+        riskLevel: "low",
+        permissions: ["read"],
         isEnabled: true,
       });
       await storage.createActivityType({
         name: "Code Review",
         description: "Code analysis and review",
+        prePrompt: "You are a senior software engineer conducting code review. Focus on code quality, security vulnerabilities, best practices, and performance optimization. Provide specific, actionable feedback and suggest improvements. Consider maintainability and scalability.",
+        riskLevel: "high",
+        permissions: ["read", "analyze", "audit"],
         isEnabled: true,
       });
       await storage.createActivityType({
         name: "Documentation",
         description: "Documentation writing and review",
+        prePrompt: "You are a technical writer specializing in clear, comprehensive documentation. Help create well-structured, easy-to-understand documentation that serves its intended audience. Focus on clarity, completeness, and usability.",
+        riskLevel: "low",
+        permissions: ["read", "write", "edit"],
         isEnabled: true,
       });
       await storage.createActivityType({
         name: "Brainstorming",
         description: "Creative brainstorming sessions",
+        prePrompt: "You are a creative brainstorming assistant. Help users generate innovative ideas and solutions. Focus on being creative, encouraging, and exploring multiple perspectives. Ask clarifying questions to understand the challenge better.",
+        riskLevel: "low",
+        permissions: ["read", "write"],
         isEnabled: true,
       });
       await storage.createActivityType({
         name: "Data Analysis",
         description: "Data analysis and insights",
+        prePrompt: "You are a data analysis expert. Help users understand their data, identify patterns, and draw meaningful insights. Always ask about the data source, structure, and analysis goals. Provide step-by-step explanations and suggest appropriate visualization techniques.",
+        riskLevel: "medium",
+        permissions: ["read", "write", "analyze"],
         isEnabled: false, // Disabled by default for security
       });
     }

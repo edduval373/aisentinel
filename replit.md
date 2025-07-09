@@ -151,6 +151,15 @@ Changelog:
   * Implemented fully functional Invite User dialog with form validation
   * Replaced all admin menu icons with AI Sentinel icon for consistent branding
   * Updated AI service to support Perplexity API calls with real-time information capabilities
+- July 09, 2025. Implemented functional Activity Types management with pre-prompt system:
+  * Updated database schema to include prePrompt, riskLevel, and permissions fields for activity types
+  * Created fully functional Add Activity Type dialog with comprehensive form validation
+  * Implemented database-driven Activity Types admin page replacing hardcoded content
+  * Added pre-prompt functionality to guide AI behavior based on selected activity type
+  * Updated AI service to use activity-specific system prompts for all providers (OpenAI, Anthropic, Perplexity)
+  * Added toggle functionality for enabling/disabling activity types
+  * Enhanced UI to display pre-prompts, risk levels, and permissions for each activity type
+  * Initialized default activity types with specific pre-prompts for different use cases
 ```
 
 ## User Preferences

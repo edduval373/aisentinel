@@ -52,6 +52,9 @@ export const activityTypes = pgTable("activity_types", {
   id: serial("id").primaryKey(),
   name: varchar("name").notNull(),
   description: text("description"),
+  prePrompt: text("pre_prompt"), // System prompt to guide AI behavior for this activity type
+  riskLevel: varchar("risk_level").default("low").notNull(), // low, medium, high
+  permissions: jsonb("permissions"), // ["read", "write", "analyze", etc.]
   isEnabled: boolean("is_enabled").default(true).notNull(),
   createdAt: timestamp("created_at").defaultNow(),
 });

@@ -26,7 +26,7 @@ const anthropic = new Anthropic({
 });
 
 class AIService {
-  async generateResponse(message: string, aiModelId: number): Promise<string> {
+  async generateResponse(message: string, aiModelId: number, activityTypeId?: number): Promise<string> {
     try {
       const models = await storage.getAiModels();
       const model = models.find(m => m.id === aiModelId);
@@ -39,12 +39,23 @@ class AIService {
         throw new Error("AI model is disabled");
       }
 
+      // Get activity type for pre-prompt
+      let systemPrompt = "You are an AI assistant in a corporate environment. Provide helpful, professional responses while being mindful of data privacy and security. Do not process or store any sensitive information like financial data, personal identifiers, or proprietary company information.";
+      
+      if (activityTypeId) {
+        const activityTypes = await storage.getActivityTypes();
+        const activityType = activityTypes.find(at => at.id === activityTypeId);
+        if (activityType?.prePrompt) {
+          systemPrompt = activityType.prePrompt;
+        }
+      }
+
       if (model.provider === "openai") {
-        return await this.generateOpenAIResponse(message, model.modelId);
+        return await this.generateOpenAIResponse(message, model.modelId, systemPrompt);
       } else if (model.provider === "anthropic") {
-        return await this.generateAnthropicResponse(message, model.modelId);
+        return await this.generateAnthropicResponse(message, model.modelId, systemPrompt);
       } else if (model.provider === "perplexity") {
-        return await this.generatePerplexityResponse(message, model.modelId);
+        return await this.generatePerplexityResponse(message, model.modelId, systemPrompt);
       } else {
         throw new Error(`Unsupported AI provider: ${model.provider}`);
       }
@@ -54,14 +65,14 @@ class AIService {
     }
   }
 
-  private async generateOpenAIResponse(message: string, modelId: string): Promise<string> {
+  private async generateOpenAIResponse(message: string, modelId: string, systemPrompt: string): Promise<string> {
     try {
       const response = await openai.chat.completions.create({
         model: modelId,
         messages: [
           {
             role: "system",
-            content: "You are an AI assistant in a corporate environment. Provide helpful, professional responses while being mindful of data privacy and security. Do not process or store any sensitive information like financial data, personal identifiers, or proprietary company information."
+            content: systemPrompt
           },
           {
             role: "user",
@@ -79,11 +90,11 @@ class AIService {
     }
   }
 
-  private async generateAnthropicResponse(message: string, modelId: string): Promise<string> {
+  private async generateAnthropicResponse(message: string, modelId: string, systemPrompt: string): Promise<string> {
     try {
       const response = await anthropic.messages.create({
         model: modelId,
-        system: "You are an AI assistant in a corporate environment. Provide helpful, professional responses while being mindful of data privacy and security. Do not process or store any sensitive information like financial data, personal identifiers, or proprietary company information.",
+        system: systemPrompt,
         max_tokens: 1000,
         messages: [
           {
@@ -100,7 +111,7 @@ class AIService {
     }
   }
 
-  private async generatePerplexityResponse(message: string, modelId: string): Promise<string> {
+  private async generatePerplexityResponse(message: string, modelId: string, systemPrompt: string): Promise<string> {
     try {
       const response = await fetch('https://api.perplexity.ai/chat/completions', {
         method: 'POST',
@@ -109,11 +120,11 @@ class AIService {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          model: "llama-3.1-sonar-small-128k-online",
+          model: modelId,
           messages: [
             {
               role: "system",
-              content: "You are an AI assistant in a corporate environment. Provide helpful, professional responses with up-to-date information while being mindful of data privacy and security. Do not process or store any sensitive information like financial data, personal identifiers, or proprietary company information."
+              content: systemPrompt
             },
             {
               role: "user",
