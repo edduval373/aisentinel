@@ -127,9 +127,9 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       )}>
         {/* Header */}
         <div className="flex items-center justify-between h-16 bg-slate-900 border-b border-slate-700 px-4">
-          <div className="flex items-center space-x-1">
-            <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center">
-              <AISentinelIcon className="w-12 h-12" />
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-transparent rounded-lg flex items-center justify-center">
+              <AISentinelIcon className="w-12 h-12 opacity-90 brightness-0 invert" />
             </div>
             <h1 className="text-white font-semibold text-lg">AI Sentinel</h1>
           </div>
