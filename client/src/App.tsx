@@ -10,6 +10,9 @@ import Admin from "@/pages/admin";
 import AdminModels from "@/pages/admin/models";
 import AdminActivityTypes from "@/pages/admin/activity-types";
 import AdminUsers from "@/pages/admin/users";
+import AdminPolicies from "@/pages/admin/policies";
+import AdminLogs from "@/pages/admin/logs";
+import AdminSecurity from "@/pages/admin/security";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -26,6 +29,9 @@ function Router() {
           <Route path="/admin/models" component={AdminModels} />
           <Route path="/admin/activity-types" component={AdminActivityTypes} />
           <Route path="/admin/users" component={AdminUsers} />
+          <Route path="/admin/policies" component={AdminPolicies} />
+          <Route path="/admin/logs" component={AdminLogs} />
+          <Route path="/admin/security" component={AdminSecurity} />
         </>
       )}
       <Route component={NotFound} />
