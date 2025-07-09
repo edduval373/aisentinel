@@ -43,6 +43,8 @@ class AIService {
         return await this.generateOpenAIResponse(message, model.modelId);
       } else if (model.provider === "anthropic") {
         return await this.generateAnthropicResponse(message, model.modelId);
+      } else if (model.provider === "perplexity") {
+        return await this.generatePerplexityResponse(message, model.modelId);
       } else {
         throw new Error(`Unsupported AI provider: ${model.provider}`);
       }
@@ -95,6 +97,45 @@ class AIService {
     } catch (error) {
       console.error("Anthropic API error:", error);
       throw new Error("Failed to get response from Anthropic");
+    }
+  }
+
+  private async generatePerplexityResponse(message: string, modelId: string): Promise<string> {
+    try {
+      const response = await fetch('https://api.perplexity.ai/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.PERPLEXITY_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: modelId,
+          messages: [
+            {
+              role: "system",
+              content: "You are an AI assistant in a corporate environment. Provide helpful, professional responses with up-to-date information while being mindful of data privacy and security. Do not process or store any sensitive information like financial data, personal identifiers, or proprietary company information."
+            },
+            {
+              role: "user",
+              content: message
+            }
+          ],
+          max_tokens: 1000,
+          temperature: 0.2,
+          top_p: 0.9,
+          stream: false
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Perplexity API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data.choices[0].message.content || "I apologize, but I couldn't generate a response at this time.";
+    } catch (error) {
+      console.error("Perplexity API error:", error);
+      throw new Error("Failed to get response from Perplexity");
     }
   }
 }

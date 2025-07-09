@@ -144,6 +144,13 @@ Changelog:
   * Updated App.tsx routing to include all new admin pages
   * Replaced admin panel icon with atomic structure design (white on black)
   * Refined chat header spacing and increased text size by 20%
+- July 09, 2025. Enhanced AI model support and functionality:
+  * Added Perplexity AI model integration with proper API implementation
+  * Created comprehensive Model Settings admin page with detailed configuration options
+  * Fixed header disappearing issue in chat interface with proper CSS layout constraints
+  * Implemented fully functional Invite User dialog with form validation
+  * Replaced all admin menu icons with AI Sentinel icon for consistent branding
+  * Updated AI service to support Perplexity API calls with real-time information capabilities
 ```
 
 ## User Preferences
