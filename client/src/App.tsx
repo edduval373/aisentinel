@@ -13,6 +13,11 @@ import AdminUsers from "@/pages/admin/users";
 import AdminPolicies from "@/pages/admin/policies";
 import AdminLogs from "@/pages/admin/logs";
 import AdminSecurity from "@/pages/admin/security";
+import AdminRoles from "@/pages/admin/roles";
+import AdminAnalytics from "@/pages/admin/analytics";
+import AdminApiConfig from "@/pages/admin/api-config";
+import AdminSecuritySettings from "@/pages/admin/security-settings";
+import AdminPermissions from "@/pages/admin/permissions";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -32,6 +37,11 @@ function Router() {
           <Route path="/admin/policies" component={AdminPolicies} />
           <Route path="/admin/logs" component={AdminLogs} />
           <Route path="/admin/security" component={AdminSecurity} />
+          <Route path="/admin/roles" component={AdminRoles} />
+          <Route path="/admin/analytics" component={AdminAnalytics} />
+          <Route path="/admin/api-config" component={AdminApiConfig} />
+          <Route path="/admin/security-settings" component={AdminSecuritySettings} />
+          <Route path="/admin/permissions" component={AdminPermissions} />
         </>
       )}
       <Route component={NotFound} />
