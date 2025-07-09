@@ -19,42 +19,15 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+import iconPath from "@assets/icononly_nobuffer_1752067577689.png";
+
 // AI Sentinel Logo Component
 const AISentinelIcon = ({ className = "w-6 h-6" }) => (
-  <svg 
-    className={className} 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <defs>
-      <linearGradient id="sentinelGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#3B82F6" />
-        <stop offset="100%" stopColor="#1E40AF" />
-      </linearGradient>
-    </defs>
-    {/* Shield outline */}
-    <path 
-      d="M12 2L4 6v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V6l-8-4z" 
-      stroke="url(#sentinelGrad)" 
-      strokeWidth="2" 
-      fill="none"
-    />
-    {/* AI Eye/Core */}
-    <circle 
-      cx="12" 
-      cy="12" 
-      r="3" 
-      fill="url(#sentinelGrad)"
-    />
-    {/* Neural network lines */}
-    <path 
-      d="M12 9v-2M12 17v-2M9 12h-2M17 12h-2M10.5 10.5l-1.5-1.5M15.5 13.5l1.5 1.5M13.5 10.5l1.5-1.5M10.5 13.5l-1.5 1.5" 
-      stroke="url(#sentinelGrad)" 
-      strokeWidth="1.5" 
-      strokeLinecap="round"
-    />
-  </svg>
+  <img 
+    src={iconPath} 
+    alt="AI Sentinel" 
+    className={className}
+  />
 );
 
 interface SidebarProps {
@@ -155,8 +128,8 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
         {/* Header */}
         <div className="flex items-center justify-between h-16 bg-slate-900 border-b border-slate-700 px-4">
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-sentinel-blue rounded-lg flex items-center justify-center">
-              <Shield className="w-4 h-4 text-white" />
+            <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
+              <AISentinelIcon className="w-6 h-6" />
             </div>
             <h1 className="text-white font-semibold text-lg">AI Sentinel</h1>
           </div>
