@@ -57,9 +57,9 @@ export default function Home() {
     <div className="flex h-screen overflow-hidden bg-slate-50">
       <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
       
-      <div className="flex-1 flex flex-col">
-        {/* Top Header with Menu Button */}
-        <div className="bg-white border-b border-slate-200 px-4 py-3 flex items-center">
+      <div className="flex-1 flex flex-col min-h-0">
+        {/* Top Header with Menu Button - Fixed Header */}
+        <div className="bg-white border-b border-slate-200 px-4 py-3 flex items-center flex-shrink-0">
           <Button
             variant="ghost"
             size="sm"
@@ -71,10 +71,13 @@ export default function Home() {
           <h1 className="text-xl font-semibold text-slate-800">AI Sentinel Dashboard</h1>
         </div>
         
-        <ChatInterface 
-          currentSession={currentSession} 
-          setCurrentSession={setCurrentSession}
-        />
+        {/* Chat Interface Container */}
+        <div className="flex-1 flex flex-col min-h-0">
+          <ChatInterface 
+            currentSession={currentSession} 
+            setCurrentSession={setCurrentSession}
+          />
+        </div>
       </div>
     </div>
   );
