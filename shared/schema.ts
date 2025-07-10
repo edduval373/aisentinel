@@ -52,6 +52,20 @@ export const companyEmployees = pgTable("company_employees", {
   index("idx_company_employee_company").on(table.companyId),
 ]);
 
+// Company roles table - allows companies to define their own role hierarchy
+export const companyRoles = pgTable("company_roles", {
+  id: serial("id").primaryKey(),
+  companyId: integer("company_id").references(() => companies.id).notNull(),
+  name: varchar("name").notNull(), // e.g., "Manager", "Lead", "Senior", etc.
+  level: integer("level").notNull(), // 1=user, 2=admin, 99=owner, 100=super-user
+  description: text("description"),
+  permissions: jsonb("permissions"), // customizable permissions
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => [
+  index("idx_company_role_level").on(table.companyId, table.level),
+]);
+
 // User storage table.
 // (IMPORTANT) This table is mandatory for Replit Auth, don't drop it.
 export const users = pgTable("users", {
@@ -60,7 +74,9 @@ export const users = pgTable("users", {
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
-  role: varchar("role").default("user").notNull(), // user, admin, owner, super-user
+  role: varchar("role").default("user").notNull(), // user, admin, owner, super-user (legacy field)
+  roleLevel: integer("role_level").default(1).notNull(), // 1=user, 2=admin, 99=owner, 100=super-user
+  companyRoleId: integer("company_role_id").references(() => companyRoles.id),
   companyId: integer("company_id").references(() => companies.id),
   department: varchar("department"),
   createdAt: timestamp("created_at").defaultNow(),
@@ -132,6 +148,7 @@ export const chatMessages = pgTable("chat_messages", {
 // Insert schemas
 export const insertCompanySchema = createInsertSchema(companies).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertCompanyEmployeeSchema = createInsertSchema(companyEmployees).omit({ id: true, addedAt: true });
+export const insertCompanyRoleSchema = createInsertSchema(companyRoles).omit({ id: true, createdAt: true });
 export const insertUserSchema = createInsertSchema(users).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertAiModelSchema = createInsertSchema(aiModels).omit({ id: true, createdAt: true });
 export const insertActivityTypeSchema = createInsertSchema(activityTypes).omit({ id: true, createdAt: true });
@@ -144,6 +161,8 @@ export type Company = typeof companies.$inferSelect;
 export type InsertCompany = z.infer<typeof insertCompanySchema>;
 export type CompanyEmployee = typeof companyEmployees.$inferSelect;
 export type InsertCompanyEmployee = z.infer<typeof insertCompanyEmployeeSchema>;
+export type CompanyRole = typeof companyRoles.$inferSelect;
+export type InsertCompanyRole = z.infer<typeof insertCompanyRoleSchema>;
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
 export type AiModel = typeof aiModels.$inferSelect;

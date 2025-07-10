@@ -2,6 +2,7 @@ import {
   users,
   companies,
   companyEmployees,
+  companyRoles,
   aiModels,
   activityTypes,
   userActivities,
@@ -13,6 +14,8 @@ import {
   type InsertCompany,
   type CompanyEmployee,
   type InsertCompanyEmployee,
+  type CompanyRole,
+  type InsertCompanyRole,
   type AiModel,
   type InsertAiModel,
   type ActivityType,
@@ -49,6 +52,13 @@ export interface IStorage {
   addCompanyOwner(companyId: number, userData: { firstName: string; lastName: string; email: string; department?: string }): Promise<User>;
   updateCompanyOwner(userId: string, userData: { firstName?: string; lastName?: string; email?: string; department?: string }): Promise<User>;
   removeCompanyOwner(userId: string, companyId: number): Promise<void>;
+  
+  // Company Role operations
+  getCompanyRoles(companyId: number): Promise<CompanyRole[]>;
+  createCompanyRole(role: InsertCompanyRole): Promise<CompanyRole>;
+  updateCompanyRole(id: number, role: Partial<InsertCompanyRole>): Promise<CompanyRole>;
+  deleteCompanyRole(id: number): Promise<void>;
+  getUserRoleLevel(userId: string): Promise<number>;
   
   // AI Models operations
   getAiModels(companyId: number): Promise<AiModel[]>;
@@ -93,6 +103,7 @@ export class DatabaseStorage implements IStorage {
     
     if (isFirstUser) {
       userData.role = 'super-user';
+      userData.roleLevel = 100; // Super-user level
     } else {
       // Check if user's email domain matches a company and auto-assign
       if (userData.email) {
@@ -104,6 +115,8 @@ export class DatabaseStorage implements IStorage {
           const isAuthorized = await this.isEmployeeAuthorized(userData.email, company.id);
           if (isAuthorized) {
             userData.companyId = company.id;
+            userData.role = 'user';
+            userData.roleLevel = 1; // Default user level
           }
         }
       }
@@ -208,6 +221,7 @@ export class DatabaseStorage implements IStorage {
         lastName: userData.lastName,
         department: userData.department,
         role: 'owner',
+        roleLevel: 99, // Owner level
         companyId: companyId,
       })
       .returning();
@@ -238,6 +252,36 @@ export class DatabaseStorage implements IStorage {
       eq(users.companyId, companyId),
       eq(users.role, 'owner')
     ));
+  }
+
+  // Company Role operations
+  async getCompanyRoles(companyId: number): Promise<CompanyRole[]> {
+    return await db.select().from(companyRoles)
+      .where(and(eq(companyRoles.companyId, companyId), eq(companyRoles.isActive, true)))
+      .orderBy(companyRoles.level);
+  }
+
+  async createCompanyRole(role: InsertCompanyRole): Promise<CompanyRole> {
+    const [created] = await db.insert(companyRoles).values(role).returning();
+    return created;
+  }
+
+  async updateCompanyRole(id: number, role: Partial<InsertCompanyRole>): Promise<CompanyRole> {
+    const [updated] = await db
+      .update(companyRoles)
+      .set(role)
+      .where(eq(companyRoles.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteCompanyRole(id: number): Promise<void> {
+    await db.delete(companyRoles).where(eq(companyRoles.id, id));
+  }
+
+  async getUserRoleLevel(userId: string): Promise<number> {
+    const [user] = await db.select().from(users).where(eq(users.id, userId));
+    return user?.roleLevel || 1;
   }
 
   // AI Models operations

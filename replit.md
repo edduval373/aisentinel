@@ -251,6 +251,13 @@ Changelog:
   * Replaced hamburger menu with AI Sentinel logo for consistent branding
   * Positioned company logo, name, and ID next to menu button on top left
   * Created clean visual hierarchy: menu logo → company info (left) | AI Sentinel branding (right)
+- July 10, 2025. Implemented hierarchical role-based permission system:
+  * Created company_roles table with numerical role levels (super-user: 100, owner: 99, admin: 2, user: 1)
+  * Added role management methods to storage layer with proper validation and constraints
+  * Updated all API routes to use >= comparisons for flexible permission checking
+  * Added complete company role management endpoints with owner/super-user access control
+  * Business rule implemented: cannot delete the last owner to maintain company access
+  * Enhanced user creation to assign appropriate role levels based on company role structure
 ```
 
 ## User Preferences
