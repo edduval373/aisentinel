@@ -59,7 +59,7 @@ export default function Home() {
       
       <div className="flex-1 flex flex-col min-h-0">
         {/* Top Header with Menu Button - Fixed Header */}
-        <div className="bg-white border-b border-slate-200 px-4 py-3 flex items-center flex-shrink-0">
+        <div className="bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between flex-shrink-0">
           <Button
             variant="ghost"
             size="sm"
@@ -68,7 +68,11 @@ export default function Home() {
           >
             <AISentinelIcon className="w-10 h-10" />
           </Button>
-          <h1 className="text-xl font-semibold text-slate-800">AI Sentinel Dashboard</h1>
+          
+          <div className="flex items-center space-x-3">
+            <AISentinelIcon className="w-8 h-8" />
+            <h1 className="text-lg font-semibold text-slate-800">AI Sentinel Chat</h1>
+          </div>
         </div>
         
         {/* Chat Interface Container */}
