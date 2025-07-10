@@ -48,8 +48,8 @@ export default function ConfigurationPanel() {
   // Update AI model mutation
   const updateAiModelMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: Partial<AiModel> }) => {
-      const response = await apiRequest("PATCH", `/api/admin/ai-models/${id}`, data);
-      return response.json();
+      const response = await apiRequest(`/api/admin/ai-models/${id}`, "PATCH", data);
+      return response;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/ai-models'] });
@@ -82,8 +82,8 @@ export default function ConfigurationPanel() {
   // Update activity type mutation
   const updateActivityTypeMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: Partial<ActivityType> }) => {
-      const response = await apiRequest("PATCH", `/api/admin/activity-types/${id}`, data);
-      return response.json();
+      const response = await apiRequest(`/api/admin/activity-types/${id}`, "PATCH", data);
+      return response;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/activity-types'] });

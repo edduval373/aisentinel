@@ -82,8 +82,8 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   // Create session mutation
   const createSessionMutation = useMutation({
     mutationFn: async () => {
-      const response = await apiRequest("POST", "/api/chat/session");
-      return response.json();
+      const response = await apiRequest("/api/chat/session", "POST");
+      return response;
     },
     onSuccess: (session) => {
       setCurrentSession(session.id);
@@ -112,8 +112,8 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   // Send message mutation
   const sendMessageMutation = useMutation({
     mutationFn: async (data: { message: string; aiModelId: number; activityTypeId: number; sessionId: number }) => {
-      const response = await apiRequest("POST", "/api/chat/message", data);
-      return await response.json();
+      const response = await apiRequest("/api/chat/message", "POST", data);
+      return response;
     },
     onSuccess: (newMessage) => {
       console.log('New message received:', newMessage);

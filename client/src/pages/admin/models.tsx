@@ -49,8 +49,8 @@ export default function AdminModels() {
   // Update AI model mutation
   const updateAiModelMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: Partial<AiModel> }) => {
-      const response = await apiRequest("PATCH", `/api/admin/ai-models/${id}`, data);
-      return response.json();
+      const response = await apiRequest(`/api/admin/ai-models/${id}`, "PATCH", data);
+      return response;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/ai-models'] });
@@ -83,8 +83,8 @@ export default function AdminModels() {
   // Add AI model mutation
   const addAiModelMutation = useMutation({
     mutationFn: async (modelData: typeof newModel) => {
-      const response = await apiRequest("POST", "/api/admin/ai-models", modelData);
-      return response.json();
+      const response = await apiRequest("/api/admin/ai-models", "POST", modelData);
+      return response;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/ai-models'] });
