@@ -66,9 +66,9 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   if (isSuperUser) {
     navigation.push({
       name: "Company Management",
-      href: "/admin/companies",
+      href: "/admin",
       icon: Building,
-      current: location === "/admin/companies" || location === "/admin",
+      current: location === "/admin" || location === "/admin/companies",
     });
   }
 

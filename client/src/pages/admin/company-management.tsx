@@ -10,67 +10,79 @@ import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
-import { Building, UserPlus, Mail, Trash2, Edit2 } from "lucide-react";
+import { Building, Plus, Edit2, Trash2, UserPlus, Mail } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { apiRequest } from "@/lib/queryClient";
 
-const ownerSchema = z.object({
-  name: z.string().min(1, "Owner name is required"),
-  email: z.string().email("Valid email required"),
-  title: z.string().min(1, "Title is required"),
-  role: z.enum(["owner", "admin"]).default("owner"),
-});
-
-const companyUpdateSchema = z.object({
+const companySchema = z.object({
   name: z.string().min(1, "Company name is required"),
+  domain: z.string().min(1, "Domain is required").regex(/^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Invalid domain format"),
+  primaryAdminName: z.string().min(1, "Primary administrator name is required"),
+  primaryAdminEmail: z.string().email("Valid email required for primary administrator"),
+  primaryAdminTitle: z.string().min(1, "Primary administrator title is required"),
   logo: z.string().optional(),
+  isActive: z.boolean().default(true),
 });
 
-interface Owner {
+interface Company {
   id: number;
   name: string;
-  email: string;
-  title: string;
-  role: "owner" | "admin";
+  domain: string;
+  primaryAdminName: string;
+  primaryAdminEmail: string;
+  primaryAdminTitle: string;
+  logo?: string;
+  isActive: boolean;
 }
 
 export default function CompanyManagement() {
-  const [showAddOwner, setShowAddOwner] = useState(false);
+  const [showAddCompany, setShowAddCompany] = useState(false);
   const [showEditCompany, setShowEditCompany] = useState(false);
-  const [owners, setOwners] = useState<Owner[]>([]);
+  const [editingCompany, setEditingCompany] = useState<Company | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Fetch the single company
-  const { data: company, isLoading: companyLoading } = useQuery({
-    queryKey: ["/api/admin/company"],
+  // Fetch all companies
+  const { data: companies = [], isLoading: companiesLoading } = useQuery({
+    queryKey: ["/api/admin/companies"],
   });
 
-  const ownerForm = useForm<z.infer<typeof ownerSchema>>({
-    resolver: zodResolver(ownerSchema),
+  const companyForm = useForm<z.infer<typeof companySchema>>({
+    resolver: zodResolver(companySchema),
     defaultValues: {
       name: "",
-      email: "",
-      title: "",
-      role: "owner",
+      domain: "",
+      primaryAdminName: "",
+      primaryAdminEmail: "",
+      primaryAdminTitle: "",
+      logo: "",
+      isActive: true,
     },
   });
 
-  const companyForm = useForm<z.infer<typeof companyUpdateSchema>>({
-    resolver: zodResolver(companyUpdateSchema),
-    defaultValues: {
-      name: company?.name || "",
-      logo: company?.logo || "",
+  // Create company mutation
+  const createCompanyMutation = useMutation({
+    mutationFn: (data: z.infer<typeof companySchema>) =>
+      apiRequest(`/api/admin/companies`, "POST", data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/companies"] });
+      setShowAddCompany(false);
+      companyForm.reset();
+      toast({ title: "Success", description: "Company created successfully" });
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to create company", variant: "destructive" });
     },
   });
 
   // Update company mutation
   const updateCompanyMutation = useMutation({
-    mutationFn: (data: z.infer<typeof companyUpdateSchema>) =>
-      apiRequest(`/api/admin/company`, "PATCH", data),
+    mutationFn: ({ id, data }: { id: number; data: z.infer<typeof companySchema> }) =>
+      apiRequest(`/api/admin/companies/${id}`, "PATCH", data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/company"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/companies"] });
       setShowEditCompany(false);
+      setEditingCompany(null);
       companyForm.reset();
       toast({ title: "Success", description: "Company updated successfully" });
     },
@@ -79,29 +91,50 @@ export default function CompanyManagement() {
     },
   });
 
-  const addOwner = (data: z.infer<typeof ownerSchema>) => {
-    const newOwner: Owner = {
-      id: Date.now(), // temporary ID
-      ...data,
-    };
-    setOwners([...owners, newOwner]);
-    ownerForm.reset();
-    setShowAddOwner(false);
-    toast({ title: "Owner Added", description: "Owner has been added to the company" });
+  // Delete company mutation
+  const deleteCompanyMutation = useMutation({
+    mutationFn: (id: number) =>
+      apiRequest(`/api/admin/companies/${id}`, "DELETE"),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/companies"] });
+      toast({ title: "Success", description: "Company deleted successfully" });
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to delete company", variant: "destructive" });
+    },
+  });
+
+  const onSubmitCompany = (data: z.infer<typeof companySchema>) => {
+    if (editingCompany) {
+      updateCompanyMutation.mutate({ id: editingCompany.id, data });
+    } else {
+      createCompanyMutation.mutate(data);
+    }
   };
 
-  const removeOwner = (id: number) => {
-    setOwners(owners.filter(owner => owner.id !== id));
-    toast({ title: "Owner Removed", description: "Owner has been removed from the company" });
+  const handleEditCompany = (company: Company) => {
+    setEditingCompany(company);
+    companyForm.reset({
+      name: company.name,
+      domain: company.domain,
+      primaryAdminName: company.primaryAdminName,
+      primaryAdminEmail: company.primaryAdminEmail,
+      primaryAdminTitle: company.primaryAdminTitle,
+      logo: company.logo || "",
+      isActive: company.isActive,
+    });
+    setShowEditCompany(true);
   };
 
-  const onSubmitCompany = (data: z.infer<typeof companyUpdateSchema>) => {
-    updateCompanyMutation.mutate(data);
+  const handleDeleteCompany = (id: number) => {
+    if (confirm("Are you sure you want to delete this company? This action cannot be undone.")) {
+      deleteCompanyMutation.mutate(id);
+    }
   };
 
-  if (companyLoading) {
+  if (companiesLoading) {
     return (
-      <AdminLayout title="Company Management" subtitle="Manage your company and owners">
+      <AdminLayout title="Company Management" subtitle="Manage all companies (Super-user only)">
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
         </div>
@@ -110,213 +143,299 @@ export default function CompanyManagement() {
   }
 
   return (
-    <AdminLayout title="Company Management" subtitle="Manage your company and owners">
+    <AdminLayout title="Company Management" subtitle="Manage all companies (Super-user only)">
       <div className="space-y-6">
-        {/* Company Information */}
+        {/* Add Company Button */}
+        <div className="flex justify-between items-center">
+          <h2 className="text-lg font-semibold">All Companies</h2>
+          <Dialog open={showAddCompany} onOpenChange={setShowAddCompany}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="w-4 h-4 mr-2" />
+                Add Company
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Add New Company</DialogTitle>
+              </DialogHeader>
+              <Form {...companyForm}>
+                <form onSubmit={companyForm.handleSubmit(onSubmitCompany)} className="space-y-4">
+                  <FormField
+                    control={companyForm.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Company Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Acme Corporation" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={companyForm.control}
+                    name="domain"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Company Domain</FormLabel>
+                        <FormControl>
+                          <Input placeholder="acme.com" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={companyForm.control}
+                    name="primaryAdminName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Primary Administrator Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="John Smith" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={companyForm.control}
+                    name="primaryAdminEmail"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Primary Administrator Email</FormLabel>
+                        <FormControl>
+                          <Input placeholder="john.smith@acme.com" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={companyForm.control}
+                    name="primaryAdminTitle"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Primary Administrator Title</FormLabel>
+                        <FormControl>
+                          <Input placeholder="CEO" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={companyForm.control}
+                    name="logo"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Company Logo (Optional)</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="file" 
+                            accept="image/*"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                const reader = new FileReader();
+                                reader.onload = (event) => {
+                                  field.onChange(event.target?.result as string);
+                                };
+                                reader.readAsDataURL(file);
+                              }
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button type="submit" className="w-full" disabled={createCompanyMutation.isPending || updateCompanyMutation.isPending}>
+                    {editingCompany 
+                      ? (updateCompanyMutation.isPending ? "Updating..." : "Update Company")
+                      : (createCompanyMutation.isPending ? "Creating..." : "Create Company")
+                    }
+                  </Button>
+                </form>
+              </Form>
+            </DialogContent>
+          </Dialog>
+        </div>
+
+        {/* Companies List */}
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
-              <Building className="w-5 h-5" />
-              Company Information
-            </CardTitle>
-            <Dialog open={showEditCompany} onOpenChange={setShowEditCompany}>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <Edit2 className="w-4 h-4 mr-2" />
-                  Edit Company
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-md">
-                <DialogHeader>
-                  <DialogTitle>Edit Company Information</DialogTitle>
-                </DialogHeader>
-                <Form {...companyForm}>
-                  <form onSubmit={companyForm.handleSubmit(onSubmitCompany)} className="space-y-4">
-                    <FormField
-                      control={companyForm.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Company Name</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Acme Corp" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={companyForm.control}
-                      name="logo"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Company Logo (Optional)</FormLabel>
-                          <FormControl>
-                            <Input 
-                              type="file" 
-                              accept="image/*"
-                              onChange={(e) => {
-                                const file = e.target.files?.[0];
-                                if (file) {
-                                  const reader = new FileReader();
-                                  reader.onload = (event) => {
-                                    field.onChange(event.target?.result as string);
-                                  };
-                                  reader.readAsDataURL(file);
-                                }
-                              }}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <Button type="submit" className="w-full" disabled={updateCompanyMutation.isPending}>
-                      {updateCompanyMutation.isPending ? "Updating..." : "Update Company"}
-                    </Button>
-                  </form>
-                </Form>
-              </DialogContent>
-            </Dialog>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-4">
-              {company?.logo && (
-                <img 
-                  src={company.logo} 
-                  alt={company.name} 
-                  className="w-16 h-16 object-cover rounded-lg border"
-                />
-              )}
-              <div>
-                <h3 className="text-xl font-semibold">{company?.name}</h3>
-                <p className="text-gray-600">{company?.domain}</p>
+          <CardContent className="p-6">
+            {companies.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                <Building className="w-12 h-12 mx-auto mb-2 text-gray-300" />
+                <p>No companies found</p>
+                <p className="text-sm">Add companies to manage your organization</p>
               </div>
-            </div>
+            ) : (
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {companies.map((company: Company) => (
+                  <Card key={company.id} className="border">
+                    <CardContent className="p-4">
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                          {company.logo && (
+                            <img 
+                              src={company.logo} 
+                              alt={company.name} 
+                              className="w-12 h-12 object-cover rounded-lg border"
+                            />
+                          )}
+                          <div>
+                            <h3 className="font-semibold">{company.name}</h3>
+                            <p className="text-sm text-gray-600">{company.domain}</p>
+                            <p className="text-xs text-gray-500">Admin: {company.primaryAdminName}</p>
+                          </div>
+                        </div>
+                        <Badge variant={company.isActive ? "default" : "secondary"}>
+                          {company.isActive ? "Active" : "Inactive"}
+                        </Badge>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEditCompany(company)}
+                        >
+                          <Edit2 className="w-4 h-4 mr-1" />
+                          Edit
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDeleteCompany(company.id)}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          <Trash2 className="w-4 h-4 mr-1" />
+                          Delete
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
 
-        {/* Company Owners */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
-              <UserPlus className="w-5 h-5" />
-              Company Owners
-            </CardTitle>
-            <Dialog open={showAddOwner} onOpenChange={setShowAddOwner}>
-              <DialogTrigger asChild>
-                <Button>
-                  <UserPlus className="w-4 h-4 mr-2" />
-                  Add Owner
+        {/* Edit Company Dialog */}
+        <Dialog open={showEditCompany} onOpenChange={(open) => {
+          setShowEditCompany(open);
+          if (!open) {
+            setEditingCompany(null);
+            companyForm.reset();
+          }
+        }}>
+          <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Edit Company</DialogTitle>
+            </DialogHeader>
+            <Form {...companyForm}>
+              <form onSubmit={companyForm.handleSubmit(onSubmitCompany)} className="space-y-4">
+                <FormField
+                  control={companyForm.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Company Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Acme Corporation" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={companyForm.control}
+                  name="domain"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Company Domain</FormLabel>
+                      <FormControl>
+                        <Input placeholder="acme.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={companyForm.control}
+                  name="primaryAdminName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Primary Administrator Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="John Smith" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={companyForm.control}
+                  name="primaryAdminEmail"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Primary Administrator Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="john.smith@acme.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={companyForm.control}
+                  name="primaryAdminTitle"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Primary Administrator Title</FormLabel>
+                      <FormControl>
+                        <Input placeholder="CEO" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={companyForm.control}
+                  name="logo"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Company Logo (Optional)</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="file" 
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const reader = new FileReader();
+                              reader.onload = (event) => {
+                                field.onChange(event.target?.result as string);
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit" className="w-full" disabled={updateCompanyMutation.isPending}>
+                  {updateCompanyMutation.isPending ? "Updating..." : "Update Company"}
                 </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-md">
-                <DialogHeader>
-                  <DialogTitle>Add New Owner</DialogTitle>
-                </DialogHeader>
-                <Form {...ownerForm}>
-                  <form onSubmit={ownerForm.handleSubmit(addOwner)} className="space-y-4">
-                    <FormField
-                      control={ownerForm.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Full Name</FormLabel>
-                          <FormControl>
-                            <Input placeholder="John Smith" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={ownerForm.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email Address</FormLabel>
-                          <FormControl>
-                            <Input placeholder="john.smith@company.com" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={ownerForm.control}
-                      name="title"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Job Title</FormLabel>
-                          <FormControl>
-                            <Input placeholder="CEO" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={ownerForm.control}
-                      name="role"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Role</FormLabel>
-                          <FormControl>
-                            <select {...field} className="w-full p-2 border rounded-md">
-                              <option value="owner">Owner</option>
-                              <option value="admin">Admin</option>
-                            </select>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <Button type="submit" className="w-full">
-                      Add Owner
-                    </Button>
-                  </form>
-                </Form>
-              </DialogContent>
-            </Dialog>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {owners.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
-                  <UserPlus className="w-12 h-12 mx-auto mb-2 text-gray-300" />
-                  <p>No owners added yet</p>
-                  <p className="text-sm">Add owners to manage company access</p>
-                </div>
-              ) : (
-                owners.map((owner) => (
-                  <div key={owner.id} className="flex items-center justify-between p-4 border rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <Mail className="w-5 h-5 text-gray-400" />
-                      <div>
-                        <p className="font-medium">{owner.name}</p>
-                        <p className="text-sm text-gray-600">{owner.email}</p>
-                        <p className="text-xs text-gray-500">{owner.title}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge variant={owner.role === 'owner' ? 'default' : 'secondary'}>
-                        {owner.role}
-                      </Badge>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removeOwner(owner.id)}
-                        className="text-red-500 hover:text-red-700"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </CardContent>
-        </Card>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
       </div>
     </AdminLayout>
   );

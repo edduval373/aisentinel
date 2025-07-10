@@ -37,6 +37,9 @@ export interface IStorage {
   getCompanyByDomain(domain: string): Promise<Company | undefined>;
   getCompanies(): Promise<Company[]>;
   createCompany(company: InsertCompany): Promise<Company>;
+  updateCompany(id: number, company: Partial<InsertCompany>): Promise<Company>;
+  deleteCompany(id: number): Promise<void>;
+  getCompanyById(id: number): Promise<Company | undefined>;
   getCompanyEmployees(companyId: number): Promise<CompanyEmployee[]>;
   addCompanyEmployee(employee: InsertCompanyEmployee): Promise<CompanyEmployee>;
   isEmployeeAuthorized(email: string, companyId: number): Promise<boolean>;
@@ -125,8 +128,32 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createCompany(company: InsertCompany): Promise<Company> {
-    const [created] = await db.insert(companies).values(company).returning();
-    return created;
+    const [newCompany] = await db
+      .insert(companies)
+      .values(company)
+      .returning();
+    return newCompany;
+  }
+
+  async updateCompany(id: number, company: Partial<InsertCompany>): Promise<Company> {
+    const [updatedCompany] = await db
+      .update(companies)
+      .set({
+        ...company,
+        updatedAt: new Date(),
+      })
+      .where(eq(companies.id, id))
+      .returning();
+    return updatedCompany;
+  }
+
+  async deleteCompany(id: number): Promise<void> {
+    await db.delete(companies).where(eq(companies.id, id));
+  }
+
+  async getCompanyById(id: number): Promise<Company | undefined> {
+    const [company] = await db.select().from(companies).where(eq(companies.id, id));
+    return company;
   }
 
   async getCompanyEmployees(companyId: number): Promise<CompanyEmployee[]> {

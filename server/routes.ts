@@ -110,6 +110,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch('/api/admin/companies/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = await storage.getUser(req.user.claims.sub);
+      if (user?.role !== 'super-user') {
+        return res.status(403).json({ message: "Super-user access required" });
+      }
+      const id = parseInt(req.params.id);
+      const company = await storage.updateCompany(id, req.body);
+      res.json(company);
+    } catch (error) {
+      console.error("Error updating company:", error);
+      res.status(500).json({ message: "Failed to update company" });
+    }
+  });
+
+  app.delete('/api/admin/companies/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = await storage.getUser(req.user.claims.sub);
+      if (user?.role !== 'super-user') {
+        return res.status(403).json({ message: "Super-user access required" });
+      }
+      const id = parseInt(req.params.id);
+      await storage.deleteCompany(id);
+      res.json({ message: "Company deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting company:", error);
+      res.status(500).json({ message: "Failed to delete company" });
+    }
+  });
+
   app.post('/api/admin/company-employees', isAuthenticated, async (req: any, res) => {
     try {
       const user = await storage.getUser(req.user.claims.sub);
