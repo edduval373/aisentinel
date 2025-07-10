@@ -2,24 +2,32 @@ import { Pool } from 'pg';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import * as schema from "@shared/schema";
 
-const databaseUrl = process.env.RAILWAY_DATABASE_URL || process.env.DATABASE_URL;
+// Try both RAILWAY_DATABASE_URL and DATABASE_URL
+const railwayUrl = process.env.RAILWAY_DATABASE_URL;
+const databaseUrl = process.env.DATABASE_URL;
 
+console.log("Railway URL preview:", railwayUrl?.substring(0, 50) + "...");
 console.log("Database URL preview:", databaseUrl?.substring(0, 50) + "...");
 
-if (!databaseUrl) {
+// Use whichever one is a proper PostgreSQL connection string
+let connectionString = null;
+
+if (railwayUrl && (railwayUrl.startsWith('postgresql://') || railwayUrl.startsWith('postgres://'))) {
+  connectionString = railwayUrl;
+  console.log("Using RAILWAY_DATABASE_URL");
+} else if (databaseUrl && (databaseUrl.startsWith('postgresql://') || databaseUrl.startsWith('postgres://'))) {
+  connectionString = databaseUrl;
+  console.log("Using DATABASE_URL");
+}
+
+if (!connectionString) {
   throw new Error(
-    "RAILWAY_DATABASE_URL or DATABASE_URL must be set. Did you forget to provision a database?",
+    "Need a valid PostgreSQL connection string starting with 'postgresql://' or 'postgres://' in either RAILWAY_DATABASE_URL or DATABASE_URL"
   );
 }
 
-// For now, let's use the original Neon database as fallback while we fix Railway connection
-if (databaseUrl.includes("${{") || databaseUrl.includes("base")) {
-  console.log("WARNING: DATABASE_URL contains variable references. Using fallback database.");
-  // Use the original connection temporarily
-}
-
 export const pool = new Pool({ 
-  connectionString: databaseUrl,
+  connectionString: connectionString,
   ssl: {
     rejectUnauthorized: false
   }
