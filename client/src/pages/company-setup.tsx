@@ -41,6 +41,8 @@ export default function CompanySetup() {
   const [editForm, setEditForm] = useState({ name: "", email: "", title: "" });
   const [isEditCompanyModalOpen, setIsEditCompanyModalOpen] = useState(false);
   const [companyEditForm, setCompanyEditForm] = useState({ name: "", domain: "", primaryAdminName: "", primaryAdminEmail: "", primaryAdminTitle: "" });
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [ownerToDelete, setOwnerToDelete] = useState<Owner | null>(null);
 
   // Fetch available companies for owners/super-users
   const { data: companies = [], isLoading: companiesLoading } = useQuery({
@@ -146,6 +148,15 @@ export default function CompanySetup() {
       // In a real app, this would make an API call to update the company
       toast({ title: "Success", description: "Company information updated successfully" });
       setIsEditCompanyModalOpen(false);
+    }
+  };
+
+  const handleConfirmDelete = () => {
+    if (ownerToDelete) {
+      setOwners(owners.filter(o => o.id !== ownerToDelete.id));
+      toast({ title: "Success", description: "Owner deleted successfully" });
+      setIsDeleteConfirmOpen(false);
+      setOwnerToDelete(null);
     }
   };
 
@@ -297,10 +308,8 @@ export default function CompanySetup() {
                             });
                             return;
                           }
-                          if (window.confirm("Are you sure you want to delete this owner?")) {
-                            setOwners(owners.filter(o => o.id !== owner.id));
-                            toast({ title: "Success", description: "Owner deleted successfully" });
-                          }
+                          setOwnerToDelete(owner);
+                          setIsDeleteConfirmOpen(true);
                         }}
                         className="text-red-600 hover:text-red-800 text-sm font-medium"
                       >
@@ -482,6 +491,42 @@ export default function CompanySetup() {
                 className="flex-1"
               >
                 Cancel
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Delete Confirmation Modal */}
+        <Dialog open={isDeleteConfirmOpen} onOpenChange={setIsDeleteConfirmOpen}>
+          <DialogContent className="sm:max-w-[400px]">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-red-600">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 19.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+                Confirm Deletion
+              </DialogTitle>
+            </DialogHeader>
+            <div className="py-4">
+              <p className="text-gray-600">
+                Are you sure you want to delete <span className="font-medium text-gray-900">{ownerToDelete?.name}</span>?
+              </p>
+              <p className="text-sm text-gray-500 mt-2">
+                This action cannot be undone.
+              </p>
+            </div>
+            <div className="flex gap-3 justify-end">
+              <Button 
+                variant="outline" 
+                onClick={() => setIsDeleteConfirmOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button 
+                variant="destructive" 
+                onClick={handleConfirmDelete}
+              >
+                Delete Owner
               </Button>
             </div>
           </DialogContent>
