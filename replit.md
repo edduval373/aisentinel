@@ -78,7 +78,7 @@ AI Sentinel is a comprehensive enterprise AI governance platform that provides s
 ## External Dependencies
 
 ### Core Services
-- **Database**: Neon PostgreSQL for managed database hosting
+- **Database**: Railway PostgreSQL for managed database hosting
 - **Authentication**: Replit Auth for OIDC integration
 - **AI Providers**: OpenAI and Anthropic for language models
 
