@@ -35,6 +35,7 @@ export interface IStorage {
   
   // Company operations
   getCompanyByDomain(domain: string): Promise<Company | undefined>;
+  getCompanies(): Promise<Company[]>;
   createCompany(company: InsertCompany): Promise<Company>;
   getCompanyEmployees(companyId: number): Promise<CompanyEmployee[]>;
   addCompanyEmployee(employee: InsertCompanyEmployee): Promise<CompanyEmployee>;
@@ -117,6 +118,10 @@ export class DatabaseStorage implements IStorage {
   async getCompanyByDomain(domain: string): Promise<Company | undefined> {
     const [company] = await db.select().from(companies).where(eq(companies.domain, domain));
     return company;
+  }
+
+  async getCompanies(): Promise<Company[]> {
+    return await db.select().from(companies).orderBy(companies.companyName);
   }
 
   async createCompany(company: InsertCompany): Promise<Company> {

@@ -81,12 +81,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Company Management routes
+  // Company Management routes (Super-user only)
   app.post('/api/admin/companies', isAuthenticated, async (req: any, res) => {
     try {
       const user = await storage.getUser(req.user.claims.sub);
-      if (user?.role !== 'admin') {
-        return res.status(403).json({ message: "Admin access required" });
+      if (user?.role !== 'super-user') {
+        return res.status(403).json({ message: "Super-user access required" });
       }
       const company = await storage.createCompany(req.body);
       res.json(company);
@@ -96,17 +96,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get('/api/admin/companies', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = await storage.getUser(req.user.claims.sub);
+      if (user?.role !== 'super-user') {
+        return res.status(403).json({ message: "Super-user access required" });
+      }
+      const companies = await storage.getCompanies();
+      res.json(companies);
+    } catch (error) {
+      console.error("Error fetching companies:", error);
+      res.status(500).json({ message: "Failed to fetch companies" });
+    }
+  });
+
   app.post('/api/admin/company-employees', isAuthenticated, async (req: any, res) => {
     try {
       const user = await storage.getUser(req.user.claims.sub);
-      if (user?.role !== 'admin') {
-        return res.status(403).json({ message: "Admin access required" });
+      if (user?.role !== 'super-user') {
+        return res.status(403).json({ message: "Super-user access required" });
       }
       const employee = await storage.addCompanyEmployee(req.body);
       res.json(employee);
     } catch (error) {
       console.error("Error adding employee:", error);
       res.status(500).json({ message: "Failed to add employee" });
+    }
+  });
+
+  app.get('/api/admin/company-employees/:companyId', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = await storage.getUser(req.user.claims.sub);
+      if (user?.role !== 'super-user') {
+        return res.status(403).json({ message: "Super-user access required" });
+      }
+      const companyId = parseInt(req.params.companyId);
+      const employees = await storage.getCompanyEmployees(companyId);
+      res.json(employees);
+    } catch (error) {
+      console.error("Error fetching company employees:", error);
+      res.status(500).json({ message: "Failed to fetch company employees" });
     }
   });
 

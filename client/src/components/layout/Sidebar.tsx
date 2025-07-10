@@ -40,7 +40,9 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const [location, navigate] = useLocation();
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
-  const isAdmin = user?.role === 'admin' || user?.email?.includes('admin') || user?.email?.includes('ed.duval15@gmail.com');
+  const isSuperUser = user?.role === 'super-user';
+  const isAdmin = user?.role === 'admin' || user?.role === 'super-user';
+  const isRegularUser = !isAdmin && !isSuperUser;
 
   const handleLogout = () => {
     window.location.href = "/api/logout";
@@ -57,6 +59,18 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       icon: MessageSquare,
       current: location === "/",
     },
+  ];
+
+  const superUserSections = [
+    {
+      id: "company-management",
+      name: "Company Management", 
+      icon: Users,
+      items: [
+        { name: "Companies", href: "/admin/companies", icon: Users },
+        { name: "Company Setup", href: "/company-setup", icon: Settings },
+      ]
+    }
   ];
 
   const adminSections = [
@@ -171,6 +185,58 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
               <span>{item.name}</span>
             </button>
           ))}
+
+          {/* Super User Sections */}
+          {isSuperUser && (
+            <>
+              <div className="pt-4 pb-2">
+                <h3 className="text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                  System Management
+                </h3>
+              </div>
+              
+              {superUserSections.map((section) => (
+                <div key={section.id} className="space-y-1">
+                  <button
+                    onClick={() => toggleSection(section.id)}
+                    className="w-full flex items-center justify-between text-left rounded-lg px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <section.icon className="w-5 h-5 text-slate-400" />
+                      <span>{section.name}</span>
+                    </div>
+                    <ChevronRight className={cn(
+                      "w-4 h-4 text-slate-400 transition-transform",
+                      expandedSection === section.id && "rotate-90"
+                    )} />
+                  </button>
+                  
+                  {expandedSection === section.id && (
+                    <div className="ml-8 space-y-1">
+                      {section.items.map((item) => (
+                        <button
+                          key={item.href}
+                          onClick={() => {
+                            navigate(item.href);
+                            if (window.innerWidth < 1024) onToggle();
+                          }}
+                          className={cn(
+                            "w-full flex items-center space-x-3 text-left rounded-lg px-3 py-2 transition-colors text-sm",
+                            location === item.href
+                              ? "text-white bg-slate-700"
+                              : "text-slate-400 hover:text-white hover:bg-slate-700"
+                          )}
+                        >
+                          <item.icon className="w-4 h-4" />
+                          <span>{item.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </>
+          )}
 
           {/* Admin Sections */}
           {isAdmin && (

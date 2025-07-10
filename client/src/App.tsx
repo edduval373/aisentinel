@@ -45,6 +45,7 @@ function Router() {
           <Route path="/admin/security-settings" component={AdminSecuritySettings} />
           <Route path="/admin/permissions" component={AdminPermissions} />
           <Route path="/admin/model-settings" component={AdminModelSettings} />
+          <Route path="/admin/companies" component={() => import("./pages/admin/companies")} />
           <Route path="/company-setup" component={CompanySetup} />
         </>
       )}
