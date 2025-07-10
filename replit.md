@@ -207,6 +207,12 @@ Changelog:
   * Implemented file picker for logo uploads and complete company information forms
   * Created streamlined interface focused on essential company data management
   * Added confirmation dialogs for destructive actions like company deletion
+- July 10, 2025. Restructured sidebar navigation per user requirements:
+  * Moved "SUPER-USER" header above "Company Management" section
+  * Added "Owners" header above "Company Setup" section  
+  * Moved "API Configuration" under the "Owners" section with other owner controls
+  * Fixed database schema by removing problematic settings column
+  * Organized sidebar hierarchy: SUPER-USER → Company Management → Owners → Company Setup
 ```
 
 ## User Preferences

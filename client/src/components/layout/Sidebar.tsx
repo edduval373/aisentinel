@@ -62,16 +62,6 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
     },
   ];
 
-  // For super-users, add direct access to company management
-  if (isSuperUser) {
-    navigation.push({
-      name: "Company Management",
-      href: "/admin",
-      icon: Building,
-      current: location === "/admin" || location === "/admin/companies",
-    });
-  }
-
   const superUserSections = [
     {
       id: "company-setup",
@@ -99,7 +89,10 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
         { name: "Security Reports", href: "/admin/security", icon: Shield },
         { name: "Usage Analytics", href: "/admin/analytics", icon: BarChart3 },
       ]
-    },
+    }
+  ];
+
+  const ownersSections = [
     {
       id: "owners",
       name: "Owners",
@@ -225,7 +218,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
             </button>
           ))}
 
-          {/* Super User Sections */}
+          {/* Company Management for Super User */}
           {isSuperUser && (
             <>
               <div className="pt-4 pb-2">
@@ -234,7 +227,73 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                 </h3>
               </div>
               
+              <button
+                onClick={() => {
+                  navigate("/admin");
+                  if (window.innerWidth < 1024) onToggle();
+                }}
+                className={cn(
+                  "w-full flex items-center space-x-3 text-left rounded-lg px-3 py-2 transition-colors",
+                  (location === "/admin" || location === "/admin/companies")
+                    ? "text-white bg-slate-700"
+                    : "text-slate-300 hover:text-white hover:bg-slate-700"
+                )}
+              >
+                <Building className={cn(
+                  "w-5 h-5",
+                  (location === "/admin" || location === "/admin/companies") ? "text-sentinel-blue" : "text-slate-400"
+                )} />
+                <span>Company Management</span>
+              </button>
+
+              <div className="pt-4 pb-2">
+                <h3 className="text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                  Owners
+                </h3>
+              </div>
+              
               {superUserSections.map((section) => (
+                <div key={section.id} className="space-y-1">
+                  <button
+                    onClick={() => toggleSection(section.id)}
+                    className="w-full flex items-center justify-between text-left rounded-lg px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <section.icon className="w-5 h-5 text-slate-400" />
+                      <span>{section.name}</span>
+                    </div>
+                    <ChevronRight className={cn(
+                      "w-4 h-4 text-slate-400 transition-transform",
+                      expandedSection === section.id && "rotate-90"
+                    )} />
+                  </button>
+                  
+                  {expandedSection === section.id && (
+                    <div className="ml-8 space-y-1">
+                      {section.items.map((item) => (
+                        <button
+                          key={item.href}
+                          onClick={() => {
+                            navigate(item.href);
+                            if (window.innerWidth < 1024) onToggle();
+                          }}
+                          className={cn(
+                            "w-full flex items-center space-x-3 text-left rounded-lg px-3 py-2 transition-colors text-sm",
+                            location === item.href
+                              ? "text-white bg-slate-700"
+                              : "text-slate-400 hover:text-white hover:bg-slate-700"
+                          )}
+                        >
+                          <item.icon className="w-4 h-4" />
+                          <span>{item.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+              
+              {ownersSections.map((section) => (
                 <div key={section.id} className="space-y-1">
                   <button
                     onClick={() => toggleSection(section.id)}

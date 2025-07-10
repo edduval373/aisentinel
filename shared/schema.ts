@@ -28,12 +28,11 @@ export const sessions = pgTable(
 export const companies = pgTable("companies", {
   id: serial("id").primaryKey(),
   name: varchar("name").notNull(),
-  domain: varchar("domain").unique().notNull(), // e.g., "example.com"
+  domain: varchar("domain").unique(),
   primaryAdminName: varchar("primary_admin_name"),
   primaryAdminEmail: varchar("primary_admin_email"),
   primaryAdminTitle: varchar("primary_admin_title"),
   logo: varchar("logo"),
-  settings: jsonb("settings"),
   isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
