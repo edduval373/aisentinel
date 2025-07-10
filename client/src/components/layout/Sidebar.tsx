@@ -70,12 +70,10 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 
   const superUserSections = [
     {
-      id: "company-setup",
-      name: "Company Setup",
+      id: "company-management",
+      name: "Company Management",
+      href: "/admin/company-management",
       icon: Building,
-      items: [
-        { name: "Setup Company", href: "/admin/company-setup", icon: Building },
-      ]
     }
   ];
 
@@ -220,14 +218,14 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                 }}
                 className={cn(
                   "w-full flex items-center space-x-3 text-left rounded-lg px-3 py-2 transition-colors",
-                  (location === "/admin" || location === "/admin/companies")
+                  location === "/admin"
                     ? "text-white bg-slate-700"
                     : "text-slate-300 hover:text-white hover:bg-slate-700"
                 )}
               >
                 <Building className={cn(
                   "w-5 h-5",
-                  (location === "/admin" || location === "/admin/companies") ? "text-sentinel-blue" : "text-slate-400"
+                  location === "/admin" ? "text-sentinel-blue" : "text-slate-400"
                 )} />
                 <span>Company Management</span>
               </button>
@@ -243,46 +241,24 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                 </h3>
               </div>
               
-              {superUserSections.map((section) => (
-                <div key={section.id} className="space-y-1">
-                  <button
-                    onClick={() => toggleSection(section.id)}
-                    className="w-full flex items-center justify-between text-left rounded-lg px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
-                  >
-                    <div className="flex items-center space-x-3">
-                      <section.icon className="w-5 h-5 text-slate-400" />
-                      <span>{section.name}</span>
-                    </div>
-                    <ChevronRight className={cn(
-                      "w-4 h-4 text-slate-400 transition-transform",
-                      expandedSection === section.id && "rotate-90"
-                    )} />
-                  </button>
-                  
-                  {expandedSection === section.id && (
-                    <div className="ml-8 space-y-1">
-                      {section.items.map((item) => (
-                        <button
-                          key={item.href}
-                          onClick={() => {
-                            navigate(item.href);
-                            if (window.innerWidth < 1024) onToggle();
-                          }}
-                          className={cn(
-                            "w-full flex items-center space-x-3 text-left rounded-lg px-3 py-2 transition-colors text-sm",
-                            location === item.href
-                              ? "text-white bg-slate-700"
-                              : "text-slate-400 hover:text-white hover:bg-slate-700"
-                          )}
-                        >
-                          <item.icon className="w-4 h-4" />
-                          <span>{item.name}</span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
+              <button
+                onClick={() => {
+                  navigate("/admin/company-setup");
+                  if (window.innerWidth < 1024) onToggle();
+                }}
+                className={cn(
+                  "w-full flex items-center space-x-3 text-left rounded-lg px-3 py-2 transition-colors",
+                  location === "/admin/company-setup"
+                    ? "text-white bg-slate-700"
+                    : "text-slate-300 hover:text-white hover:bg-slate-700"
+                )}
+              >
+                <Building className={cn(
+                  "w-5 h-5",
+                  location === "/admin/company-setup" ? "text-sentinel-blue" : "text-slate-400"
+                )} />
+                <span>Setup Company</span>
+              </button>
               
               {ownersSections.map((section) => (
                 <div key={section.id} className="space-y-1">

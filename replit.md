@@ -225,6 +225,12 @@ Changelog:
   * ADMIN: Can only see ADMINISTRATION section + AI Chat
   * USERS: Cannot open the sidebar panel at all
   * Strict role hierarchy enforcing proper access levels
+- July 10, 2025. Final UI improvements to company management interface:
+  * Changed "Company Owners" section label to simply "Owners" as requested
+  * Consolidated duplicate "Setup Company" entries into single panel entry
+  * Fixed database schema issues with logo field to support base64 image storage
+  * Company creation functionality now fully operational with large image support
+  * Resolved all payload size limitations and API parameter ordering issues
 ```
 
 ## User Preferences

@@ -189,14 +189,14 @@ export default function CompanySetup() {
           </Card>
         )}
 
-        {/* Company Owners */}
+        {/* Owners */}
         {currentCompany && (
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Users className="w-5 h-5" />
-                  Company Owners
+                  Owners
                 </div>
                 <Button onClick={handleAddOwner} size="sm">
                   Add Owner
