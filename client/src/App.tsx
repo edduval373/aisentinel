@@ -19,6 +19,7 @@ import AdminApiConfig from "@/pages/admin/api-config";
 import AdminSecuritySettings from "@/pages/admin/security-settings";
 import AdminPermissions from "@/pages/admin/permissions";
 import AdminModelSettings from "@/pages/admin/model-settings";
+import CompanySetup from "@/pages/company-setup";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -44,6 +45,7 @@ function Router() {
           <Route path="/admin/security-settings" component={AdminSecuritySettings} />
           <Route path="/admin/permissions" component={AdminPermissions} />
           <Route path="/admin/model-settings" component={AdminModelSettings} />
+          <Route path="/company-setup" component={CompanySetup} />
         </>
       )}
       <Route component={NotFound} />
