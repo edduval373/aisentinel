@@ -5,6 +5,8 @@ import { isUnauthorizedError } from "@/lib/authUtils";
 import { Button } from "@/components/ui/button";
 import Sidebar from "@/components/layout/Sidebar";
 import ChatInterface from "@/components/chat/ChatInterface";
+import { useQuery } from "@tanstack/react-query";
+import { Building2 } from "lucide-react";
 
 import iconPath from "@assets/icononly_nobuffer_1752067577689.png";
 
@@ -16,6 +18,35 @@ const AISentinelIcon = ({ className = "w-10 h-10" }) => (
     className={className}
   />
 );
+
+// Company Info Component
+const CompanyInfo = () => {
+  const { data: currentCompany } = useQuery({
+    queryKey: ['/api/user/current-company'],
+    retry: false,
+  });
+
+  if (!currentCompany) return null;
+
+  return (
+    <div className="flex items-center space-x-2">
+      {currentCompany.logo ? (
+        <img 
+          src={currentCompany.logo} 
+          alt={`${currentCompany.name} logo`}
+          className="w-6 h-6 rounded object-cover"
+        />
+      ) : (
+        <div className="w-6 h-6 rounded bg-slate-300 flex items-center justify-center">
+          <Building2 className="w-3 h-3 text-slate-600" />
+        </div>
+      )}
+      <span className="text-sm font-medium text-slate-700">
+        {currentCompany.name} ({currentCompany.id})
+      </span>
+    </div>
+  );
+};
 
 export default function Home() {
   const { toast } = useToast();
@@ -60,14 +91,17 @@ export default function Home() {
       <div className="flex-1 flex flex-col min-h-0">
         {/* Top Header with Menu Button - Fixed Header */}
         <div className="bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between flex-shrink-0">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setSidebarOpen(true)}
-            className="text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-          >
-            ☰
-          </Button>
+          <div className="flex items-center space-x-3">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setSidebarOpen(true)}
+              className="text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+            >
+              ☰
+            </Button>
+            <CompanyInfo />
+          </div>
           
           <div className="flex items-center space-x-3">
             <AISentinelIcon className="w-8 h-8" />

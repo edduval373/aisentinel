@@ -267,39 +267,17 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       {/* Chat Header - Fixed at top */}
       <div className="bg-white border-b border-slate-200 p-4 flex-shrink-0">
         <div className="flex items-center justify-between">
-          <div className="flex flex-col space-y-2">
-            {/* Company Info Display - Top Left */}
-            {currentCompany && (
-              <div className="flex items-center space-x-2">
-                {currentCompany.logo ? (
-                  <img 
-                    src={currentCompany.logo} 
-                    alt={`${currentCompany.name} logo`}
-                    className="w-6 h-6 rounded object-cover"
-                  />
-                ) : (
-                  <div className="w-6 h-6 rounded bg-slate-300 flex items-center justify-center">
-                    <Building2 className="w-3 h-3 text-slate-600" />
-                  </div>
-                )}
-                <span className="text-sm font-medium text-slate-700">
-                  {currentCompany.name} ({currentCompany.id})
-                </span>
-              </div>
-            )}
-            
-            <div className="flex items-center space-x-4">
-              <h2 className="text-lg font-semibold text-slate-800">AI Assistant</h2>
-              <div className="flex items-center space-x-2">
-                {isConnected ? (
-                  <Wifi className="w-4 h-4 text-sentinel-green" />
-                ) : (
-                  <WifiOff className="w-4 h-4 text-slate-400" />
-                )}
-                <span className="text-sm text-slate-600">
-                  {isConnected ? 'Connected' : 'Disconnected'}
-                </span>
-              </div>
+          <div className="flex items-center space-x-4">
+            <h2 className="text-lg font-semibold text-slate-800">AI Assistant</h2>
+            <div className="flex items-center space-x-2">
+              {isConnected ? (
+                <Wifi className="w-4 h-4 text-sentinel-green" />
+              ) : (
+                <WifiOff className="w-4 h-4 text-slate-400" />
+              )}
+              <span className="text-sm text-slate-600">
+                {isConnected ? 'Connected' : 'Disconnected'}
+              </span>
             </div>
           </div>
           <div className="flex items-center space-x-4">
