@@ -68,7 +68,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       icon: Users,
       items: [
         { name: "Companies", href: "/admin/companies", icon: Users },
-        { name: "Company Setup", href: "/company-setup", icon: Settings },
+        { name: "Employee Management", href: "/admin/companies", icon: Building },
       ]
     }
   ];

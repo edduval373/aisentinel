@@ -170,6 +170,13 @@ Changelog:
   * Users are now automatically signed in if they're on their company's employee list
   * Enhanced authentication flow to include company-based verification
   * Added admin routes for company and employee management
+- July 10, 2025. Enhanced role-based access control and integrated company management:
+  * Created super-user role system with automatic assignment for first user
+  * Implemented three-tier access: super-user (system management), admin (AI management), regular user (chat only)
+  * Integrated employee management directly into company admin interface with tabbed navigation
+  * Added role-based sidebar visibility controls for different user types
+  * Super-users can now manage companies and employees in unified interface
+  * Fixed routing issues with dynamic imports causing React rendering errors
 ```
 
 ## User Preferences
