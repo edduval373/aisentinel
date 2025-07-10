@@ -77,16 +77,24 @@ export class DatabaseStorage implements IStorage {
   }
 
   async upsertUser(userData: UpsertUser): Promise<User> {
-    // Check if user's email domain matches a company and auto-assign
-    if (userData.email) {
-      const emailDomain = userData.email.split('@')[1];
-      const company = await this.getCompanyByDomain(emailDomain);
-      
-      if (company && company.isActive) {
-        // Check if user is authorized employee
-        const isAuthorized = await this.isEmployeeAuthorized(userData.email, company.id);
-        if (isAuthorized) {
-          userData.companyId = company.id;
+    // Check if this is the first user - make them super-user
+    const userCount = await db.select({ count: count() }).from(users);
+    const isFirstUser = userCount[0].count === 0;
+    
+    if (isFirstUser) {
+      userData.role = 'super-user';
+    } else {
+      // Check if user's email domain matches a company and auto-assign
+      if (userData.email) {
+        const emailDomain = userData.email.split('@')[1];
+        const company = await this.getCompanyByDomain(emailDomain);
+        
+        if (company && company.isActive) {
+          // Check if user is authorized employee
+          const isAuthorized = await this.isEmployeeAuthorized(userData.email, company.id);
+          if (isAuthorized) {
+            userData.companyId = company.id;
+          }
         }
       }
     }
