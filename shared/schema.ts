@@ -32,7 +32,7 @@ export const companies = pgTable("companies", {
   primaryAdminName: varchar("primary_admin_name"),
   primaryAdminEmail: varchar("primary_admin_email"),
   primaryAdminTitle: varchar("primary_admin_title"),
-  logo: varchar("logo"),
+  logo: text("logo"),
   isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
