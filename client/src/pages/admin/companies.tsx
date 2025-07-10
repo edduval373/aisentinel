@@ -10,7 +10,7 @@ import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
-import { Building, Plus } from "lucide-react";
+import { Building, Plus, Users, UserPlus, Mail, Trash2 } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
 
 const companySchema = z.object({
@@ -23,8 +23,18 @@ const companySchema = z.object({
   isActive: z.boolean().default(true),
 });
 
+const ownerSchema = z.object({
+  name: z.string().min(1, "Owner name is required"),
+  email: z.string().email("Valid email required"),
+  title: z.string().min(1, "Title is required"),
+  role: z.enum(["owner", "admin"]).default("owner"),
+});
+
 export default function AdminCompanies() {
   const [showAddCompany, setShowAddCompany] = useState(false);
+  const [selectedCompany, setSelectedCompany] = useState<any>(null);
+  const [showAddOwner, setShowAddOwner] = useState(false);
+  const [owners, setOwners] = useState<Array<z.infer<typeof ownerSchema>>>([]);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -38,6 +48,16 @@ export default function AdminCompanies() {
       primaryAdminTitle: "",
       logo: "",
       isActive: true,
+    },
+  });
+
+  const ownerForm = useForm<z.infer<typeof ownerSchema>>({
+    resolver: zodResolver(ownerSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      title: "",
+      role: "owner",
     },
   });
 
@@ -68,6 +88,18 @@ export default function AdminCompanies() {
 
   const onSubmitCompany = (data: z.infer<typeof companySchema>) => {
     createCompanyMutation.mutate(data);
+  };
+
+  const addOwner = (data: z.infer<typeof ownerSchema>) => {
+    setOwners([...owners, data]);
+    ownerForm.reset();
+    setShowAddOwner(false);
+    toast({ title: "Owner Added", description: "Owner has been added to the list" });
+  };
+
+  const removeOwner = (index: number) => {
+    setOwners(owners.filter((_, i) => i !== index));
+    toast({ title: "Owner Removed", description: "Owner has been removed from the list" });
   };
 
   return (
@@ -212,6 +244,16 @@ export default function AdminCompanies() {
                             <p className="text-xs text-gray-500">Admin: {company.primaryAdminName}</p>
                           )}
                         </div>
+                        <div className="flex items-center gap-2 mt-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setSelectedCompany(company)}
+                          >
+                            <Users className="w-4 h-4 mr-1" />
+                            Manage Owners
+                          </Button>
+                        </div>
                       </div>
                       <Badge variant={company.isActive ? "default" : "secondary"}>
                         {company.isActive ? "Active" : "Inactive"}
@@ -223,6 +265,137 @@ export default function AdminCompanies() {
             )}
           </CardContent>
         </Card>
+
+        {/* Company Owners Management Modal */}
+        {selectedCompany && (
+          <Dialog open={!!selectedCompany} onOpenChange={() => setSelectedCompany(null)}>
+            <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <Users className="w-5 h-5" />
+                  Manage Owners - {selectedCompany.name}
+                </DialogTitle>
+              </DialogHeader>
+              
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-medium">Company Owners</h3>
+                  <Dialog open={showAddOwner} onOpenChange={setShowAddOwner}>
+                    <DialogTrigger asChild>
+                      <Button size="sm">
+                        <UserPlus className="w-4 h-4 mr-2" />
+                        Add Owner
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-md">
+                      <DialogHeader>
+                        <DialogTitle>Add New Owner</DialogTitle>
+                      </DialogHeader>
+                      <Form {...ownerForm}>
+                        <form onSubmit={ownerForm.handleSubmit(addOwner)} className="space-y-4">
+                          <FormField
+                            control={ownerForm.control}
+                            name="name"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Full Name</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="John Smith" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={ownerForm.control}
+                            name="email"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Email Address</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="john.smith@company.com" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={ownerForm.control}
+                            name="title"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Job Title</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="CEO" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={ownerForm.control}
+                            name="role"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Role</FormLabel>
+                                <FormControl>
+                                  <select {...field} className="w-full p-2 border rounded-md">
+                                    <option value="owner">Owner</option>
+                                    <option value="admin">Admin</option>
+                                  </select>
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <Button type="submit" className="w-full">
+                            Add Owner
+                          </Button>
+                        </form>
+                      </Form>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+                
+                <div className="space-y-2">
+                  {owners.length === 0 ? (
+                    <div className="text-center py-8 text-gray-500">
+                      <Users className="w-12 h-12 mx-auto mb-2 text-gray-300" />
+                      <p>No owners added yet</p>
+                      <p className="text-sm">Add owners to manage company access</p>
+                    </div>
+                  ) : (
+                    owners.map((owner, index) => (
+                      <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <Mail className="w-4 h-4 text-gray-400" />
+                          <div>
+                            <p className="font-medium">{owner.name}</p>
+                            <p className="text-sm text-gray-600">{owner.email}</p>
+                            <p className="text-xs text-gray-500">{owner.title}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant={owner.role === 'owner' ? 'default' : 'secondary'}>
+                            {owner.role}
+                          </Badge>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => removeOwner(index)}
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
     </AdminLayout>
   );

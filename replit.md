@@ -187,6 +187,13 @@ Changelog:
   * Moved AI Sentinel branding (logo and text) to top right of header
   * Updated sidebar navigation to link to simplified User Setup instead of Employee Management
   * Fixed database schema issues with company table structure and primary admin fields
+- July 10, 2025. Streamlined admin panel with enhanced company ownership management:
+  * Consolidated admin panel to single "Company Management" option for super-users
+  * Replaced employee management with multiple company owners system
+  * Added owner roles (owner/admin) with dedicated management interface
+  * Implemented add/remove owners functionality with form validation
+  * Enhanced company cards with "Manage Owners" button for direct access
+  * Simplified navigation structure removing duplicate company management options
 ```
 
 ## User Preferences

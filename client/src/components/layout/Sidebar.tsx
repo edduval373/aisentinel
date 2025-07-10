@@ -15,7 +15,8 @@ import {
   Activity,
   Users,
   Eye,
-  ChevronRight
+  ChevronRight,
+  Building
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -65,10 +66,9 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
     {
       id: "company-management",
       name: "Company Management", 
-      icon: Users,
+      icon: Building,
       items: [
-        { name: "Companies", href: "/admin/companies", icon: Users },
-        { name: "User Setup", href: "/company-setup", icon: Users },
+        { name: "Companies", href: "/admin/companies", icon: Building },
       ]
     }
   ];
