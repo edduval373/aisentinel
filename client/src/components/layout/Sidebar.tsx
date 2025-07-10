@@ -82,16 +82,6 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
         { name: "AI Models", href: "/admin/models", icon: Bot },
         { name: "Model Settings", href: "/admin/model-settings", icon: Settings },
       ]
-    },
-    {
-      id: "owners",
-      name: "Owners",
-      icon: Settings,
-      items: [
-        { name: "Content Policies", href: "/admin/policies", icon: BookOpen },
-        { name: "API Configuration", href: "/admin/api-config", icon: Settings },
-        { name: "Security Settings", href: "/admin/security-settings", icon: Shield },
-      ]
     }
   ];
 

@@ -216,6 +216,7 @@ Changelog:
 - July 10, 2025. Final sidebar reorganization to streamline navigation:
   * Removed User Management and Monitoring & Reports from Owners section
   * Moved AI Management from admin section to Owners section
+  * Removed Owners subsection from OWNERS header
   * Simplified structure: Company Setup under Owners, AI Management under Owners
   * Clean separation between super-user company management and owner controls
 ```
