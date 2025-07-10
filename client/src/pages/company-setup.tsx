@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Building, CheckCircle, Users, Settings, Eye } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
-import { apiRequest } from "@/lib/queryClient";
 
 interface Company {
   id: number;
@@ -24,11 +24,12 @@ interface Company {
 }
 
 interface Owner {
-  id: number;
-  name: string;
+  id: string;
+  firstName: string;
+  lastName: string;
   email: string;
-  title: string;
-  role: "owner" | "admin";
+  department?: string;
+  role: string;
 }
 
 export default function CompanySetup() {
@@ -38,7 +39,7 @@ export default function CompanySetup() {
   const [selectedCompanyId, setSelectedCompanyId] = useState<number | null>(null);
   const [editingOwner, setEditingOwner] = useState<Owner | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editForm, setEditForm] = useState({ name: "", email: "", title: "" });
+  const [editForm, setEditForm] = useState({ firstName: "", lastName: "", email: "", department: "" });
   const [isEditCompanyModalOpen, setIsEditCompanyModalOpen] = useState(false);
   const [companyEditForm, setCompanyEditForm] = useState({ name: "", domain: "", primaryAdminName: "", primaryAdminEmail: "", primaryAdminTitle: "" });
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
@@ -78,68 +79,108 @@ export default function CompanySetup() {
     setCurrentCompanyMutation.mutate(companyId);
   };
 
-  // Sample owners data - in a real app this would come from API
-  const [owners, setOwners] = useState<Owner[]>([
-    {
-      id: 1,
-      name: "Larry Ditto",
-      email: "larry.ditto@horizonedge.com",
-      title: "CEO",
-      role: "owner"
-    }
-  ]);
+  // Fetch owners from API
+  const { data: owners = [], isLoading: ownersLoading, refetch: refetchOwners } = useQuery({
+    queryKey: ["/api/company/owners", currentCompany?.id],
+    enabled: !!currentCompany?.id,
+  });
 
   const handleAddOwner = () => {
     setEditingOwner(null); // No owner selected means we're adding
-    setEditForm({ name: "", email: "", title: "" }); // Empty form
+    setEditForm({ firstName: "", lastName: "", email: "", department: "" }); // Empty form
     setIsEditModalOpen(true);
   };
 
   const handleEditOwner = (owner: Owner) => {
     setEditingOwner(owner);
     setEditForm({
-      name: owner.name,
+      firstName: owner.firstName,
+      lastName: owner.lastName,
       email: owner.email,
-      title: owner.title
+      department: owner.department || ""
     });
     setIsEditModalOpen(true);
   };
 
-  const handleSaveEdit = () => {
-    if (editForm.name && editForm.email && editForm.title) {
-      if (editingOwner) {
-        // Editing existing owner
-        setOwners(owners.map(o => 
-          o.id === editingOwner.id 
-            ? { ...o, name: editForm.name, email: editForm.email, title: editForm.title }
-            : o
-        ));
-        toast({ title: "Success", description: "Owner updated successfully" });
-      } else {
-        // Adding new owner
-        const newOwner: Owner = {
-          id: owners.length + 1,
-          name: editForm.name,
-          email: editForm.email,
-          title: editForm.title,
-          role: "owner"
-        };
-        setOwners([...owners, newOwner]);
-        toast({ title: "Success", description: "Owner added successfully" });
-      }
+  // Add owner mutation
+  const addOwnerMutation = useMutation({
+    mutationFn: (ownerData: { firstName: string; lastName: string; email: string; department?: string }) =>
+      apiRequest(`/api/company/owners`, "POST", { companyId: currentCompany?.id, ...ownerData }),
+    onSuccess: () => {
+      refetchOwners();
+      toast({ title: "Success", description: "Owner added successfully" });
       setIsEditModalOpen(false);
       setEditingOwner(null);
+    },
+    onError: (error: any) => {
+      toast({ 
+        title: "Error", 
+        description: error?.message || "Failed to add owner", 
+        variant: "destructive" 
+      });
+    },
+  });
+
+  // Update owner mutation
+  const updateOwnerMutation = useMutation({
+    mutationFn: (ownerData: { userId: string; firstName?: string; lastName?: string; email?: string; department?: string }) =>
+      apiRequest(`/api/company/owners/${ownerData.userId}`, "PUT", ownerData),
+    onSuccess: () => {
+      refetchOwners();
+      toast({ title: "Success", description: "Owner updated successfully" });
+      setIsEditModalOpen(false);
+      setEditingOwner(null);
+    },
+    onError: (error: any) => {
+      toast({ 
+        title: "Error", 
+        description: error?.message || "Failed to update owner", 
+        variant: "destructive" 
+      });
+    },
+  });
+
+  const handleSaveEdit = () => {
+    if (editForm.firstName && editForm.lastName && editForm.email) {
+      if (editingOwner) {
+        // Editing existing owner
+        updateOwnerMutation.mutate({
+          userId: editingOwner.id,
+          firstName: editForm.firstName,
+          lastName: editForm.lastName,
+          email: editForm.email,
+          department: editForm.department
+        });
+      } else {
+        // Adding new owner
+        addOwnerMutation.mutate({
+          firstName: editForm.firstName,
+          lastName: editForm.lastName,
+          email: editForm.email,
+          department: editForm.department
+        });
+      }
     }
   };
 
-  const handleDeleteOwner = () => {
-    if (editingOwner && window.confirm("Are you sure you want to delete this owner?")) {
-      setOwners(owners.filter(owner => owner.id !== editingOwner.id));
-      setIsEditModalOpen(false);
-      setEditingOwner(null);
+  // Remove owner mutation
+  const removeOwnerMutation = useMutation({
+    mutationFn: (userId: string) =>
+      apiRequest(`/api/company/owners/${userId}`, "DELETE", { companyId: currentCompany?.id }),
+    onSuccess: () => {
+      refetchOwners();
       toast({ title: "Success", description: "Owner deleted successfully" });
-    }
-  };
+      setIsDeleteConfirmOpen(false);
+      setOwnerToDelete(null);
+    },
+    onError: (error: any) => {
+      toast({ 
+        title: "Error", 
+        description: error?.message || "Failed to remove owner", 
+        variant: "destructive" 
+      });
+    },
+  });
 
   const handleEditCompany = (company: Company) => {
     setCompanyEditForm({
@@ -162,10 +203,7 @@ export default function CompanySetup() {
 
   const handleConfirmDelete = () => {
     if (ownerToDelete) {
-      setOwners(owners.filter(o => o.id !== ownerToDelete.id));
-      toast({ title: "Success", description: "Owner deleted successfully" });
-      setIsDeleteConfirmOpen(false);
-      setOwnerToDelete(null);
+      removeOwnerMutation.mutate(ownerToDelete.id);
     }
   };
 
@@ -289,45 +327,51 @@ export default function CompanySetup() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
-                {owners.map((owner) => (
-                  <div key={owner.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div>
-                      <h4 className="font-medium">{owner.name}</h4>
-                      <p className="text-sm text-gray-600">{owner.email}</p>
-                      <p className="text-sm text-gray-500">{owner.title}</p>
+              {ownersLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {owners.map((owner) => (
+                    <div key={owner.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div>
+                        <h4 className="font-medium">{owner.firstName} {owner.lastName}</h4>
+                        <p className="text-sm text-gray-600">{owner.email}</p>
+                        {owner.department && <p className="text-sm text-gray-500">{owner.department}</p>}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge variant={owner.role === 'owner' ? 'default' : 'secondary'}>
+                          {owner.role}
+                        </Badge>
+                        <button 
+                          onClick={() => handleEditOwner(owner)}
+                          className="text-green-600 hover:text-green-800 text-sm font-medium"
+                        >
+                          edit
+                        </button>
+                        <button 
+                          onClick={() => {
+                            if (owners.length === 1) {
+                              toast({ 
+                                title: "Cannot Delete", 
+                                description: "Cannot delete the last owner. At least one owner must remain.", 
+                                variant: "destructive" 
+                              });
+                              return;
+                            }
+                            setOwnerToDelete(owner);
+                            setIsDeleteConfirmOpen(true);
+                          }}
+                          className="text-red-600 hover:text-red-800 text-sm font-medium"
+                        >
+                          delete
+                        </button>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Badge variant={owner.role === 'owner' ? 'default' : 'secondary'}>
-                        {owner.role}
-                      </Badge>
-                      <button 
-                        onClick={() => handleEditOwner(owner)}
-                        className="text-green-600 hover:text-green-800 text-sm font-medium"
-                      >
-                        edit
-                      </button>
-                      <button 
-                        onClick={() => {
-                          if (owners.length === 1) {
-                            toast({ 
-                              title: "Cannot Delete", 
-                              description: "Cannot delete the last owner. At least one owner must remain.", 
-                              variant: "destructive" 
-                            });
-                            return;
-                          }
-                          setOwnerToDelete(owner);
-                          setIsDeleteConfirmOpen(true);
-                        }}
-                        className="text-red-600 hover:text-red-800 text-sm font-medium"
-                      >
-                        delete
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
         )}
@@ -387,12 +431,21 @@ export default function CompanySetup() {
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
+                <Label htmlFor="firstName">First Name</Label>
                 <Input
-                  id="name"
-                  value={editForm.name}
-                  onChange={(e) => setEditForm({...editForm, name: e.target.value})}
-                  placeholder="Enter full name"
+                  id="firstName"
+                  value={editForm.firstName}
+                  onChange={(e) => setEditForm({...editForm, firstName: e.target.value})}
+                  placeholder="Enter first name"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="lastName">Last Name</Label>
+                <Input
+                  id="lastName"
+                  value={editForm.lastName}
+                  onChange={(e) => setEditForm({...editForm, lastName: e.target.value})}
+                  placeholder="Enter last name"
                 />
               </div>
               <div className="space-y-2">
@@ -406,36 +459,26 @@ export default function CompanySetup() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="title">Title</Label>
+                <Label htmlFor="department">Department (Optional)</Label>
                 <Input
-                  id="title"
-                  value={editForm.title}
-                  onChange={(e) => setEditForm({...editForm, title: e.target.value})}
-                  placeholder="Enter job title"
+                  id="department"
+                  value={editForm.department}
+                  onChange={(e) => setEditForm({...editForm, department: e.target.value})}
+                  placeholder="Enter department"
                 />
               </div>
             </div>
-            <div className="flex gap-2">
-              <Button onClick={handleSaveEdit} className="flex-1">
-                {editingOwner ? 'Save Changes' : 'Add Owner'}
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => setIsEditModalOpen(false)}
-                className="flex-1"
-              >
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsEditModalOpen(false)}>
                 Cancel
               </Button>
-              {editingOwner && owners.length > 1 && (
-                <Button 
-                  variant="destructive" 
-                  onClick={handleDeleteOwner}
-                  className="flex-1"
-                >
-                  Delete
-                </Button>
-              )}
-            </div>
+              <Button 
+                onClick={handleSaveEdit}
+                disabled={addOwnerMutation.isPending || updateOwnerMutation.isPending}
+              >
+                {(addOwnerMutation.isPending || updateOwnerMutation.isPending) ? 'Saving...' : (editingOwner ? 'Update' : 'Add')} Owner
+              </Button>
+            </DialogFooter>
           </DialogContent>
         </Dialog>
 
@@ -496,18 +539,14 @@ export default function CompanySetup() {
                 />
               </div>
             </div>
-            <div className="flex gap-2">
-              <Button onClick={handleSaveCompanyEdit} className="flex-1">
-                Save Changes
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => setIsEditCompanyModalOpen(false)}
-                className="flex-1"
-              >
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsEditCompanyModalOpen(false)}>
                 Cancel
               </Button>
-            </div>
+              <Button onClick={handleSaveCompanyEdit}>
+                Save Changes
+              </Button>
+            </DialogFooter>
           </DialogContent>
         </Dialog>
 
@@ -527,10 +566,10 @@ export default function CompanySetup() {
             </DialogHeader>
             <div className="py-4">
               <p className="text-gray-600">
-                Are you sure you want to delete <span className="font-medium text-gray-900">{ownerToDelete?.name}</span>?
+                Are you sure you want to delete <span className="font-medium text-gray-900">{ownerToDelete?.firstName} {ownerToDelete?.lastName}</span>?
               </p>
             </div>
-            <div className="flex gap-3 justify-end">
+            <DialogFooter>
               <Button 
                 variant="outline" 
                 onClick={() => setIsDeleteConfirmOpen(false)}
@@ -540,10 +579,11 @@ export default function CompanySetup() {
               <Button 
                 variant="destructive" 
                 onClick={handleConfirmDelete}
+                disabled={removeOwnerMutation.isPending}
               >
-                Delete Owner
+                {removeOwnerMutation.isPending ? 'Deleting...' : 'Delete Owner'}
               </Button>
-            </div>
+            </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>

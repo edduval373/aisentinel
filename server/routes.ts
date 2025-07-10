@@ -187,6 +187,87 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Owner Management routes (Owner/Super-user only)
+  app.get('/api/company/owners/:companyId', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = await storage.getUser(req.user.claims.sub);
+      if (!['owner', 'super-user'].includes(user?.role || '')) {
+        return res.status(403).json({ message: "Owner or super-user access required" });
+      }
+      const companyId = parseInt(req.params.companyId);
+      
+      // Ensure user can only access their own company (unless super-user)
+      if (user?.role !== 'super-user' && user?.companyId !== companyId) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+      
+      const owners = await storage.getCompanyOwners(companyId);
+      res.json(owners);
+    } catch (error) {
+      console.error("Error fetching company owners:", error);
+      res.status(500).json({ message: "Failed to fetch company owners" });
+    }
+  });
+
+  app.post('/api/company/owners/:companyId', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = await storage.getUser(req.user.claims.sub);
+      if (!['owner', 'super-user'].includes(user?.role || '')) {
+        return res.status(403).json({ message: "Owner or super-user access required" });
+      }
+      const companyId = parseInt(req.params.companyId);
+      
+      // Ensure user can only modify their own company (unless super-user)
+      if (user?.role !== 'super-user' && user?.companyId !== companyId) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+      
+      const newOwner = await storage.addCompanyOwner(companyId, req.body);
+      res.json(newOwner);
+    } catch (error) {
+      console.error("Error adding company owner:", error);
+      res.status(500).json({ message: "Failed to add company owner" });
+    }
+  });
+
+  app.patch('/api/company/owners/:userId', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = await storage.getUser(req.user.claims.sub);
+      if (!['owner', 'super-user'].includes(user?.role || '')) {
+        return res.status(403).json({ message: "Owner or super-user access required" });
+      }
+      const userId = req.params.userId;
+      
+      const updatedOwner = await storage.updateCompanyOwner(userId, req.body);
+      res.json(updatedOwner);
+    } catch (error) {
+      console.error("Error updating company owner:", error);
+      res.status(500).json({ message: "Failed to update company owner" });
+    }
+  });
+
+  app.delete('/api/company/owners/:userId/:companyId', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = await storage.getUser(req.user.claims.sub);
+      if (!['owner', 'super-user'].includes(user?.role || '')) {
+        return res.status(403).json({ message: "Owner or super-user access required" });
+      }
+      const userId = req.params.userId;
+      const companyId = parseInt(req.params.companyId);
+      
+      // Ensure user can only modify their own company (unless super-user)
+      if (user?.role !== 'super-user' && user?.companyId !== companyId) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+      
+      await storage.removeCompanyOwner(userId, companyId);
+      res.json({ message: "Owner deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting company owner:", error);
+      res.status(500).json({ message: error.message || "Failed to delete company owner" });
+    }
+  });
+
   // Activity Types routes
   app.get('/api/activity-types', isAuthenticated, async (req: any, res) => {
     try {

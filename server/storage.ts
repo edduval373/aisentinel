@@ -44,6 +44,12 @@ export interface IStorage {
   addCompanyEmployee(employee: InsertCompanyEmployee): Promise<CompanyEmployee>;
   isEmployeeAuthorized(email: string, companyId: number): Promise<boolean>;
   
+  // Owner operations
+  getCompanyOwners(companyId: number): Promise<User[]>;
+  addCompanyOwner(companyId: number, userData: { firstName: string; lastName: string; email: string; department?: string }): Promise<User>;
+  updateCompanyOwner(userId: string, userData: { firstName?: string; lastName?: string; email?: string; department?: string }): Promise<User>;
+  removeCompanyOwner(userId: string, companyId: number): Promise<void>;
+  
   // AI Models operations
   getAiModels(companyId: number): Promise<AiModel[]>;
   getEnabledAiModels(companyId: number): Promise<AiModel[]>;
@@ -175,6 +181,63 @@ export class DatabaseStorage implements IStorage {
         eq(companyEmployees.isActive, true)
       ));
     return !!employee;
+  }
+
+  // Owner operations
+  async getCompanyOwners(companyId: number): Promise<User[]> {
+    return await db
+      .select()
+      .from(users)
+      .where(and(
+        eq(users.companyId, companyId),
+        eq(users.role, 'owner')
+      ))
+      .orderBy(users.firstName, users.lastName);
+  }
+
+  async addCompanyOwner(companyId: number, userData: { firstName: string; lastName: string; email: string; department?: string }): Promise<User> {
+    // Generate a temporary user ID (in real scenario, this would come from auth system)
+    const tempUserId = `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    const [newOwner] = await db
+      .insert(users)
+      .values({
+        id: tempUserId,
+        email: userData.email,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        department: userData.department,
+        role: 'owner',
+        companyId: companyId,
+      })
+      .returning();
+    return newOwner;
+  }
+
+  async updateCompanyOwner(userId: string, userData: { firstName?: string; lastName?: string; email?: string; department?: string }): Promise<User> {
+    const [updated] = await db
+      .update(users)
+      .set({
+        ...userData,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, userId))
+      .returning();
+    return updated;
+  }
+
+  async removeCompanyOwner(userId: string, companyId: number): Promise<void> {
+    // Only allow deletion if there's more than one owner
+    const owners = await this.getCompanyOwners(companyId);
+    if (owners.length <= 1) {
+      throw new Error("Cannot delete the last owner. At least one owner must remain.");
+    }
+    
+    await db.delete(users).where(and(
+      eq(users.id, userId),
+      eq(users.companyId, companyId),
+      eq(users.role, 'owner')
+    ));
   }
 
   // AI Models operations

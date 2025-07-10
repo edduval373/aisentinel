@@ -60,7 +60,7 @@ export const users = pgTable("users", {
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
-  role: varchar("role").default("user").notNull(), // user, admin
+  role: varchar("role").default("user").notNull(), // user, admin, owner, super-user
   companyId: integer("company_id").references(() => companies.id),
   department: varchar("department"),
   createdAt: timestamp("created_at").defaultNow(),
