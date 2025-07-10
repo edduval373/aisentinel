@@ -6,7 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
 import Landing from "@/pages/landing";
 import Home from "@/pages/home";
-import Admin from "@/pages/admin";
+import AdminCompanies from "@/pages/admin/companies";
 import AdminModels from "@/pages/admin/models";
 import AdminActivityTypes from "@/pages/admin/activity-types";
 import AdminUsers from "@/pages/admin/users";
@@ -33,7 +33,7 @@ function Router() {
       ) : (
         <>
           <Route path="/" component={Home} />
-          <Route path="/admin" component={Admin} />
+          <Route path="/admin" component={() => <AdminCompanies />} />
           <Route path="/admin/models" component={AdminModels} />
           <Route path="/admin/activity-types" component={AdminActivityTypes} />
           <Route path="/admin/users" component={AdminUsers} />

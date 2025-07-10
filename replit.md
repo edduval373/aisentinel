@@ -194,6 +194,12 @@ Changelog:
   * Implemented add/remove owners functionality with form validation
   * Enhanced company cards with "Manage Owners" button for direct access
   * Simplified navigation structure removing duplicate company management options
+- July 10, 2025. Enhanced company logo handling and direct admin access:
+  * Changed company logo from URL input to file picker with base64 encoding
+  * Removed "URL" text from logo field label for cleaner interface
+  * Modified admin route to go directly to Company Management instead of overview page
+  * Added Company Management as main navigation item for super-users
+  * Removed redundant expandable company management section from sidebar
 ```
 
 ## User Preferences

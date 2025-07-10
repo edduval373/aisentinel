@@ -62,13 +62,44 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
     },
   ];
 
+  // For super-users, add direct access to company management
+  if (isSuperUser) {
+    navigation.push({
+      name: "Company Management",
+      href: "/admin/companies",
+      icon: Building,
+      current: location === "/admin/companies" || location === "/admin",
+    });
+  }
+
   const superUserSections = [
     {
-      id: "company-management",
-      name: "Company Management", 
-      icon: Building,
+      id: "user-management",
+      name: "User Management", 
+      icon: Users,
       items: [
-        { name: "Companies", href: "/admin/companies", icon: Building },
+        { name: "Users", href: "/admin/users", icon: Users },
+        { name: "Roles", href: "/admin/roles", icon: Shield },
+      ]
+    },
+    {
+      id: "monitoring",
+      name: "Monitoring & Reports",
+      icon: Eye,
+      items: [
+        { name: "Activity Logs", href: "/admin/logs", icon: BarChart3 },
+        { name: "Security Reports", href: "/admin/security", icon: Shield },
+        { name: "Usage Analytics", href: "/admin/analytics", icon: BarChart3 },
+      ]
+    },
+    {
+      id: "system",
+      name: "System Settings",
+      icon: Settings,
+      items: [
+        { name: "Content Policies", href: "/admin/policies", icon: BookOpen },
+        { name: "API Configuration", href: "/admin/api-config", icon: Settings },
+        { name: "Security Settings", href: "/admin/security-settings", icon: Shield },
       ]
     }
   ];

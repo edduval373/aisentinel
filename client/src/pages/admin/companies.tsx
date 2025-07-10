@@ -156,9 +156,22 @@ export default function AdminCompanies() {
                         name="logo"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Company Logo URL (Optional)</FormLabel>
+                            <FormLabel>Company Logo (Optional)</FormLabel>
                             <FormControl>
-                              <Input placeholder="https://example.com/logo.png" {...field} />
+                              <Input 
+                                type="file" 
+                                accept="image/*"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) {
+                                    const reader = new FileReader();
+                                    reader.onload = (event) => {
+                                      field.onChange(event.target?.result as string);
+                                    };
+                                    reader.readAsDataURL(file);
+                                  }
+                                }}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
