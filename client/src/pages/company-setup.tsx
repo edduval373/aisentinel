@@ -214,10 +214,18 @@ export default function CompanySetup() {
         {currentCompany && (
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Building className="w-5 h-5" />
-                {currentCompany.name}
-                <Badge variant="default">Current Company</Badge>
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Building className="w-5 h-5" />
+                  {currentCompany.name}
+                  <Badge variant="default">Current Company</Badge>
+                </div>
+                <button 
+                  onClick={() => handleEditCompany(currentCompany)}
+                  className="text-green-600 hover:text-green-800 text-sm font-medium"
+                >
+                  edit
+                </button>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -279,22 +287,25 @@ export default function CompanySetup() {
                       >
                         edit
                       </button>
-                      {owners.length > 1 && (
-                        <button 
-                          onClick={() => {
-                            setEditingOwner(owner);
-                            setEditForm({
-                              name: owner.name,
-                              email: owner.email,
-                              title: owner.title
+                      <button 
+                        onClick={() => {
+                          if (owners.length === 1) {
+                            toast({ 
+                              title: "Cannot Delete", 
+                              description: "Cannot delete the last owner. At least one owner must remain.", 
+                              variant: "destructive" 
                             });
-                            setIsEditModalOpen(true);
-                          }}
-                          className="text-red-600 hover:text-red-800 text-sm font-medium"
-                        >
-                          delete
-                        </button>
-                      )}
+                            return;
+                          }
+                          if (window.confirm("Are you sure you want to delete this owner?")) {
+                            setOwners(owners.filter(o => o.id !== owner.id));
+                            toast({ title: "Success", description: "Owner deleted successfully" });
+                          }
+                        }}
+                        className="text-red-600 hover:text-red-800 text-sm font-medium"
+                      >
+                        delete
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -403,6 +414,75 @@ export default function CompanySetup() {
                   Delete
                 </Button>
               )}
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Edit Company Modal */}
+        <Dialog open={isEditCompanyModalOpen} onOpenChange={setIsEditCompanyModalOpen}>
+          <DialogContent className="sm:max-w-[500px]">
+            <DialogHeader>
+              <DialogTitle>Edit Company Information</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="companyName">Company Name</Label>
+                <Input
+                  id="companyName"
+                  value={companyEditForm.name}
+                  onChange={(e) => setCompanyEditForm({...companyEditForm, name: e.target.value})}
+                  placeholder="Enter company name"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="domain">Domain</Label>
+                <Input
+                  id="domain"
+                  value={companyEditForm.domain}
+                  onChange={(e) => setCompanyEditForm({...companyEditForm, domain: e.target.value})}
+                  placeholder="Enter company domain"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="adminName">Primary Admin Name</Label>
+                <Input
+                  id="adminName"
+                  value={companyEditForm.primaryAdminName}
+                  onChange={(e) => setCompanyEditForm({...companyEditForm, primaryAdminName: e.target.value})}
+                  placeholder="Enter admin name"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="adminEmail">Primary Admin Email</Label>
+                <Input
+                  id="adminEmail"
+                  type="email"
+                  value={companyEditForm.primaryAdminEmail}
+                  onChange={(e) => setCompanyEditForm({...companyEditForm, primaryAdminEmail: e.target.value})}
+                  placeholder="Enter admin email"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="adminTitle">Primary Admin Title</Label>
+                <Input
+                  id="adminTitle"
+                  value={companyEditForm.primaryAdminTitle}
+                  onChange={(e) => setCompanyEditForm({...companyEditForm, primaryAdminTitle: e.target.value})}
+                  placeholder="Enter admin title"
+                />
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button onClick={handleSaveCompanyEdit} className="flex-1">
+                Save Changes
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => setIsEditCompanyModalOpen(false)}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
             </div>
           </DialogContent>
         </Dialog>
