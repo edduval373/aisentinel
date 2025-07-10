@@ -35,16 +35,18 @@ export default function AdminActivityTypes() {
 
   // Redirect if not admin
   useEffect(() => {
-    if (!isLoading && (!isAuthenticated || (!user?.role?.includes('admin') && !user?.email?.includes('admin') && !user?.email?.includes('ed.duval15@gmail.com')))) {
+    if (!isLoading && !isAuthenticated) {
       toast({
         title: "Unauthorized",
-        description: "You need admin privileges to access this page.",
+        description: "You are logged out. Logging in again...",
         variant: "destructive",
       });
-      window.location.href = "/";
+      setTimeout(() => {
+        window.location.href = "/api/login";
+      }, 500);
       return;
     }
-  }, [isAuthenticated, isLoading, user, toast]);
+  }, [isAuthenticated, isLoading, toast]);
 
   // Fetch activity types from database
   const { data: activityTypes, isLoading: typesLoading } = useQuery<ActivityType[]>({
