@@ -70,6 +70,7 @@ export const users = pgTable("users", {
 // AI Models configuration
 export const aiModels = pgTable("ai_models", {
   id: serial("id").primaryKey(),
+  companyId: integer("company_id").references(() => companies.id).notNull(),
   name: varchar("name").notNull(),
   provider: varchar("provider").notNull(), // openai, anthropic
   modelId: varchar("model_id").notNull(),
@@ -80,6 +81,7 @@ export const aiModels = pgTable("ai_models", {
 // Activity types configuration
 export const activityTypes = pgTable("activity_types", {
   id: serial("id").primaryKey(),
+  companyId: integer("company_id").references(() => companies.id).notNull(),
   name: varchar("name").notNull(),
   description: text("description"),
   prePrompt: text("pre_prompt"), // System prompt to guide AI behavior for this activity type
@@ -92,6 +94,7 @@ export const activityTypes = pgTable("activity_types", {
 // User activities tracking
 export const userActivities = pgTable("user_activities", {
   id: serial("id").primaryKey(),
+  companyId: integer("company_id").references(() => companies.id).notNull(),
   userId: varchar("user_id").references(() => users.id).notNull(),
   aiModelId: integer("ai_model_id").references(() => aiModels.id).notNull(),
   activityTypeId: integer("activity_type_id").references(() => activityTypes.id).notNull(),
@@ -105,6 +108,7 @@ export const userActivities = pgTable("user_activities", {
 // Chat sessions
 export const chatSessions = pgTable("chat_sessions", {
   id: serial("id").primaryKey(),
+  companyId: integer("company_id").references(() => companies.id).notNull(),
   userId: varchar("user_id").references(() => users.id).notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
@@ -113,6 +117,7 @@ export const chatSessions = pgTable("chat_sessions", {
 // Chat messages
 export const chatMessages = pgTable("chat_messages", {
   id: serial("id").primaryKey(),
+  companyId: integer("company_id").references(() => companies.id).notNull(),
   sessionId: integer("session_id").references(() => chatSessions.id).notNull(),
   userId: varchar("user_id").references(() => users.id).notNull(),
   aiModelId: integer("ai_model_id").references(() => aiModels.id).notNull(),

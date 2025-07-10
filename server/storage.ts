@@ -45,21 +45,21 @@ export interface IStorage {
   isEmployeeAuthorized(email: string, companyId: number): Promise<boolean>;
   
   // AI Models operations
-  getAiModels(): Promise<AiModel[]>;
-  getEnabledAiModels(): Promise<AiModel[]>;
+  getAiModels(companyId: number): Promise<AiModel[]>;
+  getEnabledAiModels(companyId: number): Promise<AiModel[]>;
   createAiModel(model: InsertAiModel): Promise<AiModel>;
   updateAiModel(id: number, model: Partial<InsertAiModel>): Promise<AiModel>;
   
   // Activity Types operations
-  getActivityTypes(): Promise<ActivityType[]>;
-  getEnabledActivityTypes(): Promise<ActivityType[]>;
+  getActivityTypes(companyId: number): Promise<ActivityType[]>;
+  getEnabledActivityTypes(companyId: number): Promise<ActivityType[]>;
   createActivityType(activityType: InsertActivityType): Promise<ActivityType>;
   updateActivityType(id: number, activityType: Partial<InsertActivityType>): Promise<ActivityType>;
   
   // User Activities operations
   createUserActivity(activity: InsertUserActivity): Promise<UserActivity>;
-  getUserActivities(userId?: string, limit?: number): Promise<UserActivity[]>;
-  getActivityStats(): Promise<{
+  getUserActivities(companyId: number, userId?: string, limit?: number): Promise<UserActivity[]>;
+  getActivityStats(companyId: number): Promise<{
     totalConversations: number;
     securityBlocks: number;
     activeUsers: number;
@@ -68,9 +68,9 @@ export interface IStorage {
   
   // Chat operations
   createChatSession(session: InsertChatSession): Promise<ChatSession>;
-  getChatSession(id: number): Promise<ChatSession | undefined>;
+  getChatSession(id: number, companyId: number): Promise<ChatSession | undefined>;
   createChatMessage(message: InsertChatMessage): Promise<ChatMessage>;
-  getChatMessages(sessionId: number): Promise<ChatMessage[]>;
+  getChatMessages(sessionId: number, companyId: number): Promise<ChatMessage[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -178,12 +178,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   // AI Models operations
-  async getAiModels(): Promise<AiModel[]> {
-    return await db.select().from(aiModels).orderBy(aiModels.name);
+  async getAiModels(companyId: number): Promise<AiModel[]> {
+    return await db.select().from(aiModels).where(eq(aiModels.companyId, companyId)).orderBy(aiModels.name);
   }
 
-  async getEnabledAiModels(): Promise<AiModel[]> {
-    return await db.select().from(aiModels).where(eq(aiModels.isEnabled, true)).orderBy(aiModels.name);
+  async getEnabledAiModels(companyId: number): Promise<AiModel[]> {
+    return await db.select().from(aiModels).where(and(eq(aiModels.companyId, companyId), eq(aiModels.isEnabled, true))).orderBy(aiModels.name);
   }
 
   async createAiModel(model: InsertAiModel): Promise<AiModel> {
@@ -201,12 +201,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Activity Types operations
-  async getActivityTypes(): Promise<ActivityType[]> {
-    return await db.select().from(activityTypes).orderBy(activityTypes.name);
+  async getActivityTypes(companyId: number): Promise<ActivityType[]> {
+    return await db.select().from(activityTypes).where(eq(activityTypes.companyId, companyId)).orderBy(activityTypes.name);
   }
 
-  async getEnabledActivityTypes(): Promise<ActivityType[]> {
-    return await db.select().from(activityTypes).where(eq(activityTypes.isEnabled, true)).orderBy(activityTypes.name);
+  async getEnabledActivityTypes(companyId: number): Promise<ActivityType[]> {
+    return await db.select().from(activityTypes).where(and(eq(activityTypes.companyId, companyId), eq(activityTypes.isEnabled, true))).orderBy(activityTypes.name);
   }
 
   async createActivityType(activityType: InsertActivityType): Promise<ActivityType> {
@@ -229,17 +229,20 @@ export class DatabaseStorage implements IStorage {
     return created;
   }
 
-  async getUserActivities(userId?: string, limit: number = 50): Promise<UserActivity[]> {
-    const query = db.select().from(userActivities);
+  async getUserActivities(companyId: number, userId?: string, limit: number = 50): Promise<UserActivity[]> {
+    let whereCondition = eq(userActivities.companyId, companyId);
     
     if (userId) {
-      query.where(eq(userActivities.userId, userId));
+      whereCondition = and(whereCondition, eq(userActivities.userId, userId));
     }
     
-    return await query.orderBy(desc(userActivities.timestamp)).limit(limit);
+    return await db.select().from(userActivities)
+      .where(whereCondition)
+      .orderBy(desc(userActivities.timestamp))
+      .limit(limit);
   }
 
-  async getActivityStats(): Promise<{
+  async getActivityStats(companyId: number): Promise<{
     totalConversations: number;
     securityBlocks: number;
     activeUsers: number;
@@ -247,22 +250,27 @@ export class DatabaseStorage implements IStorage {
   }> {
     const [totalConversations] = await db
       .select({ count: count() })
-      .from(userActivities);
+      .from(userActivities)
+      .where(eq(userActivities.companyId, companyId));
 
     const [securityBlocks] = await db
       .select({ count: count() })
       .from(userActivities)
-      .where(eq(userActivities.status, 'blocked'));
+      .where(and(eq(userActivities.companyId, companyId), eq(userActivities.status, 'blocked')));
 
     const [activeUsers] = await db
       .select({ count: sql<number>`COUNT(DISTINCT ${userActivities.userId})` })
       .from(userActivities)
-      .where(sql`${userActivities.timestamp} >= NOW() - INTERVAL '24 hours'`);
+      .where(and(
+        eq(userActivities.companyId, companyId),
+        sql`${userActivities.timestamp} >= NOW() - INTERVAL '24 hours'`
+      ));
 
     const [policyViolations] = await db
       .select({ count: count() })
       .from(userActivities)
       .where(and(
+        eq(userActivities.companyId, companyId),
         eq(userActivities.status, 'blocked'),
         sql`${userActivities.timestamp} >= NOW() - INTERVAL '7 days'`
       ));
@@ -281,8 +289,8 @@ export class DatabaseStorage implements IStorage {
     return created;
   }
 
-  async getChatSession(id: number): Promise<ChatSession | undefined> {
-    const [session] = await db.select().from(chatSessions).where(eq(chatSessions.id, id));
+  async getChatSession(id: number, companyId: number): Promise<ChatSession | undefined> {
+    const [session] = await db.select().from(chatSessions).where(and(eq(chatSessions.id, id), eq(chatSessions.companyId, companyId)));
     return session;
   }
 
@@ -291,11 +299,11 @@ export class DatabaseStorage implements IStorage {
     return created;
   }
 
-  async getChatMessages(sessionId: number): Promise<ChatMessage[]> {
+  async getChatMessages(sessionId: number, companyId: number): Promise<ChatMessage[]> {
     return await db
       .select()
       .from(chatMessages)
-      .where(eq(chatMessages.sessionId, sessionId))
+      .where(and(eq(chatMessages.sessionId, sessionId), eq(chatMessages.companyId, companyId)))
       .orderBy(chatMessages.timestamp);
   }
 }

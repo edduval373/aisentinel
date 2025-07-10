@@ -28,9 +28,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // AI Models routes
-  app.get('/api/ai-models', isAuthenticated, async (req, res) => {
+  app.get('/api/ai-models', isAuthenticated, async (req: any, res) => {
     try {
-      const models = await storage.getEnabledAiModels();
+      const user = await storage.getUser(req.user.claims.sub);
+      if (!user?.companyId) {
+        return res.status(400).json({ message: "No company associated with user" });
+      }
+      const models = await storage.getEnabledAiModels(user.companyId);
       res.json(models);
     } catch (error) {
       console.error("Error fetching AI models:", error);
@@ -44,7 +48,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (user?.role !== 'admin') {
         return res.status(403).json({ message: "Admin access required" });
       }
-      const models = await storage.getAiModels();
+      if (!user?.companyId) {
+        return res.status(400).json({ message: "No company associated with user" });
+      }
+      const models = await storage.getAiModels(user.companyId);
       res.json(models);
     } catch (error) {
       console.error("Error fetching AI models:", error);
@@ -58,7 +65,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (user?.role !== 'admin') {
         return res.status(403).json({ message: "Admin access required" });
       }
-      const model = await storage.createAiModel(req.body);
+      if (!user?.companyId) {
+        return res.status(400).json({ message: "No company associated with user" });
+      }
+      const model = await storage.createAiModel({ ...req.body, companyId: user.companyId });
       res.json(model);
     } catch (error) {
       console.error("Error creating AI model:", error);
@@ -178,9 +188,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Activity Types routes
-  app.get('/api/activity-types', isAuthenticated, async (req, res) => {
+  app.get('/api/activity-types', isAuthenticated, async (req: any, res) => {
     try {
-      const types = await storage.getEnabledActivityTypes();
+      const user = await storage.getUser(req.user.claims.sub);
+      if (!user?.companyId) {
+        return res.status(400).json({ message: "No company associated with user" });
+      }
+      const types = await storage.getEnabledActivityTypes(user.companyId);
       res.json(types);
     } catch (error) {
       console.error("Error fetching activity types:", error);
@@ -194,7 +208,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (user?.role !== 'admin') {
         return res.status(403).json({ message: "Admin access required" });
       }
-      const types = await storage.getActivityTypes();
+      if (!user?.companyId) {
+        return res.status(400).json({ message: "No company associated with user" });
+      }
+      const types = await storage.getActivityTypes(user.companyId);
       res.json(types);
     } catch (error) {
       console.error("Error fetching activity types:", error);
@@ -208,7 +225,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (user?.role !== 'admin') {
         return res.status(403).json({ message: "Admin access required" });
       }
-      const activityType = await storage.createActivityType(req.body);
+      if (!user?.companyId) {
+        return res.status(400).json({ message: "No company associated with user" });
+      }
+      const activityType = await storage.createActivityType({ ...req.body, companyId: user.companyId });
       res.json(activityType);
     } catch (error) {
       console.error("Error creating activity type:", error);
@@ -235,7 +255,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/user-activities', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const activities = await storage.getUserActivities(userId);
+      const user = await storage.getUser(userId);
+      if (!user?.companyId) {
+        return res.status(400).json({ message: "No company associated with user" });
+      }
+      const activities = await storage.getUserActivities(user.companyId, userId);
       res.json(activities);
     } catch (error) {
       console.error("Error fetching user activities:", error);
@@ -249,7 +273,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (user?.role !== 'admin') {
         return res.status(403).json({ message: "Admin access required" });
       }
-      const activities = await storage.getUserActivities();
+      if (!user?.companyId) {
+        return res.status(400).json({ message: "No company associated with user" });
+      }
+      const activities = await storage.getUserActivities(user.companyId);
       res.json(activities);
     } catch (error) {
       console.error("Error fetching user activities:", error);
@@ -263,7 +290,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (user?.role !== 'admin') {
         return res.status(403).json({ message: "Admin access required" });
       }
-      const stats = await storage.getActivityStats();
+      if (!user?.companyId) {
+        return res.status(400).json({ message: "No company associated with user" });
+      }
+      const stats = await storage.getActivityStats(user.companyId);
       res.json(stats);
     } catch (error) {
       console.error("Error fetching stats:", error);
@@ -304,6 +334,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.claims.sub;
       const { message, aiModelId, activityTypeId, sessionId } = req.body;
 
+      // Get user's company context
+      const user = await storage.getUser(userId);
+      if (!user?.companyId) {
+        return res.status(400).json({ message: "No company associated with user" });
+      }
+
       // Validate input
       const validationResult = insertChatMessageSchema.safeParse({
         sessionId,
@@ -326,6 +362,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (filterResult.blocked) {
         // Log blocked activity
         await storage.createUserActivity({
+          companyId: user.companyId,
           userId,
           aiModelId,
           activityTypeId,
@@ -347,6 +384,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Create chat message
       const chatMessage = await storage.createChatMessage({
+        companyId: user.companyId,
         sessionId,
         userId,
         aiModelId,
@@ -359,6 +397,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Log activity
       await storage.createUserActivity({
+        companyId: user.companyId,
         userId,
         aiModelId,
         activityTypeId,
@@ -378,7 +417,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/chat/session', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const session = await storage.createChatSession({ userId });
+      const user = await storage.getUser(userId);
+      if (!user?.companyId) {
+        return res.status(400).json({ message: "No company associated with user" });
+      }
+      const session = await storage.createChatSession({ companyId: user.companyId, userId });
       res.json(session);
     } catch (error) {
       console.error("Error creating chat session:", error);
@@ -389,7 +432,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/chat/session/:id/messages', isAuthenticated, async (req: any, res) => {
     try {
       const sessionId = parseInt(req.params.id);
-      const messages = await storage.getChatMessages(sessionId);
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      if (!user?.companyId) {
+        return res.status(400).json({ message: "No company associated with user" });
+      }
+      const messages = await storage.getChatMessages(sessionId, user.companyId);
       res.json(messages);
     } catch (error) {
       console.error("Error fetching chat messages:", error);
@@ -440,73 +488,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
 async function initializeDefaultData() {
   try {
-    // Initialize default AI models
-    const existingModels = await storage.getAiModels();
-    if (existingModels.length === 0) {
-      await storage.createAiModel({
-        name: "GPT-4",
-        provider: "openai",
-        modelId: "gpt-4o",
-        isEnabled: true,
-      });
-      await storage.createAiModel({
-        name: "GPT-3.5 Turbo",
-        provider: "openai",
-        modelId: "gpt-3.5-turbo",
-        isEnabled: true,
-      });
-      await storage.createAiModel({
-        name: "Claude 3",
-        provider: "anthropic",
-        modelId: "claude-sonnet-4-20250514",
-        isEnabled: true,
-      });
-    }
-
-    // Initialize default activity types
-    const existingTypes = await storage.getActivityTypes();
-    if (existingTypes.length === 0) {
-      await storage.createActivityType({
-        name: "General Inquiry",
-        description: "General questions and inquiries",
-        prePrompt: "You are a helpful assistant providing accurate and informative responses to general inquiries. Be concise, professional, and ensure your information is current and accurate.",
-        riskLevel: "low",
-        permissions: ["read"],
-        isEnabled: true,
-      });
-      await storage.createActivityType({
-        name: "Code Review",
-        description: "Code analysis and review",
-        prePrompt: "You are a senior software engineer conducting code review. Focus on code quality, security vulnerabilities, best practices, and performance optimization. Provide specific, actionable feedback and suggest improvements. Consider maintainability and scalability.",
-        riskLevel: "high",
-        permissions: ["read", "analyze", "audit"],
-        isEnabled: true,
-      });
-      await storage.createActivityType({
-        name: "Documentation",
-        description: "Documentation writing and review",
-        prePrompt: "You are a technical writer specializing in clear, comprehensive documentation. Help create well-structured, easy-to-understand documentation that serves its intended audience. Focus on clarity, completeness, and usability.",
-        riskLevel: "low",
-        permissions: ["read", "write", "edit"],
-        isEnabled: true,
-      });
-      await storage.createActivityType({
-        name: "Brainstorming",
-        description: "Creative brainstorming sessions",
-        prePrompt: "You are a creative brainstorming assistant. Help users generate innovative ideas and solutions. Focus on being creative, encouraging, and exploring multiple perspectives. Ask clarifying questions to understand the challenge better.",
-        riskLevel: "low",
-        permissions: ["read", "write"],
-        isEnabled: true,
-      });
-      await storage.createActivityType({
-        name: "Data Analysis",
-        description: "Data analysis and insights",
-        prePrompt: "You are a data analysis expert. Help users understand their data, identify patterns, and draw meaningful insights. Always ask about the data source, structure, and analysis goals. Provide step-by-step explanations and suggest appropriate visualization techniques.",
-        riskLevel: "medium",
-        permissions: ["read", "write", "analyze"],
-        isEnabled: false, // Disabled by default for security
-      });
-    }
+    // Skip initialization since it's now handled per company
+    // Default data will be created when companies are created
+    console.log("Skipping global initialization - data will be created per company");
   } catch (error) {
     console.error("Error initializing default data:", error);
   }
