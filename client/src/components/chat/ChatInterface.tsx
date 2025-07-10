@@ -7,10 +7,10 @@ import { isUnauthorizedError } from "@/lib/authUtils";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Download, Wifi, WifiOff, Shield } from "lucide-react";
+import { Download, Wifi, WifiOff, Shield, Building2 } from "lucide-react";
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
-import type { AiModel, ActivityType, ChatMessage as ChatMessageType } from "@shared/schema";
+import type { AiModel, ActivityType, ChatMessage as ChatMessageType, Company } from "@shared/schema";
 
 interface ChatInterfaceProps {
   currentSession: number | null;
@@ -47,6 +47,23 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   // Fetch activity types
   const { data: activityTypes, isLoading: typesLoading } = useQuery<ActivityType[]>({
     queryKey: ['/api/activity-types'],
+    onError: (error) => {
+      if (isUnauthorizedError(error)) {
+        toast({
+          title: "Unauthorized",
+          description: "You are logged out. Logging in again...",
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          window.location.href = "/api/login";
+        }, 500);
+      }
+    },
+  });
+
+  // Fetch current company details
+  const { data: currentCompany, isLoading: companyLoading } = useQuery<Company>({
+    queryKey: ['/api/user/current-company'],
     onError: (error) => {
       if (isUnauthorizedError(error)) {
         toast({
@@ -264,6 +281,26 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
             </div>
           </div>
           <div className="flex items-center space-x-4">
+            {/* Company Info Display */}
+            {currentCompany && (
+              <div className="flex items-center space-x-3 bg-slate-50 rounded-lg px-3 py-2 border border-slate-200">
+                {currentCompany.logo ? (
+                  <img 
+                    src={currentCompany.logo} 
+                    alt={`${currentCompany.name} logo`}
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-sentinel-blue flex items-center justify-center">
+                    <Building2 className="w-4 h-4 text-white" />
+                  </div>
+                )}
+                <div className="flex flex-col">
+                  <span className="text-sm font-medium text-slate-800">{currentCompany.name}</span>
+                  <span className="text-xs text-slate-500">ID: {currentCompany.id}</span>
+                </div>
+              </div>
+            )}
             {/* AI Model Dropdown */}
             <Select
               value={selectedModel?.toString()}
