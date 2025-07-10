@@ -97,6 +97,7 @@ export default function Home() {
               size="sm"
               onClick={() => setSidebarOpen(true)}
               className="text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+              style={{ transform: 'translateY(10px)' }}
             >
               <AISentinelIcon className="w-14 h-14" />
             </Button>
