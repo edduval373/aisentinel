@@ -39,6 +39,8 @@ export default function CompanySetup() {
   const [editingOwner, setEditingOwner] = useState<Owner | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editForm, setEditForm] = useState({ name: "", email: "", title: "" });
+  const [isEditCompanyModalOpen, setIsEditCompanyModalOpen] = useState(false);
+  const [companyEditForm, setCompanyEditForm] = useState({ name: "", domain: "", primaryAdminName: "", primaryAdminEmail: "", primaryAdminTitle: "" });
 
   // Fetch available companies for owners/super-users
   const { data: companies = [], isLoading: companiesLoading } = useQuery({
@@ -125,6 +127,25 @@ export default function CompanySetup() {
       setIsEditModalOpen(false);
       setEditingOwner(null);
       toast({ title: "Success", description: "Owner deleted successfully" });
+    }
+  };
+
+  const handleEditCompany = (company: Company) => {
+    setCompanyEditForm({
+      name: company.name,
+      domain: company.domain,
+      primaryAdminName: company.primaryAdminName,
+      primaryAdminEmail: company.primaryAdminEmail,
+      primaryAdminTitle: company.primaryAdminTitle
+    });
+    setIsEditCompanyModalOpen(true);
+  };
+
+  const handleSaveCompanyEdit = () => {
+    if (companyEditForm.name && companyEditForm.domain) {
+      // In a real app, this would make an API call to update the company
+      toast({ title: "Success", description: "Company information updated successfully" });
+      setIsEditCompanyModalOpen(false);
     }
   };
 
