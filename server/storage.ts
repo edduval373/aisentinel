@@ -121,7 +121,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getCompanies(): Promise<Company[]> {
-    return await db.select().from(companies).orderBy(companies.companyName);
+    return await db.select().from(companies).orderBy(companies.name);
   }
 
   async createCompany(company: InsertCompany): Promise<Company> {

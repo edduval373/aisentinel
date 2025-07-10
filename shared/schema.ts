@@ -29,9 +29,9 @@ export const companies = pgTable("companies", {
   id: serial("id").primaryKey(),
   name: varchar("name").notNull(),
   domain: varchar("domain").unique().notNull(), // e.g., "example.com"
-  primaryAdminName: varchar("primary_admin_name").notNull(),
-  primaryAdminEmail: varchar("primary_admin_email").notNull(),
-  primaryAdminTitle: varchar("primary_admin_title").notNull(),
+  primaryAdminName: varchar("primary_admin_name"),
+  primaryAdminEmail: varchar("primary_admin_email"),
+  primaryAdminTitle: varchar("primary_admin_title"),
   logo: varchar("logo"),
   settings: jsonb("settings"),
   isActive: boolean("is_active").default(true),

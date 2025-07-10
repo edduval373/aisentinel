@@ -1,7 +1,9 @@
 import { useAuth } from "@/hooks/useAuth";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Shield, Wifi, WifiOff, Download } from "lucide-react";
+import iconPath from "@assets/icononly_nobuffer_1752067577689.png";
 
 interface HeaderProps {
   title: string;
@@ -24,10 +26,30 @@ export default function Header({
 }: HeaderProps) {
   const { user } = useAuth();
 
+  // Get user's company info
+  const { data: userCompany } = useQuery({
+    queryKey: ["/api/admin/companies", user?.companyId],
+    enabled: !!user?.companyId,
+  });
+
   return (
     <div className="bg-white border-b border-slate-200 p-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
+          {/* Company Logo and Name */}
+          {userCompany && (
+            <div className="flex items-center space-x-3">
+              {userCompany.logo && (
+                <img 
+                  src={userCompany.logo} 
+                  alt={`${userCompany.name} logo`}
+                  className="w-8 h-8 object-contain rounded"
+                />
+              )}
+              <span className="font-semibold text-slate-800">{userCompany.name}</span>
+            </div>
+          )}
+          
           <h2 className="text-lg font-semibold text-slate-800">{title}</h2>
           {subtitle && (
             <Badge variant="secondary" className="text-xs">
@@ -49,6 +71,18 @@ export default function Header({
         </div>
         
         <div className="flex items-center space-x-4">
+          {/* AI Sentinel Logo and Title */}
+          <div className="flex items-center space-x-2">
+            <div className="w-6 h-6 bg-black rounded flex items-center justify-center p-0.5">
+              <img 
+                src={iconPath} 
+                alt="AI Sentinel" 
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <span className="text-sm font-medium text-slate-700">AI Sentinel</span>
+          </div>
+          
           {children}
           
           {showExportButton && onExportReport && (

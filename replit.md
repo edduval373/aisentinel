@@ -180,6 +180,13 @@ Changelog:
   * Enhanced company setup to require primary administrator contact information (name, email, title)
   * Added database fields for tracking company's primary administrator details
   * Updated company creation form with mandatory admin contact validation
+- July 10, 2025. Simplified user interface and enhanced company branding:
+  * Removed complex employee management tabs, keeping only streamlined user setup
+  * Added company logo upload capability to company creation form
+  * Reorganized header layout to display company name and logo on top left
+  * Moved AI Sentinel branding (logo and text) to top right of header
+  * Updated sidebar navigation to link to simplified User Setup instead of Employee Management
+  * Fixed database schema issues with company table structure and primary admin fields
 ```
 
 ## User Preferences
