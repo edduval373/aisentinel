@@ -246,6 +246,11 @@ Changelog:
   * Updated display format to match AI Sentinel Dashboard style with logo and company name
   * Company ID now shows in parentheses after company name (e.g., "Horizon Edge Enterprises (1)")
   * Simplified layout with inline styling and compact logo design
+- July 10, 2025. Final header layout improvements:
+  * Moved AI Sentinel logo and text to top right corner, changed "Dashboard" to "Chat"
+  * Replaced hamburger menu with AI Sentinel logo for consistent branding
+  * Positioned company logo, name, and ID next to menu button on top left
+  * Created clean visual hierarchy: menu logo → company info (left) | AI Sentinel branding (right)
 ```
 
 ## User Preferences

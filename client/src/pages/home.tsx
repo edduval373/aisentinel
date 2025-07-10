@@ -98,7 +98,7 @@ export default function Home() {
               onClick={() => setSidebarOpen(true)}
               className="text-slate-600 hover:text-slate-900 hover:bg-slate-100"
             >
-              ☰
+              <AISentinelIcon className="w-8 h-8" />
             </Button>
             <CompanyInfo />
           </div>
