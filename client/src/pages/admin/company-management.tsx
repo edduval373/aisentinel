@@ -70,8 +70,13 @@ export default function CompanyManagement() {
       companyForm.reset();
       toast({ title: "Success", description: "Company created successfully" });
     },
-    onError: () => {
-      toast({ title: "Error", description: "Failed to create company", variant: "destructive" });
+    onError: (error: any) => {
+      console.error("Company creation error:", error);
+      toast({ 
+        title: "Error", 
+        description: error?.message || "Failed to create company", 
+        variant: "destructive" 
+      });
     },
   });
 
@@ -86,8 +91,13 @@ export default function CompanyManagement() {
       companyForm.reset();
       toast({ title: "Success", description: "Company updated successfully" });
     },
-    onError: () => {
-      toast({ title: "Error", description: "Failed to update company", variant: "destructive" });
+    onError: (error: any) => {
+      console.error("Company update error:", error);
+      toast({ 
+        title: "Error", 
+        description: error?.message || "Failed to update company", 
+        variant: "destructive" 
+      });
     },
   });
 

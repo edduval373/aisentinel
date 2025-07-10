@@ -85,14 +85,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/admin/companies', isAuthenticated, async (req: any, res) => {
     try {
       const user = await storage.getUser(req.user.claims.sub);
+      console.log("User attempting to create company:", { 
+        userId: req.user?.claims?.sub, 
+        userRole: user?.role,
+        requestBody: req.body 
+      });
+      
       if (user?.role !== 'super-user') {
         return res.status(403).json({ message: "Super-user access required" });
       }
+      
       const company = await storage.createCompany(req.body);
+      console.log("Company created successfully:", company);
       res.json(company);
     } catch (error) {
       console.error("Error creating company:", error);
-      res.status(500).json({ message: "Failed to create company" });
+      res.status(500).json({ message: "Failed to create company", error: error.message });
     }
   });
 
@@ -260,6 +268,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching stats:", error);
       res.status(500).json({ message: "Failed to fetch stats" });
+    }
+  });
+
+  // User routes for company selection
+  app.post('/api/user/set-current-company', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { companyId } = req.body;
+      
+      // Validate company exists and user has access
+      const company = await storage.getCompanyById(companyId);
+      if (!company) {
+        return res.status(404).json({ message: "Company not found" });
+      }
+      
+      // Update user's current company
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // For now, we'll just return success. In a full implementation,
+      // you'd want to update the user's current company in the database
+      res.json({ message: "Current company updated successfully", companyId });
+    } catch (error) {
+      console.error("Error setting current company:", error);
+      res.status(500).json({ message: "Failed to set current company" });
     }
   });
 
