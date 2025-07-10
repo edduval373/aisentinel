@@ -258,7 +258,22 @@ export default function CompanySetup() {
                       >
                         edit
                       </button>
-
+                      {owners.length > 1 && (
+                        <button 
+                          onClick={() => {
+                            setEditingOwner(owner);
+                            setEditForm({
+                              name: owner.name,
+                              email: owner.email,
+                              title: owner.title
+                            });
+                            setIsEditModalOpen(true);
+                          }}
+                          className="text-red-600 hover:text-red-800 text-sm font-medium"
+                        >
+                          delete
+                        </button>
+                      )}
                     </div>
                   </div>
                 ))}
