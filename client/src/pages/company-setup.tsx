@@ -5,6 +5,9 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Building, CheckCircle, Users, Settings, Eye } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { apiRequest } from "@/lib/queryClient";
@@ -33,6 +36,9 @@ export default function CompanySetup() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [selectedCompanyId, setSelectedCompanyId] = useState<number | null>(null);
+  const [editingOwner, setEditingOwner] = useState<Owner | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editForm, setEditForm] = useState({ name: "", email: "", title: "" });
 
   // Fetch available companies for owners/super-users
   const { data: companies = [], isLoading: companiesLoading } = useQuery({
@@ -91,23 +97,38 @@ export default function CompanySetup() {
   };
 
   const handleEditOwner = (owner: Owner) => {
-    // Simple edit - you can implement inline editing or a modal later
-    const newName = prompt("Edit name:", owner.name);
-    const newEmail = prompt("Edit email:", owner.email);
-    const newTitle = prompt("Edit title:", owner.title);
-    
-    if (newName && newEmail && newTitle) {
+    setEditingOwner(owner);
+    setEditForm({
+      name: owner.name,
+      email: owner.email,
+      title: owner.title
+    });
+    setIsEditModalOpen(true);
+  };
+
+  const handleSaveEdit = () => {
+    if (editingOwner && editForm.name && editForm.email && editForm.title) {
       setOwners(owners.map(o => 
-        o.id === owner.id 
-          ? { ...o, name: newName, email: newEmail, title: newTitle }
+        o.id === editingOwner.id 
+          ? { ...o, name: editForm.name, email: editForm.email, title: editForm.title }
           : o
       ));
+      setIsEditModalOpen(false);
+      setEditingOwner(null);
+      toast({ title: "Success", description: "Owner updated successfully" });
     }
   };
 
-  const handleRemoveOwner = (id: number) => {
-    setOwners(owners.filter(owner => owner.id !== id));
+  const handleDeleteOwner = () => {
+    if (editingOwner && window.confirm("Are you sure you want to delete this owner?")) {
+      setOwners(owners.filter(owner => owner.id !== editingOwner.id));
+      setIsEditModalOpen(false);
+      setEditingOwner(null);
+      toast({ title: "Success", description: "Owner deleted successfully" });
+    }
   };
+
+
 
   if (companiesLoading) {
     return (
@@ -237,14 +258,7 @@ export default function CompanySetup() {
                       >
                         edit
                       </button>
-                      {owners.length > 1 && (
-                        <button 
-                          onClick={() => handleRemoveOwner(owner.id)}
-                          className="text-red-600 hover:text-red-800 text-sm font-medium"
-                        >
-                          delete
-                        </button>
-                      )}
+
                     </div>
                   </div>
                 ))}
@@ -296,6 +310,66 @@ export default function CompanySetup() {
             </CardContent>
           </Card>
         )}
+
+        {/* Edit Owner Modal */}
+        <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Edit Owner</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Name</Label>
+                <Input
+                  id="name"
+                  value={editForm.name}
+                  onChange={(e) => setEditForm({...editForm, name: e.target.value})}
+                  placeholder="Enter full name"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={editForm.email}
+                  onChange={(e) => setEditForm({...editForm, email: e.target.value})}
+                  placeholder="Enter email address"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="title">Title</Label>
+                <Input
+                  id="title"
+                  value={editForm.title}
+                  onChange={(e) => setEditForm({...editForm, title: e.target.value})}
+                  placeholder="Enter job title"
+                />
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button onClick={handleSaveEdit} className="flex-1">
+                Save Changes
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => setIsEditModalOpen(false)}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              {owners.length > 1 && (
+                <Button 
+                  variant="destructive" 
+                  onClick={handleDeleteOwner}
+                  className="flex-1"
+                >
+                  Delete
+                </Button>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </AdminLayout>
   );
