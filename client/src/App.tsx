@@ -6,7 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
 import Landing from "@/pages/landing";
 import Home from "@/pages/home";
-import AdminCompanies from "@/pages/admin/companies";
+import CompanyManagement from "@/pages/admin/company-management";
 import AdminModels from "@/pages/admin/models";
 import AdminActivityTypes from "@/pages/admin/activity-types";
 import AdminUsers from "@/pages/admin/users";
@@ -19,7 +19,6 @@ import AdminApiConfig from "@/pages/admin/api-config";
 import AdminSecuritySettings from "@/pages/admin/security-settings";
 import AdminPermissions from "@/pages/admin/permissions";
 import AdminModelSettings from "@/pages/admin/model-settings";
-import AdminCompanies from "@/pages/admin/companies";
 import CompanySetup from "@/pages/company-setup";
 import NotFound from "@/pages/not-found";
 
@@ -33,7 +32,7 @@ function Router() {
       ) : (
         <>
           <Route path="/" component={Home} />
-          <Route path="/admin" component={() => <AdminCompanies />} />
+          <Route path="/admin" component={CompanyManagement} />
           <Route path="/admin/models" component={AdminModels} />
           <Route path="/admin/activity-types" component={AdminActivityTypes} />
           <Route path="/admin/users" component={AdminUsers} />
@@ -46,7 +45,7 @@ function Router() {
           <Route path="/admin/security-settings" component={AdminSecuritySettings} />
           <Route path="/admin/permissions" component={AdminPermissions} />
           <Route path="/admin/model-settings" component={AdminModelSettings} />
-          <Route path="/admin/companies" component={AdminCompanies} />
+          <Route path="/admin/companies" component={CompanyManagement} />
           <Route path="/company-setup" component={CompanySetup} />
         </>
       )}
