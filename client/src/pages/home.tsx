@@ -34,14 +34,14 @@ const CompanyInfo = () => {
         <img 
           src={currentCompany.logo} 
           alt={`${currentCompany.name} logo`}
-          className="w-6 h-6 rounded object-cover"
+          className="w-8 h-8 rounded object-cover"
         />
       ) : (
-        <div className="w-6 h-6 rounded bg-slate-300 flex items-center justify-center">
-          <Building2 className="w-3 h-3 text-slate-600" />
+        <div className="w-8 h-8 rounded bg-slate-300 flex items-center justify-center">
+          <Building2 className="w-4 h-4 text-slate-600" />
         </div>
       )}
-      <span className="text-sm font-medium text-slate-700">
+      <span className="text-lg font-semibold text-slate-800">
         {currentCompany.name} ({currentCompany.id})
       </span>
     </div>
@@ -105,7 +105,6 @@ export default function Home() {
           </div>
           
           <div className="flex items-center space-x-3">
-            <AISentinelIcon className="w-8 h-8" />
             <h1 className="text-lg font-semibold text-slate-800">AI Sentinel Chat</h1>
           </div>
         </div>
