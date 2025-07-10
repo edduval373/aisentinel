@@ -5,16 +5,9 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Building, CheckCircle, Users, Settings, Eye, Edit } from "lucide-react";
+import { Building, CheckCircle, Users, Settings, Eye } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { apiRequest } from "@/lib/queryClient";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 
 interface Company {
   id: number;
@@ -35,22 +28,11 @@ interface Owner {
   role: "owner" | "admin";
 }
 
-const ownerFormSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  email: z.string().email("Please enter a valid email"),
-  title: z.string().min(1, "Title is required"),
-  role: z.enum(["owner", "admin"], {
-    required_error: "Please select a role",
-  }),
-});
-
 export default function CompanySetup() {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [selectedCompanyId, setSelectedCompanyId] = useState<number | null>(null);
-  const [isOwnerDialogOpen, setIsOwnerDialogOpen] = useState(false);
-  const [editingOwner, setEditingOwner] = useState<Owner | null>(null);
 
   // Fetch available companies for owners/super-users
   const { data: companies = [], isLoading: companiesLoading } = useQuery({
@@ -97,62 +79,34 @@ export default function CompanySetup() {
     }
   ]);
 
-  const form = useForm<z.infer<typeof ownerFormSchema>>({
-    resolver: zodResolver(ownerFormSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      title: "",
-      role: "owner",
-    },
-  });
-
   const handleAddOwner = () => {
-    setEditingOwner(null);
-    form.reset({
-      name: "",
-      email: "",
-      title: "",
-      role: "owner",
-    });
-    setIsOwnerDialogOpen(true);
+    const newOwner: Owner = {
+      id: owners.length + 1,
+      name: "New Owner",
+      email: "new.owner@company.com",
+      title: "Executive",
+      role: "owner"
+    };
+    setOwners([...owners, newOwner]);
   };
 
   const handleEditOwner = (owner: Owner) => {
-    setEditingOwner(owner);
-    form.reset({
-      name: owner.name,
-      email: owner.email,
-      title: owner.title,
-      role: owner.role,
-    });
-    setIsOwnerDialogOpen(true);
+    // Simple edit - you can implement inline editing or a modal later
+    const newName = prompt("Edit name:", owner.name);
+    const newEmail = prompt("Edit email:", owner.email);
+    const newTitle = prompt("Edit title:", owner.title);
+    
+    if (newName && newEmail && newTitle) {
+      setOwners(owners.map(o => 
+        o.id === owner.id 
+          ? { ...o, name: newName, email: newEmail, title: newTitle }
+          : o
+      ));
+    }
   };
 
   const handleRemoveOwner = (id: number) => {
     setOwners(owners.filter(owner => owner.id !== id));
-  };
-
-  const onSubmitOwner = (values: z.infer<typeof ownerFormSchema>) => {
-    if (editingOwner) {
-      // Edit existing owner
-      setOwners(owners.map(owner => 
-        owner.id === editingOwner.id 
-          ? { ...owner, ...values }
-          : owner
-      ));
-      toast({ title: "Success", description: "Owner updated successfully" });
-    } else {
-      // Add new owner
-      const newOwner: Owner = {
-        id: owners.length + 1,
-        ...values,
-      };
-      setOwners([...owners, newOwner]);
-      toast({ title: "Success", description: "Owner added successfully" });
-    }
-    setIsOwnerDialogOpen(false);
-    setEditingOwner(null);
   };
 
   if (companiesLoading) {
@@ -259,97 +213,9 @@ export default function CompanySetup() {
                   <Users className="w-5 h-5" />
                   Owners
                 </div>
-                <Dialog open={isOwnerDialogOpen} onOpenChange={setIsOwnerDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button onClick={handleAddOwner} size="sm">
-                      Add Owner
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                      <DialogTitle>
-                        {editingOwner ? "Edit Owner" : "Add New Owner"}
-                      </DialogTitle>
-                    </DialogHeader>
-                    <Form {...form}>
-                      <form onSubmit={form.handleSubmit(onSubmitOwner)} className="space-y-4">
-                        <FormField
-                          control={form.control}
-                          name="name"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Name</FormLabel>
-                              <FormControl>
-                                <Input placeholder="Enter full name" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={form.control}
-                          name="email"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Email</FormLabel>
-                              <FormControl>
-                                <Input placeholder="Enter email address" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={form.control}
-                          name="title"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Title</FormLabel>
-                              <FormControl>
-                                <Input placeholder="Enter job title" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={form.control}
-                          name="role"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Role</FormLabel>
-                              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                <FormControl>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Select a role" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  <SelectItem value="owner">Owner</SelectItem>
-                                  <SelectItem value="admin">Admin</SelectItem>
-                                </SelectContent>
-                              </Select>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <div className="flex gap-2 pt-4">
-                          <Button type="submit" className="flex-1">
-                            {editingOwner ? "Update Owner" : "Add Owner"}
-                          </Button>
-                          <Button 
-                            type="button" 
-                            variant="outline" 
-                            onClick={() => setIsOwnerDialogOpen(false)}
-                            className="flex-1"
-                          >
-                            Cancel
-                          </Button>
-                        </div>
-                      </form>
-                    </Form>
-                  </DialogContent>
-                </Dialog>
+                <Button onClick={handleAddOwner} size="sm">
+                  Add Owner
+                </Button>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -365,23 +231,19 @@ export default function CompanySetup() {
                       <Badge variant={owner.role === 'owner' ? 'default' : 'secondary'}>
                         {owner.role}
                       </Badge>
-                      <Button 
-                        variant="outline" 
-                        size="sm"
+                      <button 
                         onClick={() => handleEditOwner(owner)}
-                        className="text-blue-500 hover:text-blue-700"
+                        className="text-green-600 hover:text-green-800 text-sm font-medium"
                       >
-                        <Edit className="w-4 h-4" />
-                      </Button>
+                        edit
+                      </button>
                       {owners.length > 1 && (
-                        <Button 
-                          variant="outline" 
-                          size="sm"
+                        <button 
                           onClick={() => handleRemoveOwner(owner.id)}
-                          className="text-red-500 hover:text-red-700"
+                          className="text-red-600 hover:text-red-800 text-sm font-medium"
                         >
-                          Remove
-                        </Button>
+                          delete
+                        </button>
                       )}
                     </div>
                   </div>
