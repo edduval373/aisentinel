@@ -72,9 +72,21 @@ export default function CompanyManagement() {
     },
     onError: (error: any) => {
       console.error("Company creation error:", error);
+      let errorMessage = "Failed to create company";
+      
+      if (error?.message) {
+        if (error.message.includes("request entity too large")) {
+          errorMessage = "Company logo is too large. Please use a smaller image (under 5MB).";
+        } else if (error.message.includes("413")) {
+          errorMessage = "Upload file is too large. Please use a smaller image.";
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
       toast({ 
         title: "Error", 
-        description: error?.message || "Failed to create company", 
+        description: errorMessage, 
         variant: "destructive" 
       });
     },
@@ -241,7 +253,7 @@ export default function CompanyManagement() {
                     name="logo"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Company Logo (Optional)</FormLabel>
+                        <FormLabel>Company Logo (Optional - Max 5MB)</FormLabel>
                         <FormControl>
                           <Input 
                             type="file" 
@@ -249,6 +261,17 @@ export default function CompanyManagement() {
                             onChange={(e) => {
                               const file = e.target.files?.[0];
                               if (file) {
+                                // Check file size (limit to 5MB)
+                                const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+                                if (file.size > maxSize) {
+                                  toast({
+                                    title: "File too large",
+                                    description: "Please select an image smaller than 5MB",
+                                    variant: "destructive",
+                                  });
+                                  return;
+                                }
+                                
                                 const reader = new FileReader();
                                 reader.onload = (event) => {
                                   field.onChange(event.target?.result as string);
@@ -418,7 +441,7 @@ export default function CompanyManagement() {
                   name="logo"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Company Logo (Optional)</FormLabel>
+                      <FormLabel>Company Logo (Optional - Max 5MB)</FormLabel>
                       <FormControl>
                         <Input 
                           type="file" 
@@ -426,6 +449,17 @@ export default function CompanyManagement() {
                           onChange={(e) => {
                             const file = e.target.files?.[0];
                             if (file) {
+                              // Check file size (limit to 5MB)
+                              const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+                              if (file.size > maxSize) {
+                                toast({
+                                  title: "File too large",
+                                  description: "Please select an image smaller than 5MB",
+                                  variant: "destructive",
+                                });
+                                return;
+                              }
+                              
                               const reader = new FileReader();
                               reader.onload = (event) => {
                                 field.onChange(event.target?.result as string);
