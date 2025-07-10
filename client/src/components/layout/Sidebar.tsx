@@ -74,6 +74,14 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 
   const superUserSections = [
     {
+      id: "company-setup",
+      name: "Company Setup",
+      icon: Building,
+      items: [
+        { name: "Setup Company", href: "/admin/company-setup", icon: Building },
+      ]
+    },
+    {
       id: "user-management",
       name: "User Management", 
       icon: Users,
@@ -93,8 +101,8 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       ]
     },
     {
-      id: "system",
-      name: "System Settings",
+      id: "owners",
+      name: "Owners",
       icon: Settings,
       items: [
         { name: "Content Policies", href: "/admin/policies", icon: BookOpen },
@@ -222,7 +230,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
             <>
               <div className="pt-4 pb-2">
                 <h3 className="text-slate-400 text-xs font-semibold uppercase tracking-wider">
-                  System Management
+                  SUPER-USER
                 </h3>
               </div>
               

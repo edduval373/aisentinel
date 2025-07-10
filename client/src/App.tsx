@@ -47,6 +47,7 @@ function Router() {
           <Route path="/admin/model-settings" component={AdminModelSettings} />
           <Route path="/admin/companies" component={CompanyManagement} />
           <Route path="/company-setup" component={CompanySetup} />
+          <Route path="/admin/company-setup" component={CompanySetup} />
         </>
       )}
       <Route component={NotFound} />
