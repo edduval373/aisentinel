@@ -70,29 +70,19 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       items: [
         { name: "Setup Company", href: "/admin/company-setup", icon: Building },
       ]
-    },
-    {
-      id: "user-management",
-      name: "User Management", 
-      icon: Users,
-      items: [
-        { name: "Users", href: "/admin/users", icon: Users },
-        { name: "Roles", href: "/admin/roles", icon: Shield },
-      ]
-    },
-    {
-      id: "monitoring",
-      name: "Monitoring & Reports",
-      icon: Eye,
-      items: [
-        { name: "Activity Logs", href: "/admin/logs", icon: BarChart3 },
-        { name: "Security Reports", href: "/admin/security", icon: Shield },
-        { name: "Usage Analytics", href: "/admin/analytics", icon: BarChart3 },
-      ]
     }
   ];
 
   const ownersSections = [
+    {
+      id: "ai-management",
+      name: "AI Management",
+      icon: Bot,
+      items: [
+        { name: "AI Models", href: "/admin/models", icon: Bot },
+        { name: "Model Settings", href: "/admin/model-settings", icon: Settings },
+      ]
+    },
     {
       id: "owners",
       name: "Owners",

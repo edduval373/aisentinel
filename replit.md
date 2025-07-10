@@ -213,6 +213,11 @@ Changelog:
   * Moved "API Configuration" under the "Owners" section with other owner controls
   * Fixed database schema by removing problematic settings column
   * Organized sidebar hierarchy: SUPER-USER → Company Management → Owners → Company Setup
+- July 10, 2025. Final sidebar reorganization to streamline navigation:
+  * Removed User Management and Monitoring & Reports from Owners section
+  * Moved AI Management from admin section to Owners section
+  * Simplified structure: Company Setup under Owners, AI Management under Owners
+  * Clean separation between super-user company management and owner controls
 ```
 
 ## User Preferences
