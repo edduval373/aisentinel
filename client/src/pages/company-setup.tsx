@@ -5,7 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Building, CheckCircle, Users, Settings, Eye } from "lucide-react";
@@ -372,6 +372,9 @@ export default function CompanySetup() {
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>Edit Owner</DialogTitle>
+              <DialogDescription>
+                Update the owner's name, email, and job title.
+              </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
@@ -432,6 +435,9 @@ export default function CompanySetup() {
           <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
               <DialogTitle>Edit Company Information</DialogTitle>
+              <DialogDescription>
+                Update your company details and administrator information.
+              </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
@@ -506,13 +512,13 @@ export default function CompanySetup() {
                 </svg>
                 Confirm Deletion
               </DialogTitle>
+              <DialogDescription>
+                This action cannot be undone.
+              </DialogDescription>
             </DialogHeader>
             <div className="py-4">
               <p className="text-gray-600">
                 Are you sure you want to delete <span className="font-medium text-gray-900">{ownerToDelete?.name}</span>?
-              </p>
-              <p className="text-sm text-gray-500 mt-2">
-                This action cannot be undone.
               </p>
             </div>
             <div className="flex gap-3 justify-end">
