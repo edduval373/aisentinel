@@ -15,8 +15,11 @@ import { Building, Plus, Users, Mail, Calendar } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
 
 const companySchema = z.object({
-  companyName: z.string().min(1, "Company name is required"),
+  name: z.string().min(1, "Company name is required"),
   domain: z.string().min(1, "Domain is required").regex(/^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Invalid domain format"),
+  primaryAdminName: z.string().min(1, "Primary administrator name is required"),
+  primaryAdminEmail: z.string().email("Valid email required for primary administrator"),
+  primaryAdminTitle: z.string().min(1, "Primary administrator title is required"),
   isActive: z.boolean().default(true),
 });
 
@@ -37,8 +40,11 @@ export default function AdminCompanies() {
   const companyForm = useForm<z.infer<typeof companySchema>>({
     resolver: zodResolver(companySchema),
     defaultValues: {
-      companyName: "",
+      name: "",
       domain: "",
+      primaryAdminName: "",
+      primaryAdminEmail: "",
+      primaryAdminTitle: "",
       isActive: true,
     },
   });
@@ -173,7 +179,7 @@ export default function AdminCompanies() {
                     <form onSubmit={companyForm.handleSubmit(onSubmitCompany)} className="space-y-4">
                       <FormField
                         control={companyForm.control}
-                        name="companyName"
+                        name="name"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Company Name</FormLabel>
@@ -197,6 +203,52 @@ export default function AdminCompanies() {
                           </FormItem>
                         )}
                       />
+                      
+                      <div className="border-t pt-4">
+                        <h4 className="font-medium text-sm mb-3">Primary Company Administrator</h4>
+                        <div className="space-y-3">
+                          <FormField
+                            control={companyForm.control}
+                            name="primaryAdminName"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Full Name</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="John Smith" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={companyForm.control}
+                            name="primaryAdminEmail"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Email Address</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="john.smith@acme.com" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={companyForm.control}
+                            name="primaryAdminTitle"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Job Title</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="IT Director" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      </div>
+                      
                       <Button type="submit" className="w-full" disabled={createCompanyMutation.isPending}>
                         {createCompanyMutation.isPending ? "Creating..." : "Create Company"}
                       </Button>
@@ -225,8 +277,11 @@ export default function AdminCompanies() {
                   >
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="font-semibold">{company.companyName}</h3>
+                        <h3 className="font-semibold">{company.name}</h3>
                         <p className="text-sm text-gray-600">{company.domain}</p>
+                        {company.primaryAdminName && (
+                          <p className="text-xs text-gray-500">Admin: {company.primaryAdminName}</p>
+                        )}
                       </div>
                       <Badge variant={company.isActive ? "default" : "secondary"}>
                         {company.isActive ? "Active" : "Inactive"}
@@ -245,7 +300,7 @@ export default function AdminCompanies() {
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2">
                 <Users className="h-5 w-5" />
-                {selectedCompany ? `${selectedCompany.companyName} Employees` : 'Select Company'}
+                {selectedCompany ? `${selectedCompany.name} Employees` : 'Select Company'}
               </CardTitle>
               {selectedCompany && (
                 <Dialog open={showAddEmployee} onOpenChange={setShowAddEmployee}>
@@ -402,10 +457,10 @@ export default function AdminCompanies() {
                   <div>
                     <CardTitle className="flex items-center gap-2">
                       <Users className="h-5 w-5" />
-                      {selectedCompany.companyName} Employees
+                      {selectedCompany.name} Employees
                     </CardTitle>
                     <CardDescription>
-                      Manage employee access for {selectedCompany.companyName}
+                      Manage employee access for {selectedCompany.name}
                     </CardDescription>
                   </div>
                   <Dialog open={showAddEmployee} onOpenChange={setShowAddEmployee}>
@@ -417,7 +472,7 @@ export default function AdminCompanies() {
                     </DialogTrigger>
                     <DialogContent>
                       <DialogHeader>
-                        <DialogTitle>Add Employee to {selectedCompany.companyName}</DialogTitle>
+                        <DialogTitle>Add Employee to {selectedCompany.name}</DialogTitle>
                       </DialogHeader>
                       <Form {...employeeForm}>
                         <form onSubmit={employeeForm.handleSubmit(onSubmitEmployee)} className="space-y-4">

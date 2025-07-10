@@ -68,7 +68,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       icon: Users,
       items: [
         { name: "Companies", href: "/admin/companies", icon: Users },
-        { name: "Employee Management", href: "/admin/companies", icon: Building },
+        { name: "Employee Management", href: "/admin/companies", icon: Users },
       ]
     }
   ];

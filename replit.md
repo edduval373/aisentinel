@@ -177,6 +177,9 @@ Changelog:
   * Added role-based sidebar visibility controls for different user types
   * Super-users can now manage companies and employees in unified interface
   * Fixed routing issues with dynamic imports causing React rendering errors
+  * Enhanced company setup to require primary administrator contact information (name, email, title)
+  * Added database fields for tracking company's primary administrator details
+  * Updated company creation form with mandatory admin contact validation
 ```
 
 ## User Preferences
