@@ -81,6 +81,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Company Management routes
+  app.post('/api/admin/companies', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = await storage.getUser(req.user.claims.sub);
+      if (user?.role !== 'admin') {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+      const company = await storage.createCompany(req.body);
+      res.json(company);
+    } catch (error) {
+      console.error("Error creating company:", error);
+      res.status(500).json({ message: "Failed to create company" });
+    }
+  });
+
+  app.post('/api/admin/company-employees', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = await storage.getUser(req.user.claims.sub);
+      if (user?.role !== 'admin') {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+      const employee = await storage.addCompanyEmployee(req.body);
+      res.json(employee);
+    } catch (error) {
+      console.error("Error adding employee:", error);
+      res.status(500).json({ message: "Failed to add employee" });
+    }
+  });
+
   // Activity Types routes
   app.get('/api/activity-types', isAuthenticated, async (req, res) => {
     try {

@@ -24,6 +24,32 @@ export const sessions = pgTable(
   (table) => [index("IDX_session_expire").on(table.expire)],
 );
 
+// Companies table
+export const companies = pgTable("companies", {
+  id: serial("id").primaryKey(),
+  name: varchar("name").notNull(),
+  domain: varchar("domain").unique().notNull(), // e.g., "example.com"
+  logo: varchar("logo"),
+  settings: jsonb("settings"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Company employees table
+export const companyEmployees = pgTable("company_employees", {
+  id: serial("id").primaryKey(),
+  companyId: integer("company_id").references(() => companies.id),
+  email: varchar("email").notNull(),
+  role: varchar("role").default("employee"), // employee, admin, owner
+  department: varchar("department"),
+  isActive: boolean("is_active").default(true),
+  addedAt: timestamp("added_at").defaultNow(),
+}, (table) => [
+  index("idx_company_employee_email").on(table.email),
+  index("idx_company_employee_company").on(table.companyId),
+]);
+
 // User storage table.
 // (IMPORTANT) This table is mandatory for Replit Auth, don't drop it.
 export const users = pgTable("users", {
@@ -33,6 +59,8 @@ export const users = pgTable("users", {
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
   role: varchar("role").default("user").notNull(), // user, admin
+  companyId: integer("company_id").references(() => companies.id),
+  department: varchar("department"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -95,6 +123,8 @@ export const chatMessages = pgTable("chat_messages", {
 });
 
 // Insert schemas
+export const insertCompanySchema = createInsertSchema(companies).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertCompanyEmployeeSchema = createInsertSchema(companyEmployees).omit({ id: true, addedAt: true });
 export const insertUserSchema = createInsertSchema(users).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertAiModelSchema = createInsertSchema(aiModels).omit({ id: true, createdAt: true });
 export const insertActivityTypeSchema = createInsertSchema(activityTypes).omit({ id: true, createdAt: true });
@@ -103,6 +133,10 @@ export const insertChatSessionSchema = createInsertSchema(chatSessions).omit({ i
 export const insertChatMessageSchema = createInsertSchema(chatMessages).omit({ id: true, timestamp: true });
 
 // Types
+export type Company = typeof companies.$inferSelect;
+export type InsertCompany = z.infer<typeof insertCompanySchema>;
+export type CompanyEmployee = typeof companyEmployees.$inferSelect;
+export type InsertCompanyEmployee = z.infer<typeof insertCompanyEmployeeSchema>;
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
 export type AiModel = typeof aiModels.$inferSelect;

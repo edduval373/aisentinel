@@ -59,7 +59,9 @@ AI Sentinel is a comprehensive enterprise AI governance platform that provides s
 2. Middleware checks session validity
 3. Redirects to Replit Auth if unauthenticated
 4. Creates/updates user record on successful auth
-5. Establishes session with role-based permissions
+5. **Company-based authorization**: Checks if user's email domain matches registered company
+6. **Employee verification**: Validates user is on company's authorized employee list
+7. Establishes session with role-based permissions and company association
 
 ### AI Interaction Flow
 1. User selects AI model and activity type
@@ -160,6 +162,14 @@ Changelog:
   * Added toggle functionality for enabling/disabling activity types
   * Enhanced UI to display pre-prompts, risk levels, and permissions for each activity type
   * Initialized default activity types with specific pre-prompts for different use cases
+- July 10, 2025. Implemented company-based authentication system:
+  * Added companies and company_employees tables to database schema
+  * Created automatic company assignment based on email domain matching
+  * Implemented employee authorization system for controlled access
+  * Added company management routes and storage methods
+  * Users are now automatically signed in if they're on their company's employee list
+  * Enhanced authentication flow to include company-based verification
+  * Added admin routes for company and employee management
 ```
 
 ## User Preferences

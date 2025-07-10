@@ -1,5 +1,7 @@
 import {
   users,
+  companies,
+  companyEmployees,
   aiModels,
   activityTypes,
   userActivities,
@@ -7,6 +9,10 @@ import {
   chatMessages,
   type User,
   type UpsertUser,
+  type Company,
+  type InsertCompany,
+  type CompanyEmployee,
+  type InsertCompanyEmployee,
   type AiModel,
   type InsertAiModel,
   type ActivityType,
@@ -26,6 +32,13 @@ export interface IStorage {
   // User operations (IMPORTANT: mandatory for Replit Auth)
   getUser(id: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
+  
+  // Company operations
+  getCompanyByDomain(domain: string): Promise<Company | undefined>;
+  createCompany(company: InsertCompany): Promise<Company>;
+  getCompanyEmployees(companyId: number): Promise<CompanyEmployee[]>;
+  addCompanyEmployee(employee: InsertCompanyEmployee): Promise<CompanyEmployee>;
+  isEmployeeAuthorized(email: string, companyId: number): Promise<boolean>;
   
   // AI Models operations
   getAiModels(): Promise<AiModel[]>;
@@ -64,6 +77,20 @@ export class DatabaseStorage implements IStorage {
   }
 
   async upsertUser(userData: UpsertUser): Promise<User> {
+    // Check if user's email domain matches a company and auto-assign
+    if (userData.email) {
+      const emailDomain = userData.email.split('@')[1];
+      const company = await this.getCompanyByDomain(emailDomain);
+      
+      if (company && company.isActive) {
+        // Check if user is authorized employee
+        const isAuthorized = await this.isEmployeeAuthorized(userData.email, company.id);
+        if (isAuthorized) {
+          userData.companyId = company.id;
+        }
+      }
+    }
+
     const [user] = await db
       .insert(users)
       .values(userData)
@@ -76,6 +103,38 @@ export class DatabaseStorage implements IStorage {
       })
       .returning();
     return user;
+  }
+
+  // Company operations
+  async getCompanyByDomain(domain: string): Promise<Company | undefined> {
+    const [company] = await db.select().from(companies).where(eq(companies.domain, domain));
+    return company;
+  }
+
+  async createCompany(company: InsertCompany): Promise<Company> {
+    const [created] = await db.insert(companies).values(company).returning();
+    return created;
+  }
+
+  async getCompanyEmployees(companyId: number): Promise<CompanyEmployee[]> {
+    return await db.select().from(companyEmployees).where(eq(companyEmployees.companyId, companyId));
+  }
+
+  async addCompanyEmployee(employee: InsertCompanyEmployee): Promise<CompanyEmployee> {
+    const [created] = await db.insert(companyEmployees).values(employee).returning();
+    return created;
+  }
+
+  async isEmployeeAuthorized(email: string, companyId: number): Promise<boolean> {
+    const [employee] = await db
+      .select()
+      .from(companyEmployees)
+      .where(and(
+        eq(companyEmployees.email, email),
+        eq(companyEmployees.companyId, companyId),
+        eq(companyEmployees.isActive, true)
+      ));
+    return !!employee;
   }
 
   // AI Models operations
