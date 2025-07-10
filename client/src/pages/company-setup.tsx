@@ -90,14 +90,9 @@ export default function CompanySetup() {
   ]);
 
   const handleAddOwner = () => {
-    const newOwner: Owner = {
-      id: owners.length + 1,
-      name: "New Owner",
-      email: "new.owner@company.com",
-      title: "Executive",
-      role: "owner"
-    };
-    setOwners([...owners, newOwner]);
+    setEditingOwner(null); // No owner selected means we're adding
+    setEditForm({ name: "", email: "", title: "" }); // Empty form
+    setIsEditModalOpen(true);
   };
 
   const handleEditOwner = (owner: Owner) => {
@@ -111,15 +106,29 @@ export default function CompanySetup() {
   };
 
   const handleSaveEdit = () => {
-    if (editingOwner && editForm.name && editForm.email && editForm.title) {
-      setOwners(owners.map(o => 
-        o.id === editingOwner.id 
-          ? { ...o, name: editForm.name, email: editForm.email, title: editForm.title }
-          : o
-      ));
+    if (editForm.name && editForm.email && editForm.title) {
+      if (editingOwner) {
+        // Editing existing owner
+        setOwners(owners.map(o => 
+          o.id === editingOwner.id 
+            ? { ...o, name: editForm.name, email: editForm.email, title: editForm.title }
+            : o
+        ));
+        toast({ title: "Success", description: "Owner updated successfully" });
+      } else {
+        // Adding new owner
+        const newOwner: Owner = {
+          id: owners.length + 1,
+          name: editForm.name,
+          email: editForm.email,
+          title: editForm.title,
+          role: "owner"
+        };
+        setOwners([...owners, newOwner]);
+        toast({ title: "Success", description: "Owner added successfully" });
+      }
       setIsEditModalOpen(false);
       setEditingOwner(null);
-      toast({ title: "Success", description: "Owner updated successfully" });
     }
   };
 
@@ -371,9 +380,9 @@ export default function CompanySetup() {
         <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Edit Owner</DialogTitle>
+              <DialogTitle>{editingOwner ? 'Edit Owner' : 'Add New Owner'}</DialogTitle>
               <DialogDescription>
-                Update the owner's name, email, and job title.
+                {editingOwner ? 'Update the owner\'s name, email, and job title.' : 'Enter the new owner\'s information.'}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
@@ -408,7 +417,7 @@ export default function CompanySetup() {
             </div>
             <div className="flex gap-2">
               <Button onClick={handleSaveEdit} className="flex-1">
-                Save Changes
+                {editingOwner ? 'Save Changes' : 'Add Owner'}
               </Button>
               <Button 
                 variant="outline" 
@@ -417,7 +426,7 @@ export default function CompanySetup() {
               >
                 Cancel
               </Button>
-              {owners.length > 1 && (
+              {editingOwner && owners.length > 1 && (
                 <Button 
                   variant="destructive" 
                   onClick={handleDeleteOwner}
