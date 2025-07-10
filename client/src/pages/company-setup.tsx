@@ -105,7 +105,7 @@ export default function CompanySetup() {
   }
 
   return (
-    <AdminLayout title="Company Setup" subtitle="Configure your company settings">
+    <AdminLayout title="Company Setup" subtitle="Configure your current company and manage owners">
       <div className="space-y-6">
         {/* Company Selection */}
         {(user?.role === 'super-user' || user?.role === 'owner') && companies.length > 1 && (

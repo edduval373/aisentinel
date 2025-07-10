@@ -231,6 +231,7 @@ Changelog:
   * Fixed database schema issues with logo field to support base64 image storage
   * Company creation functionality now fully operational with large image support
   * Resolved all payload size limitations and API parameter ordering issues
+  * Clarified interface distinction: "Company Management" (super-user system administration) vs "Setup Company" (owner company configuration)
 ```
 
 ## User Preferences
