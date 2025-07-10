@@ -240,6 +240,12 @@ Changelog:
   * Implemented company context provider on frontend for persistent company association
   * All data queries now properly isolated by company ensuring complete tenant separation
   * Removed global initialization in favor of per-company data creation system
+- July 10, 2025. Enhanced chat interface company information display:
+  * Added company information display to chat screen header in top right corner
+  * Created API endpoint (/api/user/current-company) to fetch current user's company details
+  * Updated display format to match AI Sentinel Dashboard style with logo and company name
+  * Company ID now shows in parentheses after company name (e.g., "Horizon Edge Enterprises (1)")
+  * Simplified layout with inline styling and compact logo design
 ```
 
 ## User Preferences

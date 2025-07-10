@@ -281,26 +281,6 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
             </div>
           </div>
           <div className="flex items-center space-x-4">
-            {/* Company Info Display */}
-            {currentCompany && (
-              <div className="flex items-center space-x-3 bg-slate-50 rounded-lg px-3 py-2 border border-slate-200">
-                {currentCompany.logo ? (
-                  <img 
-                    src={currentCompany.logo} 
-                    alt={`${currentCompany.name} logo`}
-                    className="w-8 h-8 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="w-8 h-8 rounded-full bg-sentinel-blue flex items-center justify-center">
-                    <Building2 className="w-4 h-4 text-white" />
-                  </div>
-                )}
-                <div className="flex flex-col">
-                  <span className="text-sm font-medium text-slate-800">{currentCompany.name}</span>
-                  <span className="text-xs text-slate-500">ID: {currentCompany.id}</span>
-                </div>
-              </div>
-            )}
             {/* AI Model Dropdown */}
             <Select
               value={selectedModel?.toString()}
@@ -336,6 +316,26 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                 ))}
               </SelectContent>
             </Select>
+
+            {/* Company Info Display - matching AI Sentinel Dashboard style */}
+            {currentCompany && (
+              <div className="flex items-center space-x-2">
+                {currentCompany.logo ? (
+                  <img 
+                    src={currentCompany.logo} 
+                    alt={`${currentCompany.name} logo`}
+                    className="w-6 h-6 rounded object-cover"
+                  />
+                ) : (
+                  <div className="w-6 h-6 rounded bg-slate-300 flex items-center justify-center">
+                    <Building2 className="w-3 h-3 text-slate-600" />
+                  </div>
+                )}
+                <span className="text-sm font-medium text-slate-700">
+                  {currentCompany.name} ({currentCompany.id})
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>
