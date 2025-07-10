@@ -81,7 +81,7 @@ export default function CompanySetup() {
 
   // Fetch owners from API
   const { data: owners = [], isLoading: ownersLoading, refetch: refetchOwners } = useQuery({
-    queryKey: ["/api/company/owners", currentCompany?.id],
+    queryKey: [`/api/company/owners/${currentCompany?.id}`],
     enabled: !!currentCompany?.id,
   });
 
@@ -105,7 +105,7 @@ export default function CompanySetup() {
   // Add owner mutation
   const addOwnerMutation = useMutation({
     mutationFn: (ownerData: { firstName: string; lastName: string; email: string; department?: string }) =>
-      apiRequest(`/api/company/owners`, "POST", { companyId: currentCompany?.id, ...ownerData }),
+      apiRequest(`/api/company/owners/${currentCompany?.id}`, "POST", ownerData),
     onSuccess: () => {
       refetchOwners();
       toast({ title: "Success", description: "Owner added successfully" });
@@ -124,7 +124,7 @@ export default function CompanySetup() {
   // Update owner mutation
   const updateOwnerMutation = useMutation({
     mutationFn: (ownerData: { userId: string; firstName?: string; lastName?: string; email?: string; department?: string }) =>
-      apiRequest(`/api/company/owners/${ownerData.userId}`, "PUT", ownerData),
+      apiRequest(`/api/company/owners/${ownerData.userId}`, "PATCH", ownerData),
     onSuccess: () => {
       refetchOwners();
       toast({ title: "Success", description: "Owner updated successfully" });
@@ -166,7 +166,7 @@ export default function CompanySetup() {
   // Remove owner mutation
   const removeOwnerMutation = useMutation({
     mutationFn: (userId: string) =>
-      apiRequest(`/api/company/owners/${userId}`, "DELETE", { companyId: currentCompany?.id }),
+      apiRequest(`/api/company/owners/${userId}/${currentCompany?.id}`, "DELETE"),
     onSuccess: () => {
       refetchOwners();
       toast({ title: "Success", description: "Owner deleted successfully" });
