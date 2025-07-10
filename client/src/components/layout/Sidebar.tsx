@@ -42,8 +42,14 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
   const isSuperUser = user?.role === 'super-user';
-  const isAdmin = user?.role === 'admin' || user?.role === 'super-user';
-  const isRegularUser = !isAdmin && !isSuperUser;
+  const isOwner = user?.role === 'owner';
+  const isAdmin = user?.role === 'admin';
+  const isRegularUser = user?.role === 'user';
+  
+  // Users cannot open the panel at all
+  if (isRegularUser) {
+    return null;
+  }
 
   const handleLogout = () => {
     window.location.href = "/api/logout";
@@ -198,7 +204,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
             </button>
           ))}
 
-          {/* Company Management for Super User */}
+          {/* SUPER-USER Section */}
           {isSuperUser && (
             <>
               <div className="pt-4 pb-2">
@@ -225,10 +231,15 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                 )} />
                 <span>Company Management</span>
               </button>
+            </>
+          )}
 
+          {/* OWNERS Section - visible to super-user and owners */}
+          {(isSuperUser || isOwner) && (
+            <>
               <div className="pt-4 pb-2">
                 <h3 className="text-slate-400 text-xs font-semibold uppercase tracking-wider">
-                  Owners
+                  OWNERS
                 </h3>
               </div>
               
@@ -316,12 +327,12 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
             </>
           )}
 
-          {/* Admin Sections */}
-          {isAdmin && (
+          {/* ADMINISTRATION Section - visible to super-user, owners, and admins */}
+          {(isSuperUser || isOwner || isAdmin) && (
             <>
               <div className="pt-4 pb-2">
                 <h3 className="text-slate-400 text-xs font-semibold uppercase tracking-wider">
-                  Administration
+                  ADMINISTRATION
                 </h3>
               </div>
               
