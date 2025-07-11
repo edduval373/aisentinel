@@ -8,6 +8,7 @@ import {
   serial,
   boolean,
   integer,
+  real,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -88,9 +89,27 @@ export const aiModels = pgTable("ai_models", {
   id: serial("id").primaryKey(),
   companyId: integer("company_id").references(() => companies.id).notNull(),
   name: varchar("name").notNull(),
-  provider: varchar("provider").notNull(), // openai, anthropic
+  provider: varchar("provider").notNull(), // openai, anthropic, perplexity, google, cohere, custom
   modelId: varchar("model_id").notNull(),
+  description: text("description"),
+  contextWindow: integer("context_window").default(4096).notNull(),
   isEnabled: boolean("is_enabled").default(true).notNull(),
+  capabilities: jsonb("capabilities"), // ["text-generation", "code-generation", "multimodal", etc.]
+  // API Configuration
+  apiKey: text("api_key").notNull(),
+  apiEndpoint: text("api_endpoint").notNull(),
+  authMethod: varchar("auth_method").default("bearer").notNull(), // bearer, api-key, x-api-key, basic, custom
+  requestHeaders: jsonb("request_headers"), // JSON object with headers
+  maxTokens: integer("max_tokens").default(1000).notNull(),
+  temperature: real("temperature").default(0.7).notNull(),
+  // Advanced settings
+  maxRetries: integer("max_retries").default(3).notNull(),
+  timeout: integer("timeout").default(30000).notNull(), // milliseconds
+  rateLimit: integer("rate_limit").default(100).notNull(), // requests per minute
+  organizationId: varchar("organization_id"),
+  // Status
+  lastTested: timestamp("last_tested"),
+  isWorking: boolean("is_working"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 

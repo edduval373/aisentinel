@@ -12,8 +12,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Bot, Plus, Edit2, Trash2, Key, Settings } from "lucide-react";
+import { Bot, Plus, Edit2, Trash2, Key, Settings, Eye, EyeOff, TestTube } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { apiRequest } from "@/lib/queryClient";
 
@@ -25,9 +26,18 @@ const modelSchema = z.object({
   contextWindow: z.number().min(1, "Context window must be at least 1"),
   isEnabled: z.boolean().default(true),
   capabilities: z.array(z.string()).default([]),
-  apiEndpoint: z.string().url("Must be a valid URL").optional(),
-  maxTokens: z.number().min(1, "Max tokens must be at least 1").optional(),
-  temperature: z.number().min(0).max(2).optional(),
+  // API Configuration
+  apiKey: z.string().min(1, "API key is required"),
+  apiEndpoint: z.string().url("Must be a valid URL"),
+  authMethod: z.string().default("bearer"),
+  requestHeaders: z.string().default("{}"),
+  maxTokens: z.number().min(1, "Max tokens must be at least 1").default(1000),
+  temperature: z.number().min(0).max(2).default(0.7),
+  // Advanced settings
+  maxRetries: z.number().min(0).max(10).default(3),
+  timeout: z.number().min(1000).max(60000).default(30000),
+  rateLimit: z.number().min(1).max(1000).default(100),
+  organizationId: z.string().optional(),
 });
 
 interface AiModel {
@@ -39,18 +49,74 @@ interface AiModel {
   contextWindow: number;
   isEnabled: boolean;
   capabilities: string[];
-  apiEndpoint?: string;
-  maxTokens?: number;
-  temperature?: number;
+  // API Configuration
+  apiKey: string;
+  apiEndpoint: string;
+  authMethod: string;
+  requestHeaders: string;
+  maxTokens: number;
+  temperature: number;
+  // Advanced settings
+  maxRetries: number;
+  timeout: number;
+  rateLimit: number;
+  organizationId?: string;
+  // Status
+  lastTested?: string;
+  isWorking?: boolean;
 }
 
 const providers = [
-  { value: "openai", label: "OpenAI" },
-  { value: "anthropic", label: "Anthropic" },
-  { value: "perplexity", label: "Perplexity" },
-  { value: "google", label: "Google" },
-  { value: "cohere", label: "Cohere" },
-  { value: "custom", label: "Custom" },
+  { 
+    value: "openai", 
+    label: "OpenAI", 
+    defaultEndpoint: "https://api.openai.com/v1/chat/completions",
+    authMethod: "bearer",
+    defaultHeaders: '{"Content-Type": "application/json"}'
+  },
+  { 
+    value: "anthropic", 
+    label: "Anthropic", 
+    defaultEndpoint: "https://api.anthropic.com/v1/messages",
+    authMethod: "x-api-key",
+    defaultHeaders: '{"Content-Type": "application/json", "anthropic-version": "2023-06-01"}'
+  },
+  { 
+    value: "perplexity", 
+    label: "Perplexity", 
+    defaultEndpoint: "https://api.perplexity.ai/chat/completions",
+    authMethod: "bearer",
+    defaultHeaders: '{"Content-Type": "application/json"}'
+  },
+  { 
+    value: "google", 
+    label: "Google Gemini", 
+    defaultEndpoint: "https://generativelanguage.googleapis.com/v1/models",
+    authMethod: "api-key",
+    defaultHeaders: '{"Content-Type": "application/json"}'
+  },
+  { 
+    value: "cohere", 
+    label: "Cohere", 
+    defaultEndpoint: "https://api.cohere.ai/v1/generate",
+    authMethod: "bearer",
+    defaultHeaders: '{"Content-Type": "application/json"}'
+  },
+  { 
+    value: "custom", 
+    label: "Custom Provider", 
+    defaultEndpoint: "",
+    authMethod: "bearer",
+    defaultHeaders: '{"Content-Type": "application/json"}'
+  },
+];
+
+const authMethods = [
+  { value: "bearer", label: "Bearer Token" },
+  { value: "api-key", label: "API Key Header" },
+  { value: "x-api-key", label: "X-API-Key Header" },
+  { value: "basic", label: "Basic Auth" },
+  { value: "custom", label: "Custom Auth" },
 ];
 
 const capabilities = [
@@ -66,6 +132,8 @@ export default function CreateModels() {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [editingModel, setEditingModel] = useState<AiModel | null>(null);
+  const [showApiKeys, setShowApiKeys] = useState<Record<number, boolean>>({});
+  const [activeTab, setActiveTab] = useState("basic");
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -84,9 +152,16 @@ export default function CreateModels() {
       contextWindow: 4096,
       isEnabled: true,
       capabilities: [],
+      apiKey: "",
       apiEndpoint: "",
+      authMethod: "bearer",
+      requestHeaders: '{"Content-Type": "application/json"}',
       maxTokens: 1000,
       temperature: 0.7,
+      maxRetries: 3,
+      timeout: 30000,
+      rateLimit: 100,
+      organizationId: "",
     },
   });
 
@@ -155,9 +230,16 @@ export default function CreateModels() {
       contextWindow: model.contextWindow,
       isEnabled: model.isEnabled,
       capabilities: model.capabilities,
-      apiEndpoint: model.apiEndpoint || "",
-      maxTokens: model.maxTokens || 1000,
-      temperature: model.temperature || 0.7,
+      apiKey: model.apiKey,
+      apiEndpoint: model.apiEndpoint,
+      authMethod: model.authMethod,
+      requestHeaders: model.requestHeaders,
+      maxTokens: model.maxTokens,
+      temperature: model.temperature,
+      maxRetries: model.maxRetries,
+      timeout: model.timeout,
+      rateLimit: model.rateLimit,
+      organizationId: model.organizationId || "",
     });
     setShowEditDialog(true);
   };
@@ -170,7 +252,56 @@ export default function CreateModels() {
 
   const resetForm = () => {
     setEditingModel(null);
+    setActiveTab("basic");
     modelForm.reset();
+  };
+
+  const toggleApiKeyVisibility = (id: number) => {
+    setShowApiKeys(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const maskApiKey = (key: string) => {
+    if (key.length <= 8) return key;
+    return key.substring(0, 4) + "•".repeat(key.length - 8) + key.substring(key.length - 4);
+  };
+
+  // Update form values when provider changes
+  const handleProviderChange = (provider: string) => {
+    const providerConfig = providers.find(p => p.value === provider);
+    if (providerConfig) {
+      modelForm.setValue("provider", provider);
+      if (providerConfig.defaultEndpoint) {
+        modelForm.setValue("apiEndpoint", providerConfig.defaultEndpoint);
+      }
+      modelForm.setValue("authMethod", providerConfig.authMethod);
+      modelForm.setValue("requestHeaders", providerConfig.defaultHeaders);
+    }
+  };
+
+  // Test API configuration
+  const testConfigMutation = useMutation({
+    mutationFn: (id: number) =>
+      apiRequest(`/api/ai-models/${id}/test`, "POST"),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/ai-models"] });
+      toast({ 
+        title: "Test Successful", 
+        description: "API configuration is working correctly",
+        variant: "default"
+      });
+    },
+    onError: (error: any) => {
+      console.error("API test error:", error);
+      toast({ 
+        title: "Test Failed", 
+        description: "API configuration test failed. Please check your settings.",
+        variant: "destructive"
+      });
+    },
+  });
+
+  const handleTestConfig = (id: number) => {
+    testConfigMutation.mutate(id);
   };
 
   if (modelsLoading) {
@@ -195,193 +326,351 @@ export default function CreateModels() {
                 Create Model
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>Create New AI Model</DialogTitle>
               </DialogHeader>
               <Form {...modelForm}>
                 <form onSubmit={modelForm.handleSubmit(onSubmitModel)} className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={modelForm.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Model Name</FormLabel>
-                          <FormControl>
-                            <Input placeholder="GPT-4 Turbo" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={modelForm.control}
-                      name="provider"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Provider</FormLabel>
-                          <Select onValueChange={field.onChange} value={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select provider" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {providers.map((provider) => (
-                                <SelectItem key={provider.value} value={provider.value}>
-                                  {provider.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <FormField
-                    control={modelForm.control}
-                    name="modelId"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Model ID</FormLabel>
-                        <FormControl>
-                          <Input placeholder="gpt-4-turbo" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={modelForm.control}
-                    name="description"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Description</FormLabel>
-                        <FormControl>
-                          <Textarea placeholder="Model description..." {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={modelForm.control}
-                    name="apiEndpoint"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>API Endpoint (Optional)</FormLabel>
-                        <FormControl>
-                          <Input placeholder="https://api.openai.com/v1/chat/completions" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <div className="grid grid-cols-3 gap-4">
-                    <FormField
-                      control={modelForm.control}
-                      name="contextWindow"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Context Window</FormLabel>
-                          <FormControl>
-                            <Input 
-                              type="number" 
-                              placeholder="4096" 
-                              {...field}
-                              onChange={(e) => field.onChange(parseInt(e.target.value))}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={modelForm.control}
-                      name="maxTokens"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Max Tokens</FormLabel>
-                          <FormControl>
-                            <Input 
-                              type="number" 
-                              placeholder="1000" 
-                              {...field}
-                              onChange={(e) => field.onChange(parseInt(e.target.value))}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={modelForm.control}
-                      name="temperature"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Temperature</FormLabel>
-                          <FormControl>
-                            <Input 
-                              type="number" 
-                              step="0.1"
-                              min="0"
-                              max="2"
-                              placeholder="0.7" 
-                              {...field}
-                              onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <FormLabel>Capabilities</FormLabel>
-                    <div className="grid grid-cols-2 gap-2">
-                      {capabilities.map((capability) => (
+                  <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                    <TabsList className="grid w-full grid-cols-4">
+                      <TabsTrigger value="basic">Basic Info</TabsTrigger>
+                      <TabsTrigger value="api">API Config</TabsTrigger>
+                      <TabsTrigger value="settings">Settings</TabsTrigger>
+                      <TabsTrigger value="advanced">Advanced</TabsTrigger>
+                    </TabsList>
+
+                    <TabsContent value="basic" className="space-y-4 mt-4">
+                      <div className="grid grid-cols-2 gap-4">
                         <FormField
-                          key={capability}
                           control={modelForm.control}
-                          name="capabilities"
+                          name="name"
                           render={({ field }) => (
-                            <FormItem className="flex items-center space-x-2">
+                            <FormItem>
+                              <FormLabel>Model Name</FormLabel>
                               <FormControl>
-                                <Switch
-                                  checked={field.value?.includes(capability)}
-                                  onCheckedChange={(checked) => {
-                                    if (checked) {
-                                      field.onChange([...field.value, capability]);
-                                    } else {
-                                      field.onChange(field.value?.filter((c) => c !== capability));
-                                    }
-                                  }}
-                                />
+                                <Input placeholder="GPT-4 Turbo" {...field} />
                               </FormControl>
-                              <FormLabel className="text-sm">{capability}</FormLabel>
+                              <FormMessage />
                             </FormItem>
                           )}
                         />
-                      ))}
-                    </div>
-                  </div>
-                  <FormField
-                    control={modelForm.control}
-                    name="isEnabled"
-                    render={({ field }) => (
-                      <FormItem className="flex items-center space-x-2">
-                        <FormControl>
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>
-                        <FormLabel>Enable Model</FormLabel>
-                      </FormItem>
-                    )}
-                  />
+                        <FormField
+                          control={modelForm.control}
+                          name="provider"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Provider</FormLabel>
+                              <Select onValueChange={handleProviderChange} value={field.value}>
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select provider" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  {providers.map((provider) => (
+                                    <SelectItem key={provider.value} value={provider.value}>
+                                      {provider.label}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      <FormField
+                        control={modelForm.control}
+                        name="modelId"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Model ID</FormLabel>
+                            <FormControl>
+                              <Input placeholder="gpt-4-turbo" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={modelForm.control}
+                        name="description"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Description</FormLabel>
+                            <FormControl>
+                              <Textarea placeholder="Model description..." {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={modelForm.control}
+                        name="contextWindow"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Context Window</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                placeholder="4096" 
+                                {...field}
+                                onChange={(e) => field.onChange(parseInt(e.target.value))}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={modelForm.control}
+                        name="isEnabled"
+                        render={({ field }) => (
+                          <FormItem className="flex items-center space-x-2">
+                            <FormControl>
+                              <Switch
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                            <FormLabel>Enable Model</FormLabel>
+                          </FormItem>
+                        )}
+                      />
+                    </TabsContent>
+
+                    <TabsContent value="api" className="space-y-4 mt-4">
+                      <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                        <h3 className="font-semibold text-blue-900 mb-2">API Authentication & Communication</h3>
+                        <p className="text-sm text-blue-700">Configure how your application communicates with the AI model API.</p>
+                      </div>
+                      <FormField
+                        control={modelForm.control}
+                        name="apiKey"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>API Key</FormLabel>
+                            <FormControl>
+                              <Input type="password" placeholder="sk-..." {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={modelForm.control}
+                        name="apiEndpoint"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>API Endpoint</FormLabel>
+                            <FormControl>
+                              <Input placeholder="https://api.openai.com/v1/chat/completions" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={modelForm.control}
+                        name="authMethod"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Authentication Method</FormLabel>
+                            <Select onValueChange={field.onChange} value={field.value}>
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select auth method" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {authMethods.map((method) => (
+                                  <SelectItem key={method.value} value={method.value}>
+                                    {method.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={modelForm.control}
+                        name="requestHeaders"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Request Headers (JSON)</FormLabel>
+                            <FormControl>
+                              <Textarea 
+                                placeholder='{"Content-Type": "application/json"}' 
+                                {...field} 
+                                rows={3}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={modelForm.control}
+                        name="organizationId"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Organization ID (Optional)</FormLabel>
+                            <FormControl>
+                              <Input placeholder="org-..." {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </TabsContent>
+
+                    <TabsContent value="settings" className="space-y-4 mt-4">
+                      <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                        <h3 className="font-semibold text-green-900 mb-2">Model Parameters</h3>
+                        <p className="text-sm text-green-700">Configure model behavior and output settings.</p>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <FormField
+                          control={modelForm.control}
+                          name="maxTokens"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Max Tokens</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  type="number" 
+                                  placeholder="1000" 
+                                  {...field}
+                                  onChange={(e) => field.onChange(parseInt(e.target.value))}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={modelForm.control}
+                          name="temperature"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Temperature</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  type="number" 
+                                  step="0.1"
+                                  min="0"
+                                  max="2"
+                                  placeholder="0.7" 
+                                  {...field}
+                                  onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <FormLabel>Capabilities</FormLabel>
+                        <div className="grid grid-cols-2 gap-2">
+                          {capabilities.map((capability) => (
+                            <FormField
+                              key={capability}
+                              control={modelForm.control}
+                              name="capabilities"
+                              render={({ field }) => (
+                                <FormItem className="flex items-center space-x-2">
+                                  <FormControl>
+                                    <Switch
+                                      checked={field.value?.includes(capability)}
+                                      onCheckedChange={(checked) => {
+                                        if (checked) {
+                                          field.onChange([...field.value, capability]);
+                                        } else {
+                                          field.onChange(field.value?.filter((c) => c !== capability));
+                                        }
+                                      }}
+                                    />
+                                  </FormControl>
+                                  <FormLabel className="text-sm">{capability}</FormLabel>
+                                </FormItem>
+                              )}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </TabsContent>
+
+                    <TabsContent value="advanced" className="space-y-4 mt-4">
+                      <div className="bg-orange-50 p-4 rounded-lg border border-orange-200">
+                        <h3 className="font-semibold text-orange-900 mb-2">Advanced Configuration</h3>
+                        <p className="text-sm text-orange-700">Rate limiting, timeouts, and error handling settings.</p>
+                      </div>
+                      <div className="grid grid-cols-3 gap-4">
+                        <FormField
+                          control={modelForm.control}
+                          name="maxRetries"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Max Retries</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  type="number" 
+                                  min="0" 
+                                  max="10" 
+                                  {...field}
+                                  onChange={(e) => field.onChange(parseInt(e.target.value))}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={modelForm.control}
+                          name="timeout"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Timeout (ms)</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  type="number" 
+                                  min="1000" 
+                                  max="60000" 
+                                  {...field}
+                                  onChange={(e) => field.onChange(parseInt(e.target.value))}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={modelForm.control}
+                          name="rateLimit"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Rate Limit (req/min)</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  type="number" 
+                                  min="1" 
+                                  max="1000" 
+                                  {...field}
+                                  onChange={(e) => field.onChange(parseInt(e.target.value))}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </TabsContent>
+                  </Tabs>
                   <div className="flex justify-end space-x-2 pt-4">
                     <Button type="button" variant="outline" onClick={() => setShowCreateDialog(false)}>
                       Cancel
@@ -412,10 +701,10 @@ export default function CreateModels() {
                 </div>
               </CardHeader>
               <CardContent className="space-y-3">
-                <div className="text-sm text-gray-600">
+                <div className="text-sm text-gray-600 space-y-2">
                   <div className="flex justify-between">
                     <span>Provider:</span>
-                    <span className="font-medium">{model.provider}</span>
+                    <span className="font-medium capitalize">{model.provider}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Model ID:</span>
@@ -423,13 +712,53 @@ export default function CreateModels() {
                   </div>
                   <div className="flex justify-between">
                     <span>Context:</span>
-                    <span className="font-medium">{model.contextWindow.toLocaleString()}</span>
+                    <span className="font-medium">{model.contextWindow?.toLocaleString() || 'N/A'}</span>
                   </div>
+                  <div className="flex justify-between">
+                    <span>API Key:</span>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-xs font-mono">
+                        {showApiKeys[model.id] ? model.apiKey : maskApiKey(model.apiKey || '')}
+                      </span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => toggleApiKeyVisibility(model.id)}
+                        className="p-0 h-auto"
+                      >
+                        {showApiKeys[model.id] ? (
+                          <EyeOff className="w-3 h-3" />
+                        ) : (
+                          <Eye className="w-3 h-3" />
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Endpoint:</span>
+                    <span className="text-xs truncate max-w-32" title={model.apiEndpoint}>
+                      {model.apiEndpoint}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Auth:</span>
+                    <span className="text-xs">{model.authMethod || 'bearer'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Rate Limit:</span>
+                    <span className="text-xs">{model.rateLimit || 100}/min</span>
+                  </div>
+                  {model.lastTested && (
+                    <div className="flex justify-between">
+                      <span>Last Tested:</span>
+                      <span className="text-xs">{new Date(model.lastTested).toLocaleDateString()}</span>
+                    </div>
+                  )}
                 </div>
                 {model.description && (
                   <p className="text-sm text-gray-600 line-clamp-2">{model.description}</p>
                 )}
-                {model.capabilities.length > 0 && (
+                {model.capabilities && model.capabilities.length > 0 && (
                   <div className="flex flex-wrap gap-1">
                     {model.capabilities.slice(0, 3).map((capability) => (
                       <Badge key={capability} variant="outline" className="text-xs">
@@ -443,24 +772,35 @@ export default function CreateModels() {
                     )}
                   </div>
                 )}
-                <div className="flex justify-end space-x-2 pt-2">
+                <div className="flex justify-between pt-2 border-t">
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => handleEditModel(model)}
+                    onClick={() => handleTestConfig(model.id)}
+                    disabled={testConfigMutation.isPending}
                   >
-                    <Edit2 className="w-3 h-3 mr-1" />
-                    Edit
+                    <TestTube className="w-3 h-3 mr-1" />
+                    Test
                   </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleDeleteModel(model.id)}
-                    className="text-red-600 hover:text-red-700"
-                  >
-                    <Trash2 className="w-3 h-3 mr-1" />
-                    Delete
-                  </Button>
+                  <div className="flex space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleEditModel(model)}
+                    >
+                      <Edit2 className="w-3 h-3 mr-1" />
+                      Edit
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleDeleteModel(model.id)}
+                      className="text-red-600 hover:text-red-700"
+                    >
+                      <Trash2 className="w-3 h-3 mr-1" />
+                      Delete
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -469,193 +809,351 @@ export default function CreateModels() {
 
         {/* Edit Dialog */}
         <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Edit AI Model</DialogTitle>
             </DialogHeader>
             <Form {...modelForm}>
               <form onSubmit={modelForm.handleSubmit(onSubmitModel)} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={modelForm.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Model Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="GPT-4 Turbo" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={modelForm.control}
-                    name="provider"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Provider</FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select provider" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {providers.map((provider) => (
-                              <SelectItem key={provider.value} value={provider.value}>
-                                {provider.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <FormField
-                  control={modelForm.control}
-                  name="modelId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Model ID</FormLabel>
-                      <FormControl>
-                        <Input placeholder="gpt-4-turbo" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={modelForm.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description</FormLabel>
-                      <FormControl>
-                        <Textarea placeholder="Model description..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={modelForm.control}
-                  name="apiEndpoint"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>API Endpoint (Optional)</FormLabel>
-                      <FormControl>
-                        <Input placeholder="https://api.openai.com/v1/chat/completions" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="grid grid-cols-3 gap-4">
-                  <FormField
-                    control={modelForm.control}
-                    name="contextWindow"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Context Window</FormLabel>
-                        <FormControl>
-                          <Input 
-                            type="number" 
-                            placeholder="4096" 
-                            {...field}
-                            onChange={(e) => field.onChange(parseInt(e.target.value))}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={modelForm.control}
-                    name="maxTokens"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Max Tokens</FormLabel>
-                        <FormControl>
-                          <Input 
-                            type="number" 
-                            placeholder="1000" 
-                            {...field}
-                            onChange={(e) => field.onChange(parseInt(e.target.value))}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={modelForm.control}
-                    name="temperature"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Temperature</FormLabel>
-                        <FormControl>
-                          <Input 
-                            type="number" 
-                            step="0.1"
-                            min="0"
-                            max="2"
-                            placeholder="0.7" 
-                            {...field}
-                            onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <FormLabel>Capabilities</FormLabel>
-                  <div className="grid grid-cols-2 gap-2">
-                    {capabilities.map((capability) => (
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                  <TabsList className="grid w-full grid-cols-4">
+                    <TabsTrigger value="basic">Basic Info</TabsTrigger>
+                    <TabsTrigger value="api">API Config</TabsTrigger>
+                    <TabsTrigger value="settings">Settings</TabsTrigger>
+                    <TabsTrigger value="advanced">Advanced</TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="basic" className="space-y-4 mt-4">
+                    <div className="grid grid-cols-2 gap-4">
                       <FormField
-                        key={capability}
                         control={modelForm.control}
-                        name="capabilities"
+                        name="name"
                         render={({ field }) => (
-                          <FormItem className="flex items-center space-x-2">
+                          <FormItem>
+                            <FormLabel>Model Name</FormLabel>
                             <FormControl>
-                              <Switch
-                                checked={field.value?.includes(capability)}
-                                onCheckedChange={(checked) => {
-                                  if (checked) {
-                                    field.onChange([...field.value, capability]);
-                                  } else {
-                                    field.onChange(field.value?.filter((c) => c !== capability));
-                                  }
-                                }}
-                              />
+                              <Input placeholder="GPT-4 Turbo" {...field} />
                             </FormControl>
-                            <FormLabel className="text-sm">{capability}</FormLabel>
+                            <FormMessage />
                           </FormItem>
                         )}
                       />
-                    ))}
-                  </div>
-                </div>
-                <FormField
-                  control={modelForm.control}
-                  name="isEnabled"
-                  render={({ field }) => (
-                    <FormItem className="flex items-center space-x-2">
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                      <FormLabel>Enable Model</FormLabel>
-                    </FormItem>
-                  )}
-                />
+                      <FormField
+                        control={modelForm.control}
+                        name="provider"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Provider</FormLabel>
+                            <Select onValueChange={handleProviderChange} value={field.value}>
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select provider" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {providers.map((provider) => (
+                                  <SelectItem key={provider.value} value={provider.value}>
+                                    {provider.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <FormField
+                      control={modelForm.control}
+                      name="modelId"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Model ID</FormLabel>
+                          <FormControl>
+                            <Input placeholder="gpt-4-turbo" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={modelForm.control}
+                      name="description"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Description</FormLabel>
+                          <FormControl>
+                            <Textarea placeholder="Model description..." {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={modelForm.control}
+                      name="contextWindow"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Context Window</FormLabel>
+                          <FormControl>
+                            <Input 
+                              type="number" 
+                              placeholder="4096" 
+                              {...field}
+                              onChange={(e) => field.onChange(parseInt(e.target.value))}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={modelForm.control}
+                      name="isEnabled"
+                      render={({ field }) => (
+                        <FormItem className="flex items-center space-x-2">
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <FormLabel>Enable Model</FormLabel>
+                        </FormItem>
+                      )}
+                    />
+                  </TabsContent>
+
+                  <TabsContent value="api" className="space-y-4 mt-4">
+                    <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                      <h3 className="font-semibold text-blue-900 mb-2">API Authentication & Communication</h3>
+                      <p className="text-sm text-blue-700">Configure how your application communicates with the AI model API.</p>
+                    </div>
+                    <FormField
+                      control={modelForm.control}
+                      name="apiKey"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>API Key</FormLabel>
+                          <FormControl>
+                            <Input type="password" placeholder="sk-..." {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={modelForm.control}
+                      name="apiEndpoint"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>API Endpoint</FormLabel>
+                          <FormControl>
+                            <Input placeholder="https://api.openai.com/v1/chat/completions" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={modelForm.control}
+                      name="authMethod"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Authentication Method</FormLabel>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select auth method" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {authMethods.map((method) => (
+                                <SelectItem key={method.value} value={method.value}>
+                                  {method.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={modelForm.control}
+                      name="requestHeaders"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Request Headers (JSON)</FormLabel>
+                          <FormControl>
+                            <Textarea 
+                              placeholder='{"Content-Type": "application/json"}' 
+                              {...field} 
+                              rows={3}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={modelForm.control}
+                      name="organizationId"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Organization ID (Optional)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="org-..." {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </TabsContent>
+
+                  <TabsContent value="settings" className="space-y-4 mt-4">
+                    <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                      <h3 className="font-semibold text-green-900 mb-2">Model Parameters</h3>
+                      <p className="text-sm text-green-700">Configure model behavior and output settings.</p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={modelForm.control}
+                        name="maxTokens"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Max Tokens</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                placeholder="1000" 
+                                {...field}
+                                onChange={(e) => field.onChange(parseInt(e.target.value))}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={modelForm.control}
+                        name="temperature"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Temperature</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                step="0.1"
+                                min="0"
+                                max="2"
+                                placeholder="0.7" 
+                                {...field}
+                                onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <FormLabel>Capabilities</FormLabel>
+                      <div className="grid grid-cols-2 gap-2">
+                        {capabilities.map((capability) => (
+                          <FormField
+                            key={capability}
+                            control={modelForm.control}
+                            name="capabilities"
+                            render={({ field }) => (
+                              <FormItem className="flex items-center space-x-2">
+                                <FormControl>
+                                  <Switch
+                                    checked={field.value?.includes(capability)}
+                                    onCheckedChange={(checked) => {
+                                      if (checked) {
+                                        field.onChange([...field.value, capability]);
+                                      } else {
+                                        field.onChange(field.value?.filter((c) => c !== capability));
+                                      }
+                                    }}
+                                  />
+                                </FormControl>
+                                <FormLabel className="text-sm">{capability}</FormLabel>
+                              </FormItem>
+                            )}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="advanced" className="space-y-4 mt-4">
+                    <div className="bg-orange-50 p-4 rounded-lg border border-orange-200">
+                      <h3 className="font-semibold text-orange-900 mb-2">Advanced Configuration</h3>
+                      <p className="text-sm text-orange-700">Rate limiting, timeouts, and error handling settings.</p>
+                    </div>
+                    <div className="grid grid-cols-3 gap-4">
+                      <FormField
+                        control={modelForm.control}
+                        name="maxRetries"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Max Retries</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                min="0" 
+                                max="10" 
+                                {...field}
+                                onChange={(e) => field.onChange(parseInt(e.target.value))}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={modelForm.control}
+                        name="timeout"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Timeout (ms)</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                min="1000" 
+                                max="60000" 
+                                {...field}
+                                onChange={(e) => field.onChange(parseInt(e.target.value))}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={modelForm.control}
+                        name="rateLimit"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Rate Limit (req/min)</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                min="1" 
+                                max="1000" 
+                                {...field}
+                                onChange={(e) => field.onChange(parseInt(e.target.value))}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </TabsContent>
+                </Tabs>
                 <div className="flex justify-end space-x-2 pt-4">
                   <Button type="button" variant="outline" onClick={() => setShowEditDialog(false)}>
                     Cancel
