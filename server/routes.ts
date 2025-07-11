@@ -473,6 +473,171 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Context Document API routes
+  app.get("/api/context-documents", isAuthenticated, async (req: any, res) => {
+    try {
+      const userRoleLevel = await storage.getUserRoleLevel(req.user.claims.sub);
+      if (userRoleLevel < 2) {
+        return res.status(403).json({ message: "Insufficient permissions" });
+      }
+
+      const user = await storage.getUser(req.user.claims.sub);
+      if (!user?.companyId) {
+        return res.status(400).json({ message: "No company associated with user" });
+      }
+
+      const documents = await storage.getContextDocuments(user.companyId);
+      res.json(documents);
+    } catch (error) {
+      console.error("Error fetching context documents:", error);
+      res.status(500).json({ message: "Failed to fetch context documents" });
+    }
+  });
+
+  app.post("/api/context-documents", isAuthenticated, async (req: any, res) => {
+    try {
+      const userRoleLevel = await storage.getUserRoleLevel(req.user.claims.sub);
+      if (userRoleLevel < 2) {
+        return res.status(403).json({ message: "Insufficient permissions" });
+      }
+
+      const user = await storage.getUser(req.user.claims.sub);
+      if (!user?.companyId) {
+        return res.status(400).json({ message: "No company associated with user" });
+      }
+
+      const file = req.files?.file;
+      if (!file) {
+        return res.status(400).json({ message: "No file uploaded" });
+      }
+
+      const { name, description, category, priority = 1 } = req.body;
+      if (!name || !category) {
+        return res.status(400).json({ message: "Name and category are required" });
+      }
+
+      // Extract text content from file
+      let content = '';
+      if (file.mimetype === 'text/plain' || file.mimetype === 'text/markdown') {
+        content = file.data.toString('utf-8');
+      } else if (file.mimetype === 'application/json') {
+        content = file.data.toString('utf-8');
+      } else {
+        // For other file types, store first 2000 characters as preview
+        content = `[File: ${file.name}]\n${file.data.toString('utf-8', 0, 2000)}...`;
+      }
+
+      const document = await storage.createContextDocument({
+        companyId: user.companyId,
+        name,
+        description,
+        category,
+        fileName: file.name,
+        fileSize: file.size,
+        content,
+        priority: parseInt(priority),
+        isEnabled: true
+      });
+
+      res.json(document);
+    } catch (error) {
+      console.error("Error creating context document:", error);
+      res.status(500).json({ message: "Failed to create context document" });
+    }
+  });
+
+  app.put("/api/context-documents/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const userRoleLevel = await storage.getUserRoleLevel(req.user.claims.sub);
+      if (userRoleLevel < 2) {
+        return res.status(403).json({ message: "Insufficient permissions" });
+      }
+
+      const documentId = parseInt(req.params.id);
+      const updateData = req.body;
+
+      const document = await storage.updateContextDocument(documentId, updateData);
+      res.json(document);
+    } catch (error) {
+      console.error("Error updating context document:", error);
+      res.status(500).json({ message: "Failed to update context document" });
+    }
+  });
+
+  app.delete("/api/context-documents/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const userRoleLevel = await storage.getUserRoleLevel(req.user.claims.sub);
+      if (userRoleLevel < 2) {
+        return res.status(403).json({ message: "Insufficient permissions" });
+      }
+
+      const documentId = parseInt(req.params.id);
+      await storage.deleteContextDocument(documentId);
+      res.json({ message: "Context document deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting context document:", error);
+      res.status(500).json({ message: "Failed to delete context document" });
+    }
+  });
+
+  // Activity Context Links API routes
+  app.get("/api/activity-types/:id/context-links", isAuthenticated, async (req: any, res) => {
+    try {
+      const userRoleLevel = await storage.getUserRoleLevel(req.user.claims.sub);
+      if (userRoleLevel < 2) {
+        return res.status(403).json({ message: "Insufficient permissions" });
+      }
+
+      const activityTypeId = parseInt(req.params.id);
+      const links = await storage.getActivityContextLinks(activityTypeId);
+      res.json(links);
+    } catch (error) {
+      console.error("Error fetching activity context links:", error);
+      res.status(500).json({ message: "Failed to fetch activity context links" });
+    }
+  });
+
+  app.post("/api/activity-types/:id/context-links", isAuthenticated, async (req: any, res) => {
+    try {
+      const userRoleLevel = await storage.getUserRoleLevel(req.user.claims.sub);
+      if (userRoleLevel < 2) {
+        return res.status(403).json({ message: "Insufficient permissions" });
+      }
+
+      const activityTypeId = parseInt(req.params.id);
+      const { documentId, usageType = "optional" } = req.body;
+
+      const link = await storage.createActivityContextLink({
+        activityTypeId,
+        documentId,
+        usageType
+      });
+
+      res.json(link);
+    } catch (error) {
+      console.error("Error creating activity context link:", error);
+      res.status(500).json({ message: "Failed to create activity context link" });
+    }
+  });
+
+  app.delete("/api/activity-types/:activityId/context-links/:documentId", isAuthenticated, async (req: any, res) => {
+    try {
+      const userRoleLevel = await storage.getUserRoleLevel(req.user.claims.sub);
+      if (userRoleLevel < 2) {
+        return res.status(403).json({ message: "Insufficient permissions" });
+      }
+
+      const activityTypeId = parseInt(req.params.activityId);
+      const documentId = parseInt(req.params.documentId);
+
+      await storage.deleteActivityContextLink(activityTypeId, documentId);
+      res.json({ message: "Activity context link deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting activity context link:", error);
+      res.status(500).json({ message: "Failed to delete activity context link" });
+    }
+  });
+
   // Chat routes
   app.post('/api/chat/session', isAuthenticated, async (req: any, res) => {
     try {

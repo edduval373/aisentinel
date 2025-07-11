@@ -58,7 +58,7 @@ class AIService {
         throw new Error("AI model is disabled");
       }
 
-      // Get activity type for pre-prompt
+      // Get activity type for pre-prompt and context documents
       let systemPrompt = "You are an AI assistant in a corporate environment. Provide helpful, professional responses while being mindful of data privacy and security. Do not process or store any sensitive information like financial data, personal identifiers, or proprietary company information.";
       
       if (activityTypeId) {
@@ -66,6 +66,16 @@ class AIService {
         const activityType = activityTypes.find(at => at.id === activityTypeId);
         if (activityType?.prePrompt) {
           systemPrompt = activityType.prePrompt;
+        }
+
+        // Get context documents for this activity type
+        const contextDocuments = await storage.getContextForActivity(activityTypeId, companyId);
+        if (contextDocuments.length > 0) {
+          const contextContent = contextDocuments.map(doc => 
+            `=== ${doc.name} (${doc.category}) ===\n${doc.content}`
+          ).join('\n\n');
+          
+          systemPrompt += `\n\n--- CONTEXT DOCUMENTS ---\nThe following company documents are provided for reference. Use this information to inform your responses when relevant:\n\n${contextContent}\n\n--- END CONTEXT ---`;
         }
       }
 

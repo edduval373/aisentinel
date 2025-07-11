@@ -147,6 +147,34 @@ export const chatMessages = pgTable("chat_messages", {
   timestamp: timestamp("timestamp").defaultNow().notNull(),
 });
 
+// Context documents
+export const contextDocuments = pgTable("context_documents", {
+  id: serial("id").primaryKey(),
+  companyId: integer("company_id").references(() => companies.id).notNull(),
+  name: varchar("name").notNull(),
+  description: text("description"),
+  category: varchar("category").notNull(), // 'policy', 'procedure', 'guideline', 'knowledge'
+  fileName: varchar("file_name").notNull(),
+  fileSize: integer("file_size").notNull(),
+  content: text("content").notNull(), // processed text content
+  priority: integer("priority").default(1).notNull(),
+  isEnabled: boolean("is_enabled").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Link documents to activity types
+export const activityContextLinks = pgTable("activity_context_links", {
+  id: serial("id").primaryKey(),
+  activityTypeId: integer("activity_type_id").references(() => activityTypes.id).notNull(),
+  documentId: integer("document_id").references(() => contextDocuments.id).notNull(),
+  usageType: varchar("usage_type").default("optional").notNull(), // 'required', 'optional'
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => [
+  index("idx_activity_context_activity").on(table.activityTypeId),
+  index("idx_activity_context_document").on(table.documentId),
+]);
+
 // Insert schemas
 export const insertCompanySchema = createInsertSchema(companies).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertCompanyEmployeeSchema = createInsertSchema(companyEmployees).omit({ id: true, addedAt: true });
@@ -157,6 +185,8 @@ export const insertActivityTypeSchema = createInsertSchema(activityTypes).omit({
 export const insertUserActivitySchema = createInsertSchema(userActivities).omit({ id: true, timestamp: true });
 export const insertChatSessionSchema = createInsertSchema(chatSessions).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertChatMessageSchema = createInsertSchema(chatMessages).omit({ id: true, timestamp: true });
+export const insertContextDocumentSchema = createInsertSchema(contextDocuments).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertActivityContextLinkSchema = createInsertSchema(activityContextLinks).omit({ id: true, createdAt: true });
 
 // Types
 export type Company = typeof companies.$inferSelect;
@@ -178,3 +208,7 @@ export type InsertChatSession = z.infer<typeof insertChatSessionSchema>;
 export type ChatMessage = typeof chatMessages.$inferSelect;
 export type ChatMessageWithModel = ChatMessage & { aiModel?: AiModel };
 export type InsertChatMessage = z.infer<typeof insertChatMessageSchema>;
+export type ContextDocument = typeof contextDocuments.$inferSelect;
+export type InsertContextDocument = z.infer<typeof insertContextDocumentSchema>;
+export type ActivityContextLink = typeof activityContextLinks.$inferSelect;
+export type InsertActivityContextLink = z.infer<typeof insertActivityContextLinkSchema>;

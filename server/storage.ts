@@ -8,6 +8,8 @@ import {
   userActivities,
   chatSessions,
   chatMessages,
+  contextDocuments,
+  activityContextLinks,
   type User,
   type UpsertUser,
   type Company,
@@ -26,6 +28,10 @@ import {
   type InsertChatSession,
   type ChatMessage,
   type InsertChatMessage,
+  type ContextDocument,
+  type InsertContextDocument,
+  type ActivityContextLink,
+  type InsertActivityContextLink,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, count, sql } from "drizzle-orm";
@@ -88,6 +94,19 @@ export interface IStorage {
   getUserChatSessions(userId: string, companyId: number): Promise<(ChatSession & { messageCount?: number; lastMessage?: string })[]>;
   createChatMessage(message: InsertChatMessage): Promise<ChatMessage>;
   getChatMessages(sessionId: number, companyId: number): Promise<ChatMessage[]>;
+  
+  // Context Document operations
+  getContextDocuments(companyId: number): Promise<ContextDocument[]>;
+  getEnabledContextDocuments(companyId: number): Promise<ContextDocument[]>;
+  createContextDocument(document: InsertContextDocument): Promise<ContextDocument>;
+  updateContextDocument(id: number, document: Partial<InsertContextDocument>): Promise<ContextDocument>;
+  deleteContextDocument(id: number): Promise<void>;
+  
+  // Activity Context Link operations
+  getActivityContextLinks(activityTypeId: number): Promise<(ActivityContextLink & { document?: ContextDocument })[]>;
+  createActivityContextLink(link: InsertActivityContextLink): Promise<ActivityContextLink>;
+  deleteActivityContextLink(activityTypeId: number, documentId: number): Promise<void>;
+  getContextForActivity(activityTypeId: number, companyId: number): Promise<ContextDocument[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -464,6 +483,103 @@ export class DatabaseStorage implements IStorage {
       ...msg,
       aiModel: msg.aiModel.id ? msg.aiModel : undefined
     }));
+  }
+
+  // Context Document operations
+  async getContextDocuments(companyId: number): Promise<ContextDocument[]> {
+    return await db.select().from(contextDocuments)
+      .where(eq(contextDocuments.companyId, companyId))
+      .orderBy(contextDocuments.name);
+  }
+
+  async getEnabledContextDocuments(companyId: number): Promise<ContextDocument[]> {
+    return await db.select().from(contextDocuments)
+      .where(and(eq(contextDocuments.companyId, companyId), eq(contextDocuments.isEnabled, true)))
+      .orderBy(contextDocuments.name);
+  }
+
+  async createContextDocument(document: InsertContextDocument): Promise<ContextDocument> {
+    const [created] = await db.insert(contextDocuments).values(document).returning();
+    return created;
+  }
+
+  async updateContextDocument(id: number, document: Partial<InsertContextDocument>): Promise<ContextDocument> {
+    const [updated] = await db
+      .update(contextDocuments)
+      .set({
+        ...document,
+        updatedAt: new Date(),
+      })
+      .where(eq(contextDocuments.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteContextDocument(id: number): Promise<void> {
+    // First delete all activity context links
+    await db.delete(activityContextLinks).where(eq(activityContextLinks.documentId, id));
+    // Then delete the document
+    await db.delete(contextDocuments).where(eq(contextDocuments.id, id));
+  }
+
+  // Activity Context Link operations
+  async getActivityContextLinks(activityTypeId: number): Promise<(ActivityContextLink & { document?: ContextDocument })[]> {
+    const links = await db
+      .select({
+        id: activityContextLinks.id,
+        activityTypeId: activityContextLinks.activityTypeId,
+        documentId: activityContextLinks.documentId,
+        usageType: activityContextLinks.usageType,
+        createdAt: activityContextLinks.createdAt,
+        document: contextDocuments,
+      })
+      .from(activityContextLinks)
+      .leftJoin(contextDocuments, eq(activityContextLinks.documentId, contextDocuments.id))
+      .where(eq(activityContextLinks.activityTypeId, activityTypeId));
+    
+    return links;
+  }
+
+  async createActivityContextLink(link: InsertActivityContextLink): Promise<ActivityContextLink> {
+    const [created] = await db.insert(activityContextLinks).values(link).returning();
+    return created;
+  }
+
+  async deleteActivityContextLink(activityTypeId: number, documentId: number): Promise<void> {
+    await db.delete(activityContextLinks).where(
+      and(
+        eq(activityContextLinks.activityTypeId, activityTypeId),
+        eq(activityContextLinks.documentId, documentId)
+      )
+    );
+  }
+
+  async getContextForActivity(activityTypeId: number, companyId: number): Promise<ContextDocument[]> {
+    const documents = await db
+      .select({
+        id: contextDocuments.id,
+        companyId: contextDocuments.companyId,
+        name: contextDocuments.name,
+        description: contextDocuments.description,
+        category: contextDocuments.category,
+        fileName: contextDocuments.fileName,
+        fileSize: contextDocuments.fileSize,
+        content: contextDocuments.content,
+        priority: contextDocuments.priority,
+        isEnabled: contextDocuments.isEnabled,
+        createdAt: contextDocuments.createdAt,
+        updatedAt: contextDocuments.updatedAt,
+      })
+      .from(contextDocuments)
+      .innerJoin(activityContextLinks, eq(contextDocuments.id, activityContextLinks.documentId))
+      .where(and(
+        eq(activityContextLinks.activityTypeId, activityTypeId),
+        eq(contextDocuments.companyId, companyId),
+        eq(contextDocuments.isEnabled, true)
+      ))
+      .orderBy(contextDocuments.priority, contextDocuments.name);
+    
+    return documents;
   }
 }
 

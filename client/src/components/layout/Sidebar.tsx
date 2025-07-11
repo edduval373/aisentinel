@@ -16,7 +16,8 @@ import {
   Users,
   Eye,
   ChevronRight,
-  Building
+  Building,
+  FileText
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -85,6 +86,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       items: [
         { name: "AI Models", href: "/admin/models", icon: Bot },
         { name: "Model Settings", href: "/admin/model-settings", icon: Settings },
+        { name: "Context Management", href: "/admin/context-management", icon: FileText },
       ]
     }
   ];
@@ -97,6 +99,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       items: [
         { name: "AI Models", href: "/admin/models", icon: Bot },
         { name: "Model Settings", href: "/admin/model-settings", icon: Settings },
+        { name: "Context Management", href: "/admin/context-management", icon: FileText },
       ]
     },
     {
