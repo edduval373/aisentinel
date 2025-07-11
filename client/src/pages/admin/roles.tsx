@@ -31,7 +31,15 @@ export default function AdminRoles() {
   const [roles, setRoles] = useState<CompanyRole[]>([]);
   const [loading, setLoading] = useState(true);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editingRole, setEditingRole] = useState<CompanyRole | null>(null);
   const [newRole, setNewRole] = useState({
+    name: '',
+    level: '',
+    description: '',
+    permissions: [] as string[]
+  });
+  const [editRole, setEditRole] = useState({
     name: '',
     level: '',
     description: '',
@@ -167,6 +175,72 @@ export default function AdminRoles() {
     }));
   };
 
+  const handleEditPermissionChange = (permission: string, checked: boolean) => {
+    setEditRole(prev => ({
+      ...prev,
+      permissions: checked 
+        ? [...prev.permissions, permission]
+        : prev.permissions.filter(p => p !== permission)
+    }));
+  };
+
+  const openEditDialog = (role: CompanyRole) => {
+    setEditingRole(role);
+    setEditRole({
+      name: role.name,
+      level: role.level.toString(),
+      description: role.description,
+      permissions: role.permissions || []
+    });
+    setIsEditDialogOpen(true);
+  };
+
+  const updateRole = async () => {
+    if (!editingRole) return;
+
+    try {
+      const roleData = {
+        ...editRole,
+        level: parseInt(editRole.level),
+        permissions: editRole.permissions
+      };
+
+      const response = await fetch(`/api/company/roles/${editingRole.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(roleData),
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: "Role updated successfully",
+        });
+        setIsEditDialogOpen(false);
+        setEditingRole(null);
+        setEditRole({ name: '', level: '', description: '', permissions: [] });
+        fetchRoles();
+      } else {
+        const error = await response.json();
+        toast({
+          title: "Error",
+          description: error.message || "Failed to update role",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error updating role:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update role",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (isLoading || loading) {
     return (
       <AdminLayout title="Roles & Permissions" subtitle="Manage user roles and access permissions">
@@ -269,6 +343,79 @@ export default function AdminRoles() {
           </Dialog>
         </div>
 
+        {/* Edit Role Dialog */}
+        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Edit Role</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="edit-name">Role Name</Label>
+                <Input
+                  id="edit-name"
+                  value={editRole.name}
+                  onChange={(e) => setEditRole(prev => ({ ...prev, name: e.target.value }))}
+                  placeholder="e.g., Manager, Team Lead"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="edit-level">Role Level</Label>
+                <Input
+                  id="edit-level"
+                  type="number"
+                  value={editRole.level}
+                  onChange={(e) => setEditRole(prev => ({ ...prev, level: e.target.value }))}
+                  placeholder="e.g., 500 (between 1-999 for custom roles)"
+                  min="1"
+                  max="999"
+                />
+                <p className="text-xs text-slate-500 mt-1">
+                  1000: Super User, 999: Owner, 998: Admin, 1: User. Use values between for custom roles.
+                </p>
+              </div>
+              
+              <div>
+                <Label htmlFor="edit-description">Description</Label>
+                <Textarea
+                  id="edit-description"
+                  value={editRole.description}
+                  onChange={(e) => setEditRole(prev => ({ ...prev, description: e.target.value }))}
+                  placeholder="Describe this role's responsibilities"
+                />
+              </div>
+              
+              <div>
+                <Label>Permissions</Label>
+                <div className="grid grid-cols-2 gap-2 mt-2 max-h-48 overflow-y-auto">
+                  {availablePermissions.map((permission) => (
+                    <div key={permission} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`edit-${permission}`}
+                        checked={editRole.permissions.includes(permission)}
+                        onCheckedChange={(checked) => handleEditPermissionChange(permission, checked as boolean)}
+                      />
+                      <Label htmlFor={`edit-${permission}`} className="text-sm">
+                        {permission.replace(/_/g, ' ')}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="flex justify-end space-x-2">
+                <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={updateRole} disabled={!editRole.name || !editRole.level}>
+                  Update Role
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
         {/* Roles Grid */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {roles.map((role) => (
@@ -279,7 +426,7 @@ export default function AdminRoles() {
                   {role.name}
                 </CardTitle>
                 <div className="flex space-x-1">
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" onClick={() => openEditDialog(role)}>
                     <Edit className="w-4 h-4" />
                   </Button>
                   <Button variant="ghost" size="sm">
