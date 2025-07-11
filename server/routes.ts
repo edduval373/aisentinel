@@ -540,6 +540,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
+      // Validate AI model exists and is enabled
+      const models = await storage.getAiModels(user.companyId);
+      const selectedModel = models.find(m => m.id === aiModelId);
+      if (!selectedModel) {
+        return res.status(400).json({ message: "AI model not found" });
+      }
+      if (!selectedModel.isEnabled) {
+        return res.status(400).json({ message: "AI model is disabled" });
+      }
+
       // Generate AI response
       const aiResponse = await aiService.generateResponse(message, aiModelId, user.companyId, activityTypeId);
       

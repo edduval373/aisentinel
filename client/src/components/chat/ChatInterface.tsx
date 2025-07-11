@@ -142,7 +142,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
     },
     onError: (error: any) => {
       console.error('Send message error:', error);
-      
+
       // Check if this is actually an error (not an empty object from successful request)
       if (error && Object.keys(error).length > 0 && error.message) {
         if (isUnauthorizedError(error)) {
@@ -156,7 +156,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
           }, 500);
           return;
         }
-        
+
         // Handle blocked messages
         if (error.message.includes("403")) {
           toast({
@@ -339,14 +339,18 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sentinel-blue"></div>
           </div>
         ) : (
-          messages.map((message) => (
-            <ChatMessage
-              key={message.id}
-              message={message}
-              aiModel={selectedModelData}
-              user={user}
-            />
-          ))
+          messages.map((message) => {
+            // Use the AI model data embedded in the message, or fall back to finding it
+            const messageAiModel = message.aiModel || aiModels?.find(m => m.id === message.aiModelId);
+            return (
+              <ChatMessage
+                key={message.id}
+                message={message}
+                aiModel={messageAiModel}
+                user={user}
+              />
+            );
+          })
         )}
 
         {/* Loading indicator */}

@@ -406,12 +406,39 @@ export class DatabaseStorage implements IStorage {
     return created;
   }
 
-  async getChatMessages(sessionId: number, companyId: number): Promise<ChatMessage[]> {
-    return await db
-      .select()
+  async getChatMessages(sessionId: number, companyId: number): Promise<(ChatMessage & { aiModel?: AiModel })[]> {
+    const messages = await db
+      .select({
+        id: chatMessages.id,
+        companyId: chatMessages.companyId,
+        sessionId: chatMessages.sessionId,
+        userId: chatMessages.userId,
+        aiModelId: chatMessages.aiModelId,
+        activityTypeId: chatMessages.activityTypeId,
+        message: chatMessages.message,
+        response: chatMessages.response,
+        status: chatMessages.status,
+        securityFlags: chatMessages.securityFlags,
+        timestamp: chatMessages.timestamp,
+        aiModel: {
+          id: aiModels.id,
+          companyId: aiModels.companyId,
+          name: aiModels.name,
+          provider: aiModels.provider,
+          modelId: aiModels.modelId,
+          isEnabled: aiModels.isEnabled,
+          createdAt: aiModels.createdAt,
+        }
+      })
       .from(chatMessages)
+      .leftJoin(aiModels, eq(chatMessages.aiModelId, aiModels.id))
       .where(and(eq(chatMessages.sessionId, sessionId), eq(chatMessages.companyId, companyId)))
       .orderBy(chatMessages.timestamp);
+
+    return messages.map(msg => ({
+      ...msg,
+      aiModel: msg.aiModel.id ? msg.aiModel : undefined
+    }));
   }
 }
 

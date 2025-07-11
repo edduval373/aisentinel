@@ -176,4 +176,5 @@ export type InsertUserActivity = z.infer<typeof insertUserActivitySchema>;
 export type ChatSession = typeof chatSessions.$inferSelect;
 export type InsertChatSession = z.infer<typeof insertChatSessionSchema>;
 export type ChatMessage = typeof chatMessages.$inferSelect;
+export type ChatMessageWithModel = ChatMessage & { aiModel?: AiModel };
 export type InsertChatMessage = z.infer<typeof insertChatMessageSchema>;
