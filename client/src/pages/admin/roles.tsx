@@ -45,6 +45,8 @@ export default function AdminRoles() {
     description: '',
     permissions: [] as string[]
   });
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [roleToDelete, setRoleToDelete] = useState<CompanyRole | null>(null);
 
   const availablePermissions = [
     'full_system_access',
@@ -241,6 +243,46 @@ export default function AdminRoles() {
     }
   };
 
+  const openDeleteDialog = (role: CompanyRole) => {
+    setRoleToDelete(role);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const deleteRole = async () => {
+    if (!roleToDelete) return;
+
+    try {
+      const response = await fetch(`/api/company/roles/${roleToDelete.id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: "Role deleted successfully",
+        });
+        setIsDeleteDialogOpen(false);
+        setRoleToDelete(null);
+        fetchRoles();
+      } else {
+        const error = await response.json();
+        toast({
+          title: "Error",
+          description: error.message || "Failed to delete role",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error deleting role:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete role",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (isLoading || loading) {
     return (
       <AdminLayout title="Roles & Permissions" subtitle="Manage user roles and access permissions">
@@ -343,6 +385,34 @@ export default function AdminRoles() {
           </Dialog>
         </div>
 
+        {/* Delete Confirmation Dialog */}
+        <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+          <DialogContent className="sm:max-w-[400px]">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-red-600">
+                <Trash2 className="w-5 h-5" />
+                Confirm Deletion
+              </DialogTitle>
+            </DialogHeader>
+            <div className="py-4">
+              <p className="text-gray-600">
+                Are you sure you want to delete the role <span className="font-medium text-gray-900">{roleToDelete?.name}</span>?
+              </p>
+              <p className="text-sm text-gray-500 mt-2">
+                This action cannot be undone. Users with this role will lose their permissions.
+              </p>
+            </div>
+            <div className="flex justify-end space-x-2">
+              <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button variant="destructive" onClick={deleteRole}>
+                Delete Role
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
         {/* Edit Role Dialog */}
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
           <DialogContent className="max-w-2xl">
@@ -429,7 +499,7 @@ export default function AdminRoles() {
                   <Button variant="ghost" size="sm" onClick={() => openEditDialog(role)}>
                     <Edit className="w-4 h-4" />
                   </Button>
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" onClick={() => openDeleteDialog(role)}>
                     <Trash2 className="w-4 h-4 text-red-500" />
                   </Button>
                 </div>
