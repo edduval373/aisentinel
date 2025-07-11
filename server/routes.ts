@@ -589,6 +589,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Voice transcription endpoint using OpenAI Whisper
+  app.post('/api/transcribe', isAuthenticated, async (req: any, res) => {
+    try {
+      const multer = require('multer');
+      const upload = multer({ storage: multer.memoryStorage() });
+      
+      upload.single('audio')(req, res, async (err) => {
+        if (err) {
+          return res.status(400).json({ message: "File upload error" });
+        }
+        
+        if (!req.file) {
+          return res.status(400).json({ message: "No audio file provided" });
+        }
+        
+        const formData = new FormData();
+        formData.append('file', new Blob([req.file.buffer], { type: 'audio/wav' }), 'audio.wav');
+        formData.append('model', 'whisper-1');
+        
+        const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+          },
+          body: formData,
+        });
+        
+        if (!response.ok) {
+          throw new Error('OpenAI transcription failed');
+        }
+        
+        const data = await response.json();
+        res.json({ transcription: data.text });
+      });
+    } catch (error) {
+      console.error("Error transcribing audio:", error);
+      res.status(500).json({ message: "Failed to transcribe audio" });
+    }
+  });
+
   const httpServer = createServer(app);
 
   // WebSocket setup for real-time chat

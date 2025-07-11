@@ -11,7 +11,7 @@ interface ChatMessageProps {
 }
 
 export default function ChatMessage({ message, aiModel, user }: ChatMessageProps) {
-  const timestamp = format(new Date(message.timestamp), "h:mm a");
+  const timestamp = message.timestamp ? format(new Date(message.timestamp), "h:mm a") : "Now";
 
   const getStatusBadge = () => {
     switch (message.status) {
