@@ -9,6 +9,10 @@ interface ChatInputProps {
   disabled?: boolean;
 }
 
+interface ChatInputHandle {
+  setMessage: (message: string) => void;
+}
+
 export default function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
   const [message, setMessage] = useState("");
 

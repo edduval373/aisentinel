@@ -291,7 +291,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
     });
   };
 
-  // Repeat last request
+  // Repeat last request - fill input field instead of submitting
   const handleRepeatLast = () => {
     if (!lastMessage) {
       toast({
@@ -301,7 +301,15 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       });
       return;
     }
-    handleSendMessage(lastMessage);
+    // Find the chat input component and set its value
+    const chatInput = document.querySelector('textarea[placeholder="Type your message here..."]') as HTMLTextAreaElement;
+    if (chatInput) {
+      chatInput.value = lastMessage;
+      chatInput.focus();
+      // Trigger an input event to update React state
+      const event = new Event('input', { bubbles: true });
+      chatInput.dispatchEvent(event);
+    }
   };
 
   const selectedModelData = aiModels?.find(m => m.id === selectedModel);
