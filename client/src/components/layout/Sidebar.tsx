@@ -78,17 +78,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
     }
   ];
 
-  const ownersSections = [
-    {
-      id: "setup-ai-models",
-      name: "Setup AI Models",
-      icon: Bot,
-      items: [
-        { name: "Create Models", href: "/admin/create-models", icon: Bot },
-        { name: "API Configuration", href: "/admin/api-config", icon: Settings },
-      ]
-    }
-  ];
+  const ownersSections = [];
 
   const adminSections = [
     {
@@ -261,46 +251,24 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                 <span>Setup Company</span>
               </button>
               
-              {ownersSections.map((section) => (
-                <div key={section.id} className="space-y-1">
-                  <button
-                    onClick={() => toggleSection(section.id)}
-                    className="w-full flex items-center justify-between text-left rounded-lg px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
-                  >
-                    <div className="flex items-center space-x-3">
-                      <section.icon className="w-5 h-5 text-slate-400" />
-                      <span>{section.name}</span>
-                    </div>
-                    <ChevronRight className={cn(
-                      "w-4 h-4 text-slate-400 transition-transform",
-                      expandedSection === section.id && "rotate-90"
-                    )} />
-                  </button>
-                  
-                  {expandedSection === section.id && (
-                    <div className="ml-8 space-y-1">
-                      {section.items.map((item) => (
-                        <button
-                          key={item.href}
-                          onClick={() => {
-                            navigate(item.href);
-                            if (window.innerWidth < 1024) onToggle();
-                          }}
-                          className={cn(
-                            "w-full flex items-center space-x-3 text-left rounded-lg px-3 py-2 transition-colors text-sm",
-                            location === item.href
-                              ? "text-white bg-slate-700"
-                              : "text-slate-400 hover:text-white hover:bg-slate-700"
-                          )}
-                        >
-                          <item.icon className="w-4 h-4" />
-                          <span>{item.name}</span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
+              <button
+                onClick={() => {
+                  navigate("/admin/create-models");
+                  if (window.innerWidth < 1024) onToggle();
+                }}
+                className={cn(
+                  "w-full flex items-center space-x-3 text-left rounded-lg px-3 py-2 transition-colors",
+                  location === "/admin/create-models"
+                    ? "text-white bg-slate-700"
+                    : "text-slate-300 hover:text-white hover:bg-slate-700"
+                )}
+              >
+                <Bot className={cn(
+                  "w-5 h-5",
+                  location === "/admin/create-models" ? "text-sentinel-blue" : "text-slate-400"
+                )} />
+                <span>Setup AI Models</span>
+              </button>
             </>
           )}
 
