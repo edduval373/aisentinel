@@ -45,9 +45,9 @@ class AIService {
     }
   }
 
-  async generateResponse(message: string, aiModelId: number, activityTypeId?: number): Promise<string> {
+  async generateResponse(message: string, aiModelId: number, companyId: number, activityTypeId?: number): Promise<string> {
     try {
-      const models = await storage.getAiModels();
+      const models = await storage.getAiModels(companyId);
       const model = models.find(m => m.id === aiModelId);
 
       if (!model) {
@@ -62,7 +62,7 @@ class AIService {
       let systemPrompt = "You are an AI assistant in a corporate environment. Provide helpful, professional responses while being mindful of data privacy and security. Do not process or store any sensitive information like financial data, personal identifiers, or proprietary company information.";
       
       if (activityTypeId) {
-        const activityTypes = await storage.getActivityTypes();
+        const activityTypes = await storage.getActivityTypes(companyId);
         const activityType = activityTypes.find(at => at.id === activityTypeId);
         if (activityType?.prePrompt) {
           systemPrompt = activityType.prePrompt;

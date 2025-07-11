@@ -540,7 +540,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Generate AI response
-      const aiResponse = await aiService.generateResponse(message, aiModelId, activityTypeId);
+      const aiResponse = await aiService.generateResponse(message, aiModelId, user.companyId, activityTypeId);
       
       // Create chat message with company isolation
       const chatMessage = await storage.createChatMessage({
