@@ -13,7 +13,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { Upload, FileText, AlertCircle, CheckCircle, Settings, Link, Trash2, Edit, ArrowLeft, Menu } from "lucide-react";
+import { Upload, FileText, AlertCircle, CheckCircle, Settings, Link, Trash2, Edit } from "lucide-react";
+import AdminLayout from "@/components/layout/AdminLayout";
 import type { ContextDocument, ActivityType } from "@shared/schema";
 
 export default function ContextManagement() {
@@ -267,50 +268,26 @@ export default function ContextManagement() {
 
   if (documentsLoading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <AdminLayout title="Context Management" subtitle="Upload and manage company documents that AI can reference during conversations">
         <div className="flex items-center justify-center h-96">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
             <p className="mt-2 text-gray-600">Loading context documents...</p>
           </div>
         </div>
-      </div>
+      </AdminLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Button
-                variant="ghost"
-                onClick={() => window.history.back()}
-                className="flex items-center space-x-2"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span>Back</span>
-              </Button>
-              <div className="border-l pl-4">
-                <h1 className="text-xl font-semibold">Context Management</h1>
-              </div>
-            </div>
-            <Button onClick={() => setShowUploadDialog(true)} className="bg-blue-600 hover:bg-blue-700">
-              <Upload className="w-4 h-4 mr-2" />
-              Upload Document
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <p className="text-gray-600">
-            Upload and manage company documents that AI can reference during conversations
-          </p>
+    <AdminLayout title="Context Management" subtitle="Upload and manage company documents that AI can reference during conversations">
+      <div className="p-6">
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-2xl font-bold text-gray-900">All Documents</h2>
+          <Button onClick={() => setShowUploadDialog(true)} className="bg-blue-600 hover:bg-blue-700">
+            <Upload className="w-4 h-4 mr-2" />
+            Upload Document
+          </Button>
         </div>
 
         <div className="w-full">
@@ -535,6 +512,6 @@ export default function ContextManagement() {
           </DialogContent>
         </Dialog>
       </div>
-    </div>
+    </AdminLayout>
   );
 }
