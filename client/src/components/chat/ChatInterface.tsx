@@ -210,6 +210,16 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
     }
   }, [chatMessages]);
 
+  // Load messages when session changes
+  useEffect(() => {
+    if (currentSession) {
+      // Refetch messages for the selected session
+      queryClient.invalidateQueries({
+        queryKey: ['/api/chat/session', currentSession, 'messages']
+      });
+    }
+  }, [currentSession, queryClient]);
+
   // WebSocket connection
   useEffect(() => {
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
@@ -353,13 +363,13 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
             {/* Chat Management Buttons */}
             <div className="flex items-center space-x-2 border-l border-slate-200 pl-4">
               <Button
-                variant="outline"
+                variant={showPreviousChats ? "default" : "outline"}
                 size="sm"
                 onClick={() => setShowPreviousChats(!showPreviousChats)}
                 className="flex items-center space-x-1"
               >
                 <History className="w-4 h-4" />
-                <span>History</span>
+                <span>{showPreviousChats ? "Hide History" : "History"}</span>
               </Button>
               <Button
                 variant="outline"
@@ -405,7 +415,10 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                         ? 'bg-sentinel-blue text-white'
                         : 'bg-white hover:bg-slate-100'
                     }`}
-                    onClick={() => setCurrentSession(session.id)}
+                    onClick={() => {
+                      setCurrentSession(session.id);
+                      setShowPreviousChats(false);
+                    }}
                   >
                     <div className="flex justify-between items-center">
                       <div className="text-sm">
