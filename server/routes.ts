@@ -324,11 +324,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!user?.companyId) {
         return res.status(400).json({ message: "No company associated with user" });
       }
-      const activityType = await storage.createActivityType({ ...req.body, companyId: user.companyId });
+      
+      // Ensure permissions is properly formatted as an array
+      const activityTypeData = {
+        ...req.body,
+        companyId: user.companyId,
+        permissions: Array.isArray(req.body.permissions) ? req.body.permissions : []
+      };
+      
+      console.log("Creating activity type with data:", activityTypeData);
+      const activityType = await storage.createActivityType(activityTypeData);
       res.json(activityType);
     } catch (error) {
       console.error("Error creating activity type:", error);
-      res.status(500).json({ message: "Failed to create activity type" });
+      res.status(500).json({ message: "Failed to create activity type", error: error.message });
     }
   });
 

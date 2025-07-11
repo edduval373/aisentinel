@@ -260,32 +260,38 @@ export default function AdminActivityTypes() {
                       </FormItem>
                     )}
                   />
-                  <div className="space-y-2">
-                    <FormLabel>Permissions</FormLabel>
-                    <div className="flex flex-wrap gap-2">
-                      {["read", "write", "analyze", "edit", "audit"].map((permission) => (
-                        <div key={permission} className="flex items-center space-x-2">
-                          <input
-                            type="checkbox"
-                            id={permission}
-                            checked={form.watch("permissions").includes(permission)}
-                            onChange={(e) => {
-                              const currentPermissions = form.getValues("permissions");
-                              if (e.target.checked) {
-                                form.setValue("permissions", [...currentPermissions, permission]);
-                              } else {
-                                form.setValue("permissions", currentPermissions.filter(p => p !== permission));
-                              }
-                            }}
-                            className="rounded border-gray-300"
-                          />
-                          <label htmlFor={permission} className="text-sm font-medium capitalize">
-                            {permission}
-                          </label>
+                  <FormField
+                    control={form.control}
+                    name="permissions"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Permissions</FormLabel>
+                        <div className="flex flex-wrap gap-2">
+                          {["read", "write", "analyze", "edit", "audit"].map((permission) => (
+                            <div key={permission} className="flex items-center space-x-2">
+                              <input
+                                type="checkbox"
+                                id={permission}
+                                checked={field.value.includes(permission)}
+                                onChange={(e) => {
+                                  if (e.target.checked) {
+                                    field.onChange([...field.value, permission]);
+                                  } else {
+                                    field.onChange(field.value.filter((p: string) => p !== permission));
+                                  }
+                                }}
+                                className="rounded border-gray-300"
+                              />
+                              <label htmlFor={permission} className="text-sm font-medium capitalize">
+                                {permission}
+                              </label>
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
-                  </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                   <div className="flex justify-end space-x-2">
                     <Button type="button" variant="outline" onClick={() => setIsAddDialogOpen(false)}>
                       Cancel
