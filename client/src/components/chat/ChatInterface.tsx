@@ -147,6 +147,8 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       setMessages(prev => [...prev, newMessage]);
       // Also refresh the messages to get the most up-to-date view
       queryClient.invalidateQueries({ queryKey: ['/api/chat/session', currentSession, 'messages'] });
+      // Invalidate chat sessions to update the history
+      queryClient.invalidateQueries({ queryKey: ['/api/chat/sessions'] });
     },
     onError: (error: any) => {
       console.error('Send message error:', error);

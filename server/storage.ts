@@ -416,6 +416,8 @@ export class DatabaseStorage implements IStorage {
       const messageCount = messages.length;
       const lastMessage = messages.length > 0 ? messages[0].message.substring(0, 50) + (messages[0].message.length > 50 ? '...' : '') : undefined;
       
+      console.log(`Session ${session.id}: ${messageCount} messages, lastMessage: ${lastMessage}`);
+      
       return {
         ...session,
         messageCount,
