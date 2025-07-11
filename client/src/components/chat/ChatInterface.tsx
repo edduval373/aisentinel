@@ -99,8 +99,8 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
     },
   });
 
-  // Fetch previous chat sessions
-  const { data: previousSessions, isLoading: sessionsLoading } = useQuery<ChatSession[]>({
+  // Fetch previous chat sessions with message details
+  const { data: previousSessions, isLoading: sessionsLoading } = useQuery<(ChatSession & { messageCount?: number; lastMessage?: string })[]>({
     queryKey: ['/api/chat/sessions'],
     enabled: showPreviousChats,
   });
@@ -423,18 +423,16 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                     <div className="flex justify-between items-center">
                       <div className="text-sm">
                         <div className="font-medium">
-                          {session.title || `Chat Session ${session.id}`}
+                          {session.lastMessage || `Chat Session ${session.id}`}
                         </div>
                         <div className="text-xs opacity-75">
                           {new Date(session.createdAt).toLocaleDateString()} at{' '}
                           {new Date(session.createdAt).toLocaleTimeString()}
+                          {session.messageCount !== undefined && (
+                            <span className="ml-2">• {session.messageCount} message{session.messageCount !== 1 ? 's' : ''}</span>
+                          )}
                         </div>
                       </div>
-                      {currentSession === session.id && (
-                        <div className="text-xs font-medium bg-white bg-opacity-20 px-2 py-1 rounded">
-                          Current
-                        </div>
-                      )}
                     </div>
                   </div>
                 ))}

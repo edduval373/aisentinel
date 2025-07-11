@@ -85,7 +85,7 @@ export interface IStorage {
   // Chat operations
   createChatSession(session: InsertChatSession): Promise<ChatSession>;
   getChatSession(id: number, companyId: number): Promise<ChatSession | undefined>;
-  getUserChatSessions(userId: string, companyId: number): Promise<ChatSession[]>;
+  getUserChatSessions(userId: string, companyId: number): Promise<(ChatSession & { messageCount?: number; lastMessage?: string })[]>;
   createChatMessage(message: InsertChatMessage): Promise<ChatMessage>;
   getChatMessages(sessionId: number, companyId: number): Promise<ChatMessage[]>;
 }
@@ -402,11 +402,28 @@ export class DatabaseStorage implements IStorage {
     return session;
   }
 
-  async getUserChatSessions(userId: string, companyId: number): Promise<ChatSession[]> {
+  async getUserChatSessions(userId: string, companyId: number): Promise<(ChatSession & { messageCount?: number; lastMessage?: string })[]> {
     const sessions = await db.select().from(chatSessions).where(
       and(eq(chatSessions.userId, userId), eq(chatSessions.companyId, companyId))
     ).orderBy(desc(chatSessions.createdAt)).limit(20);
-    return sessions;
+    
+    // Get message count and last message for each session
+    const sessionsWithDetails = await Promise.all(sessions.map(async (session) => {
+      const messages = await db.select().from(chatMessages).where(
+        and(eq(chatMessages.sessionId, session.id), eq(chatMessages.companyId, companyId))
+      ).orderBy(desc(chatMessages.timestamp));
+      
+      const messageCount = messages.length;
+      const lastMessage = messages.length > 0 ? messages[0].message.substring(0, 50) + (messages[0].message.length > 50 ? '...' : '') : undefined;
+      
+      return {
+        ...session,
+        messageCount,
+        lastMessage
+      };
+    }));
+    
+    return sessionsWithDetails;
   }
 
   async createChatMessage(message: InsertChatMessage): Promise<ChatMessage> {
