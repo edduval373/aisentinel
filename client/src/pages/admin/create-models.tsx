@@ -712,7 +712,7 @@ export default function CreateModels() {
                   </div>
                   <div className="flex justify-between">
                     <span>Context:</span>
-                    <span className="font-medium">{model.contextWindow?.toLocaleString() || 'N/A'}</span>
+                    <span className="font-medium">{model.contextWindow ? model.contextWindow.toLocaleString() : 'N/A'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>API Key:</span>
