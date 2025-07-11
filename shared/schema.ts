@@ -112,13 +112,15 @@ export const userActivities = pgTable("user_activities", {
   id: serial("id").primaryKey(),
   companyId: integer("company_id").references(() => companies.id).notNull(),
   userId: varchar("user_id").references(() => users.id).notNull(),
-  aiModelId: integer("ai_model_id").references(() => aiModels.id).notNull(),
-  activityTypeId: integer("activity_type_id").references(() => activityTypes.id).notNull(),
-  message: text("message").notNull(),
+  aiModelId: integer("ai_model_id").references(() => aiModels.id),
+  activityTypeId: integer("activity_type_id").references(() => activityTypes.id),
+  message: text("message"),
   response: text("response"),
   status: varchar("status").notNull(), // approved, blocked, pending
   securityFlags: jsonb("security_flags"), // PII detected, financial data, etc.
   timestamp: timestamp("timestamp").defaultNow().notNull(),
+  description: text("description").notNull(), // What activity was performed
+  metadata: jsonb("metadata"), // Additional context data
 });
 
 // Chat sessions
