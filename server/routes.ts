@@ -530,6 +530,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           userId,
           activityTypeId,
           description: `Content blocked: ${filterResult.reason}`,
+          status: 'blocked',
           metadata: { originalMessage: message, flags: filterResult.flags }
         });
         
@@ -561,6 +562,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userId,
         activityTypeId,
         description: `Chat message sent`,
+        status: 'completed',
         metadata: { messageId: chatMessage.id, aiModelId }
       });
 
