@@ -53,6 +53,9 @@ export interface IStorage {
   addCompanyEmployee(employee: InsertCompanyEmployee): Promise<CompanyEmployee>;
   isEmployeeAuthorized(email: string, companyId: number): Promise<boolean>;
   
+  // Company initialization
+  initializeCompanyDefaults(companyId: number): Promise<void>;
+  
   // Owner operations
   getCompanyOwners(companyId: number): Promise<User[]>;
   addCompanyOwner(companyId: number, userData: { firstName: string; lastName: string; email: string; department?: string }): Promise<User>;
@@ -171,6 +174,10 @@ export class DatabaseStorage implements IStorage {
       .insert(companies)
       .values(company)
       .returning();
+    
+    // Initialize default models and activity types for the new company
+    await this.initializeCompanyDefaults(newCompany.id);
+    
     return newCompany;
   }
 
@@ -580,6 +587,125 @@ export class DatabaseStorage implements IStorage {
       .orderBy(contextDocuments.priority, contextDocuments.name);
     
     return documents;
+  }
+
+  // Company initialization with default models and activity types
+  async initializeCompanyDefaults(companyId: number): Promise<void> {
+    // Create default AI models for the company
+    const defaultAiModels = [
+      {
+        name: "GPT-4o",
+        provider: "openai",
+        modelId: "gpt-4o",
+        description: "OpenAI's most capable model with multimodal capabilities",
+        contextWindow: 128000,
+        isEnabled: true,
+        capabilities: ["text-generation", "code-generation", "multimodal"],
+        apiKey: `placeholder-${companyId}-openai-gpt4o`,
+        apiEndpoint: "https://api.openai.com/v1/chat/completions",
+        authMethod: "bearer",
+        requestHeaders: { "Content-Type": "application/json" },
+        maxTokens: 4000,
+        temperature: 0.7,
+        maxRetries: 3,
+        timeout: 30000,
+        rateLimit: 100,
+        companyId: companyId,
+      },
+      {
+        name: "Claude Sonnet 4",
+        provider: "anthropic",
+        modelId: "claude-sonnet-4-20250514",
+        description: "Anthropic's latest and most capable model",
+        contextWindow: 200000,
+        isEnabled: true,
+        capabilities: ["text-generation", "code-generation", "multimodal"],
+        apiKey: `placeholder-${companyId}-anthropic-claude`,
+        apiEndpoint: "https://api.anthropic.com/v1/messages",
+        authMethod: "x-api-key",
+        requestHeaders: { "Content-Type": "application/json", "anthropic-version": "2023-06-01" },
+        maxTokens: 4000,
+        temperature: 0.7,
+        maxRetries: 3,
+        timeout: 30000,
+        rateLimit: 100,
+        companyId: companyId,
+      },
+      {
+        name: "Perplexity Sonar",
+        provider: "perplexity",
+        modelId: "llama-3.1-sonar-small-128k-online",
+        description: "Perplexity's search-enabled model with real-time information",
+        contextWindow: 128000,
+        isEnabled: true,
+        capabilities: ["text-generation", "real-time-search"],
+        apiKey: `placeholder-${companyId}-perplexity-sonar`,
+        apiEndpoint: "https://api.perplexity.ai/chat/completions",
+        authMethod: "bearer",
+        requestHeaders: { "Content-Type": "application/json" },
+        maxTokens: 4000,
+        temperature: 0.2,
+        maxRetries: 3,
+        timeout: 30000,
+        rateLimit: 100,
+        companyId: companyId,
+      },
+    ];
+
+    // Insert default AI models
+    await db.insert(aiModels).values(defaultAiModels);
+
+    // Create default activity types for the company
+    const defaultActivityTypes = [
+      {
+        name: "Brainstorming",
+        description: "Creative ideation and concept development",
+        prePrompt: "You are an expert brainstorming facilitator. Help generate creative ideas and solutions. Encourage innovative thinking and build upon ideas constructively.",
+        riskLevel: "low",
+        permissions: ["all"],
+        isEnabled: true,
+        companyId: companyId,
+      },
+      {
+        name: "Research Assistant",
+        description: "Information gathering and analysis",
+        prePrompt: "You are a skilled research assistant. Provide accurate, well-sourced information. Always cite sources when possible and distinguish between factual information and analysis.",
+        riskLevel: "medium",
+        permissions: ["research", "analysis"],
+        isEnabled: true,
+        companyId: companyId,
+      },
+      {
+        name: "Code Review",
+        description: "Software development and code analysis",
+        prePrompt: "You are an expert code reviewer. Analyze code for best practices, security vulnerabilities, and optimization opportunities. Provide constructive feedback and suggest improvements.",
+        riskLevel: "high",
+        permissions: ["development", "security"],
+        isEnabled: true,
+        companyId: companyId,
+      },
+      {
+        name: "Document Writing",
+        description: "Professional document creation and editing",
+        prePrompt: "You are a professional writing assistant. Help create clear, well-structured documents. Maintain appropriate tone and style for the intended audience.",
+        riskLevel: "medium",
+        permissions: ["writing", "editing"],
+        isEnabled: true,
+        companyId: companyId,
+      },
+      {
+        name: "Customer Support",
+        description: "Customer service and support interactions",
+        prePrompt: "You are a helpful customer support representative. Provide friendly, professional assistance. Always prioritize customer satisfaction while following company policies.",
+        riskLevel: "high",
+        permissions: ["customer-facing", "support"],
+        isEnabled: true,
+        companyId: companyId,
+      },
+    ];
+
+    // Insert default activity types
+    await db.insert(activityTypes).values(defaultActivityTypes);
   }
 }
 

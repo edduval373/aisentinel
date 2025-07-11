@@ -274,6 +274,14 @@ Changelog:
   * Added support for multiple AI providers (OpenAI, Anthropic, Perplexity, Google, Cohere, Custom)
   * Created complete model management with capabilities, context windows, temperature settings, and testing functionality
   * Updated Context Management page to use consistent AdminLayout header pattern
+- July 11, 2025. Enhanced security and implemented company-specific AI model isolation:
+  * Updated database connection to use Railway's internal networking (postgres.railway.internal) for secure API key protection
+  * Implemented automatic company-specific model creation - each new company gets its own set of default AI models
+  * Added initializeCompanyDefaults method that creates placeholder models with company-specific API keys
+  * Enhanced data isolation ensuring AI models and activity types are completely separated by company
+  * Added comprehensive default model configurations for OpenAI, Anthropic, and Perplexity providers
+  * Created secure placeholder API key system with company-specific naming for easy identification
+  * Implemented automatic activity type creation with company-specific pre-prompts for different use cases
 ```
 
 ## User Preferences
