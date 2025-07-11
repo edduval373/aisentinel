@@ -1,15 +1,29 @@
-import { useEffect } from "react";
+
+import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Shield, Users, Settings, Edit, Plus } from "lucide-react";
+import { Shield, Users, Settings, Edit, Plus, Trash2 } from "lucide-react";
+
+interface CompanyRole {
+  id: number;
+  companyId: number;
+  name: string;
+  level: number;
+  description: string;
+  permissions: string[];
+  isActive: boolean;
+  createdAt: string;
+}
 
 export default function AdminRoles() {
   const { toast } = useToast();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
+  const [roles, setRoles] = useState<CompanyRole[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -23,9 +37,55 @@ export default function AdminRoles() {
       }, 500);
       return;
     }
-  }, [isAuthenticated, isLoading, toast]);
 
-  if (isLoading) {
+    if (isAuthenticated && user?.companyId) {
+      fetchRoles();
+    }
+  }, [isAuthenticated, isLoading, user, toast]);
+
+  const fetchRoles = async () => {
+    try {
+      const response = await fetch(`/api/company/roles/${user?.companyId}`, {
+        credentials: 'include',
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setRoles(data);
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to fetch roles",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching roles:", error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch roles",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getRoleBadgeColor = (level: number) => {
+    if (level >= 100) return "destructive"; // Super-user
+    if (level >= 99) return "default"; // Owner
+    if (level >= 2) return "secondary"; // Admin
+    return "outline"; // User
+  };
+
+  const getRoleDisplayName = (level: number) => {
+    if (level >= 100) return "Super-user";
+    if (level >= 99) return "Owner";
+    if (level >= 2) return "Admin";
+    return "User";
+  };
+
+  if (isLoading || loading) {
     return (
       <AdminLayout title="Roles & Permissions" subtitle="Manage user roles and access permissions">
         <div className="flex items-center justify-center h-64">
@@ -38,33 +98,6 @@ export default function AdminRoles() {
   if (!isAuthenticated) {
     return null;
   }
-
-  const roles = [
-    {
-      id: 1,
-      name: "Administrator",
-      description: "Full system access with all permissions",
-      userCount: 2,
-      permissions: ["manage_users", "manage_ai_models", "view_logs", "manage_settings"],
-      color: "destructive"
-    },
-    {
-      id: 2,
-      name: "Manager",
-      description: "Moderate access with user and content management",
-      userCount: 5,
-      permissions: ["manage_users", "view_logs", "manage_content"],
-      color: "default"
-    },
-    {
-      id: 3,
-      name: "User",
-      description: "Standard user with basic AI interaction permissions",
-      userCount: 150,
-      permissions: ["use_ai_chat", "view_own_activity"],
-      color: "secondary"
-    }
-  ];
 
   return (
     <AdminLayout title="Roles & Permissions" subtitle="Manage user roles and access permissions">
@@ -90,9 +123,14 @@ export default function AdminRoles() {
                   <Shield className="w-5 h-5 mr-2 text-sentinel-blue" />
                   {role.name}
                 </CardTitle>
-                <Button variant="ghost" size="sm">
-                  <Edit className="w-4 h-4" />
-                </Button>
+                <div className="flex space-x-1">
+                  <Button variant="ghost" size="sm">
+                    <Edit className="w-4 h-4" />
+                  </Button>
+                  <Button variant="ghost" size="sm">
+                    <Trash2 className="w-4 h-4 text-red-500" />
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-slate-600 mb-4">{role.description}</p>
@@ -100,27 +138,49 @@ export default function AdminRoles() {
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center text-sm text-slate-500">
                     <Users className="w-4 h-4 mr-1" />
-                    {role.userCount} users
+                    Level {role.level}
                   </div>
-                  <Badge variant={role.color as any}>
-                    {role.name}
+                  <Badge variant={getRoleBadgeColor(role.level) as any}>
+                    {getRoleDisplayName(role.level)}
                   </Badge>
                 </div>
 
                 <div>
                   <p className="text-sm font-medium text-slate-700 mb-2">Permissions:</p>
                   <div className="flex flex-wrap gap-1">
-                    {role.permissions.map((permission) => (
-                      <Badge key={permission} variant="outline" className="text-xs">
-                        {permission.replace('_', ' ')}
+                    {role.permissions && role.permissions.length > 0 ? (
+                      role.permissions.map((permission, index) => (
+                        <Badge key={index} variant="outline" className="text-xs">
+                          {permission.replace('_', ' ')}
+                        </Badge>
+                      ))
+                    ) : (
+                      <Badge variant="outline" className="text-xs">
+                        No permissions set
                       </Badge>
-                    ))}
+                    )}
                   </div>
+                </div>
+
+                <div className="mt-4 text-xs text-slate-500">
+                  Created: {new Date(role.createdAt).toLocaleDateString()}
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
+
+        {roles.length === 0 && (
+          <div className="text-center py-12">
+            <Shield className="w-12 h-12 text-slate-300 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-slate-900 mb-2">No roles found</h3>
+            <p className="text-slate-500 mb-4">Create your first company role to get started.</p>
+            <Button>
+              <Plus className="w-4 h-4 mr-2" />
+              Add Role
+            </Button>
+          </div>
+        )}
 
         {/* Permission Categories */}
         <Card className="mt-8">
