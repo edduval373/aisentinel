@@ -13,7 +13,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Upload, FileText, AlertCircle, CheckCircle, Settings, Link, Trash2, Edit } from "lucide-react";
 import type { ContextDocument, ActivityType } from "@shared/schema";
 
@@ -295,13 +294,17 @@ export default function ContextManagement() {
           </Button>
         </div>
 
-        <Tabs defaultValue="documents" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="documents">Documents</TabsTrigger>
-            <TabsTrigger value="activity-links">Activity Links</TabsTrigger>
-          </TabsList>
+        <div className="w-full">
+          <div className="flex space-x-4 mb-6">
+            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg">
+              Documents
+            </button>
+            <button className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg">
+              Activity Links
+            </button>
+          </div>
 
-          <TabsContent value="documents" className="space-y-4">
+          <div className="space-y-4">
             {documents?.length === 0 ? (
               <Card>
                 <CardContent className="flex flex-col items-center justify-center py-16">
@@ -389,36 +392,8 @@ export default function ContextManagement() {
                 ))}
               </div>
             )}
-          </TabsContent>
-
-          <TabsContent value="activity-links" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Activity Type Context Links</CardTitle>
-                <p className="text-sm text-gray-600">
-                  Documents linked to specific activity types will be automatically included in AI prompts
-                </p>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {activityTypes?.map((activityType) => (
-                    <div key={activityType.id} className="border rounded-lg p-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h4 className="font-semibold">{activityType.name}</h4>
-                          <p className="text-sm text-gray-600">{activityType.description}</p>
-                        </div>
-                        <Badge variant="outline">
-                          {activityType.riskLevel} risk
-                        </Badge>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+          </div>
+        </div>
 
         {/* Upload Dialog */}
         <Dialog open={showUploadDialog} onOpenChange={setShowUploadDialog}>
