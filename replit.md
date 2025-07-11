@@ -265,6 +265,15 @@ Changelog:
   * Enhanced session display to show first line of last message instead of generic titles
   * Fixed session history refresh to update immediately when new messages are sent
   * All chat sessions properly isolated by company with Railway PostgreSQL storage
+- July 11, 2025. Restructured sidebar navigation and implemented custom AI model creation:
+  * Removed duplicate AI Management sections that were opening/closing together
+  * Created new "Setup AI Models" section under Owners with comprehensive model creation capabilities
+  * Removed AI Models option from AI Management section under Administration
+  * Added "Create Models" page for building custom AI models from scratch with full configuration options
+  * Implemented "API Configuration" page for managing API keys and settings per provider
+  * Added support for multiple AI providers (OpenAI, Anthropic, Perplexity, Google, Cohere, Custom)
+  * Created complete model management with capabilities, context windows, temperature settings, and testing functionality
+  * Updated Context Management page to use consistent AdminLayout header pattern
 ```
 
 ## User Preferences

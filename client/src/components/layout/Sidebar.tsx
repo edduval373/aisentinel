@@ -80,13 +80,12 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 
   const ownersSections = [
     {
-      id: "ai-management",
-      name: "AI Management",
+      id: "setup-ai-models",
+      name: "Setup AI Models",
       icon: Bot,
       items: [
-        { name: "AI Models", href: "/admin/models", icon: Bot },
-        { name: "Model Settings", href: "/admin/model-settings", icon: Settings },
-        { name: "Context Management", href: "/admin/context-management", icon: FileText },
+        { name: "Create Models", href: "/admin/create-models", icon: Bot },
+        { name: "API Configuration", href: "/admin/api-config", icon: Settings },
       ]
     }
   ];
@@ -97,7 +96,6 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       name: "AI Management",
       icon: Bot,
       items: [
-        { name: "AI Models", href: "/admin/models", icon: Bot },
         { name: "Model Settings", href: "/admin/model-settings", icon: Settings },
         { name: "Context Management", href: "/admin/context-management", icon: FileText },
       ]
