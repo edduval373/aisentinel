@@ -505,6 +505,72 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post('/api/chat/message', isAuthenticated, async (req: any, res) => {
+    try {
+      const { message, aiModelId, activityTypeId, sessionId } = req.body;
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user?.companyId) {
+        return res.status(400).json({ message: "No company associated with user" });
+      }
+
+      // Validate that the session belongs to the user's company
+      const session = await storage.getChatSession(sessionId, user.companyId);
+      if (!session) {
+        return res.status(404).json({ message: "Chat session not found" });
+      }
+
+      // Apply content filtering
+      const filterResult = await contentFilter.filterMessage(message);
+      if (filterResult.blocked) {
+        // Log the security violation
+        await storage.createUserActivity({
+          companyId: user.companyId,
+          userId,
+          activityTypeId,
+          description: `Content blocked: ${filterResult.reason}`,
+          metadata: { originalMessage: message, flags: filterResult.flags }
+        });
+        
+        return res.status(400).json({ 
+          message: "Content blocked by security filter", 
+          reason: filterResult.reason 
+        });
+      }
+
+      // Generate AI response
+      const aiResponse = await aiService.generateResponse(message, aiModelId, activityTypeId);
+      
+      // Create chat message with company isolation
+      const chatMessage = await storage.createChatMessage({
+        companyId: user.companyId,
+        sessionId,
+        userId,
+        aiModelId,
+        activityTypeId,
+        message,
+        response: aiResponse,
+        status: 'approved',
+        securityFlags: filterResult.flags
+      });
+
+      // Log the user activity
+      await storage.createUserActivity({
+        companyId: user.companyId,
+        userId,
+        activityTypeId,
+        description: `Chat message sent`,
+        metadata: { messageId: chatMessage.id, aiModelId }
+      });
+
+      res.json(chatMessage);
+    } catch (error) {
+      console.error("Error creating chat message:", error);
+      res.status(500).json({ message: "Failed to create chat message" });
+    }
+  });
+
   // Company Role Management routes (Owner/Super-user only)
   app.get('/api/company/roles/:companyId', isAuthenticated, async (req: any, res) => {
     try {
