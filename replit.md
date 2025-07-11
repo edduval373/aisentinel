@@ -258,6 +258,13 @@ Changelog:
   * Added complete company role management endpoints with owner/super-user access control
   * Business rule implemented: cannot delete the last owner to maintain company access
   * Enhanced user creation to assign appropriate role levels based on company role structure
+- July 11, 2025. Enhanced chat management with full session functionality:
+  * Implemented complete chat session history with message counts and preview text
+  * Added session restoration - clicking previous chat loads all messages from that session
+  * Modified repeat functionality to fill input field instead of auto-submitting for user modification
+  * Enhanced session display to show first line of last message instead of generic titles
+  * Fixed session history refresh to update immediately when new messages are sent
+  * All chat sessions properly isolated by company with Railway PostgreSQL storage
 ```
 
 ## User Preferences
