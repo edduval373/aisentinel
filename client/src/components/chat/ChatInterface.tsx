@@ -7,10 +7,10 @@ import { isUnauthorizedError } from "@/lib/authUtils";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Download, Wifi, WifiOff, Shield, Building2 } from "lucide-react";
+import { Download, Wifi, WifiOff, Shield, Building2, RotateCcw, Trash2, History } from "lucide-react";
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
-import type { AiModel, ActivityType, ChatMessage as ChatMessageType, Company } from "@shared/schema";
+import type { AiModel, ActivityType, ChatMessage as ChatMessageType, Company, ChatSession } from "@shared/schema";
 
 interface ChatInterfaceProps {
   currentSession: number | null;
@@ -26,6 +26,8 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   const [selectedActivityType, setSelectedActivityType] = useState<number | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [messages, setMessages] = useState<ChatMessageType[]>([]);
+  const [lastMessage, setLastMessage] = useState<string>("");
+  const [showPreviousChats, setShowPreviousChats] = useState(false);
 
   // Fetch AI models
   const { data: aiModels, isLoading: modelsLoading } = useQuery<AiModel[]>({
@@ -95,6 +97,12 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
         }, 500);
       }
     },
+  });
+
+  // Fetch previous chat sessions
+  const { data: previousSessions, isLoading: sessionsLoading } = useQuery<ChatSession[]>({
+    queryKey: ['/api/chat/sessions'],
+    enabled: showPreviousChats,
   });
 
   // Create session mutation
@@ -252,12 +260,36 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       return;
     }
 
+    setLastMessage(message);
     sendMessageMutation.mutate({
       message,
       aiModelId: selectedModel,
       activityTypeId: selectedActivityType,
       sessionId: currentSession,
     });
+  };
+
+  // Clear current chat
+  const handleClearChat = () => {
+    createSessionMutation.mutate();
+    setMessages([]);
+    toast({
+      title: "Chat Cleared",
+      description: "Started a new chat session",
+    });
+  };
+
+  // Repeat last request
+  const handleRepeatLast = () => {
+    if (!lastMessage) {
+      toast({
+        title: "No Previous Message",
+        description: "No previous message to repeat",
+        variant: "destructive",
+      });
+      return;
+    }
+    handleSendMessage(lastMessage);
   };
 
   const selectedModelData = aiModels?.find(m => m.id === selectedModel);
@@ -318,10 +350,90 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
               </SelectContent>
             </Select>
 
+            {/* Chat Management Buttons */}
+            <div className="flex items-center space-x-2 border-l border-slate-200 pl-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowPreviousChats(!showPreviousChats)}
+                className="flex items-center space-x-1"
+              >
+                <History className="w-4 h-4" />
+                <span>History</span>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleRepeatLast}
+                disabled={!lastMessage}
+                className="flex items-center space-x-1"
+              >
+                <RotateCcw className="w-4 h-4" />
+                <span>Repeat</span>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleClearChat}
+                className="flex items-center space-x-1"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span>Clear</span>
+              </Button>
+            </div>
 
           </div>
         </div>
       </div>
+
+      {/* Previous Chat Sessions - Collapsible */}
+      {showPreviousChats && (
+        <div className="bg-slate-50 border-b border-slate-200 p-4 flex-shrink-0">
+          <div className="max-h-48 overflow-y-auto">
+            <h3 className="text-sm font-semibold text-slate-700 mb-2">Previous Chat Sessions</h3>
+            {sessionsLoading ? (
+              <div className="flex justify-center py-4">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-sentinel-blue"></div>
+              </div>
+            ) : previousSessions && previousSessions.length > 0 ? (
+              <div className="space-y-2">
+                {previousSessions.map((session) => (
+                  <div
+                    key={session.id}
+                    className={`p-2 rounded-lg cursor-pointer transition-colors ${
+                      currentSession === session.id
+                        ? 'bg-sentinel-blue text-white'
+                        : 'bg-white hover:bg-slate-100'
+                    }`}
+                    onClick={() => setCurrentSession(session.id)}
+                  >
+                    <div className="flex justify-between items-center">
+                      <div className="text-sm">
+                        <div className="font-medium">
+                          {session.title || `Chat Session ${session.id}`}
+                        </div>
+                        <div className="text-xs opacity-75">
+                          {new Date(session.createdAt).toLocaleDateString()} at{' '}
+                          {new Date(session.createdAt).toLocaleTimeString()}
+                        </div>
+                      </div>
+                      {currentSession === session.id && (
+                        <div className="text-xs font-medium bg-white bg-opacity-20 px-2 py-1 rounded">
+                          Current
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-sm text-slate-500 py-4 text-center">
+                No previous chat sessions found
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Chat Messages - Scrollable middle section */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4 chat-messages-container">

@@ -489,6 +489,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get('/api/chat/sessions', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      if (!user?.companyId) {
+        return res.status(400).json({ message: "No company associated with user" });
+      }
+      const sessions = await storage.getUserChatSessions(userId, user.companyId);
+      res.json(sessions);
+    } catch (error) {
+      console.error("Error fetching chat sessions:", error);
+      res.status(500).json({ message: "Failed to fetch chat sessions" });
+    }
+  });
+
   app.get('/api/chat/session/:id/messages', isAuthenticated, async (req: any, res) => {
     try {
       const sessionId = parseInt(req.params.id);
