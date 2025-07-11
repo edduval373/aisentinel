@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { Upload, FileText, AlertCircle, CheckCircle, Settings, Link, Trash2, Edit } from "lucide-react";
+import { Upload, FileText, AlertCircle, CheckCircle, Settings, Link, Trash2, Edit, ArrowLeft, Menu } from "lucide-react";
 import type { ContextDocument, ActivityType } from "@shared/schema";
 
 export default function ContextManagement() {
@@ -280,18 +280,37 @@ export default function ContextManagement() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Context Management</h1>
-            <p className="text-gray-600 mt-2">
-              Upload and manage company documents that AI can reference during conversations
-            </p>
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <Button
+                variant="ghost"
+                onClick={() => window.history.back()}
+                className="flex items-center space-x-2"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back</span>
+              </Button>
+              <div className="border-l pl-4">
+                <h1 className="text-xl font-semibold">Context Management</h1>
+              </div>
+            </div>
+            <Button onClick={() => setShowUploadDialog(true)} className="bg-blue-600 hover:bg-blue-700">
+              <Upload className="w-4 h-4 mr-2" />
+              Upload Document
+            </Button>
           </div>
-          <Button onClick={() => setShowUploadDialog(true)} className="bg-blue-600 hover:bg-blue-700">
-            <Upload className="w-4 h-4 mr-2" />
-            Upload Document
-          </Button>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-8">
+          <p className="text-gray-600">
+            Upload and manage company documents that AI can reference during conversations
+          </p>
         </div>
 
         <div className="w-full">
