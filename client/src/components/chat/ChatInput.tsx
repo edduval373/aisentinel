@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Send } from "lucide-react";
+import VoiceInput from "./VoiceInput";
 
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
@@ -10,6 +11,11 @@ interface ChatInputProps {
 
 export default function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
   const [message, setMessage] = useState("");
+
+  const handleVoiceTranscription = (transcription: string) => {
+    setMessage(prev => prev + (prev ? ' ' : '') + transcription);
+  };
+
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -49,13 +55,19 @@ export default function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
             disabled={disabled}
           />
         </div>
-        <Button
+        <div className="flex items-end space-x-2">
+          <VoiceInput 
+            onTranscription={handleVoiceTranscription}
+            disabled={disabled}
+          />
+          <Button
           type="submit"
           disabled={!message.trim() || disabled}
           className="bg-sentinel-blue hover:bg-blue-600 px-4 py-2"
         >
           <Send className="w-4 h-4" />
         </Button>
+        </div>
       </form>
       <div className="flex items-center justify-between mt-2 text-xs text-slate-500">
         <span>All conversations are monitored and logged for compliance.</span>

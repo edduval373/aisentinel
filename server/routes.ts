@@ -103,12 +103,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userRole: user?.role,
         requestBody: req.body 
       });
-      
+
       const userRoleLevel = user?.roleLevel || 1;
       if (userRoleLevel < 100) { // Must be super-user (100)
         return res.status(403).json({ message: "Super-user access required" });
       }
-      
+
       const company = await storage.createCompany(req.body);
       console.log("Company created successfully:", company);
       res.json(company);
@@ -205,12 +205,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Owner or super-user access required" });
       }
       const companyId = parseInt(req.params.companyId);
-      
+
       // Ensure user can only access their own company (unless super-user)
       if (userRoleLevel < 100 && user?.companyId !== companyId) {
         return res.status(403).json({ message: "Access denied" });
       }
-      
+
       const owners = await storage.getCompanyOwners(companyId);
       res.json(owners);
     } catch (error) {
@@ -227,12 +227,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Owner or super-user access required" });
       }
       const companyId = parseInt(req.params.companyId);
-      
+
       // Ensure user can only modify their own company (unless super-user)
       if (userRoleLevel < 100 && user?.companyId !== companyId) {
         return res.status(403).json({ message: "Access denied" });
       }
-      
+
       const newOwner = await storage.addCompanyOwner(companyId, req.body);
       res.json(newOwner);
     } catch (error) {
@@ -249,7 +249,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Owner or super-user access required" });
       }
       const userId = req.params.userId;
-      
+
       const updatedOwner = await storage.updateCompanyOwner(userId, req.body);
       res.json(updatedOwner);
     } catch (error) {
@@ -267,12 +267,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       const userId = req.params.userId;
       const companyId = parseInt(req.params.companyId);
-      
+
       // Ensure user can only modify their own company (unless super-user)
       if (userRoleLevel < 100 && user?.companyId !== companyId) {
         return res.status(403).json({ message: "Access denied" });
       }
-      
+
       await storage.removeCompanyOwner(userId, companyId);
       res.json({ message: "Owner deleted successfully" });
     } catch (error) {
@@ -324,14 +324,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!user?.companyId) {
         return res.status(400).json({ message: "No company associated with user" });
       }
-      
+
       // Ensure permissions is properly formatted as an array
       const activityTypeData = {
         ...req.body,
         companyId: user.companyId,
         permissions: Array.isArray(req.body.permissions) ? req.body.permissions : []
       };
-      
+
       console.log("Creating activity type with data:", activityTypeData);
       const activityType = await storage.createActivityType(activityTypeData);
       res.json(activityType);
@@ -414,19 +414,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       const { companyId } = req.body;
-      
+
       // Validate company exists and user has access
       const company = await storage.getCompanyById(companyId);
       if (!company) {
         return res.status(404).json({ message: "Company not found" });
       }
-      
+
       // Update user's current company
       const user = await storage.getUser(userId);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
-      
+
       // For now, we'll just return success. In a full implementation,
       // you'd want to update the user's current company in the database
       res.json({ message: "Current company updated successfully", companyId });
@@ -443,12 +443,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!user?.companyId) {
         return res.status(400).json({ message: "No company associated with user" });
       }
-      
+
       const company = await storage.getCompanyById(user.companyId);
       if (!company) {
         return res.status(404).json({ message: "Company not found" });
       }
-      
+
       res.json(company);
     } catch (error) {
       console.error("Error fetching current company:", error);
@@ -456,92 +456,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Chat routes
-  app.post('/api/chat/message', isAuthenticated, async (req: any, res) => {
+  // Whisper API route
+  app.post('/api/transcribe', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const { message, aiModelId, activityTypeId, sessionId } = req.body;
-
-      // Get user's company context
-      const user = await storage.getUser(userId);
-      if (!user?.companyId) {
-        return res.status(400).json({ message: "No company associated with user" });
+      if (!req.files || !req.files.audio) {
+        return res.status(400).json({ message: "No audio file provided" });
       }
 
-      // Validate input
-      const validationResult = insertChatMessageSchema.safeParse({
-        sessionId,
-        userId,
-        aiModelId,
-        activityTypeId,
-        message,
-        response: '',
-        status: 'pending',
-        securityFlags: null,
-      });
+      const audioFile = req.files.audio;
+      const transcription = await aiService.transcribeAudio(audioFile.data, audioFile.name);
 
-      if (!validationResult.success) {
-        return res.status(400).json({ message: "Invalid input", errors: validationResult.error.errors });
-      }
-
-      // Filter content for security
-      const filterResult = await contentFilter.filterMessage(message);
-      
-      if (filterResult.blocked) {
-        // Log blocked activity
-        await storage.createUserActivity({
-          companyId: user.companyId,
-          userId,
-          aiModelId,
-          activityTypeId,
-          message,
-          response: null,
-          status: 'blocked',
-          securityFlags: filterResult.flags,
-        });
-
-        return res.status(403).json({ 
-          message: "Message blocked by security policy",
-          reason: filterResult.reason,
-          flags: filterResult.flags 
-        });
-      }
-
-      // Get AI response
-      const aiResponse = await aiService.generateResponse(message, aiModelId, activityTypeId);
-
-      // Create chat message
-      const chatMessage = await storage.createChatMessage({
-        companyId: user.companyId,
-        sessionId,
-        userId,
-        aiModelId,
-        activityTypeId,
-        message,
-        response: aiResponse,
-        status: 'approved',
-        securityFlags: filterResult.flags,
-      });
-
-      // Log activity
-      await storage.createUserActivity({
-        companyId: user.companyId,
-        userId,
-        aiModelId,
-        activityTypeId,
-        message,
-        response: aiResponse,
-        status: 'approved',
-        securityFlags: filterResult.flags,
-      });
-
-      res.json(chatMessage);
+      res.json({ transcription });
     } catch (error) {
-      console.error("Error processing chat message:", error);
-      res.status(500).json({ message: "Failed to process message" });
+      console.error("Error transcribing audio:", error);
+      res.status(500).json({ message: "Failed to transcribe audio" });
     }
   });
 
+  // Chat routes
   app.post('/api/chat/session', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
@@ -582,12 +514,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Owner or super-user access required" });
       }
       const companyId = parseInt(req.params.companyId);
-      
+
       // Ensure user can only access their own company (unless super-user)
       if (userRoleLevel < 100 && user?.companyId !== companyId) {
         return res.status(403).json({ message: "Access denied" });
       }
-      
+
       const roles = await storage.getCompanyRoles(companyId);
       res.json(roles);
     } catch (error) {
@@ -604,17 +536,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Owner or super-user access required" });
       }
       const companyId = parseInt(req.params.companyId);
-      
+
       // Ensure user can only modify their own company (unless super-user)
       if (userRoleLevel < 100 && user?.companyId !== companyId) {
         return res.status(403).json({ message: "Access denied" });
       }
-      
+
       const validationResult = insertCompanyRoleSchema.safeParse(req.body);
       if (!validationResult.success) {
         return res.status(400).json({ message: "Invalid input", errors: validationResult.error.errors });
       }
-      
+
       const newRole = await storage.createCompanyRole({ ...req.body, companyId });
       res.json(newRole);
     } catch (error) {
@@ -631,7 +563,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Owner or super-user access required" });
       }
       const roleId = parseInt(req.params.roleId);
-      
+
       const updatedRole = await storage.updateCompanyRole(roleId, req.body);
       res.json(updatedRole);
     } catch (error) {
@@ -648,7 +580,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Owner or super-user access required" });
       }
       const roleId = parseInt(req.params.roleId);
-      
+
       await storage.deleteCompanyRole(roleId);
       res.json({ message: "Role deleted successfully" });
     } catch (error) {

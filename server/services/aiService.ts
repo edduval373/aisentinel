@@ -26,6 +26,25 @@ const anthropic = new Anthropic({
 });
 
 class AIService {
+  async transcribeAudio(audioBuffer: Buffer, filename: string): Promise<string> {
+    try {
+      // Create a File-like object from the buffer
+      const file = new File([audioBuffer], filename, { type: 'audio/wav' });
+      
+      const response = await openai.audio.transcriptions.create({
+        file: file,
+        model: 'whisper-1',
+        language: 'en', // Optional: specify language
+        response_format: 'text'
+      });
+
+      return response;
+    } catch (error) {
+      console.error("Whisper API error:", error);
+      throw new Error("Failed to transcribe audio");
+    }
+  }
+
   async generateResponse(message: string, aiModelId: number, activityTypeId?: number): Promise<string> {
     try {
       const models = await storage.getAiModels();
