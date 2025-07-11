@@ -6,6 +6,12 @@ import AdminLayout from "@/components/layout/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Shield, Users, Settings, Edit, Plus, Trash2 } from "lucide-react";
 
 interface CompanyRole {
@@ -24,6 +30,30 @@ export default function AdminRoles() {
   const { isAuthenticated, isLoading, user } = useAuth();
   const [roles, setRoles] = useState<CompanyRole[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [newRole, setNewRole] = useState({
+    name: '',
+    level: '',
+    description: '',
+    permissions: [] as string[]
+  });
+
+  const availablePermissions = [
+    'full_system_access',
+    'manage_companies',
+    'manage_company',
+    'manage_users',
+    'manage_roles',
+    'manage_settings',
+    'manage_content',
+    'manage_ai_models',
+    'manage_activity_types',
+    'view_analytics',
+    'view_all_data',
+    'view_personal_data',
+    'use_chat',
+    'use_ai_models'
+  ];
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -72,17 +102,69 @@ export default function AdminRoles() {
   };
 
   const getRoleBadgeColor = (level: number) => {
-    if (level >= 100) return "destructive"; // Super-user
-    if (level >= 99) return "default"; // Owner
-    if (level >= 2) return "secondary"; // Admin
+    if (level >= 1000) return "destructive"; // Super-user
+    if (level >= 999) return "default"; // Owner
+    if (level >= 998) return "secondary"; // Admin
     return "outline"; // User
   };
 
   const getRoleDisplayName = (level: number) => {
-    if (level >= 100) return "Super-user";
-    if (level >= 99) return "Owner";
-    if (level >= 2) return "Admin";
+    if (level >= 1000) return "Super-user";
+    if (level >= 999) return "Owner";
+    if (level >= 998) return "Admin";
     return "User";
+  };
+
+  const createRole = async () => {
+    try {
+      const roleData = {
+        ...newRole,
+        level: parseInt(newRole.level),
+        permissions: newRole.permissions
+      };
+
+      const response = await fetch(`/api/company/roles/${user?.companyId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(roleData),
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: "Role created successfully",
+        });
+        setIsCreateDialogOpen(false);
+        setNewRole({ name: '', level: '', description: '', permissions: [] });
+        fetchRoles();
+      } else {
+        const error = await response.json();
+        toast({
+          title: "Error",
+          description: error.message || "Failed to create role",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error creating role:", error);
+      toast({
+        title: "Error",
+        description: "Failed to create role",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handlePermissionChange = (permission: string, checked: boolean) => {
+    setNewRole(prev => ({
+      ...prev,
+      permissions: checked 
+        ? [...prev.permissions, permission]
+        : prev.permissions.filter(p => p !== permission)
+    }));
   };
 
   if (isLoading || loading) {
@@ -108,10 +190,83 @@ export default function AdminRoles() {
             <h2 className="text-2xl font-semibold text-slate-800">Role Management</h2>
             <p className="text-slate-600 mt-1">Configure user roles and their permissions</p>
           </div>
-          <Button>
-            <Plus className="w-4 h-4 mr-2" />
-            Add Role
-          </Button>
+          <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="w-4 h-4 mr-2" />
+                Add Role
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Create New Role</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="name">Role Name</Label>
+                  <Input
+                    id="name"
+                    value={newRole.name}
+                    onChange={(e) => setNewRole(prev => ({ ...prev, name: e.target.value }))}
+                    placeholder="e.g., Manager, Team Lead"
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="level">Role Level</Label>
+                  <Input
+                    id="level"
+                    type="number"
+                    value={newRole.level}
+                    onChange={(e) => setNewRole(prev => ({ ...prev, level: e.target.value }))}
+                    placeholder="e.g., 500 (between 1-999 for custom roles)"
+                    min="1"
+                    max="999"
+                  />
+                  <p className="text-xs text-slate-500 mt-1">
+                    1000: Super User, 999: Owner, 998: Admin, 1: User. Use values between for custom roles.
+                  </p>
+                </div>
+                
+                <div>
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    value={newRole.description}
+                    onChange={(e) => setNewRole(prev => ({ ...prev, description: e.target.value }))}
+                    placeholder="Describe this role's responsibilities"
+                  />
+                </div>
+                
+                <div>
+                  <Label>Permissions</Label>
+                  <div className="grid grid-cols-2 gap-2 mt-2 max-h-48 overflow-y-auto">
+                    {availablePermissions.map((permission) => (
+                      <div key={permission} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={permission}
+                          checked={newRole.permissions.includes(permission)}
+                          onCheckedChange={(checked) => handlePermissionChange(permission, checked as boolean)}
+                        />
+                        <Label htmlFor={permission} className="text-sm">
+                          {permission.replace(/_/g, ' ')}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                
+                <div className="flex justify-end space-x-2">
+                  <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={createRole} disabled={!newRole.name || !newRole.level}>
+                    Create Role
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
 
         {/* Roles Grid */}
@@ -175,10 +330,14 @@ export default function AdminRoles() {
             <Shield className="w-12 h-12 text-slate-300 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-slate-900 mb-2">No roles found</h3>
             <p className="text-slate-500 mb-4">Create your first company role to get started.</p>
-            <Button>
-              <Plus className="w-4 h-4 mr-2" />
-              Add Role
-            </Button>
+            <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Role
+                </Button>
+              </DialogTrigger>
+            </Dialog>
           </div>
         )}
 
