@@ -169,7 +169,7 @@ export default function CompanyManagement() {
       <div className="space-y-6">
         {/* Add Company Button */}
         <div className="flex justify-between items-center">
-          <h2 className="text-lg font-semibold">All Companies</h2>
+          <h2 className="text-lg font-semibold ml-9">All Companies</h2>
           <Dialog open={showAddCompany} onOpenChange={setShowAddCompany}>
             <DialogTrigger asChild>
               <Button>
