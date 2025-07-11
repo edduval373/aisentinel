@@ -61,12 +61,12 @@ export default function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
             disabled={disabled}
           />
           <Button
-          type="submit"
-          disabled={!message.trim() || disabled}
-          className="bg-sentinel-blue hover:bg-blue-600 px-4 py-2"
-        >
-          <Send className="w-4 h-4" />
-        </Button>
+            type="submit"
+            disabled={!message.trim() || disabled}
+            className="bg-sentinel-blue hover:bg-blue-600 px-4 py-2"
+          >
+            <Send className="w-4 h-4" />
+          </Button>
         </div>
       </form>
       <div className="flex items-center justify-between mt-2 text-xs text-slate-500">
