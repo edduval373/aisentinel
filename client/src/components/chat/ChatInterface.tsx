@@ -28,6 +28,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   const [messages, setMessages] = useState<ChatMessageType[]>([]);
   const [lastMessage, setLastMessage] = useState<string>("");
   const [showPreviousChats, setShowPreviousChats] = useState(false);
+  const [prefillMessage, setPrefillMessage] = useState<string>("");
 
   // Fetch AI models
   const { data: aiModels, isLoading: modelsLoading } = useQuery<AiModel[]>({
@@ -301,15 +302,9 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       });
       return;
     }
-    // Find the chat input component and set its value
-    const chatInput = document.querySelector('textarea[placeholder="Type your message here..."]') as HTMLTextAreaElement;
-    if (chatInput) {
-      chatInput.value = lastMessage;
-      chatInput.focus();
-      // Trigger an input event to update React state
-      const event = new Event('input', { bubbles: true });
-      chatInput.dispatchEvent(event);
-    }
+    setPrefillMessage(lastMessage);
+    // Clear the prefill message after a short delay to allow the effect to run
+    setTimeout(() => setPrefillMessage(""), 100);
   };
 
   const selectedModelData = aiModels?.find(m => m.id === selectedModel);
@@ -506,6 +501,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
         <ChatInput
           onSendMessage={handleSendMessage}
           disabled={!selectedModel || !selectedActivityType || !currentSession || sendMessageMutation.isPending}
+          prefillMessage={prefillMessage}
         />
       </div>
     </div>

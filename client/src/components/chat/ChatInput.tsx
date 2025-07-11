@@ -7,14 +7,21 @@ import VoiceInput from "./VoiceInput";
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
   disabled?: boolean;
+  prefillMessage?: string;
 }
 
-interface ChatInputHandle {
-  setMessage: (message: string) => void;
-}
-
-export default function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
+export default function ChatInput({ onSendMessage, disabled, prefillMessage }: ChatInputProps) {
   const [message, setMessage] = useState("");
+
+  // Handle prefill message
+  useEffect(() => {
+    if (prefillMessage) {
+      setMessage(prefillMessage);
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+      }
+    }
+  }, [prefillMessage]);
 
   const handleVoiceTranscription = (transcription: string) => {
     setMessage(prev => prev + (prev ? ' ' : '') + transcription);
