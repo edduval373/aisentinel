@@ -17,11 +17,19 @@ export default function AdminUsers() {
   const { toast } = useToast();
   const { isAuthenticated, isLoading, user } = useAuth();
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
   const [inviteForm, setInviteForm] = useState({
     email: '',
     name: '',
     role: 'user',
     message: ''
+  });
+  const [editForm, setEditForm] = useState({
+    name: '',
+    email: '',
+    role: '',
+    status: ''
   });
 
   // Redirect if not admin
@@ -142,6 +150,47 @@ export default function AdminUsers() {
     }
   };
 
+  const handleEditUser = (user: any) => {
+    setSelectedUser(user);
+    setEditForm({
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      status: user.status
+    });
+    setEditDialogOpen(true);
+  };
+
+  const handleSaveUser = async () => {
+    if (!editForm.name || !editForm.email) {
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      toast({
+        title: "User Updated",
+        description: `${editForm.name}'s information has been updated successfully`,
+      });
+      
+      setEditDialogOpen(false);
+      setSelectedUser(null);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update user",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <AdminLayout title="User Management" subtitle="Manage user accounts, roles, and permissions">
       <div className="p-6 space-y-6">
@@ -211,6 +260,73 @@ export default function AdminUsers() {
                 <Button onClick={handleInviteUser}>
                   <Mail className="w-4 h-4 mr-2" />
                   Send Invitation
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          {/* Edit User Dialog */}
+          <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle className="flex items-center">
+                  <Edit className="w-5 h-5 mr-2" />
+                  Edit User
+                </DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-name">Full Name *</Label>
+                  <Input
+                    id="edit-name"
+                    placeholder="John Doe"
+                    value={editForm.name}
+                    onChange={(e) => setEditForm({...editForm, name: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-email">Email Address *</Label>
+                  <Input
+                    id="edit-email"
+                    type="email"
+                    placeholder="user@company.com"
+                    value={editForm.email}
+                    onChange={(e) => setEditForm({...editForm, email: e.target.value})}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-role">Role</Label>
+                  <Select value={editForm.role} onValueChange={(value) => setEditForm({...editForm, role: value})}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="user">User</SelectItem>
+                      <SelectItem value="moderator">Moderator</SelectItem>
+                      <SelectItem value="admin">Administrator</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-status">Status</Label>
+                  <Select value={editForm.status} onValueChange={(value) => setEditForm({...editForm, status: value})}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="active">Active</SelectItem>
+                      <SelectItem value="inactive">Inactive</SelectItem>
+                      <SelectItem value="banned">Banned</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="flex justify-end space-x-2">
+                <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={handleSaveUser}>
+                  Save Changes
                 </Button>
               </div>
             </DialogContent>
@@ -301,7 +417,7 @@ export default function AdminUsers() {
                     </div>
                   </div>
                   <div className="flex space-x-2">
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" onClick={() => handleEditUser(userData)}>
                       <Edit className="w-4 h-4" />
                     </Button>
                     <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700">
