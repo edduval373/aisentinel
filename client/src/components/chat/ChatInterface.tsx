@@ -388,9 +388,9 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                       <div className="flex items-center gap-2">
                         <Badge variant="default" style={{ backgroundColor: 'hsl(221, 83%, 53%)' }}>
                           <Brain className="w-3 h-3 mr-1" />
-                          Model Fusion
+                          Multi-AI
                         </Badge>
-                        Multi-AI
+                        Model Fusion
                       </div>
                     </SelectItem>
                   </>
