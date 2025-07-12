@@ -202,10 +202,10 @@ export default function DeepResearch() {
                   <div className="border rounded-lg overflow-hidden">
                     <table className="w-full">
                       <thead>
-                        <tr className="bg-gray-50 dark:bg-gray-800 border-b">
-                          <th className="text-left p-3 font-medium text-sm">Provider</th>
-                          <th className="text-left p-3 font-medium text-sm">Model Name</th>
-                          <th className="text-center p-3 font-medium text-sm">Include in Research</th>
+                        <tr className="bg-sentinel-blue border-b">
+                          <th className="text-left p-3 font-medium text-sm text-white">Provider</th>
+                          <th className="text-left p-3 font-medium text-sm text-white">Model Name</th>
+                          <th className="text-center p-3 font-medium text-sm text-white">Include in Research</th>
                         </tr>
                       </thead>
                       <tbody>
