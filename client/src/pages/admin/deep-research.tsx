@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { Brain, Zap, AlertCircle, CheckCircle2 } from "lucide-react";
@@ -33,6 +35,7 @@ export default function DeepResearch() {
     isEnabled: false,
     summaryModelId: null,
   });
+  const [selectedModels, setSelectedModels] = useState<Set<number>>(new Set());
 
   // Fetch AI models
   const { data: aiModels = [], isLoading: modelsLoading } = useQuery<AiModel[]>({
@@ -50,6 +53,14 @@ export default function DeepResearch() {
       setLocalConfig(config);
     }
   }, [config]);
+
+  // Initialize selected models with all enabled models
+  useEffect(() => {
+    if (aiModels.length > 0) {
+      const enabledModelIds = aiModels.filter(model => model.isEnabled).map(model => model.id);
+      setSelectedModels(new Set(enabledModelIds));
+    }
+  }, [aiModels]);
 
   // Save configuration mutation
   const saveConfigMutation = useMutation({
@@ -86,6 +97,18 @@ export default function DeepResearch() {
     setLocalConfig(prev => ({ ...prev, summaryModelId: parseInt(modelId) }));
   };
 
+  const handleModelToggle = (modelId: number, checked: boolean) => {
+    setSelectedModels(prev => {
+      const newSet = new Set(prev);
+      if (checked) {
+        newSet.add(modelId);
+      } else {
+        newSet.delete(modelId);
+      }
+      return newSet;
+    });
+  };
+
   const handleSaveConfiguration = () => {
     if (localConfig.isEnabled && !localConfig.summaryModelId) {
       toast({
@@ -113,93 +136,139 @@ export default function DeepResearch() {
 
   return (
     <AdminLayout title="Deep Research" subtitle="Set up advanced multi-model AI processing for comprehensive research and analysis">
-      <div className="px-6 pt-2 pb-6 space-y-6">
-        <Card>
-          <CardContent className="space-y-6 pt-6">
-            {/* Enable/Disable Toggle */}
-            <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-              <div className="space-y-1">
-                <Label htmlFor="deep-research-enabled" className="text-base font-medium">
-                  Enable Deep Research
-                </Label>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  When enabled, users can submit prompts to multiple AI models simultaneously
-                </p>
-              </div>
-              <Switch
-                id="deep-research-enabled"
-                checked={localConfig.isEnabled || false}
-                onCheckedChange={handleToggleEnabled}
-              />
-            </div>
+      <div className="px-6 pt-2 pb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Left Column - Configuration */}
+          <div className="space-y-6">
+            <Card>
+              <CardContent className="space-y-6 pt-6">
+                {/* Enable/Disable Toggle */}
+                <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                  <div className="space-y-1 flex-1">
+                    <Label htmlFor="deep-research-enabled" className="text-base font-medium">
+                      Enable Deep Research
+                    </Label>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      When enabled, users can submit prompts to multiple AI models simultaneously
+                    </p>
+                  </div>
+                  <Switch
+                    id="deep-research-enabled"
+                    checked={localConfig.isEnabled || false}
+                    onCheckedChange={handleToggleEnabled}
+                  />
+                </div>
 
-            <Separator />
-            
-            {/* Summary Model Selection */}
-            <div className="space-y-3">
-              <Label className="text-base font-medium flex items-center gap-2">
-                <Zap className="h-4 w-4" />
-                Summary Model
-              </Label>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Select the AI model that will create the final comprehensive summary of all model responses
-              </p>
-              <Select
-                value={localConfig.summaryModelId?.toString() || ""}
-                onValueChange={handleSummaryModelChange}
-                disabled={!localConfig.isEnabled}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select a model for summarization" />
-                </SelectTrigger>
-                <SelectContent>
-                  {enabledModels.map((model) => (
-                    <SelectItem key={model.id} value={model.id.toString()}>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="secondary">{model.provider}</Badge>
-                        {model.name}
+                <Separator />
+                
+                {/* Summary Model Selection */}
+                <div className="space-y-3">
+                  <Label className="text-base font-medium flex items-center gap-2">
+                    <Zap className="h-4 w-4" />
+                    Choose Summary Model
+                  </Label>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Select the AI model that will create the final comprehensive summary of all model responses
+                  </p>
+                  <Select
+                    value={localConfig.summaryModelId?.toString() || ""}
+                    onValueChange={handleSummaryModelChange}
+                    disabled={!localConfig.isEnabled}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a model for summarization" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {enabledModels.map((model) => (
+                        <SelectItem key={model.id} value={model.id.toString()}>
+                          <div className="flex items-center gap-2">
+                            <Badge variant="secondary">{model.provider}</Badge>
+                            {model.name}
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <Separator />
+
+                {/* Model Selection */}
+                <div className="space-y-3">
+                  <Label className="text-base font-medium">Active Models</Label>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Select which models to include in the deep research analysis
+                  </p>
+                  <div className="space-y-3">
+                    {enabledModels.map((model) => (
+                      <div key={model.id} className="flex items-center space-x-3 p-3 border rounded-lg">
+                        <Checkbox
+                          id={`model-${model.id}`}
+                          checked={selectedModels.has(model.id)}
+                          onCheckedChange={(checked) => handleModelToggle(model.id, checked as boolean)}
+                          disabled={!localConfig.isEnabled}
+                        />
+                        <div className="flex-1">
+                          <Label htmlFor={`model-${model.id}`} className="text-sm font-medium cursor-pointer">
+                            Include in Research?
+                          </Label>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Badge variant="secondary">{model.provider}</Badge>
+                            <span className="text-sm text-gray-600">{model.name}</span>
+                          </div>
+                        </div>
                       </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Right Column - Save Button and Information */}
+          <div className="space-y-6">
+            {/* Save Configuration Button */}
+            <Card>
+              <CardContent className="pt-6">
+                <Button
+                  onClick={handleSaveConfiguration}
+                  disabled={saveConfigMutation.isPending}
+                  className="w-full flex items-center justify-center gap-2"
+                  size="lg"
+                >
+                  {saveConfigMutation.isPending ? (
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  ) : (
+                    <CheckCircle2 className="h-4 w-4" />
+                  )}
+                  Save Configuration
+                </Button>
+              </CardContent>
+            </Card>
 
             {/* Information Panel */}
-            <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-              <div className="flex items-start gap-3">
-                <AlertCircle className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
-                <div className="space-y-1">
-                  <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
-                    How Deep Research Works
-                  </p>
-                  <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
-                    <li>• Users will see "Deep Research" as an option in the AI model selector</li>
-                    <li>• The prompt is sent to all available AI models simultaneously</li>
-                    <li>• Individual responses are collected and combined</li>
-                    <li>• The selected summary model creates a comprehensive analysis</li>
-                    <li>• Processing may take several minutes depending on model count</li>
-                  </ul>
+            <Card>
+              <CardContent className="pt-6">
+                <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                        How Deep Research Works
+                      </p>
+                      <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+                        <li>• Users will see "Deep Research" as an option in the AI model selector</li>
+                        <li>• The prompt is sent to all selected AI models simultaneously</li>
+                        <li>• Individual responses are collected and combined</li>
+                        <li>• The selected summary model creates a comprehensive analysis</li>
+                        <li>• Processing may take several minutes depending on model count</li>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        {/* Save Configuration Button - Bottom Right */}
-        <div className="flex justify-end">
-          <Button
-            onClick={handleSaveConfiguration}
-            disabled={saveConfigMutation.isPending}
-            className="flex items-center gap-2"
-          >
-            {saveConfigMutation.isPending ? (
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-            ) : (
-              <CheckCircle2 className="h-4 w-4" />
-            )}
-            Save Configuration
-          </Button>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </AdminLayout>
