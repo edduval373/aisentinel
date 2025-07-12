@@ -372,7 +372,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
               }}
               disabled={modelsLoading}
             >
-              <SelectTrigger className="w-48">
+              <SelectTrigger className="w-48 font-semibold">
                 <SelectValue placeholder="Select AI Model" />
               </SelectTrigger>
               <SelectContent>
@@ -404,7 +404,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
               onValueChange={(value) => setSelectedActivityType(parseInt(value))}
               disabled={typesLoading}
             >
-              <SelectTrigger className="w-48">
+              <SelectTrigger className="w-48 font-semibold">
                 <SelectValue placeholder="Select Activity Type" />
               </SelectTrigger>
               <SelectContent>
@@ -425,7 +425,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                 className="flex items-center space-x-1"
               >
                 <History className="w-4 h-4" />
-                <span>{showPreviousChats ? "Hide History" : "History"}</span>
+                <span className="font-semibold">{showPreviousChats ? "Hide History" : "History"}</span>
               </Button>
               <Button
                 variant="outline"
@@ -435,7 +435,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                 className="flex items-center space-x-1"
               >
                 <RotateCcw className="w-4 h-4" />
-                <span>Repeat</span>
+                <span className="font-semibold">Repeat</span>
               </Button>
               <Button
                 variant="outline"
@@ -444,7 +444,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                 className="flex items-center space-x-1"
               >
                 <Trash2 className="w-4 h-4" />
-                <span>Clear</span>
+                <span className="font-semibold">Clear</span>
               </Button>
             </div>
 
