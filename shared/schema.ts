@@ -210,8 +210,8 @@ export const activityContextLinks = pgTable("activity_context_links", {
   index("idx_activity_context_document").on(table.documentId),
 ]);
 
-// Deep Research configuration
-export const deepResearchConfigs = pgTable("deep_research_configs", {
+// Model Fusion configuration
+export const modelFusionConfigs = pgTable("model_fusion_configs", {
   id: serial("id").primaryKey(),
   companyId: integer("company_id").references(() => companies.id).notNull(),
   isEnabled: boolean("is_enabled").default(false).notNull(),
@@ -219,7 +219,7 @@ export const deepResearchConfigs = pgTable("deep_research_configs", {
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 }, (table) => [
-  index("idx_deep_research_company").on(table.companyId),
+  index("idx_model_fusion_company").on(table.companyId),
 ]);
 
 // Insert schemas
@@ -235,7 +235,7 @@ export const insertChatMessageSchema = createInsertSchema(chatMessages).omit({ i
 export const insertChatAttachmentSchema = createInsertSchema(chatAttachments).omit({ id: true, uploadedAt: true });
 export const insertContextDocumentSchema = createInsertSchema(contextDocuments).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertActivityContextLinkSchema = createInsertSchema(activityContextLinks).omit({ id: true, createdAt: true });
-export const insertDeepResearchConfigSchema = createInsertSchema(deepResearchConfigs).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertModelFusionConfigSchema = createInsertSchema(modelFusionConfigs).omit({ id: true, createdAt: true, updatedAt: true });
 
 // Types
 export type Company = typeof companies.$inferSelect;
@@ -263,8 +263,8 @@ export type ContextDocument = typeof contextDocuments.$inferSelect;
 export type InsertContextDocument = z.infer<typeof insertContextDocumentSchema>;
 export type ActivityContextLink = typeof activityContextLinks.$inferSelect;
 export type InsertActivityContextLink = z.infer<typeof insertActivityContextLinkSchema>;
-export type DeepResearchConfig = typeof deepResearchConfigs.$inferSelect;
-export type InsertDeepResearchConfig = z.infer<typeof insertDeepResearchConfigSchema>;
+export type ModelFusionConfig = typeof modelFusionConfigs.$inferSelect;
+export type InsertModelFusionConfig = z.infer<typeof insertModelFusionConfigSchema>;
 export type InsertChatAttachment = z.infer<typeof insertChatAttachmentSchema>;
 export type ContextDocument = typeof contextDocuments.$inferSelect;
 export type InsertContextDocument = z.infer<typeof insertContextDocumentSchema>;

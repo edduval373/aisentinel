@@ -273,21 +273,21 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
               
               <button
                 onClick={() => {
-                  navigate("/admin/deep-research");
+                  navigate("/admin/model-fusion");
                   if (window.innerWidth < 1024) onToggle();
                 }}
                 className={cn(
                   "w-full flex items-center space-x-3 text-left rounded-lg px-3 py-2 transition-colors",
-                  location === "/admin/deep-research"
+                  location === "/admin/model-fusion"
                     ? "text-white bg-slate-700"
                     : "text-slate-300 hover:text-white hover:bg-slate-700"
                 )}
               >
                 <Brain className={cn(
                   "w-5 h-5",
-                  location === "/admin/deep-research" ? "text-sentinel-blue" : "text-slate-400"
+                  location === "/admin/model-fusion" ? "text-sentinel-blue" : "text-slate-400"
                 )} />
-                <span>Setup Deep Research</span>
+                <span>Setup Model Fusion</span>
               </button>
             </>
           )}

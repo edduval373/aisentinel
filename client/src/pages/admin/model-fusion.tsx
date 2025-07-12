@@ -22,16 +22,16 @@ interface AiModel {
   isEnabled: boolean;
 }
 
-interface DeepResearchConfig {
+interface ModelFusionConfig {
   id: number;
   companyId: number;
   isEnabled: boolean;
   summaryModelId: number | null;
 }
 
-export default function DeepResearch() {
+export default function ModelFusion() {
   const queryClient = useQueryClient();
-  const [localConfig, setLocalConfig] = useState<Partial<DeepResearchConfig>>({
+  const [localConfig, setLocalConfig] = useState<Partial<ModelFusionConfig>>({
     isEnabled: false,
     summaryModelId: null,
   });
@@ -42,9 +42,9 @@ export default function DeepResearch() {
     queryKey: ['/api/ai-models'],
   });
 
-  // Fetch Deep Research config
-  const { data: config, isLoading: configLoading } = useQuery<DeepResearchConfig>({
-    queryKey: ['/api/deep-research-config'],
+  // Fetch Model Fusion config
+  const { data: config, isLoading: configLoading } = useQuery<ModelFusionConfig>({
+    queryKey: ['/api/model-fusion-config'],
   });
 
   // Update local config when data is fetched
@@ -64,18 +64,18 @@ export default function DeepResearch() {
 
   // Save configuration mutation
   const saveConfigMutation = useMutation({
-    mutationFn: async (configData: Partial<DeepResearchConfig>) => {
+    mutationFn: async (configData: Partial<ModelFusionConfig>) => {
       const method = config?.id ? 'PUT' : 'POST';
-      const url = config?.id ? `/api/deep-research-config/${config.id}` : '/api/deep-research-config';
+      const url = config?.id ? `/api/model-fusion-config/${config.id}` : '/api/model-fusion-config';
       
       return await apiRequest(url, method, configData);
     },
     onSuccess: () => {
       toast({
         title: "Configuration Saved",
-        description: "Deep Research settings have been updated successfully.",
+        description: "Model Fusion settings have been updated successfully.",
       });
-      queryClient.invalidateQueries({ queryKey: ['/api/deep-research-config'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/model-fusion-config'] });
     },
     onError: (error: any) => {
       toast({
@@ -132,7 +132,7 @@ export default function DeepResearch() {
   }
 
   return (
-    <AdminLayout title="Deep Research" subtitle="Set up advanced multi-model AI processing for comprehensive research and analysis">
+    <AdminLayout title="Model Fusion" subtitle="Set up advanced multi-model AI processing for comprehensive research and analysis">
       <div className="px-6 pt-2 pb-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left Column - Configuration */}
@@ -142,15 +142,15 @@ export default function DeepResearch() {
                 {/* Enable/Disable Toggle */}
                 <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                   <div className="space-y-1 flex-1">
-                    <Label htmlFor="deep-research-enabled" className="text-base font-medium">
-                      Enable Deep Research
+                    <Label htmlFor="model-fusion-enabled" className="text-base font-medium">
+                      Enable Model Fusion
                     </Label>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
                       When enabled, users can submit prompts to multiple AI models simultaneously
                     </p>
                   </div>
                   <Switch
-                    id="deep-research-enabled"
+                    id="model-fusion-enabled"
                     checked={localConfig.isEnabled || false}
                     onCheckedChange={handleToggleEnabled}
                   />
@@ -194,7 +194,7 @@ export default function DeepResearch() {
                 <div className="space-y-3" style={{ marginTop: '-18px', paddingTop: '6px' }}>
                   <Label className="text-base font-medium">Active Models</Label>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Select which models to include in the deep research analysis
+                    Select which models to include in the model fusion analysis
                   </p>
                   <div className="border rounded-lg overflow-hidden">
                     <table className="w-full">
@@ -259,10 +259,10 @@ export default function DeepResearch() {
                     <AlertCircle className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
                     <div className="space-y-1">
                       <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
-                        How Deep Research Works
+                        How Model Fusion Works
                       </p>
                       <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
-                        <li>• Users will see "Deep Research" as an option in the AI model selector</li>
+                        <li>• Users will see "Model Fusion" as an option in the AI model selector</li>
                         <li>• The prompt is sent to all selected AI models simultaneously</li>
                         <li>• Individual responses are collected and combined</li>
                         <li>• The selected summary model creates a comprehensive analysis</li>

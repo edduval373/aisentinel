@@ -303,6 +303,15 @@ Changelog:
   * Created streamlined admin interface for Deep Research configuration
   * Deep Research will process prompts across all enabled AI models and summarize results
   * Owner-level access required for Deep Research configuration management
+- July 12, 2025. Renamed Deep Research to Model Fusion throughout the application:
+  * Updated all database schema references from deepResearchConfigs to modelFusionConfigs
+  * Changed API endpoints from /api/deep-research-config to /api/model-fusion-config
+  * Updated all storage methods and interface definitions to use ModelFusion terminology
+  * Renamed admin page from deep-research.tsx to model-fusion.tsx with updated routing
+  * Updated sidebar navigation to show "Setup Model Fusion" instead of "Setup Deep Research"
+  * Changed all UI text and descriptions to reference "Model Fusion" instead of "Deep Research"
+  * Updated information panels to explain "How Model Fusion Works" with new terminology
+  * Maintained all existing functionality while providing clearer, more descriptive naming
 ```
 
 ## User Preferences

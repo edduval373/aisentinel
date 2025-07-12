@@ -11,7 +11,7 @@ import {
   chatAttachments,
   contextDocuments,
   activityContextLinks,
-  deepResearchConfigs,
+  modelFusionConfigs,
   type User,
   type UpsertUser,
   type Company,
@@ -36,8 +36,8 @@ import {
   type InsertContextDocument,
   type ActivityContextLink,
   type InsertActivityContextLink,
-  type DeepResearchConfig,
-  type InsertDeepResearchConfig,
+  type ModelFusionConfig,
+  type InsertModelFusionConfig,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, count, sql } from "drizzle-orm";
@@ -122,10 +122,10 @@ export interface IStorage {
   deleteActivityContextLink(activityTypeId: number, documentId: number): Promise<void>;
   getContextForActivity(activityTypeId: number, companyId: number): Promise<ContextDocument[]>;
   
-  // Deep Research operations
-  getDeepResearchConfig(companyId: number): Promise<DeepResearchConfig | undefined>;
-  createDeepResearchConfig(config: InsertDeepResearchConfig): Promise<DeepResearchConfig>;
-  updateDeepResearchConfig(id: number, config: Partial<InsertDeepResearchConfig>): Promise<DeepResearchConfig>;
+  // Model Fusion operations
+  getModelFusionConfig(companyId: number): Promise<ModelFusionConfig | undefined>;
+  createModelFusionConfig(config: InsertModelFusionConfig): Promise<ModelFusionConfig>;
+  updateModelFusionConfig(id: number, config: Partial<InsertModelFusionConfig>): Promise<ModelFusionConfig>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -749,28 +749,28 @@ export class DatabaseStorage implements IStorage {
     await db.insert(activityTypes).values(defaultActivityTypes);
   }
 
-  // Deep Research operations
-  async getDeepResearchConfig(companyId: number): Promise<DeepResearchConfig | undefined> {
+  // Model Fusion operations
+  async getModelFusionConfig(companyId: number): Promise<ModelFusionConfig | undefined> {
     const [config] = await db
       .select()
-      .from(deepResearchConfigs)
-      .where(eq(deepResearchConfigs.companyId, companyId));
+      .from(modelFusionConfigs)
+      .where(eq(modelFusionConfigs.companyId, companyId));
     return config;
   }
 
-  async createDeepResearchConfig(config: InsertDeepResearchConfig): Promise<DeepResearchConfig> {
-    const [created] = await db.insert(deepResearchConfigs).values(config).returning();
+  async createModelFusionConfig(config: InsertModelFusionConfig): Promise<ModelFusionConfig> {
+    const [created] = await db.insert(modelFusionConfigs).values(config).returning();
     return created;
   }
 
-  async updateDeepResearchConfig(id: number, config: Partial<InsertDeepResearchConfig>): Promise<DeepResearchConfig> {
+  async updateModelFusionConfig(id: number, config: Partial<InsertModelFusionConfig>): Promise<ModelFusionConfig> {
     const [updated] = await db
-      .update(deepResearchConfigs)
+      .update(modelFusionConfigs)
       .set({
         ...config,
         updatedAt: new Date(),
       })
-      .where(eq(deepResearchConfigs.id, id))
+      .where(eq(modelFusionConfigs.id, id))
       .returning();
     return updated;
   }

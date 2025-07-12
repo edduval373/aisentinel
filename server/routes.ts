@@ -6,7 +6,7 @@ import { setupAuth, isAuthenticated } from "./replitAuth";
 import { aiService } from "./services/aiService";
 import { contentFilter } from "./services/contentFilter";
 import { fileStorageService } from "./services/fileStorageService";
-import { insertUserActivitySchema, insertChatMessageSchema, insertCompanyRoleSchema, insertDeepResearchConfigSchema, chatAttachments } from "@shared/schema";
+import { insertUserActivitySchema, insertChatMessageSchema, insertCompanyRoleSchema, insertModelFusionConfigSchema, chatAttachments } from "@shared/schema";
 import { z } from "zod";
 import type { UploadedFile } from "express-fileupload";
 import { db } from "./db";
@@ -977,8 +977,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Deep Research Configuration routes
-  app.get('/api/deep-research-config', isAuthenticated, async (req: any, res) => {
+  // Model Fusion Configuration routes
+  app.get('/api/model-fusion-config', isAuthenticated, async (req: any, res) => {
     try {
       const user = await storage.getUser(req.user.claims.sub);
       const userRoleLevel = user?.roleLevel || 1;
@@ -990,15 +990,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "No company associated with user" });
       }
       
-      const config = await storage.getDeepResearchConfig(user.companyId);
+      const config = await storage.getModelFusionConfig(user.companyId);
       res.json(config);
     } catch (error) {
-      console.error("Error fetching deep research config:", error);
-      res.status(500).json({ message: "Failed to fetch deep research configuration" });
+      console.error("Error fetching model fusion config:", error);
+      res.status(500).json({ message: "Failed to fetch model fusion configuration" });
     }
   });
 
-  app.post('/api/deep-research-config', isAuthenticated, async (req: any, res) => {
+  app.post('/api/model-fusion-config', isAuthenticated, async (req: any, res) => {
     try {
       const user = await storage.getUser(req.user.claims.sub);
       const userRoleLevel = user?.roleLevel || 1;
@@ -1010,20 +1010,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "No company associated with user" });
       }
       
-      const configData = insertDeepResearchConfigSchema.parse({
+      const configData = insertModelFusionConfigSchema.parse({
         ...req.body,
         companyId: user.companyId
       });
       
-      const config = await storage.createDeepResearchConfig(configData);
+      const config = await storage.createModelFusionConfig(configData);
       res.json(config);
     } catch (error) {
-      console.error("Error creating deep research config:", error);
-      res.status(500).json({ message: "Failed to create deep research configuration" });
+      console.error("Error creating model fusion config:", error);
+      res.status(500).json({ message: "Failed to create model fusion configuration" });
     }
   });
 
-  app.put('/api/deep-research-config/:id', isAuthenticated, async (req: any, res) => {
+  app.put('/api/model-fusion-config/:id', isAuthenticated, async (req: any, res) => {
     try {
       const user = await storage.getUser(req.user.claims.sub);
       const userRoleLevel = user?.roleLevel || 1;
@@ -1032,13 +1032,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       const configId = parseInt(req.params.id);
-      const configData = insertDeepResearchConfigSchema.partial().parse(req.body);
+      const configData = insertModelFusionConfigSchema.partial().parse(req.body);
       
-      const config = await storage.updateDeepResearchConfig(configId, configData);
+      const config = await storage.updateModelFusionConfig(configId, configData);
       res.json(config);
     } catch (error) {
-      console.error("Error updating deep research config:", error);
-      res.status(500).json({ message: "Failed to update deep research configuration" });
+      console.error("Error updating model fusion config:", error);
+      res.status(500).json({ message: "Failed to update model fusion configuration" });
     }
   });
 
