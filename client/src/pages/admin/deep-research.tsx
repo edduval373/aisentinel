@@ -113,7 +113,7 @@ export default function DeepResearch() {
 
   return (
     <AdminLayout title="Deep Research" subtitle="Set up advanced multi-model AI processing for comprehensive research and analysis">
-      <div className="p-6 space-y-6">
+      <div className="px-6 pt-2 pb-6 space-y-6">
         <Card>
           <CardContent className="space-y-6 pt-6">
             {/* Enable/Disable Toggle */}
