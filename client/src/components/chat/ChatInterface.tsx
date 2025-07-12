@@ -146,12 +146,12 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
           body: data,
           credentials: "include",
         });
-        
+
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({ message: "Request failed" }));
           throw new Error(errorData.message || `HTTP ${response.status}`);
         }
-        
+
         return response.json();
       } else {
         const response = await apiRequest("/api/chat/message", "POST", data);
@@ -290,14 +290,14 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
     }
 
     setLastMessage(message);
-    
+
     // Create FormData for file upload
     const formData = new FormData();
     formData.append('message', message);
     formData.append('aiModelId', selectedModel.toString());
     formData.append('activityTypeId', selectedActivityType.toString());
     formData.append('sessionId', currentSession.toString());
-    
+
     if (attachments && attachments.length > 0) {
       attachments.forEach((file) => {
         formData.append('attachments', file);
@@ -477,7 +477,9 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       )}
 
       {/* Chat Messages - Scrollable middle section */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 chat-messages-container">
+      <div className="flex-1 flex flex-col min-h-0 bg-slate-50" style={{ marginTop: '-36px' }}>
+      {/* Chat Messages Area */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4" style={{ paddingTop: '52px' }}>
         {/* System Message */}
         <div className="flex justify-center">
           <div className="bg-slate-100 rounded-lg px-4 py-2 text-sm text-slate-600">
@@ -520,6 +522,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
 
         <div ref={messagesEndRef} />
       </div>
+</div>
 
       {/* Chat Input - Fixed at bottom */}
       <div className="flex-shrink-0 border-t border-slate-200">
