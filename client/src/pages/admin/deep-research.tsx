@@ -203,9 +203,9 @@ export default function DeepResearch() {
                     <table className="w-full">
                       <thead>
                         <tr className="border-b" style={{ backgroundColor: 'hsl(221, 83%, 53%)' }}>
-                          <th className="text-left p-3 font-medium text-sm text-white">Provider</th>
-                          <th className="text-left p-3 font-medium text-sm text-white">Model Name</th>
-                          <th className="text-center p-3 font-medium text-sm text-white">Include in Research</th>
+                          <th className="text-left p-3 font-medium text-sm text-white" style={{ backgroundColor: 'hsl(221, 83%, 53%)' }}>Provider</th>
+                          <th className="text-left p-3 font-medium text-sm text-white" style={{ backgroundColor: 'hsl(221, 83%, 53%)' }}>Model Name</th>
+                          <th className="text-center p-3 font-medium text-sm text-white" style={{ backgroundColor: 'hsl(221, 83%, 53%)' }}>Include in Research</th>
                         </tr>
                       </thead>
                       <tbody>
