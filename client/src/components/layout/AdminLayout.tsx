@@ -20,7 +20,7 @@ interface AdminLayoutProps {
   subtitle?: string;
 }
 
-export function AdminLayout({ children, title, subtitle }: AdminLayoutProps) {
+export default function AdminLayout({ children, title, subtitle }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -52,3 +52,6 @@ export function AdminLayout({ children, title, subtitle }: AdminLayoutProps) {
     </div>
   );
 }
+
+// Also export as named export for backwards compatibility
+export { AdminLayout };
