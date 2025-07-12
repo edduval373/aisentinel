@@ -216,7 +216,6 @@ export const deepResearchConfigs = pgTable("deep_research_configs", {
   companyId: integer("company_id").references(() => companies.id).notNull(),
   isEnabled: boolean("is_enabled").default(false).notNull(),
   summaryModelId: integer("summary_model_id").references(() => aiModels.id), // Model used for final summary
-  includedModels: jsonb("included_models").default([]), // Array of model IDs to include
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 }, (table) => [

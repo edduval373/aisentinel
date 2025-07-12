@@ -1,11 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/hooks/use-toast";
@@ -26,7 +25,6 @@ interface DeepResearchConfig {
   companyId: number;
   isEnabled: boolean;
   summaryModelId: number | null;
-  includedModels: number[];
 }
 
 export default function DeepResearch() {
@@ -34,7 +32,6 @@ export default function DeepResearch() {
   const [localConfig, setLocalConfig] = useState<Partial<DeepResearchConfig>>({
     isEnabled: false,
     summaryModelId: null,
-    includedModels: [],
   });
 
   // Fetch AI models
@@ -45,12 +42,14 @@ export default function DeepResearch() {
   // Fetch Deep Research config
   const { data: config, isLoading: configLoading } = useQuery<DeepResearchConfig>({
     queryKey: ['/api/deep-research-config'],
-    onSuccess: (data) => {
-      if (data) {
-        setLocalConfig(data);
-      }
-    },
   });
+
+  // Update local config when data is fetched
+  useEffect(() => {
+    if (config) {
+      setLocalConfig(config);
+    }
+  }, [config]);
 
   // Save configuration mutation
   const saveConfigMutation = useMutation({
@@ -87,15 +86,6 @@ export default function DeepResearch() {
     setLocalConfig(prev => ({ ...prev, summaryModelId: parseInt(modelId) }));
   };
 
-  const handleModelIncludeToggle = (modelId: number, included: boolean) => {
-    setLocalConfig(prev => ({
-      ...prev,
-      includedModels: included
-        ? [...(prev.includedModels || []), modelId]
-        : (prev.includedModels || []).filter(id => id !== modelId)
-    }));
-  };
-
   const handleSaveConfiguration = () => {
     if (localConfig.isEnabled && !localConfig.summaryModelId) {
       toast({
@@ -106,20 +96,10 @@ export default function DeepResearch() {
       return;
     }
 
-    if (localConfig.isEnabled && (!localConfig.includedModels || localConfig.includedModels.length === 0)) {
-      toast({
-        title: "Validation Error",
-        description: "Please select at least one model to include in Deep Research.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     saveConfigMutation.mutate(localConfig);
   };
 
   const enabledModels = aiModels.filter(model => model.isEnabled);
-  const availableModels = enabledModels.filter(model => model.id !== localConfig.summaryModelId);
 
   if (modelsLoading || configLoading) {
     return (
@@ -213,67 +193,7 @@ export default function DeepResearch() {
                   </Select>
                 </div>
 
-                <Separator />
 
-                {/* Model Selection */}
-                <div className="space-y-4">
-                  <Label className="text-base font-medium">
-                    Include Models in Deep Research
-                  </Label>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Select which AI models to include in the Deep Research process. Each selected model will process the prompt independently.
-                  </p>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {availableModels.map((model) => {
-                      const isIncluded = localConfig.includedModels?.includes(model.id) || false;
-                      
-                      return (
-                        <Card key={model.id} className={`cursor-pointer transition-all ${
-                          isIncluded 
-                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
-                            : 'hover:border-gray-300 dark:hover:border-gray-600'
-                        }`}>
-                          <CardContent className="p-4">
-                            <div className="flex items-start gap-3">
-                              <Checkbox
-                                id={`model-${model.id}`}
-                                checked={isIncluded}
-                                onCheckedChange={(checked) => 
-                                  handleModelIncludeToggle(model.id, checked as boolean)
-                                }
-                              />
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-2 mb-1">
-                                  <Label 
-                                    htmlFor={`model-${model.id}`}
-                                    className="font-medium cursor-pointer"
-                                  >
-                                    {model.name}
-                                  </Label>
-                                  <Badge variant="outline" className="text-xs">
-                                    {model.provider}
-                                  </Badge>
-                                </div>
-                                <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
-                                  {model.modelName}
-                                </p>
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      );
-                    })}
-                  </div>
-
-                  {availableModels.length === 0 && (
-                    <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                      <AlertCircle className="h-8 w-8 mx-auto mb-2" />
-                      <p>No additional models available for Deep Research.</p>
-                      <p className="text-sm">Configure more AI models to enable Deep Research.</p>
-                    </div>
-                  )}
-                </div>
 
                 {/* Information Panel */}
                 <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
@@ -285,9 +205,9 @@ export default function DeepResearch() {
                       </p>
                       <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
                         <li>• Users will see "Deep Research" as an option in the AI model selector</li>
-                        <li>• The prompt is sent to all selected models simultaneously</li>
+                        <li>• The prompt is sent to all available AI models simultaneously</li>
                         <li>• Individual responses are collected and combined</li>
-                        <li>• The summary model creates a comprehensive analysis</li>
+                        <li>• The selected summary model creates a comprehensive analysis</li>
                         <li>• Processing may take several minutes depending on model count</li>
                       </ul>
                     </div>

@@ -294,6 +294,15 @@ Changelog:
   * Fixed session ID validation in chat messages route to prevent SQL parsing errors
   * AI can now properly read and summarize uploaded documents including .docx and .xlsx files
   * PDF files are accepted but require manual text extraction due to library compatibility issues
+- July 12, 2025. Implemented simplified Deep Research functionality:
+  * Created deep_research_configs table with company-based configuration
+  * Added simple toggle for enabling/disabling Deep Research feature
+  * Implemented summary model selection for final analysis consolidation
+  * Removed complex model selection interface in favor of using all available models
+  * Added Deep Research API endpoints with proper authentication and validation
+  * Created streamlined admin interface for Deep Research configuration
+  * Deep Research will process prompts across all enabled AI models and summarize results
+  * Owner-level access required for Deep Research configuration management
 ```
 
 ## User Preferences
