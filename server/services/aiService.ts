@@ -94,6 +94,120 @@ class AIService {
     }
   }
 
+  async generateModelFusionResponse(message: string, companyId: number, activityTypeId?: number): Promise<string> {
+    try {
+      // Get enabled models for this company
+      const models = await storage.getEnabledAiModels(companyId);
+      
+      if (models.length === 0) {
+        throw new Error("No enabled AI models found");
+      }
+
+      // Get Model Fusion configuration
+      const modelFusionConfig = await storage.getModelFusionConfig(companyId);
+      if (!modelFusionConfig || !modelFusionConfig.isEnabled) {
+        throw new Error("Model Fusion is not enabled");
+      }
+
+      // Get activity type for pre-prompt and context documents
+      let systemPrompt = "You are an AI assistant in a corporate environment. Provide helpful, professional responses while being mindful of data privacy and security. Do not process or store any sensitive information like financial data, personal identifiers, or proprietary company information.";
+      
+      if (activityTypeId) {
+        const activityTypes = await storage.getActivityTypes(companyId);
+        const activityType = activityTypes.find(at => at.id === activityTypeId);
+        if (activityType?.prePrompt) {
+          systemPrompt = activityType.prePrompt;
+        }
+
+        // Get context documents for this activity type
+        const contextDocuments = await storage.getContextForActivity(activityTypeId, companyId);
+        if (contextDocuments.length > 0) {
+          const contextContent = contextDocuments.map(doc => 
+            `=== ${doc.name} (${doc.category}) ===\n${doc.content}`
+          ).join('\n\n');
+          
+          systemPrompt += `\n\n--- CONTEXT DOCUMENTS ---\nThe following company documents are provided for reference. Use this information to inform your responses when relevant:\n\n${contextContent}\n\n--- END CONTEXT ---`;
+        }
+      }
+
+      // Generate responses from all enabled models in parallel
+      const responses = await Promise.allSettled(
+        models.map(async (model) => {
+          try {
+            if (model.provider === "openai") {
+              return await this.generateOpenAIResponse(message, model.modelId, systemPrompt);
+            } else if (model.provider === "anthropic") {
+              return await this.generateAnthropicResponse(message, model.modelId, systemPrompt);
+            } else if (model.provider === "perplexity") {
+              return await this.generatePerplexityResponse(message, model.modelId, systemPrompt);
+            } else {
+              throw new Error(`Unsupported AI provider: ${model.provider}`);
+            }
+          } catch (error) {
+            console.error(`Error generating response from ${model.name}:`, error);
+            return `[Error: ${model.name} failed to respond]`;
+          }
+        })
+      );
+
+      // Collect successful responses
+      const successfulResponses = responses
+        .map((result, index) => {
+          if (result.status === 'fulfilled') {
+            return `**${models[index].name} Response:**\n${result.value}`;
+          } else {
+            return `**${models[index].name} Response:**\n[Error: Failed to generate response]`;
+          }
+        })
+        .filter(Boolean);
+
+      if (successfulResponses.length === 0) {
+        throw new Error("All AI models failed to generate responses");
+      }
+
+      // If we have a summary model configured, use it to synthesize the responses
+      if (modelFusionConfig.summaryModelId) {
+        const summaryModel = models.find(m => m.id === modelFusionConfig.summaryModelId);
+        if (summaryModel) {
+          const summaryPrompt = `You are tasked with synthesizing multiple AI responses into a single, comprehensive answer. 
+
+Please analyze the following responses from different AI models and provide a unified, well-structured response that:
+1. Combines the best insights from all models
+2. Resolves any contradictions by explaining different perspectives
+3. Provides a clear, actionable answer
+4. Maintains professional tone and accuracy
+
+Original Question: ${message}
+
+AI Model Responses:
+${successfulResponses.join('\n\n---\n\n')}
+
+Please provide a synthesized response that incorporates the best elements from all models:`;
+
+          try {
+            if (summaryModel.provider === "openai") {
+              return await this.generateOpenAIResponse(summaryPrompt, summaryModel.modelId, "You are an expert at synthesizing multiple AI responses into comprehensive, actionable answers.");
+            } else if (summaryModel.provider === "anthropic") {
+              return await this.generateAnthropicResponse(summaryPrompt, summaryModel.modelId, "You are an expert at synthesizing multiple AI responses into comprehensive, actionable answers.");
+            } else if (summaryModel.provider === "perplexity") {
+              return await this.generatePerplexityResponse(summaryPrompt, summaryModel.modelId, "You are an expert at synthesizing multiple AI responses into comprehensive, actionable answers.");
+            }
+          } catch (error) {
+            console.error("Error generating summary response:", error);
+            // Fall back to showing all responses if summary fails
+          }
+        }
+      }
+
+      // If no summary model or summary failed, return all responses
+      return `# Model Fusion Response\n\n${successfulResponses.join('\n\n---\n\n')}`;
+
+    } catch (error) {
+      console.error("Error generating Model Fusion response:", error);
+      throw new Error("Failed to generate Model Fusion response");
+    }
+  }
+
   private async generateOpenAIResponse(message: string, modelId: string, systemPrompt: string): Promise<string> {
     try {
       const response = await openai.chat.completions.create({

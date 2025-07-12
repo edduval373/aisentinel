@@ -48,9 +48,9 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
     },
   });
 
-  // Fetch Deep Research config
-  const { data: deepResearchConfig } = useQuery({
-    queryKey: ['/api/deep-research-config'],
+  // Fetch Model Fusion config
+  const { data: modelFusionConfig } = useQuery({
+    queryKey: ['/api/model-fusion-config'],
   });
 
   // Fetch activity types
@@ -364,8 +364,8 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
             <Select
               value={selectedModel?.toString()}
               onValueChange={(value) => {
-                if (value === "deep-research") {
-                  setSelectedModel("deep-research" as any);
+                if (value === "model-fusion") {
+                  setSelectedModel("model-fusion" as any);
                 } else {
                   setSelectedModel(parseInt(value));
                 }
@@ -381,16 +381,16 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                     {model.name}
                   </SelectItem>
                 ))}
-                {deepResearchConfig?.isEnabled && (
+                {modelFusionConfig?.isEnabled && (
                   <>
                     <Separator className="my-1" />
-                    <SelectItem value="deep-research">
+                    <SelectItem value="model-fusion">
                       <div className="flex items-center gap-2">
                         <Badge variant="default" style={{ backgroundColor: 'hsl(221, 83%, 53%)' }}>
                           <Brain className="w-3 h-3 mr-1" />
                           Multi-AI
                         </Badge>
-                        Deep Research
+                        Model Fusion
                       </div>
                     </SelectItem>
                   </>

@@ -701,8 +701,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { message, aiModelId, activityTypeId, sessionId } = req.body;
       
+      // Handle Model Fusion special case
+      const isModelFusion = aiModelId === "model-fusion";
+      
       // Parse string values to numbers (FormData sends everything as strings)
-      const parsedAiModelId = parseInt(aiModelId);
+      const parsedAiModelId = isModelFusion ? null : parseInt(aiModelId);
       const parsedActivityTypeId = parseInt(activityTypeId);
       const parsedSessionId = parseInt(sessionId);
       
@@ -738,14 +741,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Validate AI model exists and is enabled
-      const models = await storage.getAiModels(user.companyId);
-      const selectedModel = models.find(m => m.id === parsedAiModelId);
-      if (!selectedModel) {
-        return res.status(400).json({ message: "AI model not found" });
-      }
-      if (!selectedModel.isEnabled) {
-        return res.status(400).json({ message: "AI model is disabled" });
+      // Validate AI model exists and is enabled (skip for Model Fusion)
+      let selectedModel = null;
+      if (!isModelFusion) {
+        const models = await storage.getAiModels(user.companyId);
+        selectedModel = models.find(m => m.id === parsedAiModelId);
+        if (!selectedModel) {
+          return res.status(400).json({ message: "AI model not found" });
+        }
+        if (!selectedModel.isEnabled) {
+          return res.status(400).json({ message: "AI model is disabled" });
+        }
+      } else {
+        // For Model Fusion, verify the feature is enabled
+        const modelFusionConfig = await storage.getModelFusionConfig(user.companyId);
+        if (!modelFusionConfig || !modelFusionConfig.isEnabled) {
+          return res.status(400).json({ message: "Model Fusion is not enabled" });
+        }
       }
 
       // Generate AI response (include file context if attachments exist)
@@ -831,14 +843,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
-      const aiResponse = await aiService.generateResponse(contextMessage, parsedAiModelId, user.companyId, parsedActivityTypeId);
+      // Generate AI response - use Model Fusion if selected
+      let aiResponse;
+      if (isModelFusion) {
+        // For Model Fusion, use a special method that runs across all models
+        aiResponse = await aiService.generateModelFusionResponse(contextMessage, user.companyId, parsedActivityTypeId);
+      } else {
+        aiResponse = await aiService.generateResponse(contextMessage, parsedAiModelId, user.companyId, parsedActivityTypeId);
+      }
       
       // Create chat message with company isolation
       const chatMessage = await storage.createChatMessage({
         companyId: user.companyId,
         sessionId: parsedSessionId,
         userId,
-        aiModelId: parsedAiModelId,
+        aiModelId: isModelFusion ? null : parsedAiModelId, // null for Model Fusion
         activityTypeId: parsedActivityTypeId,
         message,
         response: aiResponse,
