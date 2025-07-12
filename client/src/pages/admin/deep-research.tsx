@@ -202,7 +202,7 @@ export default function DeepResearch() {
                   <div className="border rounded-lg overflow-hidden">
                     <table className="w-full">
                       <thead>
-                        <tr className="bg-sentinel-blue border-b">
+                        <tr className="border-b" style={{ backgroundColor: 'hsl(221, 83%, 53%)' }}>
                           <th className="text-left p-3 font-medium text-sm text-white">Provider</th>
                           <th className="text-left p-3 font-medium text-sm text-white">Model Name</th>
                           <th className="text-center p-3 font-medium text-sm text-white">Include in Research</th>
