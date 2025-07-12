@@ -116,7 +116,7 @@ export default function ChatInput({ onSendMessage, disabled, prefillMessage }: C
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Type your message here..."
-            className="min-h-[40px] max-h-32 resize-none"
+            className="min-h-[40px] max-h-32 resize-none border border-blue-200 focus:border-sentinel-blue focus:ring-1 focus:ring-sentinel-blue"
             disabled={disabled}
           />
         </div>
