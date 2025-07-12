@@ -17,26 +17,35 @@ import mammoth from "mammoth";
 import * as XLSX from "xlsx";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Auth middleware (keep for backward compatibility)
-  await setupAuth(app);
-
-  // Setup new cookie-based authentication routes
+  // Setup cookie-based authentication routes (primary authentication method)
   setupAuthRoutes(app);
+
+  // Optional: Setup Replit Auth only if explicitly enabled
+  if (process.env.ENABLE_REPLIT_AUTH === 'true') {
+    await setupAuth(app);
+  }
 
   // Initialize default AI models and activity types
   await initializeDefaultData();
 
-  // Legacy auth route (for backward compatibility)
-  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      res.json(user);
-    } catch (error) {
-      console.error("Error fetching user:", error);
-      res.status(500).json({ message: "Failed to fetch user" });
-    }
-  });
+  // Legacy auth route (for backward compatibility) - only if Replit Auth is enabled
+  if (process.env.ENABLE_REPLIT_AUTH === 'true') {
+    app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
+      try {
+        const userId = req.user.claims.sub;
+        const user = await storage.getUser(userId);
+        res.json(user);
+      } catch (error) {
+        console.error("Error fetching user:", error);
+        res.status(500).json({ message: "Failed to fetch user" });
+      }
+    });
+  } else {
+    // Return unauthorized if Replit Auth is disabled
+    app.get('/api/auth/user', async (req: any, res) => {
+      res.status(401).json({ message: "Unauthorized" });
+    });
+  }
 
   // New cookie-based auth route
   app.get('/api/user/current', cookieAuth, async (req: AuthenticatedRequest, res) => {
@@ -65,8 +74,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
-      // Fallback to Replit Auth
-      if (!user && req.user?.claims?.sub) {
+      // Fallback to Replit Auth (only if enabled)
+      if (!user && process.env.ENABLE_REPLIT_AUTH === 'true' && req.user?.claims?.sub) {
         user = await storage.getUser(req.user.claims.sub);
         companyId = user?.companyId;
       }
