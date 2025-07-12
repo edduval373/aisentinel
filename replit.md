@@ -289,11 +289,11 @@ Changelog:
   * Fixed FormData parameter parsing in chat message route (string to number conversion)
   * Updated file download endpoint to retrieve files from database instead of external storage
   * Application now starts successfully without requiring Google Cloud Storage configuration
-  * Added Excel file support using xlsx library for spreadsheet content extraction  
-  * Added PDF file support using pdf-parse library for document text extraction
-  * Enhanced file processing to extract actual content from Word docs (mammoth), Excel files (xlsx), and PDFs (pdf-parse)
+  * Added Excel file support using xlsx library for spreadsheet content extraction
+  * Enhanced file processing to extract actual content from Word docs (mammoth) and Excel files (xlsx)
   * Fixed session ID validation in chat messages route to prevent SQL parsing errors
-  * AI can now properly read and summarize uploaded documents including .docx, .xlsx, and .pdf files
+  * AI can now properly read and summarize uploaded documents including .docx and .xlsx files
+  * PDF files are accepted but require manual text extraction due to library compatibility issues
 ```
 
 ## User Preferences
