@@ -816,9 +816,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 console.error('Error extracting data from Excel file:', error);
                 fileContent = `[Error extracting data from Excel file: ${file.name}]`;
               }
-            } else if (file.mimetype.startsWith('application/pdf')) {
-              // For PDF files, note that content extraction would need a proper PDF parser
-              fileContent = `[PDF document: ${file.name} - ${file.size} bytes]`;
+            } else if (file.mimetype === 'application/pdf') {
+              // For PDF files, extract text using pdf-parse
+              try {
+                const pdfParse = await import('pdf-parse');
+                const pdfData = await pdfParse.default(file.data);
+                fileContent = pdfData.text.length > 3000 ? pdfData.text.substring(0, 3000) + '...' : pdfData.text;
+              } catch (error) {
+                console.error('Error extracting text from PDF file:', error);
+                fileContent = `[Error extracting text from PDF file: ${file.name}]`;
+              }
             } else {
               // For other files, provide metadata
               fileContent = `[File: ${file.name} - ${file.mimetype} - ${file.size} bytes]`;
