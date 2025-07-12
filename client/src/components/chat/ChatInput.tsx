@@ -137,7 +137,7 @@ export default function ChatInput({ onSendMessage, disabled, prefillMessage }: C
             disabled={disabled}
             className="px-3 py-2"
           >
-            <Paperclip className="w-4 h-4" />
+            <Paperclip className="w-8 h-8" />
           </Button>
           <VoiceInput 
             onTranscription={handleVoiceTranscription}

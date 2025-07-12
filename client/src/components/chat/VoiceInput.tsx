@@ -172,10 +172,9 @@ export default function VoiceInput({ onTranscription, disabled = false }: VoiceI
           size="sm"
           onClick={handleStartRecording}
           disabled={disabled}
-          className="flex items-center space-x-1"
+          className="px-3 py-2"
         >
-          <Mic className="w-4 h-4" />
-          <span>Voice</span>
+          <Mic className="w-8 h-8" />
         </Button>
       )}
       
@@ -184,10 +183,9 @@ export default function VoiceInput({ onTranscription, disabled = false }: VoiceI
           variant="destructive"
           size="sm"
           onClick={handleStopRecording}
-          className="flex items-center space-x-1 animate-pulse"
+          className="px-3 py-2 animate-pulse"
         >
-          <Square className="w-4 h-4" />
-          <span>Stop</span>
+          <Square className="w-8 h-8" />
         </Button>
       )}
       
