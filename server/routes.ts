@@ -12,6 +12,7 @@ import type { UploadedFile } from "express-fileupload";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
 import mammoth from "mammoth";
+import * as XLSX from "xlsx";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
@@ -677,6 +678,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/chat/session/:id/messages', isAuthenticated, async (req: any, res) => {
     try {
       const sessionId = parseInt(req.params.id);
+      
+      // Validate session ID is a valid number
+      if (isNaN(sessionId)) {
+        return res.status(400).json({ message: "Invalid session ID" });
+      }
+      
       const userId = req.user.claims.sub;
       const user = await storage.getUser(userId);
       if (!user?.companyId) {
@@ -752,7 +759,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         for (const file of files) {
           if (file) {
             // Validate file type and size
-            const allowedTypes = ['image/', 'text/', 'application/pdf', 'application/json', 'application/vnd.openxmlformats-officedocument'];
+            const allowedTypes = ['image/', 'text/', 'application/pdf', 'application/json', 'application/vnd.openxmlformats-officedocument', 'application/vnd.ms-excel'];
             if (!allowedTypes.some(type => file.mimetype.startsWith(type))) {
               return res.status(400).json({ message: `File type ${file.mimetype} not allowed` });
             }
@@ -784,6 +791,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
               } catch (error) {
                 console.error('Error extracting text from Word document:', error);
                 fileContent = `[Error extracting text from Word document: ${file.name}]`;
+              }
+            } else if (file.mimetype === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || 
+                       file.mimetype === 'application/vnd.ms-excel') {
+              // For Excel files, extract data using xlsx
+              try {
+                const workbook = XLSX.read(file.data, { type: 'buffer' });
+                let excelContent = '';
+                
+                // Process all sheets
+                workbook.SheetNames.forEach((sheetName, index) => {
+                  const worksheet = workbook.Sheets[sheetName];
+                  const csvData = XLSX.utils.sheet_to_csv(worksheet);
+                  
+                  if (index === 0) {
+                    excelContent += `Sheet: ${sheetName}\n${csvData}\n`;
+                  } else {
+                    excelContent += `\n--- Sheet: ${sheetName} ---\n${csvData}\n`;
+                  }
+                });
+                
+                fileContent = excelContent.length > 3000 ? excelContent.substring(0, 3000) + '...' : excelContent;
+              } catch (error) {
+                console.error('Error extracting data from Excel file:', error);
+                fileContent = `[Error extracting data from Excel file: ${file.name}]`;
               }
             } else if (file.mimetype.startsWith('application/pdf')) {
               // For PDF files, note that content extraction would need a proper PDF parser

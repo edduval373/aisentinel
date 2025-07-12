@@ -289,6 +289,10 @@ Changelog:
   * Fixed FormData parameter parsing in chat message route (string to number conversion)
   * Updated file download endpoint to retrieve files from database instead of external storage
   * Application now starts successfully without requiring Google Cloud Storage configuration
+  * Added Excel file support using xlsx library for spreadsheet content extraction
+  * Enhanced file processing to extract actual content from Word docs (mammoth) and Excel files (xlsx)
+  * Fixed session ID validation in chat messages route to prevent SQL parsing errors
+  * AI can now properly read and summarize uploaded documents including .docx and .xlsx files
 ```
 
 ## User Preferences
