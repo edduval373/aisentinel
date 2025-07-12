@@ -282,6 +282,13 @@ Changelog:
   * Added comprehensive default model configurations for OpenAI, Anthropic, and Perplexity providers
   * Created secure placeholder API key system with company-specific naming for easy identification
   * Implemented automatic activity type creation with company-specific pre-prompts for different use cases
+- July 12, 2025. Fixed Google Cloud Storage startup error and implemented database-based file storage:
+  * Replaced external object storage with database storage approach matching context management system
+  * Updated chatAttachments table schema to store file content directly as TEXT instead of external paths
+  * Modified FileStorageService to process files into base64 or text format for database storage
+  * Fixed FormData parameter parsing in chat message route (string to number conversion)
+  * Updated file download endpoint to retrieve files from database instead of external storage
+  * Application now starts successfully without requiring Google Cloud Storage configuration
 ```
 
 ## User Preferences

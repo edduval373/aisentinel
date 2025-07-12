@@ -692,6 +692,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/chat/message', isAuthenticated, async (req: any, res) => {
     try {
       const { message, aiModelId, activityTypeId, sessionId } = req.body;
+      
+      // Parse string values to numbers (FormData sends everything as strings)
+      const parsedAiModelId = parseInt(aiModelId);
+      const parsedActivityTypeId = parseInt(activityTypeId);
+      const parsedSessionId = parseInt(sessionId);
+      
       const userId = req.user.claims.sub;
       const user = await storage.getUser(userId);
       
@@ -700,7 +706,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Validate that the session belongs to the user's company
-      const session = await storage.getChatSession(sessionId, user.companyId);
+      const session = await storage.getChatSession(parsedSessionId, user.companyId);
       if (!session) {
         return res.status(404).json({ message: "Chat session not found" });
       }
@@ -712,7 +718,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await storage.createUserActivity({
           companyId: user.companyId,
           userId,
-          activityTypeId,
+          activityTypeId: parsedActivityTypeId,
           description: `Content blocked: ${filterResult.reason}`,
           status: 'blocked',
           metadata: { originalMessage: message, flags: filterResult.flags }
@@ -726,7 +732,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Validate AI model exists and is enabled
       const models = await storage.getAiModels(user.companyId);
-      const selectedModel = models.find(m => m.id === aiModelId);
+      const selectedModel = models.find(m => m.id === parsedAiModelId);
       if (!selectedModel) {
         return res.status(400).json({ message: "AI model not found" });
       }
@@ -764,15 +770,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
-      const aiResponse = await aiService.generateResponse(contextMessage, aiModelId, user.companyId, activityTypeId);
+      const aiResponse = await aiService.generateResponse(contextMessage, parsedAiModelId, user.companyId, parsedActivityTypeId);
       
       // Create chat message with company isolation
       const chatMessage = await storage.createChatMessage({
         companyId: user.companyId,
-        sessionId,
+        sessionId: parsedSessionId,
         userId,
-        aiModelId,
-        activityTypeId,
+        aiModelId: parsedAiModelId,
+        activityTypeId: parsedActivityTypeId,
         message,
         response: aiResponse,
         status: 'approved',
@@ -813,10 +819,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await storage.createUserActivity({
         companyId: user.companyId,
         userId,
-        activityTypeId,
+        activityTypeId: parsedActivityTypeId,
         description: `Chat message sent${attachments.length > 0 ? ` with ${attachments.length} attachment(s)` : ''}`,
         status: 'completed',
-        metadata: { messageId: chatMessage.id, aiModelId, attachmentCount: attachments.length }
+        metadata: { messageId: chatMessage.id, aiModelId: parsedAiModelId, attachmentCount: attachments.length }
       });
 
       res.json({ ...chatMessage, attachments });
