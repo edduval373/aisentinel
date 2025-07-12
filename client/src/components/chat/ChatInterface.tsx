@@ -47,6 +47,11 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
     },
   });
 
+  // Fetch Deep Research config
+  const { data: deepResearchConfig } = useQuery({
+    queryKey: ['/api/deep-research-config'],
+  });
+
   // Fetch activity types
   const { data: activityTypes, isLoading: typesLoading } = useQuery<ActivityType[]>({
     queryKey: ['/api/activity-types'],
@@ -369,6 +374,17 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                     {model.name}
                   </SelectItem>
                 ))}
+                                    {deepResearchConfig?.isEnabled && (
+                      <SelectItem value="deep-research">
+                        <div className="flex items-center gap-2">
+                          <Badge variant="default" style={{ backgroundColor: 'hsl(221, 83%, 53%)' }}>
+                            <Brain className="w-3 h-3 mr-1" />
+                            Multi-AI
+                          </Badge>
+                          Deep Research
+                        </div>
+                      </SelectItem>
+                    )}
               </SelectContent>
             </Select>
 
