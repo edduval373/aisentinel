@@ -6,7 +6,7 @@ import { setupAuth, isAuthenticated } from "./replitAuth";
 import { aiService } from "./services/aiService";
 import { contentFilter } from "./services/contentFilter";
 import { fileStorageService } from "./services/fileStorageService";
-import { insertUserActivitySchema, insertChatMessageSchema, insertCompanyRoleSchema, chatAttachments } from "@shared/schema";
+import { insertUserActivitySchema, insertChatMessageSchema, insertCompanyRoleSchema, insertDeepResearchConfigSchema, chatAttachments } from "@shared/schema";
 import { z } from "zod";
 import type { UploadedFile } from "express-fileupload";
 import { db } from "./db";
@@ -974,6 +974,71 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting company role:", error);
       res.status(500).json({ message: "Failed to delete company role" });
+    }
+  });
+
+  // Deep Research Configuration routes
+  app.get('/api/deep-research-config', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = await storage.getUser(req.user.claims.sub);
+      const userRoleLevel = user?.roleLevel || 1;
+      if (userRoleLevel < 99) { // Must be owner (99) or higher
+        return res.status(403).json({ message: "Owner or super-user access required" });
+      }
+      
+      if (!user?.companyId) {
+        return res.status(400).json({ message: "No company associated with user" });
+      }
+      
+      const config = await storage.getDeepResearchConfig(user.companyId);
+      res.json(config);
+    } catch (error) {
+      console.error("Error fetching deep research config:", error);
+      res.status(500).json({ message: "Failed to fetch deep research configuration" });
+    }
+  });
+
+  app.post('/api/deep-research-config', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = await storage.getUser(req.user.claims.sub);
+      const userRoleLevel = user?.roleLevel || 1;
+      if (userRoleLevel < 99) { // Must be owner (99) or higher
+        return res.status(403).json({ message: "Owner or super-user access required" });
+      }
+      
+      if (!user?.companyId) {
+        return res.status(400).json({ message: "No company associated with user" });
+      }
+      
+      const configData = insertDeepResearchConfigSchema.parse({
+        ...req.body,
+        companyId: user.companyId
+      });
+      
+      const config = await storage.createDeepResearchConfig(configData);
+      res.json(config);
+    } catch (error) {
+      console.error("Error creating deep research config:", error);
+      res.status(500).json({ message: "Failed to create deep research configuration" });
+    }
+  });
+
+  app.put('/api/deep-research-config/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = await storage.getUser(req.user.claims.sub);
+      const userRoleLevel = user?.roleLevel || 1;
+      if (userRoleLevel < 99) { // Must be owner (99) or higher
+        return res.status(403).json({ message: "Owner or super-user access required" });
+      }
+      
+      const configId = parseInt(req.params.id);
+      const configData = insertDeepResearchConfigSchema.partial().parse(req.body);
+      
+      const config = await storage.updateDeepResearchConfig(configId, configData);
+      res.json(config);
+    } catch (error) {
+      console.error("Error updating deep research config:", error);
+      res.status(500).json({ message: "Failed to update deep research configuration" });
     }
   });
 

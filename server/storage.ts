@@ -11,6 +11,7 @@ import {
   chatAttachments,
   contextDocuments,
   activityContextLinks,
+  deepResearchConfigs,
   type User,
   type UpsertUser,
   type Company,
@@ -35,6 +36,8 @@ import {
   type InsertContextDocument,
   type ActivityContextLink,
   type InsertActivityContextLink,
+  type DeepResearchConfig,
+  type InsertDeepResearchConfig,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, count, sql } from "drizzle-orm";
@@ -118,6 +121,11 @@ export interface IStorage {
   createActivityContextLink(link: InsertActivityContextLink): Promise<ActivityContextLink>;
   deleteActivityContextLink(activityTypeId: number, documentId: number): Promise<void>;
   getContextForActivity(activityTypeId: number, companyId: number): Promise<ContextDocument[]>;
+  
+  // Deep Research operations
+  getDeepResearchConfig(companyId: number): Promise<DeepResearchConfig | undefined>;
+  createDeepResearchConfig(config: InsertDeepResearchConfig): Promise<DeepResearchConfig>;
+  updateDeepResearchConfig(id: number, config: Partial<InsertDeepResearchConfig>): Promise<DeepResearchConfig>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -739,6 +747,32 @@ export class DatabaseStorage implements IStorage {
 
     // Insert default activity types
     await db.insert(activityTypes).values(defaultActivityTypes);
+  }
+
+  // Deep Research operations
+  async getDeepResearchConfig(companyId: number): Promise<DeepResearchConfig | undefined> {
+    const [config] = await db
+      .select()
+      .from(deepResearchConfigs)
+      .where(eq(deepResearchConfigs.companyId, companyId));
+    return config;
+  }
+
+  async createDeepResearchConfig(config: InsertDeepResearchConfig): Promise<DeepResearchConfig> {
+    const [created] = await db.insert(deepResearchConfigs).values(config).returning();
+    return created;
+  }
+
+  async updateDeepResearchConfig(id: number, config: Partial<InsertDeepResearchConfig>): Promise<DeepResearchConfig> {
+    const [updated] = await db
+      .update(deepResearchConfigs)
+      .set({
+        ...config,
+        updatedAt: new Date(),
+      })
+      .where(eq(deepResearchConfigs.id, id))
+      .returning();
+    return updated;
   }
 }
 

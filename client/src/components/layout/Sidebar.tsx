@@ -17,7 +17,8 @@ import {
   Eye,
   ChevronRight,
   Building,
-  FileText
+  FileText,
+  Brain
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -268,6 +269,25 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                   location === "/admin/create-models" ? "text-sentinel-blue" : "text-slate-400"
                 )} />
                 <span>Setup AI Models</span>
+              </button>
+              
+              <button
+                onClick={() => {
+                  navigate("/admin/deep-research");
+                  if (window.innerWidth < 1024) onToggle();
+                }}
+                className={cn(
+                  "w-full flex items-center space-x-3 text-left rounded-lg px-3 py-2 transition-colors",
+                  location === "/admin/deep-research"
+                    ? "text-white bg-slate-700"
+                    : "text-slate-300 hover:text-white hover:bg-slate-700"
+                )}
+              >
+                <Brain className={cn(
+                  "w-5 h-5",
+                  location === "/admin/deep-research" ? "text-sentinel-blue" : "text-slate-400"
+                )} />
+                <span>Setup Deep Research</span>
               </button>
             </>
           )}

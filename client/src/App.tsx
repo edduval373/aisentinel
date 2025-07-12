@@ -22,6 +22,7 @@ import AdminPermissions from "@/pages/admin/permissions";
 import AdminModelSettings from "@/pages/admin/model-settings";
 import AdminContextManagement from "@/pages/admin/context-management";
 import CreateModels from "@/pages/admin/create-models";
+import DeepResearch from "@/pages/admin/deep-research";
 import CompanySetup from "@/pages/company-setup";
 import NotFound from "@/pages/not-found";
 
@@ -50,6 +51,7 @@ function Router() {
           <Route path="/admin/model-settings" component={AdminModelSettings} />
           <Route path="/admin/context-management" component={AdminContextManagement} />
           <Route path="/admin/create-models" component={CreateModels} />
+          <Route path="/admin/deep-research" component={DeepResearch} />
           <Route path="/admin/companies" component={CompanyManagement} />
           <Route path="/company-setup" component={CompanySetup} />
           <Route path="/admin/company-setup" component={CompanySetup} />

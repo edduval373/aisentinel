@@ -210,6 +210,19 @@ export const activityContextLinks = pgTable("activity_context_links", {
   index("idx_activity_context_document").on(table.documentId),
 ]);
 
+// Deep Research configuration
+export const deepResearchConfigs = pgTable("deep_research_configs", {
+  id: serial("id").primaryKey(),
+  companyId: integer("company_id").references(() => companies.id).notNull(),
+  isEnabled: boolean("is_enabled").default(false).notNull(),
+  summaryModelId: integer("summary_model_id").references(() => aiModels.id), // Model used for final summary
+  includedModels: jsonb("included_models").default([]), // Array of model IDs to include
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => [
+  index("idx_deep_research_company").on(table.companyId),
+]);
+
 // Insert schemas
 export const insertCompanySchema = createInsertSchema(companies).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertCompanyEmployeeSchema = createInsertSchema(companyEmployees).omit({ id: true, addedAt: true });
@@ -223,6 +236,7 @@ export const insertChatMessageSchema = createInsertSchema(chatMessages).omit({ i
 export const insertChatAttachmentSchema = createInsertSchema(chatAttachments).omit({ id: true, uploadedAt: true });
 export const insertContextDocumentSchema = createInsertSchema(contextDocuments).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertActivityContextLinkSchema = createInsertSchema(activityContextLinks).omit({ id: true, createdAt: true });
+export const insertDeepResearchConfigSchema = createInsertSchema(deepResearchConfigs).omit({ id: true, createdAt: true, updatedAt: true });
 
 // Types
 export type Company = typeof companies.$inferSelect;
@@ -242,9 +256,16 @@ export type InsertUserActivity = z.infer<typeof insertUserActivitySchema>;
 export type ChatSession = typeof chatSessions.$inferSelect;
 export type InsertChatSession = z.infer<typeof insertChatSessionSchema>;
 export type ChatMessage = typeof chatMessages.$inferSelect;
-export type ChatMessageWithModel = ChatMessage & { aiModel?: AiModel; attachments?: ChatAttachment[] };
 export type InsertChatMessage = z.infer<typeof insertChatMessageSchema>;
 export type ChatAttachment = typeof chatAttachments.$inferSelect;
+export type InsertChatAttachment = z.infer<typeof insertChatAttachmentSchema>;
+export type ChatMessageWithModel = ChatMessage & { aiModel?: AiModel; attachments?: ChatAttachment[] };
+export type ContextDocument = typeof contextDocuments.$inferSelect;
+export type InsertContextDocument = z.infer<typeof insertContextDocumentSchema>;
+export type ActivityContextLink = typeof activityContextLinks.$inferSelect;
+export type InsertActivityContextLink = z.infer<typeof insertActivityContextLinkSchema>;
+export type DeepResearchConfig = typeof deepResearchConfigs.$inferSelect;
+export type InsertDeepResearchConfig = z.infer<typeof insertDeepResearchConfigSchema>;
 export type InsertChatAttachment = z.infer<typeof insertChatAttachmentSchema>;
 export type ContextDocument = typeof contextDocuments.$inferSelect;
 export type InsertContextDocument = z.infer<typeof insertContextDocumentSchema>;
