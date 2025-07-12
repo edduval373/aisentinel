@@ -162,7 +162,7 @@ export default function DeepResearch() {
                 <Separator />
                 
                 {/* Summary Model Selection */}
-                <div className="space-y-3">
+                <div className="space-y-3" style={{ marginTop: '-36px', paddingTop: '20px' }}>
                   <Label className="text-base font-medium flex items-center gap-2">
                     <Zap className="h-4 w-4" />
                     Choose Summary Model
