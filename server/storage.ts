@@ -8,6 +8,7 @@ import {
   userActivities,
   chatSessions,
   chatMessages,
+  chatAttachments,
   contextDocuments,
   activityContextLinks,
   type User,
@@ -28,6 +29,8 @@ import {
   type InsertChatSession,
   type ChatMessage,
   type InsertChatMessage,
+  type ChatAttachment,
+  type InsertChatAttachment,
   type ContextDocument,
   type InsertContextDocument,
   type ActivityContextLink,
@@ -97,6 +100,11 @@ export interface IStorage {
   getUserChatSessions(userId: string, companyId: number): Promise<(ChatSession & { messageCount?: number; lastMessage?: string })[]>;
   createChatMessage(message: InsertChatMessage): Promise<ChatMessage>;
   getChatMessages(sessionId: number, companyId: number): Promise<ChatMessage[]>;
+  
+  // Chat attachment operations
+  createChatAttachment(attachment: InsertChatAttachment): Promise<ChatAttachment>;
+  getChatAttachments(messageId: number): Promise<ChatAttachment[]>;
+  getAttachmentsBySession(sessionId: number, companyId: number): Promise<ChatAttachment[]>;
   
   // Context Document operations
   getContextDocuments(companyId: number): Promise<ContextDocument[]>;
@@ -457,7 +465,7 @@ export class DatabaseStorage implements IStorage {
     return created;
   }
 
-  async getChatMessages(sessionId: number, companyId: number): Promise<(ChatMessage & { aiModel?: AiModel })[]> {
+  async getChatMessages(sessionId: number, companyId: number): Promise<(ChatMessage & { aiModel?: AiModel; attachments?: ChatAttachment[] })[]> {
     const messages = await db
       .select({
         id: chatMessages.id,
@@ -486,9 +494,16 @@ export class DatabaseStorage implements IStorage {
       .where(and(eq(chatMessages.sessionId, sessionId), eq(chatMessages.companyId, companyId)))
       .orderBy(chatMessages.timestamp);
 
+    // Get attachments for all messages
+    const messageIds = messages.map(msg => msg.id);
+    const attachments = messageIds.length > 0 
+      ? await db.select().from(chatAttachments).where(sql`${chatAttachments.messageId} IN (${messageIds.join(',')})`)
+      : [];
+
     return messages.map(msg => ({
       ...msg,
-      aiModel: msg.aiModel.id ? msg.aiModel : undefined
+      aiModel: msg.aiModel.id ? msg.aiModel : undefined,
+      attachments: attachments.filter(att => att.messageId === msg.id)
     }));
   }
 
@@ -587,6 +602,24 @@ export class DatabaseStorage implements IStorage {
       .orderBy(contextDocuments.priority, contextDocuments.name);
     
     return documents;
+  }
+
+  // Chat attachment operations
+  async createChatAttachment(attachment: InsertChatAttachment): Promise<ChatAttachment> {
+    const [created] = await db.insert(chatAttachments).values(attachment).returning();
+    return created;
+  }
+
+  async getChatAttachments(messageId: number): Promise<ChatAttachment[]> {
+    return await db.select().from(chatAttachments).where(eq(chatAttachments.messageId, messageId));
+  }
+
+  async getAttachmentsBySession(sessionId: number, companyId: number): Promise<ChatAttachment[]> {
+    return await db
+      .select()
+      .from(chatAttachments)
+      .innerJoin(chatMessages, eq(chatAttachments.messageId, chatMessages.id))
+      .where(and(eq(chatMessages.sessionId, sessionId), eq(chatMessages.companyId, companyId)));
   }
 
   // Company initialization with default models and activity types

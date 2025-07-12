@@ -166,6 +166,22 @@ export const chatMessages = pgTable("chat_messages", {
   timestamp: timestamp("timestamp").defaultNow().notNull(),
 });
 
+// Chat attachments
+export const chatAttachments = pgTable("chat_attachments", {
+  id: serial("id").primaryKey(),
+  companyId: integer("company_id").references(() => companies.id).notNull(),
+  messageId: integer("message_id").references(() => chatMessages.id).notNull(),
+  fileName: varchar("file_name").notNull(),
+  originalName: varchar("original_name").notNull(),
+  fileSize: integer("file_size").notNull(),
+  mimeType: varchar("mime_type").notNull(),
+  objectStoragePath: varchar("object_storage_path").notNull(),
+  uploadedAt: timestamp("uploaded_at").defaultNow().notNull(),
+}, (table) => [
+  index("idx_chat_attachment_message").on(table.messageId),
+  index("idx_chat_attachment_company").on(table.companyId),
+]);
+
 // Context documents
 export const contextDocuments = pgTable("context_documents", {
   id: serial("id").primaryKey(),
@@ -204,6 +220,7 @@ export const insertActivityTypeSchema = createInsertSchema(activityTypes).omit({
 export const insertUserActivitySchema = createInsertSchema(userActivities).omit({ id: true, timestamp: true });
 export const insertChatSessionSchema = createInsertSchema(chatSessions).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertChatMessageSchema = createInsertSchema(chatMessages).omit({ id: true, timestamp: true });
+export const insertChatAttachmentSchema = createInsertSchema(chatAttachments).omit({ id: true, uploadedAt: true });
 export const insertContextDocumentSchema = createInsertSchema(contextDocuments).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertActivityContextLinkSchema = createInsertSchema(activityContextLinks).omit({ id: true, createdAt: true });
 
@@ -225,8 +242,10 @@ export type InsertUserActivity = z.infer<typeof insertUserActivitySchema>;
 export type ChatSession = typeof chatSessions.$inferSelect;
 export type InsertChatSession = z.infer<typeof insertChatSessionSchema>;
 export type ChatMessage = typeof chatMessages.$inferSelect;
-export type ChatMessageWithModel = ChatMessage & { aiModel?: AiModel };
+export type ChatMessageWithModel = ChatMessage & { aiModel?: AiModel; attachments?: ChatAttachment[] };
 export type InsertChatMessage = z.infer<typeof insertChatMessageSchema>;
+export type ChatAttachment = typeof chatAttachments.$inferSelect;
+export type InsertChatAttachment = z.infer<typeof insertChatAttachmentSchema>;
 export type ContextDocument = typeof contextDocuments.$inferSelect;
 export type InsertContextDocument = z.infer<typeof insertContextDocumentSchema>;
 export type ActivityContextLink = typeof activityContextLinks.$inferSelect;

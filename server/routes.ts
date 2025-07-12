@@ -5,8 +5,10 @@ import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import { aiService } from "./services/aiService";
 import { contentFilter } from "./services/contentFilter";
+import { fileStorageService } from "./services/fileStorageService";
 import { insertUserActivitySchema, insertChatMessageSchema, insertCompanyRoleSchema } from "@shared/schema";
 import { z } from "zod";
+import type { UploadedFile } from "express-fileupload";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
@@ -730,8 +732,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "AI model is disabled" });
       }
 
-      // Generate AI response
-      const aiResponse = await aiService.generateResponse(message, aiModelId, user.companyId, activityTypeId);
+      // Generate AI response (include file context if attachments exist)
+      let contextMessage = message;
+      let fileAttachments: any[] = [];
+
+      // Handle file uploads
+      if (req.files) {
+        const files = Array.isArray(req.files.attachments) ? req.files.attachments : [req.files.attachments].filter(Boolean);
+        
+        for (const file of files) {
+          if (file) {
+            // Validate file type and size
+            const allowedTypes = ['image/', 'text/', 'application/pdf', 'application/json', 'application/vnd.openxmlformats-officedocument'];
+            if (!allowedTypes.some(type => file.mimetype.startsWith(type))) {
+              return res.status(400).json({ message: `File type ${file.mimetype} not allowed` });
+            }
+
+            if (file.size > 10 * 1024 * 1024) { // 10MB limit
+              return res.status(400).json({ message: "File size must be less than 10MB" });
+            }
+
+            fileAttachments.push(file);
+          }
+        }
+
+        // Add file context to message
+        if (fileAttachments.length > 0) {
+          contextMessage += `\n\n[User has attached ${fileAttachments.length} file(s): ${fileAttachments.map(f => f.name).join(', ')}]`;
+        }
+      }
+
+      const aiResponse = await aiService.generateResponse(contextMessage, aiModelId, user.companyId, activityTypeId);
       
       // Create chat message with company isolation
       const chatMessage = await storage.createChatMessage({
@@ -746,17 +777,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
         securityFlags: filterResult.flags
       });
 
+      // Upload and store file attachments
+      const attachments = [];
+      for (const file of fileAttachments) {
+        const fileName = fileStorageService.generateFileName(file.name, chatMessage.id);
+        const storagePath = await fileStorageService.uploadFile(
+          file.data,
+          fileName,
+          `session-${sessionId}`
+        );
+
+        const attachment = await storage.createChatAttachment({
+          companyId: user.companyId,
+          messageId: chatMessage.id,
+          fileName,
+          originalName: file.name,
+          fileSize: file.size,
+          mimeType: file.mimetype,
+          objectStoragePath: storagePath,
+        });
+
+        attachments.push(attachment);
+      }
+
       // Log the user activity
       await storage.createUserActivity({
         companyId: user.companyId,
         userId,
         activityTypeId,
-        description: `Chat message sent`,
+        description: `Chat message sent${attachments.length > 0 ? ` with ${attachments.length} attachment(s)` : ''}`,
         status: 'completed',
-        metadata: { messageId: chatMessage.id, aiModelId }
+        metadata: { messageId: chatMessage.id, aiModelId, attachmentCount: attachments.length }
       });
 
-      res.json(chatMessage);
+      res.json({ ...chatMessage, attachments });
     } catch (error) {
       console.error("Error creating chat message:", error);
       res.status(500).json({ message: "Failed to create chat message" });
@@ -844,6 +898,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting company role:", error);
       res.status(500).json({ message: "Failed to delete company role" });
+    }
+  });
+
+  // File download endpoint
+  app.get('/api/files/download/:path(*)', isAuthenticated, async (req: any, res) => {
+    try {
+      const filePath = decodeURIComponent(req.params.path);
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user?.companyId) {
+        return res.status(400).json({ message: "No company associated with user" });
+      }
+
+      // Verify user has access to this file (it belongs to their company)
+      if (!filePath.startsWith('chat-attachments/')) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
+      const fileData = await fileStorageService.downloadFile(filePath);
+      
+      // Get file info from database to set proper headers
+      const attachment = await db.select().from(chatAttachments).where(eq(chatAttachments.objectStoragePath, filePath)).limit(1);
+      
+      if (attachment.length === 0 || attachment[0].companyId !== user.companyId) {
+        return res.status(404).json({ message: "File not found" });
+      }
+
+      res.setHeader('Content-Disposition', `attachment; filename="${attachment[0].originalName}"`);
+      res.setHeader('Content-Type', attachment[0].mimeType);
+      res.send(fileData);
+    } catch (error) {
+      console.error("Error downloading file:", error);
+      res.status(500).json({ message: "Failed to download file" });
     }
   });
 

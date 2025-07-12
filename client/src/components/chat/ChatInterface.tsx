@@ -138,9 +138,25 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
 
   // Send message mutation
   const sendMessageMutation = useMutation({
-    mutationFn: async (data: { message: string; aiModelId: number; activityTypeId: number; sessionId: number }) => {
-      const response = await apiRequest("/api/chat/message", "POST", data);
-      return response;
+    mutationFn: async (data: FormData | { message: string; aiModelId: number; activityTypeId: number; sessionId: number }) => {
+      // Handle both FormData (with files) and regular object
+      if (data instanceof FormData) {
+        const response = await fetch("/api/chat/message", {
+          method: "POST",
+          body: data,
+          credentials: "include",
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({ message: "Request failed" }));
+          throw new Error(errorData.message || `HTTP ${response.status}`);
+        }
+        
+        return response.json();
+      } else {
+        const response = await apiRequest("/api/chat/message", "POST", data);
+        return response;
+      }
     },
     onSuccess: (newMessage) => {
       console.log('New message received:', newMessage);
@@ -263,7 +279,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleSendMessage = (message: string) => {
+  const handleSendMessage = (message: string, attachments?: File[]) => {
     if (!selectedModel || !selectedActivityType || !currentSession) {
       toast({
         title: "Error",
@@ -274,12 +290,21 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
     }
 
     setLastMessage(message);
-    sendMessageMutation.mutate({
-      message,
-      aiModelId: selectedModel,
-      activityTypeId: selectedActivityType,
-      sessionId: currentSession,
-    });
+    
+    // Create FormData for file upload
+    const formData = new FormData();
+    formData.append('message', message);
+    formData.append('aiModelId', selectedModel.toString());
+    formData.append('activityTypeId', selectedActivityType.toString());
+    formData.append('sessionId', currentSession.toString());
+    
+    if (attachments && attachments.length > 0) {
+      attachments.forEach((file) => {
+        formData.append('attachments', file);
+      });
+    }
+
+    sendMessageMutation.mutate(formData);
   };
 
   // Clear current chat
