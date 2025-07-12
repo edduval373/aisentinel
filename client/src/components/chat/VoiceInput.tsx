@@ -1,6 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Mic, MicOff, Square } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -167,15 +168,24 @@ export default function VoiceInput({ onTranscription, disabled = false }: VoiceI
   return (
     <div className="flex items-center space-x-2">
       {!isRecording && !isProcessing && (
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleStartRecording}
-          disabled={disabled}
-          className="px-3 py-2"
-        >
-          <Mic className="w-8 h-8" />
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleStartRecording}
+                disabled={disabled}
+                className="px-3 py-2"
+              >
+                <Mic className="w-12 h-12" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Click to Dictation</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       )}
       
       {isRecording && (
@@ -185,7 +195,7 @@ export default function VoiceInput({ onTranscription, disabled = false }: VoiceI
           onClick={handleStopRecording}
           className="px-3 py-2 animate-pulse"
         >
-          <Square className="w-8 h-8" />
+          <Square className="w-12 h-12" />
         </Button>
       )}
       

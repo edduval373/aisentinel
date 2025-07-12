@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Send, Paperclip, X, File } from "lucide-react";
 import VoiceInput from "./VoiceInput";
 
@@ -129,16 +130,25 @@ export default function ChatInput({ onSendMessage, disabled, prefillMessage }: C
             className="hidden"
             accept="image/*,text/*,.pdf,.json,.xlsx,.docx,.txt,.md"
           />
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={disabled}
-            className="px-3 py-2"
-          >
-            <Paperclip className="w-8 h-8" />
-          </Button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={disabled}
+                  className="px-3 py-2"
+                >
+                  <Paperclip className="w-8 h-8" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Click to Attach File(s)</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           <VoiceInput 
             onTranscription={handleVoiceTranscription}
             disabled={disabled}
