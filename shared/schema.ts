@@ -175,7 +175,7 @@ export const chatAttachments = pgTable("chat_attachments", {
   originalName: varchar("original_name").notNull(),
   fileSize: integer("file_size").notNull(),
   mimeType: varchar("mime_type").notNull(),
-  objectStoragePath: varchar("object_storage_path").notNull(),
+  content: text("content").notNull(), // file content stored directly in database
   uploadedAt: timestamp("uploaded_at").defaultNow().notNull(),
 }, (table) => [
   index("idx_chat_attachment_message").on(table.messageId),

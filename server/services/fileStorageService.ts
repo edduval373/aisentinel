@@ -1,51 +1,45 @@
 
-import { Client } from '@replit/object-storage';
-
 export class FileStorageService {
-  private client: Client | null = null;
-  private isInitialized = false;
-
   constructor() {
-    try {
-      this.client = new Client();
-      this.isInitialized = true;
-    } catch (error) {
-      console.warn('Object storage not properly configured, file uploads will be disabled:', error.message);
-      this.client = null;
-      this.isInitialized = false;
+    // Always available since we store files directly in the database
+  }
+
+  async processFile(file: Buffer, fileName: string, mimeType: string): Promise<string> {
+    // Process file content similar to context documents
+    let content = '';
+    
+    if (mimeType.startsWith('text/') || mimeType === 'application/json') {
+      // For text files, store the full content
+      content = file.toString('utf-8');
+    } else if (mimeType.startsWith('image/')) {
+      // For images, store as base64
+      content = `data:${mimeType};base64,${file.toString('base64')}`;
+    } else {
+      // For other files, store as base64 with metadata
+      content = `data:${mimeType};base64,${file.toString('base64')}`;
     }
+    
+    return content;
   }
 
-  private checkInitialized(): void {
-    if (!this.isInitialized || !this.client) {
-      throw new Error('File storage service is not properly configured');
+  async getFileContent(content: string, mimeType: string): Promise<Buffer> {
+    if (content.startsWith('data:')) {
+      // Extract base64 content from data URL
+      const base64Data = content.split(',')[1];
+      return Buffer.from(base64Data, 'base64');
+    } else {
+      // For text content, convert to buffer
+      return Buffer.from(content, 'utf-8');
     }
-  }
-
-  async uploadFile(file: Buffer, fileName: string, path: string): Promise<string> {
-    this.checkInitialized();
-    const fullPath = `chat-attachments/${path}/${fileName}`;
-    await this.client!.uploadFromBytes(fullPath, file);
-    return fullPath;
-  }
-
-  async downloadFile(path: string): Promise<Buffer> {
-    this.checkInitialized();
-    return await this.client!.downloadAsBytes(path);
-  }
-
-  async deleteFile(path: string): Promise<void> {
-    this.checkInitialized();
-    await this.client!.delete(path);
   }
 
   isAvailable(): boolean {
-    return this.isInitialized && this.client !== null;
+    return true; // Always available since we use database storage
   }
 
-  async getFileUrl(path: string): Promise<string> {
-    // For Replit Object Storage, we'll create a download endpoint
-    return `/api/files/download/${encodeURIComponent(path)}`;
+  async getFileUrl(attachmentId: number): Promise<string> {
+    // Create download endpoint using attachment ID
+    return `/api/files/download/${attachmentId}`;
   }
 
   generateFileName(originalName: string, messageId: number): string {

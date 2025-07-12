@@ -6,9 +6,11 @@ import { setupAuth, isAuthenticated } from "./replitAuth";
 import { aiService } from "./services/aiService";
 import { contentFilter } from "./services/contentFilter";
 import { fileStorageService } from "./services/fileStorageService";
-import { insertUserActivitySchema, insertChatMessageSchema, insertCompanyRoleSchema } from "@shared/schema";
+import { insertUserActivitySchema, insertChatMessageSchema, insertCompanyRoleSchema, chatAttachments } from "@shared/schema";
 import { z } from "zod";
 import type { UploadedFile } from "express-fileupload";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
@@ -777,20 +779,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         securityFlags: filterResult.flags
       });
 
-      // Upload and store file attachments
+      // Process and store file attachments
       const attachments = [];
       if (fileAttachments.length > 0) {
-        if (!fileStorageService.isAvailable()) {
-          return res.status(503).json({ message: "File upload service is not available" });
-        }
-        
         for (const file of fileAttachments) {
           try {
             const fileName = fileStorageService.generateFileName(file.name, chatMessage.id);
-            const storagePath = await fileStorageService.uploadFile(
+            const content = await fileStorageService.processFile(
               file.data,
               fileName,
-              `session-${sessionId}`
+              file.mimetype
             );
 
             const attachment = await storage.createChatAttachment({
@@ -800,13 +798,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
               originalName: file.name,
               fileSize: file.size,
               mimeType: file.mimetype,
-              objectStoragePath: storagePath,
+              content,
             });
 
             attachments.push(attachment);
           } catch (error) {
-            console.error("Error uploading file:", error);
-            return res.status(500).json({ message: "Failed to upload file attachment" });
+            console.error("Error processing file:", error);
+            return res.status(500).json({ message: "Failed to process file attachment" });
           }
         }
       }
@@ -913,13 +911,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // File download endpoint
-  app.get('/api/files/download/:path(*)', isAuthenticated, async (req: any, res) => {
+  app.get('/api/files/download/:attachmentId', isAuthenticated, async (req: any, res) => {
     try {
-      if (!fileStorageService.isAvailable()) {
-        return res.status(503).json({ message: "File download service is not available" });
-      }
-
-      const filePath = decodeURIComponent(req.params.path);
+      const attachmentId = parseInt(req.params.attachmentId);
       const userId = req.user.claims.sub;
       const user = await storage.getUser(userId);
       
@@ -927,19 +921,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "No company associated with user" });
       }
 
-      // Verify user has access to this file (it belongs to their company)
-      if (!filePath.startsWith('chat-attachments/')) {
-        return res.status(403).json({ message: "Access denied" });
-      }
-
-      const fileData = await fileStorageService.downloadFile(filePath);
-      
-      // Get file info from database to set proper headers
-      const attachment = await db.select().from(chatAttachments).where(eq(chatAttachments.objectStoragePath, filePath)).limit(1);
+      // Get file info from database and verify access
+      const attachment = await db.select().from(chatAttachments).where(eq(chatAttachments.id, attachmentId)).limit(1);
       
       if (attachment.length === 0 || attachment[0].companyId !== user.companyId) {
         return res.status(404).json({ message: "File not found" });
       }
+
+      const fileData = await fileStorageService.getFileContent(attachment[0].content, attachment[0].mimeType);
 
       res.setHeader('Content-Disposition', `attachment; filename="${attachment[0].originalName}"`);
       res.setHeader('Content-Type', attachment[0].mimeType);
