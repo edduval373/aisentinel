@@ -25,6 +25,35 @@ export const sessions = pgTable(
   (table) => [index("IDX_session_expire").on(table.expire)],
 );
 
+// Email verification tokens table
+export const emailVerificationTokens = pgTable("email_verification_tokens", {
+  id: serial("id").primaryKey(),
+  email: varchar("email").notNull(),
+  token: varchar("token").notNull().unique(),
+  expiresAt: timestamp("expires_at").notNull(),
+  isUsed: boolean("is_used").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => [
+  index("idx_email_token").on(table.email),
+  index("idx_token_expires").on(table.token, table.expiresAt),
+]);
+
+// User sessions table for cookie-based auth
+export const userSessions = pgTable("user_sessions", {
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id").notNull().references(() => users.id),
+  sessionToken: varchar("session_token").notNull().unique(),
+  email: varchar("email").notNull(),
+  companyId: integer("company_id").references(() => companies.id),
+  roleLevel: integer("role_level").default(1),
+  expiresAt: timestamp("expires_at").notNull(),
+  lastAccessedAt: timestamp("last_accessed_at").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => [
+  index("idx_session_token").on(table.sessionToken),
+  index("idx_user_session").on(table.userId),
+]);
+
 // Companies table
 export const companies = pgTable("companies", {
   id: serial("id").primaryKey(),
@@ -236,6 +265,8 @@ export const insertChatAttachmentSchema = createInsertSchema(chatAttachments).om
 export const insertContextDocumentSchema = createInsertSchema(contextDocuments).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertActivityContextLinkSchema = createInsertSchema(activityContextLinks).omit({ id: true, createdAt: true });
 export const insertModelFusionConfigSchema = createInsertSchema(modelFusionConfigs).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertEmailVerificationTokenSchema = createInsertSchema(emailVerificationTokens).omit({ id: true, createdAt: true });
+export const insertUserSessionSchema = createInsertSchema(userSessions).omit({ id: true, createdAt: true, lastAccessedAt: true });
 
 // Types
 export type Company = typeof companies.$inferSelect;
@@ -265,8 +296,7 @@ export type ActivityContextLink = typeof activityContextLinks.$inferSelect;
 export type InsertActivityContextLink = z.infer<typeof insertActivityContextLinkSchema>;
 export type ModelFusionConfig = typeof modelFusionConfigs.$inferSelect;
 export type InsertModelFusionConfig = z.infer<typeof insertModelFusionConfigSchema>;
-export type InsertChatAttachment = z.infer<typeof insertChatAttachmentSchema>;
-export type ContextDocument = typeof contextDocuments.$inferSelect;
-export type InsertContextDocument = z.infer<typeof insertContextDocumentSchema>;
-export type ActivityContextLink = typeof activityContextLinks.$inferSelect;
-export type InsertActivityContextLink = z.infer<typeof insertActivityContextLinkSchema>;
+export type EmailVerificationToken = typeof emailVerificationTokens.$inferSelect;
+export type InsertEmailVerificationToken = z.infer<typeof insertEmailVerificationTokenSchema>;
+export type UserSession = typeof userSessions.$inferSelect;
+export type InsertUserSession = z.infer<typeof insertUserSessionSchema>;

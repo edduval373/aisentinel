@@ -3,6 +3,8 @@ import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
+import { cookieAuth, optionalAuth, AuthenticatedRequest } from "./cookieAuth";
+import { setupAuthRoutes } from "./authRoutes";
 import { aiService } from "./services/aiService";
 import { contentFilter } from "./services/contentFilter";
 import { fileStorageService } from "./services/fileStorageService";
@@ -15,13 +17,16 @@ import mammoth from "mammoth";
 import * as XLSX from "xlsx";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Auth middleware
+  // Auth middleware (keep for backward compatibility)
   await setupAuth(app);
+
+  // Setup new cookie-based authentication routes
+  setupAuthRoutes(app);
 
   // Initialize default AI models and activity types
   await initializeDefaultData();
 
-  // Auth routes
+  // Legacy auth route (for backward compatibility)
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
@@ -33,14 +38,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // AI Models routes
-  app.get('/api/ai-models', isAuthenticated, async (req: any, res) => {
+  // New cookie-based auth route
+  app.get('/api/user/current', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
-      const user = await storage.getUser(req.user.claims.sub);
-      if (!user?.companyId) {
-        return res.status(400).json({ message: "No company associated with user" });
+      const user = await storage.getUser(req.user!.userId);
+      res.json(user);
+    } catch (error) {
+      console.error("Error fetching current user:", error);
+      res.status(500).json({ message: "Failed to fetch user" });
+    }
+  });
+
+  // AI Models routes - Support both auth methods
+  app.get('/api/ai-models', async (req: any, res) => {
+    try {
+      let user = null;
+      let companyId = null;
+
+      // Try cookie auth first
+      if (req.cookies?.sessionToken) {
+        const authService = await import('./services/authService');
+        const session = await authService.authService.verifySession(req.cookies.sessionToken);
+        if (session) {
+          user = await storage.getUser(session.userId);
+          companyId = session.companyId;
+        }
       }
-      const models = await storage.getEnabledAiModels(user.companyId);
+
+      // Fallback to Replit Auth
+      if (!user && req.user?.claims?.sub) {
+        user = await storage.getUser(req.user.claims.sub);
+        companyId = user?.companyId;
+      }
+
+      if (!user) {
+        // For unauthenticated users, return empty array instead of 401 error
+        return res.json([]);
+      }
+
+      if (!companyId) {
+        // For free users, return empty array or default models
+        return res.json([]);
+      }
+
+      const models = await storage.getEnabledAiModels(companyId);
       res.json(models);
     } catch (error) {
       console.error("Error fetching AI models:", error);

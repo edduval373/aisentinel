@@ -7,6 +7,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { CompanyProvider } from "@/hooks/useCompanyContext";
 import Landing from "@/pages/landing";
 import Home from "@/pages/home";
+import Login from "@/pages/Login";
+import VerificationSuccess from "@/pages/VerificationSuccess";
 import CompanyManagement from "@/pages/admin/company-management";
 import AdminModels from "@/pages/admin/models";
 import AdminActivityTypes from "@/pages/admin/activity-types";
@@ -31,6 +33,11 @@ function Router() {
 
   return (
     <Switch>
+      {/* Authentication routes - always available */}
+      <Route path="/login" component={Login} />
+      <Route path="/verify" component={VerificationSuccess} />
+      
+      {/* Protected routes */}
       {isLoading || !isAuthenticated ? (
         <Route path="/" component={Landing} />
       ) : (

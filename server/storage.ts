@@ -12,6 +12,8 @@ import {
   contextDocuments,
   activityContextLinks,
   modelFusionConfigs,
+  emailVerificationTokens,
+  userSessions,
   type User,
   type UpsertUser,
   type Company,
@@ -38,6 +40,10 @@ import {
   type InsertActivityContextLink,
   type ModelFusionConfig,
   type InsertModelFusionConfig,
+  type EmailVerificationToken,
+  type InsertEmailVerificationToken,
+  type UserSession,
+  type InsertUserSession,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, count, sql } from "drizzle-orm";
@@ -46,10 +52,22 @@ import { eq, desc, and, count, sql } from "drizzle-orm";
 export interface IStorage {
   // User operations (IMPORTANT: mandatory for Replit Auth)
   getUser(id: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
+  
+  // Authentication operations
+  createEmailVerificationToken(token: InsertEmailVerificationToken): Promise<EmailVerificationToken>;
+  getEmailVerificationToken(token: string): Promise<EmailVerificationToken | undefined>;
+  markEmailVerificationTokenAsUsed(id: number): Promise<void>;
+  createUserSession(session: InsertUserSession): Promise<UserSession>;
+  getUserSession(sessionToken: string): Promise<UserSession | undefined>;
+  updateUserSessionLastAccessed(sessionId: number): Promise<void>;
+  deleteUserSession(sessionToken: string): Promise<void>;
   
   // Company operations
   getCompanyByDomain(domain: string): Promise<Company | undefined>;
+  getCompanyByEmailDomain(email: string): Promise<Company | undefined>;
+  getCompanyEmployeeByEmail(email: string): Promise<CompanyEmployee | undefined>;
   getCompanies(): Promise<Company[]>;
   createCompany(company: InsertCompany): Promise<Company>;
   updateCompany(id: number, company: Partial<InsertCompany>): Promise<Company>;
@@ -135,6 +153,11 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user;
+  }
+
   async upsertUser(userData: UpsertUser): Promise<User> {
     // Check if this is the first user - make them super-user
     const userCount = await db.select({ count: count() }).from(users);
@@ -173,6 +196,51 @@ export class DatabaseStorage implements IStorage {
       })
       .returning();
     return user;
+  }
+
+  // Authentication operations
+  async createEmailVerificationToken(token: InsertEmailVerificationToken): Promise<EmailVerificationToken> {
+    const [newToken] = await db.insert(emailVerificationTokens).values(token).returning();
+    return newToken;
+  }
+
+  async getEmailVerificationToken(token: string): Promise<EmailVerificationToken | undefined> {
+    const [verificationToken] = await db
+      .select()
+      .from(emailVerificationTokens)
+      .where(eq(emailVerificationTokens.token, token));
+    return verificationToken;
+  }
+
+  async markEmailVerificationTokenAsUsed(id: number): Promise<void> {
+    await db
+      .update(emailVerificationTokens)
+      .set({ isUsed: true })
+      .where(eq(emailVerificationTokens.id, id));
+  }
+
+  async createUserSession(session: InsertUserSession): Promise<UserSession> {
+    const [newSession] = await db.insert(userSessions).values(session).returning();
+    return newSession;
+  }
+
+  async getUserSession(sessionToken: string): Promise<UserSession | undefined> {
+    const [session] = await db
+      .select()
+      .from(userSessions)
+      .where(eq(userSessions.sessionToken, sessionToken));
+    return session;
+  }
+
+  async updateUserSessionLastAccessed(sessionId: number): Promise<void> {
+    await db
+      .update(userSessions)
+      .set({ lastAccessedAt: new Date() })
+      .where(eq(userSessions.id, sessionId));
+  }
+
+  async deleteUserSession(sessionToken: string): Promise<void> {
+    await db.delete(userSessions).where(eq(userSessions.sessionToken, sessionToken));
   }
 
   // Company operations
@@ -216,6 +284,19 @@ export class DatabaseStorage implements IStorage {
   async getCompanyById(id: number): Promise<Company | undefined> {
     const [company] = await db.select().from(companies).where(eq(companies.id, id));
     return company;
+  }
+
+  async getCompanyByEmailDomain(email: string): Promise<Company | undefined> {
+    const emailDomain = email.split('@')[1];
+    return await this.getCompanyByDomain(emailDomain);
+  }
+
+  async getCompanyEmployeeByEmail(email: string): Promise<CompanyEmployee | undefined> {
+    const [employee] = await db
+      .select()
+      .from(companyEmployees)
+      .where(eq(companyEmployees.email, email));
+    return employee;
   }
 
   async getCompanyEmployees(companyId: number): Promise<CompanyEmployee[]> {

@@ -4,7 +4,7 @@ import { Shield, Users, BarChart3, Lock, CheckCircle, AlertTriangle } from "luci
 
 export default function Landing() {
   const handleLogin = () => {
-    window.location.href = "/api/login";
+    window.location.href = "/login";
   };
 
   return (
