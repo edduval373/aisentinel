@@ -11,6 +11,7 @@ import { z } from "zod";
 import type { UploadedFile } from "express-fileupload";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
+import mammoth from "mammoth";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
@@ -767,6 +768,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Add file context to message
         if (fileAttachments.length > 0) {
           contextMessage += `\n\n[User has attached ${fileAttachments.length} file(s): ${fileAttachments.map(f => f.name).join(', ')}]`;
+          
+          // Extract content from files for AI processing
+          for (const file of fileAttachments) {
+            let fileContent = '';
+            
+            if (file.mimetype.startsWith('text/') || file.mimetype === 'application/json') {
+              // For text files, include full content
+              fileContent = file.data.toString('utf-8');
+            } else if (file.mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+              // For Word documents, extract text using mammoth
+              try {
+                const result = await mammoth.extractRawText({ buffer: file.data });
+                fileContent = result.value.length > 3000 ? result.value.substring(0, 3000) + '...' : result.value;
+              } catch (error) {
+                console.error('Error extracting text from Word document:', error);
+                fileContent = `[Error extracting text from Word document: ${file.name}]`;
+              }
+            } else if (file.mimetype.startsWith('application/pdf')) {
+              // For PDF files, note that content extraction would need a proper PDF parser
+              fileContent = `[PDF document: ${file.name} - ${file.size} bytes]`;
+            } else {
+              // For other files, provide metadata
+              fileContent = `[File: ${file.name} - ${file.mimetype} - ${file.size} bytes]`;
+            }
+            
+            if (fileContent) {
+              contextMessage += `\n\n--- Content of ${file.name} ---\n${fileContent}\n--- End of ${file.name} ---`;
+            }
+          }
         }
       }
 
