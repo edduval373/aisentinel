@@ -172,24 +172,7 @@ export default function DeepResearch() {
               </Select>
             </div>
 
-            {/* Information Panel */}
-            <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-              <div className="flex items-start gap-3">
-                <AlertCircle className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
-                <div className="space-y-1">
-                  <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
-                    How Deep Research Works
-                  </p>
-                  <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
-                    <li>• Users will see "Deep Research" as an option in the AI model selector</li>
-                    <li>• The prompt is sent to all available AI models simultaneously</li>
-                    <li>• Individual responses are collected and combined</li>
-                    <li>• The selected summary model creates a comprehensive analysis</li>
-                    <li>• Processing may take several minutes depending on model count</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
+
           </CardContent>
         </Card>
         
