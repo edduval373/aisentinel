@@ -112,37 +112,17 @@ export default function DeepResearch() {
   }
 
   return (
-    <AdminLayout title="Deep Research" subtitle="Configure multi-model AI research with comprehensive analysis and summarization">
+    <AdminLayout title="Deep Research" subtitle="Set up advanced multi-model AI processing for comprehensive research and analysis">
       <div className="p-6 space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Deep Research Configuration</h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">
-              Set up advanced multi-model AI processing for comprehensive research and analysis
-            </p>
-          </div>
-          <Button
-            onClick={handleSaveConfiguration}
-            disabled={saveConfigMutation.isPending}
-            className="flex items-center gap-2"
-          >
-            {saveConfigMutation.isPending ? (
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-            ) : (
-              <CheckCircle2 className="h-4 w-4" />
-            )}
-            Save Configuration
-          </Button>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Deep Research</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
+            Set up advanced multi-model AI processing for comprehensive research and analysis
+          </p>
         </div>
 
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Brain className="h-5 w-5" />
-              Deep Research Configuration
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-6 pt-6">
             {/* Enable/Disable Toggle */}
             <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
               <div className="space-y-1">
@@ -160,63 +140,74 @@ export default function DeepResearch() {
               />
             </div>
 
-            {localConfig.isEnabled && (
-              <>
-                <Separator />
-                
-                {/* Summary Model Selection */}
-                <div className="space-y-3">
-                  <Label className="text-base font-medium flex items-center gap-2">
-                    <Zap className="h-4 w-4" />
-                    Summary Model
-                  </Label>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Select the AI model that will create the final comprehensive summary of all model responses
+            <Separator />
+            
+            {/* Summary Model Selection */}
+            <div className="space-y-3">
+              <Label className="text-base font-medium flex items-center gap-2">
+                <Zap className="h-4 w-4" />
+                Summary Model
+              </Label>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Select the AI model that will create the final comprehensive summary of all model responses
+              </p>
+              <Select
+                value={localConfig.summaryModelId?.toString() || ""}
+                onValueChange={handleSummaryModelChange}
+                disabled={!localConfig.isEnabled}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select a model for summarization" />
+                </SelectTrigger>
+                <SelectContent>
+                  {enabledModels.map((model) => (
+                    <SelectItem key={model.id} value={model.id.toString()}>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="secondary">{model.provider}</Badge>
+                        {model.name}
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Information Panel */}
+            <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                    How Deep Research Works
                   </p>
-                  <Select
-                    value={localConfig.summaryModelId?.toString() || ""}
-                    onValueChange={handleSummaryModelChange}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select a model for summarization" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {enabledModels.map((model) => (
-                        <SelectItem key={model.id} value={model.id.toString()}>
-                          <div className="flex items-center gap-2">
-                            <Badge variant="secondary">{model.provider}</Badge>
-                            {model.name}
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+                    <li>• Users will see "Deep Research" as an option in the AI model selector</li>
+                    <li>• The prompt is sent to all available AI models simultaneously</li>
+                    <li>• Individual responses are collected and combined</li>
+                    <li>• The selected summary model creates a comprehensive analysis</li>
+                    <li>• Processing may take several minutes depending on model count</li>
+                  </ul>
                 </div>
-
-
-
-                {/* Information Panel */}
-                <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                  <div className="flex items-start gap-3">
-                    <AlertCircle className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
-                        How Deep Research Works
-                      </p>
-                      <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
-                        <li>• Users will see "Deep Research" as an option in the AI model selector</li>
-                        <li>• The prompt is sent to all available AI models simultaneously</li>
-                        <li>• Individual responses are collected and combined</li>
-                        <li>• The selected summary model creates a comprehensive analysis</li>
-                        <li>• Processing may take several minutes depending on model count</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
+              </div>
+            </div>
           </CardContent>
         </Card>
+        
+        {/* Save Configuration Button - Bottom Right */}
+        <div className="flex justify-end">
+          <Button
+            onClick={handleSaveConfiguration}
+            disabled={saveConfigMutation.isPending}
+            className="flex items-center gap-2"
+          >
+            {saveConfigMutation.isPending ? (
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+            ) : (
+              <CheckCircle2 className="h-4 w-4" />
+            )}
+            Save Configuration
+          </Button>
+        </div>
       </div>
     </AdminLayout>
   );
