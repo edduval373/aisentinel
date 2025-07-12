@@ -2,24 +2,45 @@
 import { Client } from '@replit/object-storage';
 
 export class FileStorageService {
-  private client: Client;
+  private client: Client | null = null;
+  private isInitialized = false;
 
   constructor() {
-    this.client = new Client();
+    try {
+      this.client = new Client();
+      this.isInitialized = true;
+    } catch (error) {
+      console.warn('Object storage not properly configured, file uploads will be disabled:', error.message);
+      this.client = null;
+      this.isInitialized = false;
+    }
+  }
+
+  private checkInitialized(): void {
+    if (!this.isInitialized || !this.client) {
+      throw new Error('File storage service is not properly configured');
+    }
   }
 
   async uploadFile(file: Buffer, fileName: string, path: string): Promise<string> {
+    this.checkInitialized();
     const fullPath = `chat-attachments/${path}/${fileName}`;
-    await this.client.uploadFromBytes(fullPath, file);
+    await this.client!.uploadFromBytes(fullPath, file);
     return fullPath;
   }
 
   async downloadFile(path: string): Promise<Buffer> {
-    return await this.client.downloadAsBytes(path);
+    this.checkInitialized();
+    return await this.client!.downloadAsBytes(path);
   }
 
   async deleteFile(path: string): Promise<void> {
-    await this.client.delete(path);
+    this.checkInitialized();
+    await this.client!.delete(path);
+  }
+
+  isAvailable(): boolean {
+    return this.isInitialized && this.client !== null;
   }
 
   async getFileUrl(path: string): Promise<string> {

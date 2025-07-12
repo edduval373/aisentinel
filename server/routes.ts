@@ -779,25 +779,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Upload and store file attachments
       const attachments = [];
-      for (const file of fileAttachments) {
-        const fileName = fileStorageService.generateFileName(file.name, chatMessage.id);
-        const storagePath = await fileStorageService.uploadFile(
-          file.data,
-          fileName,
-          `session-${sessionId}`
-        );
+      if (fileAttachments.length > 0) {
+        if (!fileStorageService.isAvailable()) {
+          return res.status(503).json({ message: "File upload service is not available" });
+        }
+        
+        for (const file of fileAttachments) {
+          try {
+            const fileName = fileStorageService.generateFileName(file.name, chatMessage.id);
+            const storagePath = await fileStorageService.uploadFile(
+              file.data,
+              fileName,
+              `session-${sessionId}`
+            );
 
-        const attachment = await storage.createChatAttachment({
-          companyId: user.companyId,
-          messageId: chatMessage.id,
-          fileName,
-          originalName: file.name,
-          fileSize: file.size,
-          mimeType: file.mimetype,
-          objectStoragePath: storagePath,
-        });
+            const attachment = await storage.createChatAttachment({
+              companyId: user.companyId,
+              messageId: chatMessage.id,
+              fileName,
+              originalName: file.name,
+              fileSize: file.size,
+              mimeType: file.mimetype,
+              objectStoragePath: storagePath,
+            });
 
-        attachments.push(attachment);
+            attachments.push(attachment);
+          } catch (error) {
+            console.error("Error uploading file:", error);
+            return res.status(500).json({ message: "Failed to upload file attachment" });
+          }
+        }
       }
 
       // Log the user activity
@@ -904,6 +915,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // File download endpoint
   app.get('/api/files/download/:path(*)', isAuthenticated, async (req: any, res) => {
     try {
+      if (!fileStorageService.isAvailable()) {
+        return res.status(503).json({ message: "File download service is not available" });
+      }
+
       const filePath = decodeURIComponent(req.params.path);
       const userId = req.user.claims.sub;
       const user = await storage.getUser(userId);
