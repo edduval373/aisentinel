@@ -7,7 +7,8 @@ import { isUnauthorizedError } from "@/lib/authUtils";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Download, Wifi, WifiOff, Shield, Building2, RotateCcw, Trash2, History } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { Download, Wifi, WifiOff, Shield, Building2, RotateCcw, Trash2, History, Brain } from "lucide-react";
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
 import type { AiModel, ActivityType, ChatMessage as ChatMessageType, Company, ChatSession } from "@shared/schema";
@@ -362,7 +363,13 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
             {/* AI Model Dropdown */}
             <Select
               value={selectedModel?.toString()}
-              onValueChange={(value) => setSelectedModel(parseInt(value))}
+              onValueChange={(value) => {
+                if (value === "deep-research") {
+                  setSelectedModel("deep-research" as any);
+                } else {
+                  setSelectedModel(parseInt(value));
+                }
+              }}
               disabled={modelsLoading}
             >
               <SelectTrigger className="w-48">
@@ -374,17 +381,20 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                     {model.name}
                   </SelectItem>
                 ))}
-                                    {deepResearchConfig?.isEnabled && (
-                      <SelectItem value="deep-research">
-                        <div className="flex items-center gap-2">
-                          <Badge variant="default" style={{ backgroundColor: 'hsl(221, 83%, 53%)' }}>
-                            <Brain className="w-3 h-3 mr-1" />
-                            Multi-AI
-                          </Badge>
-                          Deep Research
-                        </div>
-                      </SelectItem>
-                    )}
+                {deepResearchConfig?.isEnabled && (
+                  <>
+                    <Separator className="my-1" />
+                    <SelectItem value="deep-research">
+                      <div className="flex items-center gap-2">
+                        <Badge variant="default" style={{ backgroundColor: 'hsl(221, 83%, 53%)' }}>
+                          <Brain className="w-3 h-3 mr-1" />
+                          Multi-AI
+                        </Badge>
+                        Deep Research
+                      </div>
+                    </SelectItem>
+                  </>
+                )}
               </SelectContent>
             </Select>
 

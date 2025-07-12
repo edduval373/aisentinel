@@ -33,7 +33,7 @@ export default function Header({
   });
 
   return (
-    <div className="bg-white border-b border-slate-200 p-4 pt-6">
+    <div className="bg-white border-b border-slate-200 px-4 py-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           {/* Company Logo and Name */}
