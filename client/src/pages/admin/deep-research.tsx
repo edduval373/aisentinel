@@ -194,31 +194,39 @@ export default function DeepResearch() {
                 <Separator />
 
                 {/* Model Selection */}
-                <div className="space-y-3">
+                <div className="space-y-3" style={{ marginTop: '-18px', paddingTop: '6px' }}>
                   <Label className="text-base font-medium">Active Models</Label>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     Select which models to include in the deep research analysis
                   </p>
-                  <div className="space-y-3">
-                    {enabledModels.map((model) => (
-                      <div key={model.id} className="flex items-center space-x-3 p-3 border rounded-lg">
-                        <Checkbox
-                          id={`model-${model.id}`}
-                          checked={selectedModels.has(model.id)}
-                          onCheckedChange={(checked) => handleModelToggle(model.id, checked as boolean)}
-                          disabled={!localConfig.isEnabled}
-                        />
-                        <div className="flex-1">
-                          <Label htmlFor={`model-${model.id}`} className="text-sm font-medium cursor-pointer">
-                            Include in Research?
-                          </Label>
-                          <div className="flex items-center gap-2 mt-1">
-                            <Badge variant="secondary">{model.provider}</Badge>
-                            <span className="text-sm text-gray-600">{model.name}</span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+                  <div className="border rounded-lg overflow-hidden">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="bg-gray-50 dark:bg-gray-800 border-b">
+                          <th className="text-left p-3 font-medium text-sm">Provider</th>
+                          <th className="text-left p-3 font-medium text-sm">Model Name</th>
+                          <th className="text-center p-3 font-medium text-sm">Include in Research</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {enabledModels.map((model, index) => (
+                          <tr key={model.id} className={`border-b ${index % 2 === 0 ? 'bg-white dark:bg-gray-900' : 'bg-gray-50 dark:bg-gray-800'}`}>
+                            <td className="p-3">
+                              <Badge variant="secondary">{model.provider}</Badge>
+                            </td>
+                            <td className="p-3 text-sm">{model.name}</td>
+                            <td className="p-3 text-center">
+                              <Checkbox
+                                id={`model-${model.id}`}
+                                checked={selectedModels.has(model.id)}
+                                onCheckedChange={(checked) => handleModelToggle(model.id, checked as boolean)}
+                                disabled={!localConfig.isEnabled}
+                              />
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </CardContent>
