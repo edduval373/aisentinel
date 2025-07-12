@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
-import AdminLayout from "@/components/layout/AdminLayout";
+import { AdminLayout } from "@/components/layout/AdminLayout";
 import { Brain, Zap, AlertCircle, CheckCircle2 } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 
@@ -68,10 +68,7 @@ export default function DeepResearch() {
       const method = config?.id ? 'PUT' : 'POST';
       const url = config?.id ? `/api/deep-research-config/${config.id}` : '/api/deep-research-config';
       
-      return await apiRequest(url, {
-        method,
-        body: configData,
-      });
+      return await apiRequest(url, method, configData);
     },
     onSuccess: () => {
       toast({
