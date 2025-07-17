@@ -2,11 +2,12 @@ import { MailService } from '@sendgrid/mail';
 import { nanoid } from 'nanoid';
 
 const mailService = new MailService();
-// Use the new SendGrid API key directly since environment variable is cached
-const sendgridApiKey = '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';
+// Check if environment variable is updated, otherwise use the new key
+const envApiKey = process.env.SENDGRID_API_KEY;
+const sendgridApiKey = envApiKey && envApiKey.startsWith('SG.') ? envApiKey : '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';
 
 mailService.setApiKey(sendgridApiKey);
-console.log("SendGrid API key configured successfully");
+console.log(`SendGrid API key configured successfully (using ${envApiKey && envApiKey.startsWith('SG.') ? 'environment variable' : 'hardcoded key'})`);
 
 interface EmailParams {
   to: string;
