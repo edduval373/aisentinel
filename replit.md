@@ -114,6 +114,28 @@ AI Sentinel is a comprehensive enterprise AI governance platform that provides s
 - **Performance Metrics**: Response time and throughput monitoring
 - **Security Auditing**: All user activities logged with timestamps
 
+## Deployment
+
+The application is configured for deployment on Vercel with the following setup:
+
+### Vercel Configuration
+- **Serverless Functions**: API routes handled by `/api/index.ts`
+- **Static Files**: Client built to `/dist` directory
+- **Build Process**: Vite for client, esbuild for server
+- **Environment Variables**: DATABASE_URL, SENDGRID_API_KEY, APP_URL required
+
+### Deployment Files
+- `vercel.json`: Vercel configuration for builds and routing
+- `api/index.ts`: Serverless function entry point
+- `VERCEL_SETUP.md`: Complete deployment guide
+- `.vercelignore`: Files excluded from deployment
+
+### Required Environment Variables
+- `DATABASE_URL`: PostgreSQL connection string
+- `SENDGRID_API_KEY`: SendGrid API key for email verification
+- `APP_URL`: Deployed application URL
+- `NODE_ENV`: Set to 'production'
+
 ## Changelog
 
 ```
@@ -312,6 +334,16 @@ Changelog:
   * Changed all UI text and descriptions to reference "Model Fusion" instead of "Deep Research"
   * Updated information panels to explain "How Model Fusion Works" with new terminology
   * Maintained all existing functionality while providing clearer, more descriptive naming
+- July 17, 2025. Configured complete Vercel deployment environment with GitHub integration:
+  * Created comprehensive Vercel configuration (vercel.json) with serverless functions and static file serving
+  * Built dedicated serverless API handler (/api/index.ts) with proper Express middleware setup
+  * Added GitHub Actions workflow for automated deployment pipeline
+  * Created complete deployment documentation (VERCEL_SETUP.md) with step-by-step instructions
+  * Configured environment variables for production deployment (DATABASE_URL, SENDGRID_API_KEY, APP_URL)
+  * Added .vercelignore file to exclude unnecessary files from deployment
+  * Updated README.md with deployment instructions and technology stack overview
+  * Created .env.example template for environment variable reference
+  * Application now ready for production deployment on Vercel with full functionality
 ```
 
 ## User Preferences
