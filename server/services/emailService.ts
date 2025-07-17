@@ -2,13 +2,11 @@ import { MailService } from '@sendgrid/mail';
 import { nanoid } from 'nanoid';
 
 const mailService = new MailService();
-const sendgridApiKey = process.env.SENDGRID_API_KEY;
+// Use the new SendGrid API key directly since environment variable is cached
+const sendgridApiKey = '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';
 
-if (sendgridApiKey && sendgridApiKey.startsWith('SG.')) {
-  mailService.setApiKey(sendgridApiKey);
-} else {
-  console.warn("SENDGRID_API_KEY not properly configured. Email functionality will be disabled.");
-}
+mailService.setApiKey(sendgridApiKey);
+console.log("SendGrid API key configured successfully");
 
 interface EmailParams {
   to: string;
@@ -19,19 +17,15 @@ interface EmailParams {
 }
 
 export class EmailService {
-  private readonly fromEmail = 'noreply@aisentinel.com'; // Replace with your verified sender email
+  private readonly fromEmail = 'ed.duval@duvalsolutions.net'; // Using your verified sender email
 
   async sendVerificationEmail(email: string, token: string): Promise<boolean> {
-    // If SendGrid is not configured, return success (for development)
-    if (!sendgridApiKey || !sendgridApiKey.startsWith('SG.')) {
-      console.log(`[DEV MODE] Verification email for ${email}. Token: ${token}`);
-      console.log(`[DEV MODE] Visit: ${process.env.APP_URL || 'http://localhost:5000'}/verify?token=${token}`);
-      return true;
-    }
-
+    console.log(`Sending verification email to ${email}`);
+    
     const verificationUrl = `${process.env.APP_URL || 'http://localhost:5000'}/verify?token=${token}`;
     
-    const html = `
+    try {
+      const html = `
       <!DOCTYPE html>
       <html>
       <head>
@@ -89,7 +83,6 @@ export class EmailService {
       AI Sentinel - Enterprise AI Governance Platform
     `;
 
-    try {
       await mailService.send({
         to: email,
         from: this.fromEmail,
@@ -97,9 +90,13 @@ export class EmailService {
         text,
         html,
       });
+      console.log(`✓ Verification email sent successfully to ${email}`);
       return true;
     } catch (error) {
       console.error('SendGrid email error:', error);
+      if (error.response) {
+        console.error('SendGrid response:', error.response.body);
+      }
       return false;
     }
   }
