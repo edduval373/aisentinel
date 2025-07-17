@@ -23,7 +23,7 @@ export class EmailService {
   async sendVerificationEmail(email: string, token: string): Promise<boolean> {
     console.log(`Sending verification email to ${email}`);
     
-    const verificationUrl = `${process.env.APP_URL || 'http://localhost:5000'}/verify?token=${token}`;
+    const verificationUrl = `${process.env.APP_URL || 'http://localhost:5000'}/api/auth/verify?token=${token}`;
     
     try {
       const html = `

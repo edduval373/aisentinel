@@ -63,18 +63,8 @@ export function setupAuthRoutes(app: Express) {
         companyName = company?.name;
       }
 
-      res.json({
-        success: true,
-        message: "Email verified successfully",
-        user: {
-          id: session.userId,
-          email: session.email,
-          companyId: session.companyId,
-          companyName,
-          role: user?.role || 'user',
-          roleLevel: session.roleLevel,
-        },
-      });
+      // Redirect to frontend verification success page
+      res.redirect(`/verify?token=${token}&success=true`);
     } catch (error: any) {
       console.error("Verification error:", error);
       res.status(500).json({ success: false, message: "An error occurred during verification" });
