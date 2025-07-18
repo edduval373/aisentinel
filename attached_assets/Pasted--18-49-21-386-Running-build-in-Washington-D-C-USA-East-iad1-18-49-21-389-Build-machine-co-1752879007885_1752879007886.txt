@@ -1,0 +1,55 @@
+[18:49:21.386] Running build in Washington, D.C., USA (East) – iad1
+[18:49:21.389] Build machine configuration: 2 cores, 8 GB
+[18:49:21.429] Cloning github.com/edduval373/aisentinel (Branch: main, Commit: a76452c)
+[18:49:21.697] Previous build caches not available
+[18:49:22.129] Cloning completed: 700.000ms
+[18:49:22.240] Found .vercelignore
+[18:49:22.281] Removed 56 ignored files defined in .vercelignore
+[18:49:22.281]   /.git/config
+[18:49:22.282]   /.git/description
+[18:49:22.282]   /.git/FETCH_HEAD
+[18:49:22.282]   /.git/HEAD
+[18:49:22.282]   /.git/hooks/applypatch-msg.sample
+[18:49:22.282]   /.git/hooks/commit-msg.sample
+[18:49:22.282]   /.git/hooks/fsmonitor-watchman.sample
+[18:49:22.282]   /.git/hooks/post-update.sample
+[18:49:22.282]   /.git/hooks/pre-applypatch.sample
+[18:49:22.283]   /.git/hooks/pre-commit.sample
+[18:49:24.302] Running "vercel build"
+[18:49:24.770] Vercel CLI 44.4.3
+[18:49:25.546] Running "install" command: `npm install`...
+[18:49:30.324] npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+[18:49:37.311] 
+[18:49:37.312] added 704 packages, and audited 705 packages in 11s
+[18:49:37.312] 
+[18:49:37.312] 171 packages are looking for funding
+[18:49:37.313]   run `npm fund` for details
+[18:49:37.325] 
+[18:49:37.326] 9 vulnerabilities (3 low, 4 moderate, 2 high)
+[18:49:37.326] 
+[18:49:37.326] To address issues that do not require attention, run:
+[18:49:37.327]   npm audit fix
+[18:49:37.327] 
+[18:49:37.327] To address all issues possible (including breaking changes), run:
+[18:49:37.327]   npm audit fix --force
+[18:49:37.327] 
+[18:49:37.329] Some issues need review, and may require choosing
+[18:49:37.329] a different dependency.
+[18:49:37.329] 
+[18:49:37.329] Run `npm audit` for details.
+[18:49:37.733] 
+[18:49:37.733] > rest-express@1.0.0 build
+[18:49:37.733] > vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+[18:49:37.733] 
+[18:49:38.973] [36mvite v5.4.19 [32mbuilding for production...[36m[39m
+[18:49:39.015] [32m✓[39m 0 modules transformed.
+[18:49:39.017] [31mx[39m Build failed in 9ms
+[18:49:39.018] [31merror during build:
+[18:49:39.018] [31mCould not resolve entry module "index.html".[31m
+[18:49:39.018]     at getRollupError (file:///vercel/path0/node_modules/rollup/dist/es/shared/parseAst.js:396:41)
+[18:49:39.018]     at error (file:///vercel/path0/node_modules/rollup/dist/es/shared/parseAst.js:392:42)
+[18:49:39.018]     at ModuleLoader.loadEntryModule (file:///vercel/path0/node_modules/rollup/dist/es/shared/node-entry.js:20086:20)
+[18:49:39.018]     at async Promise.all (index 0)[39m
+[18:49:39.032] Error: Command "npm run build" exited with 1
+[18:49:39.377] 
+[18:49:42.528] Exiting build container
