@@ -1,0 +1,64 @@
+[19:05:55.786] Running build in Washington, D.C., USA (East) – iad1
+[19:05:55.786] Build machine configuration: 2 cores, 8 GB
+[19:05:55.810] Cloning github.com/edduval373/aisentinel (Branch: main, Commit: 21a5374)
+[19:05:55.942] Previous build caches not available
+[19:05:56.185] Cloning completed: 375.000ms
+[19:05:56.217] Found .vercelignore
+[19:05:56.228] Removed 56 ignored files defined in .vercelignore
+[19:05:56.228]   /.git/config
+[19:05:56.228]   /.git/description
+[19:05:56.228]   /.git/FETCH_HEAD
+[19:05:56.228]   /.git/HEAD
+[19:05:56.229]   /.git/hooks/applypatch-msg.sample
+[19:05:56.229]   /.git/hooks/commit-msg.sample
+[19:05:56.229]   /.git/hooks/fsmonitor-watchman.sample
+[19:05:56.229]   /.git/hooks/post-update.sample
+[19:05:56.229]   /.git/hooks/pre-applypatch.sample
+[19:05:56.229]   /.git/hooks/pre-commit.sample
+[19:05:56.460] Running "vercel build"
+[19:05:57.325] Vercel CLI 44.4.3
+[19:05:58.746] Running "install" command: `npm install`...
+[19:06:03.161] npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+[19:06:09.528] 
+[19:06:09.528] added 704 packages, and audited 705 packages in 11s
+[19:06:09.529] 
+[19:06:09.529] 171 packages are looking for funding
+[19:06:09.530]   run `npm fund` for details
+[19:06:09.539] 
+[19:06:09.540] 9 vulnerabilities (3 low, 4 moderate, 2 high)
+[19:06:09.540] 
+[19:06:09.540] To address issues that do not require attention, run:
+[19:06:09.540]   npm audit fix
+[19:06:09.542] 
+[19:06:09.542] To address all issues possible (including breaking changes), run:
+[19:06:09.542]   npm audit fix --force
+[19:06:09.542] 
+[19:06:09.542] Some issues need review, and may require choosing
+[19:06:09.543] a different dependency.
+[19:06:09.543] 
+[19:06:09.543] Run `npm audit` for details.
+[19:06:09.813] 
+[19:06:09.817] > rest-express@1.0.0 build
+[19:06:09.817] > node build.js
+[19:06:09.817] 
+[19:06:09.845] node:internal/modules/cjs/loader:1404
+[19:06:09.845]   throw err;
+[19:06:09.845]   ^
+[19:06:09.845] 
+[19:06:09.845] Error: Cannot find module '/vercel/path0/build.js'
+[19:06:09.845]     at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)
+[19:06:09.845]     at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+[19:06:09.845]     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+[19:06:09.845]     at Function._load (node:internal/modules/cjs/loader:1211:37)
+[19:06:09.845]     at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+[19:06:09.846]     at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+[19:06:09.846]     at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+[19:06:09.846]     at node:internal/main/run_main_module:36:49 {
+[19:06:09.846]   code: 'MODULE_NOT_FOUND',
+[19:06:09.846]   requireStack: []
+[19:06:09.846] }
+[19:06:09.846] 
+[19:06:09.846] Node.js v22.17.1
+[19:06:09.856] Error: Command "npm run build" exited with 1
+[19:06:10.101] 
+[19:06:12.858] Exiting build container
