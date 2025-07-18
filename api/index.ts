@@ -2,6 +2,8 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import fileUpload from 'express-fileupload';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { registerRoutes } from '../server/routes';
 
 const app = express();
@@ -45,11 +47,24 @@ app.use((req, res, next) => {
   next();
 });
 
-// Initialize routes
+// Initialize routes and static serving
 let routesInitialized = false;
 const initializeRoutes = async () => {
   if (!routesInitialized) {
     await registerRoutes(app);
+    
+    // Serve static files from dist/public
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
+    const publicPath = path.join(__dirname, '../dist/public');
+    app.use(express.static(publicPath));
+    
+    // Catch-all handler for React routing
+    app.get('*', (req, res) => {
+      if (!req.path.startsWith('/api')) {
+        res.sendFile(path.join(publicPath, 'index.html'));
+      }
+    });
+    
     routesInitialized = true;
   }
 };
