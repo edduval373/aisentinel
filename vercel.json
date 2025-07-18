@@ -2,15 +2,15 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/index.ts",
-      "use": "@vercel/node"
-    },
-    {
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
         "distDir": "dist/public"
       }
+    },
+    {
+      "src": "api/index.ts",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
@@ -19,17 +19,16 @@
       "dest": "/api/index.ts"
     },
     {
+      "handle": "filesystem"
+    },
+    {
       "src": "/(.*)",
-      "dest": "/dist/public/$1"
+      "dest": "/dist/public/index.html"
     }
   ],
   "functions": {
     "api/index.ts": {
       "maxDuration": 30
     }
-  },
-  "github": {
-    "enabled": true,
-    "autoDeployment": true
   }
 }
