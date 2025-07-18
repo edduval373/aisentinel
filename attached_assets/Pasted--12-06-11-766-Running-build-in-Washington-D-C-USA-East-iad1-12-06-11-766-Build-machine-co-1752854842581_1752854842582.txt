@@ -1,0 +1,56 @@
+[12:06:11.766] Running build in Washington, D.C., USA (East) – iad1
+[12:06:11.766] Build machine configuration: 2 cores, 8 GB
+[12:06:11.781] Cloning github.com/edduval373/aisentinel (Branch: main, Commit: bc5d40a)
+[12:06:11.915] Previous build caches not available
+[12:06:12.198] Cloning completed: 417.000ms
+[12:06:14.050] Running "vercel build"
+[12:06:14.840] Vercel CLI 44.4.3
+[12:06:15.887] Running "install" command: `npm install`...
+[12:06:20.757] npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+[12:06:28.157] 
+[12:06:28.158] added 699 packages, and audited 700 packages in 12s
+[12:06:28.159] 
+[12:06:28.159] 171 packages are looking for funding
+[12:06:28.159]   run `npm fund` for details
+[12:06:28.172] 
+[12:06:28.173] 9 vulnerabilities (3 low, 4 moderate, 2 high)
+[12:06:28.173] 
+[12:06:28.173] To address issues that do not require attention, run:
+[12:06:28.173]   npm audit fix
+[12:06:28.173] 
+[12:06:28.174] To address all issues possible (including breaking changes), run:
+[12:06:28.174]   npm audit fix --force
+[12:06:28.174] 
+[12:06:28.174] Some issues need review, and may require choosing
+[12:06:28.174] a different dependency.
+[12:06:28.174] 
+[12:06:28.174] Run `npm audit` for details.
+[12:06:28.456] 
+[12:06:28.459] > rest-express@1.0.0 build
+[12:06:28.459] > vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+[12:06:28.459] 
+[12:06:28.709] [36mvite v5.4.19 [32mbuilding for production...[36m[39m
+[12:06:28.758] transforming...
+[12:06:29.020] Browserslist: browsers data (caniuse-lite) is 9 months old. Please run:
+[12:06:29.021]   npx update-browserslist-db@latest
+[12:06:29.021]   Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[12:06:29.089] [32m✓[39m 3 modules transformed.
+[12:06:29.089] [31mx[39m Build failed in 356ms
+[12:06:29.090] [31merror during build:
+[12:06:29.090] [31m[vite:css] [postcss] Cannot find module '@tailwindcss/typography'
+[12:06:29.090] Require stack:
+[12:06:29.091] - /vercel/path0/tailwind.config.ts[31m
+[12:06:29.091] file: [36m/vercel/path0/client/src/index.css:undefined:NaN[31m
+[12:06:29.091]     at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)
+[12:06:29.091]     at Function.resolve (node:internal/modules/helpers:145:19)
+[12:06:29.091]     at _resolve (/vercel/path0/node_modules/jiti/dist/jiti.js:1:241814)
+[12:06:29.092]     at jiti (/vercel/path0/node_modules/jiti/dist/jiti.js:1:244531)
+[12:06:29.092]     at /vercel/path0/tailwind.config.ts:89:45
+[12:06:29.092]     at evalModule (/vercel/path0/node_modules/jiti/dist/jiti.js:1:247313)
+[12:06:29.092]     at jiti (/vercel/path0/node_modules/jiti/dist/jiti.js:1:245241)
+[12:06:29.093]     at /vercel/path0/node_modules/tailwindcss/lib/lib/load-config.js:52:26
+[12:06:29.093]     at loadConfig (/vercel/path0/node_modules/tailwindcss/lib/lib/load-config.js:62:6)
+[12:06:29.093]     at getTailwindConfig (/vercel/path0/node_modules/tailwindcss/lib/lib/setupTrackingContext.js:71:116)[39m
+[12:06:29.111] Error: Command "npm run build" exited with 1
+[12:06:29.340] 
+[12:06:32.258] Exiting build container
