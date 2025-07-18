@@ -86,11 +86,7 @@ export default function Login() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-1 text-center">
-            <div className="flex items-center justify-center mb-4">
-              <div className="p-3 bg-blue-100 rounded-full">
-                <Brain className="w-8 h-8 text-blue-600" />
-              </div>
-            </div>
+
             <CardTitle className="text-2xl font-bold">Check Your Email</CardTitle>
             <CardDescription>
               We've sent a verification link to your email address
@@ -158,11 +154,7 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
-          <div className="flex items-center justify-center mb-4">
-            <div className="p-3 bg-blue-100 rounded-full">
-              <Brain className="w-8 h-8 text-blue-600" />
-            </div>
-          </div>
+
           <CardTitle className="text-2xl font-bold">Welcome to AI Sentinel</CardTitle>
           <CardDescription>
             Enter your email address to get started
