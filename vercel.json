@@ -27,5 +27,9 @@
     "api/index.ts": {
       "maxDuration": 30
     }
+  },
+  "github": {
+    "enabled": true,
+    "autoDeployment": true
   }
 }
