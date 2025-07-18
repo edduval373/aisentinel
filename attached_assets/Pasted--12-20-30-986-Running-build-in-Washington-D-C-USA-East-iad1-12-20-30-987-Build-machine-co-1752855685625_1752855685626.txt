@@ -1,0 +1,48 @@
+[12:20:30.986] Running build in Washington, D.C., USA (East) – iad1
+[12:20:30.987] Build machine configuration: 2 cores, 8 GB
+[12:20:30.999] Cloning github.com/edduval373/aisentinel (Branch: main, Commit: e290602)
+[12:20:31.188] Previous build caches not available
+[12:20:31.405] Cloning completed: 406.000ms
+[12:20:33.337] Running "vercel build"
+[12:20:33.831] Vercel CLI 44.4.3
+[12:20:34.557] Running "install" command: `npm install`...
+[12:20:39.153] npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+[12:20:45.694] 
+[12:20:45.695] added 704 packages, and audited 705 packages in 11s
+[12:20:45.696] 
+[12:20:45.696] 171 packages are looking for funding
+[12:20:45.696]   run `npm fund` for details
+[12:20:45.711] 
+[12:20:45.711] 9 vulnerabilities (3 low, 4 moderate, 2 high)
+[12:20:45.711] 
+[12:20:45.712] To address issues that do not require attention, run:
+[12:20:45.712]   npm audit fix
+[12:20:45.712] 
+[12:20:45.712] To address all issues possible (including breaking changes), run:
+[12:20:45.712]   npm audit fix --force
+[12:20:45.712] 
+[12:20:45.712] Some issues need review, and may require choosing
+[12:20:45.713] a different dependency.
+[12:20:45.713] 
+[12:20:45.713] Run `npm audit` for details.
+[12:20:45.987] 
+[12:20:45.987] > rest-express@1.0.0 build
+[12:20:45.987] > vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+[12:20:45.988] 
+[12:20:46.236] [36mvite v5.4.19 [32mbuilding for production...[36m[39m
+[12:20:46.283] transforming...
+[12:20:46.621] Browserslist: browsers data (caniuse-lite) is 9 months old. Please run:
+[12:20:46.621]   npx update-browserslist-db@latest
+[12:20:46.621]   Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[12:20:47.036] [32m✓[39m 11 modules transformed.
+[12:20:47.039] [31mx[39m Build failed in 780ms
+[12:20:47.040] [31merror during build:
+[12:20:47.040] [31mCould not resolve "./pages/landing" from "client/src/App.tsx"[31m
+[12:20:47.040] file: [36m/vercel/path0/client/src/App.tsx[31m
+[12:20:47.040]     at getRollupError (file:///vercel/path0/node_modules/rollup/dist/es/shared/parseAst.js:396:41)
+[12:20:47.040]     at error (file:///vercel/path0/node_modules/rollup/dist/es/shared/parseAst.js:392:42)
+[12:20:47.041]     at ModuleLoader.handleInvalidResolvedId (file:///vercel/path0/node_modules/rollup/dist/es/shared/node-entry.js:20065:24)
+[12:20:47.041]     at file:///vercel/path0/node_modules/rollup/dist/es/shared/node-entry.js:20025:26[39m
+[12:20:47.077] Error: Command "npm run build" exited with 1
+[12:20:47.378] 
+[12:20:50.189] Exiting build container
