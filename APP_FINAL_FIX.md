@@ -1,33 +1,127 @@
-# Critical: App.tsx File Corrupted in GitHub
+# CRITICAL: App.tsx Syntax Error Fix
 
-## Problem
-The `client/src/App.tsx` file in your GitHub repository contains markdown content instead of React code:
+## Current Issue
+Build failing with syntax error in App.tsx:
 ```
-1  |  # Immediate Deployment Solution
+ERROR: Unexpected "}"
+84 |  
+85 |  export default App;
+86 |  }
+    |  ^
+87 |  
+88 |  export default App;
 ```
 
-This is causing the Vite build to fail with a syntax error.
+## Root Cause
+- Duplicate `export default App;` statements
+- Extra closing brace causing syntax error
+- File corruption during manual editing
 
-## Solution
-Replace the `client/src/App.tsx` file in GitHub with the correct React component code.
+## Complete Corrected App.tsx
 
-## Check Local Files
-Looking at the local project structure, there should be a working `App.tsx` file or `App-fixed.tsx` file that contains the actual React component code.
+Replace your entire GitHub `client/src/App.tsx` file with this exact content:
 
-## Next Steps
-1. **Find the correct App.tsx content** from local files
-2. **Replace the corrupted App.tsx** in GitHub repository
-3. **Ensure all React component files** have proper JSX code, not markdown
+```tsx
+import { Switch, Route } from "wouter";
+import { queryClient } from "./lib/queryClient";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "@/components/ui/toaster";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { useAuth } from "@/hooks/useAuth";
+import { CompanyProvider } from "@/hooks/useCompanyContext";
+import Landing from "@/pages/landing.tsx";
+import Home from "@/pages/home.tsx";
+import Login from "@/pages/Login.tsx";
+import VerificationSuccess from "@/pages/VerificationSuccess.tsx";
+import CompanyManagement from "@/pages/admin/company-management.tsx";
+import AdminModels from "@/pages/admin/models.tsx";
+import AdminActivityTypes from "@/pages/admin/activity-types.tsx";
+import AdminUsers from "@/pages/admin/users.tsx";
+import AdminPolicies from "@/pages/admin/policies.tsx";
+import AdminLogs from "@/pages/admin/logs.tsx";
+import AdminSecurity from "@/pages/admin/security.tsx";
+import AdminRoles from "@/pages/admin/roles.tsx";
+import AdminAnalytics from "@/pages/admin/analytics.tsx";
+import AdminApiConfig from "@/pages/admin/api-config.tsx";
+import AdminSecuritySettings from "@/pages/admin/security-settings.tsx";
+import AdminPermissions from "@/pages/admin/permissions.tsx";
+import AdminModelSettings from "@/pages/admin/model-settings.tsx";
+import AdminContextManagement from "@/pages/admin/context-management.tsx";
+import CreateModels from "@/pages/admin/create-models.tsx";
+import ModelFusion from "@/pages/admin/model-fusion.tsx";
+import CompanySetup from "@/pages/company-setup.tsx";
+import NotFound from "@/pages/not-found.tsx";
+
+function Router() {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  return (
+    <Switch>
+      {/* Authentication routes - always available */}
+      <Route path="/login" component={Login} />
+      <Route path="/verify" component={VerificationSuccess} />
+      
+      {/* Protected routes */}
+      {isLoading || !isAuthenticated ? (
+        <Route path="/" component={Landing} />
+      ) : (
+        <>
+          <Route path="/" component={Home} />
+          <Route path="/admin" component={CompanyManagement} />
+          <Route path="/admin/models" component={AdminModels} />
+          <Route path="/admin/activity-types" component={AdminActivityTypes} />
+          <Route path="/admin/users" component={AdminUsers} />
+          <Route path="/admin/policies" component={AdminPolicies} />
+          <Route path="/admin/logs" component={AdminLogs} />
+          <Route path="/admin/security" component={AdminSecurity} />
+          <Route path="/admin/roles" component={AdminRoles} />
+          <Route path="/admin/analytics" component={AdminAnalytics} />
+          <Route path="/admin/api-config" component={AdminApiConfig} />
+          <Route path="/admin/security-settings" component={AdminSecuritySettings} />
+          <Route path="/admin/permissions" component={AdminPermissions} />
+          <Route path="/admin/model-settings" component={AdminModelSettings} />
+          <Route path="/admin/context-management" component={AdminContextManagement} />
+          <Route path="/admin/create-models" component={CreateModels} />
+          <Route path="/admin/model-fusion" component={ModelFusion} />
+          <Route path="/admin/companies" component={CompanyManagement} />
+          <Route path="/company-setup" component={CompanySetup} />
+          <Route path="/admin/company-setup" component={CompanySetup} />
+        </>
+      )}
+      <Route component={NotFound} />
+    </Switch>
+  );
+}
+
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <CompanyProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Router />
+        </TooltipProvider>
+      </CompanyProvider>
+    </QueryClientProvider>
+  );
+}
+
+export default App;
+```
+
+## Key Fixes
+- Removed duplicate `export default App;` statement
+- Fixed closing brace placement
+- Proper React component structure
+- All imports have .tsx extensions
 
 ## Expected Result
-- ✅ Vite build processes React components successfully
-- ✅ No syntax errors in JSX files
-- ✅ Complete Vercel deployment
+- ✅ Valid TypeScript/React syntax
+- ✅ Vite build processes without syntax errors
+- ✅ All modules resolve correctly
+- ✅ Complete Vercel deployment success
 
-## Build Progress So Far
-- ✅ Package.json build script fixed
-- ✅ Vite configuration working
-- ✅ Build process starting correctly
-- ❌ App.tsx file corrupted with markdown content
+## Action Required
+Copy the complete App.tsx content above and replace the entire file in your GitHub repository. Make sure there are no extra characters or formatting issues when pasting.
 
-The deployment is very close to success - just need to fix the corrupted React component file.
+This should resolve the syntax error and complete your deployment successfully!

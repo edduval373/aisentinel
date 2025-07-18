@@ -1,0 +1,73 @@
+[19:22:22.211] Running build in Washington, D.C., USA (East) – iad1
+[19:22:22.212] Build machine configuration: 2 cores, 8 GB
+[19:22:22.243] Cloning github.com/edduval373/aisentinel (Branch: main, Commit: 1d8380c)
+[19:22:22.354] Previous build caches not available
+[19:22:22.592] Cloning completed: 349.000ms
+[19:22:22.626] Found .vercelignore
+[19:22:22.638] Removed 56 ignored files defined in .vercelignore
+[19:22:22.638]   /.git/config
+[19:22:22.638]   /.git/description
+[19:22:22.638]   /.git/FETCH_HEAD
+[19:22:22.638]   /.git/HEAD
+[19:22:22.638]   /.git/hooks/applypatch-msg.sample
+[19:22:22.638]   /.git/hooks/commit-msg.sample
+[19:22:22.638]   /.git/hooks/fsmonitor-watchman.sample
+[19:22:22.638]   /.git/hooks/post-update.sample
+[19:22:22.638]   /.git/hooks/pre-applypatch.sample
+[19:22:22.639]   /.git/hooks/pre-commit.sample
+[19:22:26.026] Running "vercel build"
+[19:22:26.515] Vercel CLI 44.4.3
+[19:22:27.263] Running "install" command: `npm install`...
+[19:22:32.102] npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+[19:22:38.934] 
+[19:22:38.934] added 704 packages, and audited 705 packages in 11s
+[19:22:38.935] 
+[19:22:38.935] 171 packages are looking for funding
+[19:22:38.935]   run `npm fund` for details
+[19:22:38.947] 
+[19:22:38.948] 9 vulnerabilities (3 low, 4 moderate, 2 high)
+[19:22:38.948] 
+[19:22:38.948] To address issues that do not require attention, run:
+[19:22:38.948]   npm audit fix
+[19:22:38.948] 
+[19:22:38.948] To address all issues possible (including breaking changes), run:
+[19:22:38.948]   npm audit fix --force
+[19:22:38.948] 
+[19:22:38.948] Some issues need review, and may require choosing
+[19:22:38.948] a different dependency.
+[19:22:38.948] 
+[19:22:38.948] Run `npm audit` for details.
+[19:22:39.262] 
+[19:22:39.263] > rest-express@1.0.0 build
+[19:22:39.263] > vite build --config vite.config.production.ts && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+[19:22:39.263] 
+[19:22:39.519] [36mvite v5.4.19 [32mbuilding for production...[36m[39m
+[19:22:39.568] transforming...
+[19:22:39.648] [32m✓[39m 3 modules transformed.
+[19:22:39.649] [31mx[39m Build failed in 107ms
+[19:22:39.652] [31merror during build:
+[19:22:39.663] [31m[vite:esbuild] Transform failed with 1 error:
+[19:22:39.671] /vercel/path0/client/src/App.tsx:86:0: ERROR: Unexpected "}"[31m
+[19:22:39.671] file: [36m/vercel/path0/client/src/App.tsx:86:0[31m
+[19:22:39.672] [33m
+[19:22:39.672] [33mUnexpected "}"[33m
+[19:22:39.672] 84 |  
+[19:22:39.672] 85 |  export default App;
+[19:22:39.672] 86 |  }
+[19:22:39.672]    |  ^
+[19:22:39.673] 87 |  
+[19:22:39.673] 88 |  export default App;
+[19:22:39.673] [31m
+[19:22:39.673]     at failureErrorWithLog (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:1472:15)
+[19:22:39.673]     at /vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:755:50
+[19:22:39.673]     at responseCallbacks.<computed> (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:622:9)
+[19:22:39.673]     at handleIncomingPacket (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:677:12)
+[19:22:39.673]     at Socket.readFromStdout (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:600:7)
+[19:22:39.674]     at Socket.emit (node:events:518:28)
+[19:22:39.674]     at addChunk (node:internal/streams/readable:561:12)
+[19:22:39.674]     at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+[19:22:39.674]     at Readable.push (node:internal/streams/readable:392:5)
+[19:22:39.674]     at Pipe.onStreamRead (node:internal/stream_base_commons:189:23)[39m
+[19:22:39.676] Error: Command "npm run build" exited with 1
+[19:22:39.958] 
+[19:22:43.752] Exiting build container
