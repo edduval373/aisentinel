@@ -1,0 +1,58 @@
+[19:19:30.032] Running build in Washington, D.C., USA (East) – iad1
+[19:19:30.032] Build machine configuration: 2 cores, 8 GB
+[19:19:30.058] Cloning github.com/edduval373/aisentinel (Branch: main, Commit: 33e2aec)
+[19:19:30.193] Previous build caches not available
+[19:19:30.399] Cloning completed: 340.000ms
+[19:19:30.429] Found .vercelignore
+[19:19:30.441] Removed 56 ignored files defined in .vercelignore
+[19:19:30.441]   /.git/config
+[19:19:30.441]   /.git/description
+[19:19:30.441]   /.git/FETCH_HEAD
+[19:19:30.441]   /.git/HEAD
+[19:19:30.441]   /.git/hooks/applypatch-msg.sample
+[19:19:30.441]   /.git/hooks/commit-msg.sample
+[19:19:30.441]   /.git/hooks/fsmonitor-watchman.sample
+[19:19:30.442]   /.git/hooks/post-update.sample
+[19:19:30.442]   /.git/hooks/pre-applypatch.sample
+[19:19:30.442]   /.git/hooks/pre-commit.sample
+[19:19:33.023] Running "vercel build"
+[19:19:33.609] Vercel CLI 44.4.3
+[19:19:34.353] Running "install" command: `npm install`...
+[19:19:39.066] npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+[19:19:45.740] 
+[19:19:45.741] added 704 packages, and audited 705 packages in 11s
+[19:19:45.741] 
+[19:19:45.742] 171 packages are looking for funding
+[19:19:45.742]   run `npm fund` for details
+[19:19:45.753] 
+[19:19:45.754] 9 vulnerabilities (3 low, 4 moderate, 2 high)
+[19:19:45.754] 
+[19:19:45.755] To address issues that do not require attention, run:
+[19:19:45.755]   npm audit fix
+[19:19:45.755] 
+[19:19:45.755] To address all issues possible (including breaking changes), run:
+[19:19:45.755]   npm audit fix --force
+[19:19:45.755] 
+[19:19:45.755] Some issues need review, and may require choosing
+[19:19:45.755] a different dependency.
+[19:19:45.755] 
+[19:19:45.755] Run `npm audit` for details.
+[19:19:46.063] 
+[19:19:46.063] > rest-express@1.0.0 build
+[19:19:46.063] > vite build --config vite.config.production.ts && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+[19:19:46.064] 
+[19:19:46.306] [36mvite v5.4.19 [32mbuilding for production...[36m[39m
+[19:19:46.354] transforming...
+[19:19:46.766] [32m✓[39m 43 modules transformed.
+[19:19:46.771] [31mx[39m Build failed in 442ms
+[19:19:46.772] [31merror during build:
+[19:19:46.772] [31m[vite:load-fallback] Could not load /vercel/path0/client/src/pages/home (imported by client/src/App.tsx): ENOENT: no such file or directory, open '/vercel/path0/client/src/pages/home'[31m
+[19:19:46.772]     at async open (node:internal/fs/promises:639:25)
+[19:19:46.772]     at async Object.readFile (node:internal/fs/promises:1243:14)
+[19:19:46.772]     at async Object.load (file:///vercel/path0/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:65341:25)
+[19:19:46.773]     at async PluginDriver.hookFirstAndGetPlugin (file:///vercel/path0/node_modules/rollup/dist/es/shared/node-entry.js:20689:28)
+[19:19:46.773]     at async file:///vercel/path0/node_modules/rollup/dist/es/shared/node-entry.js:19809:33
+[19:19:46.773]     at async Queue.work (file:///vercel/path0/node_modules/rollup/dist/es/shared/node-entry.js:20899:32)[39m
+[19:19:46.789] Error: Command "npm run build" exited with 1
+[19:19:47.044] 
+[19:19:49.950] Exiting build container

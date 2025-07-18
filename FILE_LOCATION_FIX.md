@@ -1,40 +1,43 @@
-# Fix File Location Issue
+# Final Import Extension Fixes for Deployment
 
-## Problem
-The `landing.tsx` file is in the wrong location:
-- **Current location**: `client/src/pages/admin/landing.tsx` ❌
-- **Expected location**: `client/src/pages/landing.tsx` ✅
+## Current Progress ✅
+- ✅ Package.json build script: WORKING
+- ✅ Vite configuration: CORRECT
+- ✅ App.tsx corruption: FIXED
+- ✅ Landing page: UPLOADED (43 modules transformed!)
+- ❌ Home page import missing .tsx extension
 
-## Solution
-In your GitHub repository:
+## Current Issue
+`Could not load /vercel/path0/client/src/pages/home`
 
-### Option 1: Move the File
-1. Go to `client/src/pages/admin/landing.tsx`
-2. Move it to `client/src/pages/landing.tsx`
+## Solution Strategy
+Add `.tsx` extensions to ALL page imports in App.tsx for consistent production builds.
 
-### Option 2: Update the Import
-In `client/src/App.tsx`, change line 8 from:
-```typescript
-import Landing from "@/pages/landing";
+## Required Changes in GitHub App.tsx
+
+**Update these import lines:**
+```tsx
+// Current (causing errors):
+import Home from "@/pages/home";
+import Login from "@/pages/Login";
+import VerificationSuccess from "@/pages/VerificationSuccess";
+
+// Should be:
+import Home from "@/pages/home.tsx";
+import Login from "@/pages/Login.tsx";
+import VerificationSuccess from "@/pages/VerificationSuccess.tsx";
 ```
-To:
-```typescript
-import Landing from "@/pages/admin/landing";
-```
 
-## Recommendation: Option 1 (Move the File)
-Move `landing.tsx` from the admin folder to the main pages folder since:
-- It's not an admin-specific page
-- It's the public landing page for unauthenticated users
-- The current import expects it in `@/pages/landing`
+## Why This Fix Works
+- Vite in production mode requires explicit file extensions
+- Different from development environment behavior
+- Consistent extension usage prevents build failures
 
-## Steps
-1. In GitHub, navigate to `client/src/pages/admin/`
-2. Open `landing.tsx`
-3. Copy the contents
-4. Create new file: `client/src/pages/landing.tsx`
-5. Paste the contents
-6. Delete the old file from admin folder
-7. Commit changes
+## Expected Final Result
+- ✅ All React components load successfully
+- ✅ Vite build completes without errors
+- ✅ AI Sentinel deploys to Vercel
+- ✅ Production application accessible
 
-This will fix the import error and allow your build to complete successfully!
+## We're Almost There!
+Just need to add .tsx extensions to remaining page imports and the deployment will succeed completely.
