@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
 import { CompanyProvider } from "@/hooks/useCompanyContext";
-import Landing from "@/pages/landing";
+import Landing from "@/pages/landing.tsx";
 import Home from "@/pages/home";
 import Login from "@/pages/Login";
 import VerificationSuccess from "@/pages/VerificationSuccess";
