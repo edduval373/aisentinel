@@ -1,46 +1,68 @@
-# Git Repository Corrupted - Deployment Workaround
+# Deployment Workaround - Runtime Version Fix
 
-## Problem
-The git repository in Replit is corrupted, causing "INVALID_STATE" errors when trying to commit changes.
-
-## Solution: Direct Upload to Vercel
-
-### Method 1: Manual File Upload
-1. **Download your project files**:
-   - In Replit, go to Files panel
-   - Right-click on the root folder
-   - Select "Download as ZIP"
-
-2. **Upload directly to Vercel**:
-   - Go to https://vercel.com/new
-   - Choose "Upload Files" (not Git import)
-   - Upload your project ZIP file
-   - Configure environment variables
-   - Deploy
-
-### Method 2: Create New GitHub Repository
-1. **Create a new GitHub repository** (different name)
-2. **Upload files manually** to the new repository
-3. **Connect the new repository** to Vercel
-
-### Method 3: Use Vercel CLI
-If you have access to terminal elsewhere:
-```bash
-npm install -g vercel
-vercel login
-vercel --prod
+## Current Error
+```
+Error: Function Runtimes must have a valid version, for example `now-php@1.0.0`.
 ```
 
-## Your Files Are Ready
-- ✅ Application builds successfully (`npm run build`)
-- ✅ Static files generated in `dist/public/`
-- ✅ API handler configured in `api/index.ts`
-- ✅ Clean `vercel.json` configuration
-- ✅ Environment variables documented
+## Root Cause
+The `@vercel/node@3` runtime version format is invalid or not supported.
 
-## The Issue is NOT Your Code
-- Your application works perfectly
-- The git repository is corrupted (Replit issue)
-- All files are deployment-ready
+## Solution: Update vercel.json
 
-Choose Method 1 (direct upload) for fastest deployment.
+Replace your `vercel.json` in GitHub with this corrected version:
+
+```json
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/index.ts"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/api/index.ts"
+    }
+  ]
+}
+```
+
+## Key Changes
+1. **Removed invalid runtime version**: `@vercel/node@3` → `@vercel/node`
+2. **Used builds instead of functions**: This is the more reliable approach
+3. **Proper routing configuration**: Routes all requests to the serverless function
+
+## Alternative Minimal Version
+If the above doesn't work, try this ultra-minimal version:
+
+```json
+{
+  "version": 2,
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/index.ts"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/api/index.ts"
+    }
+  ]
+}
+```
+
+## Expected Result
+After updating `vercel.json`:
+1. Build will complete without runtime errors
+2. Application will be accessible
+3. Both frontend and API routes will work
+
+## The Issue
+Vercel rejected the `@vercel/node@3` runtime version format. Using the standard `@vercel/node` without version should resolve this.
