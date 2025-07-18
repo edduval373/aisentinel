@@ -1,54 +1,86 @@
-# Vercel Deployment Troubleshooting
+# Vercel Deployment Troubleshooting - 404 Error Fix
 
-## Current Issue - RESOLVED
-- ✅ GitHub Actions builds successfully
-- ✅ Local build working (`npm run build` creates dist/public/)
-- ✅ New Vercel project created with correct configuration
-- ⚠️ Vercel deployment not triggering from GitHub pushes
+## Current Issue
+- ✅ Build completed successfully 
+- ✅ Vercel shows "Ready" status
+- ❌ 404 NOT_FOUND error when accessing the live URL
 
 ## Root Cause
-The Vercel project was created but never actually deployed. The connection between GitHub and Vercel exists but deployments aren't triggering.
+The `vercel.json` file is missing proper routing configuration. The serverless function exists but routes aren't properly configured to handle frontend and API requests.
 
-## Solutions
+## Solution: Update vercel.json in GitHub
 
-### Option 1: Force Manual Deployment (Try This First)
-1. Go to your Vercel project dashboard
-2. Click "Deployments" tab
-3. Click "..." menu next to "View Function Logs"
-4. Select "Redeploy" 
-5. Choose "Use existing Build Cache" or "Redeploy from scratch"
-6. This should trigger a fresh deployment
+Replace your current `vercel.json` with this complete configuration:
 
-### Option 2: GitHub Integration Fix
-1. Go to Project Settings → Git
-2. Under "Connected Git Repository" 
-3. Click "Disconnect" then "Connect Git Repository"
-4. Reconnect your repository: `edduval373/AiSentinel`
-5. This should trigger automatic deployment
+```json
+{
+  "version": 2,
+  "functions": {
+    "api/index.ts": {
+      "runtime": "@vercel/node@3"
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/index.ts"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/api/index.ts"
+    }
+  ]
+}
+```
 
-### Option 2: Manual Deployment
-1. Delete the current Vercel project
-2. Create a new one from scratch
-3. This will establish a fresh connection
+## What This Does
+1. **Functions**: Configures the serverless function runtime
+2. **API Routes**: `/api/*` requests go to the serverless function
+3. **Frontend Routes**: All other requests go to the serverless function which serves static files
 
-### Option 3: Force Deploy via Settings
-1. Go to your current project settings
-2. Under "Git" → disconnect and reconnect
-3. Under "General" → set build settings manually:
-   - Build Command: `npm run build`
-   - Output Directory: `dist/public`
-4. Trigger manual deployment
+## Alternative Complete Configuration
+
+If the above doesn't work, try this expanded version:
+
+```json
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["dist/**", "client/**"]
+      }
+    }
+  ],
+  "functions": {
+    "api/index.ts": {
+      "runtime": "@vercel/node@3"
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/index.ts"
+    },
+    {
+      "src": "/_next/static/(.*)",
+      "headers": { "cache-control": "immutable" }
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/api/index.ts"
+    }
+  ]
+}
+```
 
 ## Expected Result
-After successful deployment, you should see:
-- Live URL accessible
-- Static files served from `/dist/public/`
-- API routes working at `/api/*`
-- Environment variables loaded correctly
+After updating `vercel.json`:
+1. Frontend will load properly (React app)
+2. API routes will work (`/api/*`)
+3. Authentication and all features will function
 
-## Files Ready for Deployment
-- ✅ `vercel.json` - Deployment configuration
-- ✅ `api/index.ts` - Serverless API handler
-- ✅ `package.json` - Build scripts configured
-- ✅ `dist/public/` - Static files (after build)
-- ✅ Environment variables documented
+## The Issue
+Without proper routing, Vercel doesn't know how to handle requests - it can't find the entry point to serve your application.
