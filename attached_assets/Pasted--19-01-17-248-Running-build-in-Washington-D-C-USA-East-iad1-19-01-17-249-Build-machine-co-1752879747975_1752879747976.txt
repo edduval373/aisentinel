@@ -1,0 +1,58 @@
+[19:01:17.248] Running build in Washington, D.C., USA (East) – iad1
+[19:01:17.249] Build machine configuration: 2 cores, 8 GB
+[19:01:17.265] Cloning github.com/edduval373/aisentinel (Branch: main, Commit: 4d51ae1)
+[19:01:17.410] Previous build caches not available
+[19:01:17.624] Cloning completed: 359.000ms
+[19:01:17.657] Found .vercelignore
+[19:01:17.669] Removed 56 ignored files defined in .vercelignore
+[19:01:17.670]   /.git/config
+[19:01:17.670]   /.git/description
+[19:01:17.670]   /.git/FETCH_HEAD
+[19:01:17.670]   /.git/HEAD
+[19:01:17.670]   /.git/hooks/applypatch-msg.sample
+[19:01:17.670]   /.git/hooks/commit-msg.sample
+[19:01:17.670]   /.git/hooks/fsmonitor-watchman.sample
+[19:01:17.670]   /.git/hooks/post-update.sample
+[19:01:17.670]   /.git/hooks/pre-applypatch.sample
+[19:01:17.670]   /.git/hooks/pre-commit.sample
+[19:01:17.951] Running "vercel build"
+[19:01:19.812] Vercel CLI 44.4.3
+[19:01:21.305] Running "install" command: `npm install`...
+[19:01:26.259] npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+[19:01:32.753] 
+[19:01:32.754] added 704 packages, and audited 705 packages in 11s
+[19:01:32.755] 
+[19:01:32.755] 171 packages are looking for funding
+[19:01:32.755]   run `npm fund` for details
+[19:01:32.768] 
+[19:01:32.769] 9 vulnerabilities (3 low, 4 moderate, 2 high)
+[19:01:32.769] 
+[19:01:32.769] To address issues that do not require attention, run:
+[19:01:32.770]   npm audit fix
+[19:01:32.770] 
+[19:01:32.770] To address all issues possible (including breaking changes), run:
+[19:01:32.770]   npm audit fix --force
+[19:01:32.770] 
+[19:01:32.771] Some issues need review, and may require choosing
+[19:01:32.771] a different dependency.
+[19:01:32.774] 
+[19:01:32.774] Run `npm audit` for details.
+[19:01:33.037] 
+[19:01:33.038] > rest-express@1.0.0 build
+[19:01:33.038] > node vercel-build.js
+[19:01:33.038] 
+[19:01:33.078] file:///vercel/path0/vercel-build.js:1
+[19:01:33.078] # Immediate Fix: Custom Build Script Solution
+[19:01:33.078] ^
+[19:01:33.078] 
+[19:01:33.078] SyntaxError: Invalid or unexpected token
+[19:01:33.078]     at compileSourceTextModule (node:internal/modules/esm/utils:344:16)
+[19:01:33.078]     at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:105:18)
+[19:01:33.078]     at #translate (node:internal/modules/esm/loader:534:12)
+[19:01:33.078]     at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:581:27)
+[19:01:33.078]     at async ModuleJob._link (node:internal/modules/esm/module_job:154:19)
+[19:01:33.078] 
+[19:01:33.079] Node.js v22.17.1
+[19:01:33.089] Error: Command "npm run build" exited with 1
+[19:01:33.542] 
+[19:01:36.490] Exiting build container
