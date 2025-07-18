@@ -5,9 +5,20 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Brain, Mail, CheckCircle2, Loader2 } from "lucide-react";
+import { Mail, CheckCircle2, Loader2, X, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+
+import iconPath from "@assets/icononly_nobuffer_1752067577689.png";
+
+// AI Sentinel Logo Component
+const AISentinelIcon = ({ className = "w-16 h-16" }) => (
+  <img 
+    src={iconPath} 
+    alt="AI Sentinel" 
+    className={className}
+  />
+);
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -83,15 +94,40 @@ export default function Login() {
 
   if (emailSent) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-        <Card className="w-full max-w-md">
-          <CardHeader className="space-y-1 text-center">
-
-            <CardTitle className="text-2xl font-bold">Check Your Email</CardTitle>
-            <CardDescription>
-              We've sent a verification link to your email address
-            </CardDescription>
-          </CardHeader>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+        {/* Header */}
+        <div className="bg-white shadow-sm border-b">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+              <div className="flex items-center space-x-3">
+                <AISentinelIcon className="w-10 h-10" />
+                <h1 className="text-xl font-bold text-slate-800">AI Sentinel</h1>
+              </div>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => window.close()}
+                className="text-slate-600 hover:text-slate-900"
+              >
+                <X className="w-4 h-4 mr-2" />
+                Exit
+              </Button>
+            </div>
+          </div>
+        </div>
+        
+        {/* Content */}
+        <div className="flex items-center justify-center p-4 pt-20">
+          <Card className="w-full max-w-md">
+            <CardHeader className="space-y-1 text-center">
+              <div className="flex items-center justify-center mb-4">
+                <AISentinelIcon className="w-16 h-16" />
+              </div>
+              <CardTitle className="text-2xl font-bold">Check Your Email</CardTitle>
+              <CardDescription>
+                We've sent a verification link to your email address
+              </CardDescription>
+            </CardHeader>
           <CardContent className="space-y-4">
             <div className="text-center">
               <div className="flex items-center justify-center mb-4">
@@ -141,25 +177,52 @@ export default function Login() {
                 variant="ghost"
                 className="w-full"
               >
+                <ArrowLeft className="w-4 h-4 mr-2" />
                 Use Different Email
               </Button>
             </div>
           </CardContent>
         </Card>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1 text-center">
-
-          <CardTitle className="text-2xl font-bold">Welcome to AI Sentinel</CardTitle>
-          <CardDescription>
-            Enter your email address to get started
-          </CardDescription>
-        </CardHeader>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center space-x-3">
+              <AISentinelIcon className="w-10 h-10" />
+              <h1 className="text-xl font-bold text-slate-800">AI Sentinel</h1>
+            </div>
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => window.close()}
+              className="text-slate-600 hover:text-slate-900"
+            >
+              <X className="w-4 h-4 mr-2" />
+              Exit
+            </Button>
+          </div>
+        </div>
+      </div>
+      
+      {/* Content */}
+      <div className="flex items-center justify-center p-4 pt-20">
+        <Card className="w-full max-w-md">
+          <CardHeader className="space-y-1 text-center">
+            <div className="flex items-center justify-center mb-4">
+              <AISentinelIcon className="w-16 h-16" />
+            </div>
+            <CardTitle className="text-2xl font-bold">Welcome to AI Sentinel</CardTitle>
+            <CardDescription>
+              Enter your email address to get started
+            </CardDescription>
+          </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
@@ -210,6 +273,7 @@ export default function Login() {
           </div>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 }
