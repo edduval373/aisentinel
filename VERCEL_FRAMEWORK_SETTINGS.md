@@ -1,38 +1,63 @@
-# Vercel Framework Settings - Correct Configuration
+# Vercel Framework Settings Fix
 
-## Framework Detection
-- ✅ Vercel detected **Vite** - this is correct
-- Your project uses Vite for the React frontend
-- Keep it as **Vite** framework
+## Current Issue
+Vite is transforming "0 modules" - it's not finding any files to build. This indicates a path resolution problem.
 
-## Override These Settings
-Even though it detected Vite, override these settings:
+## Root Cause Analysis
+The issue is likely in the `vite.config.ts` path resolution. The `__dirname` may not resolve correctly in Vercel's build environment.
 
-### Build Settings
-- **Build Command**: `npm run build`
-- **Output Directory**: `dist/public`
-- **Install Command**: `npm install`
+## Solution: Update vite.config.ts in GitHub
 
-### Root Directory
-- **Root Directory**: `.` (leave as default)
+Replace your `vite.config.ts` with this version that uses `import.meta.url` for better path resolution:
 
-## Why These Settings
-- Your `package.json` has `"build": "vite build && esbuild..."`
-- This builds both frontend (Vite) and backend (esbuild)
-- Output goes to `dist/public/` for static files
-- API routes handled by `/api/index.ts`
+```typescript
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import path from "path";
+import { fileURLToPath } from "url";
 
-## Environment Variables
-Add these before deploying:
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "client/src"),
+      "@shared": path.resolve(__dirname, "shared"),
+      "@assets": path.resolve(__dirname, "attached_assets"),
+    },
+  },
+  root: path.resolve(__dirname, "client"),
+  build: {
+    outDir: path.resolve(__dirname, "dist/public"),
+    emptyOutDir: true,
+  },
+});
 ```
-DATABASE_URL=your_postgresql_connection_string
-SENDGRID_API_KEY=your_new_sendgrid_api_key
-NODE_ENV=production
+
+## Alternative Simple Version
+
+If the above doesn't work, try this minimal version:
+
+```typescript
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+
+export default defineConfig({
+  plugins: [react()],
+  root: "client",
+  build: {
+    outDir: "../dist/public",
+    emptyOutDir: true,
+  },
+  resolve: {
+    alias: {
+      "@": "/client/src",
+      "@shared": "/shared",
+    },
+  },
+});
 ```
 
-## Expected Build Process
-1. Vite builds React app → `dist/public/`
-2. esbuild builds Express server → `dist/`
-3. Vercel deploys static files and serverless functions
-
-Keep **Vite** as the framework and use the custom build settings above.
+## Expected Result
+After updating, Vite should find the index.html in the client folder and transform all React modules successfully.
