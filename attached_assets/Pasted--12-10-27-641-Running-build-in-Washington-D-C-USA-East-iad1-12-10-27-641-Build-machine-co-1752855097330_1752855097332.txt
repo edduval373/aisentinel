@@ -1,0 +1,49 @@
+[12:10:27.641] Running build in Washington, D.C., USA (East) – iad1
+[12:10:27.641] Build machine configuration: 2 cores, 8 GB
+[12:10:27.655] Cloning github.com/edduval373/aisentinel (Branch: main, Commit: 71369a2)
+[12:10:27.783] Previous build caches not available
+[12:10:27.979] Cloning completed: 324.000ms
+[12:10:29.766] Running "vercel build"
+[12:10:30.827] Vercel CLI 44.4.3
+[12:10:31.538] Running "install" command: `npm install`...
+[12:10:36.966] npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+[12:10:43.981] 
+[12:10:43.982] added 704 packages, and audited 705 packages in 12s
+[12:10:43.982] 
+[12:10:43.982] 171 packages are looking for funding
+[12:10:43.983]   run `npm fund` for details
+[12:10:43.992] 
+[12:10:43.993] 9 vulnerabilities (3 low, 4 moderate, 2 high)
+[12:10:43.993] 
+[12:10:43.994] To address issues that do not require attention, run:
+[12:10:43.994]   npm audit fix
+[12:10:43.994] 
+[12:10:43.994] To address all issues possible (including breaking changes), run:
+[12:10:43.996]   npm audit fix --force
+[12:10:43.996] 
+[12:10:43.996] Some issues need review, and may require choosing
+[12:10:43.996] a different dependency.
+[12:10:43.996] 
+[12:10:43.996] Run `npm audit` for details.
+[12:10:44.481] 
+[12:10:44.481] > rest-express@1.0.0 build
+[12:10:44.481] > vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+[12:10:44.481] 
+[12:10:44.731] [36mvite v5.4.19 [32mbuilding for production...[36m[39m
+[12:10:44.779] transforming...
+[12:10:45.110] Browserslist: browsers data (caniuse-lite) is 9 months old. Please run:
+[12:10:45.112]   npx update-browserslist-db@latest
+[12:10:45.112]   Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[12:10:46.509] [32m✓[39m 44 modules transformed.
+[12:10:46.519] [31mx[39m Build failed in 1.76s
+[12:10:46.521] [31merror during build:
+[12:10:46.522] [31m[vite:load-fallback] Could not load /vercel/path0/client/src/pages/landing (imported by client/src/App.tsx): ENOENT: no such file or directory, open '/vercel/path0/client/src/pages/landing'[31m
+[12:10:46.522]     at async open (node:internal/fs/promises:639:25)
+[12:10:46.522]     at async Object.readFile (node:internal/fs/promises:1243:14)
+[12:10:46.523]     at async Object.load (file:///vercel/path0/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:65341:25)
+[12:10:46.523]     at async PluginDriver.hookFirstAndGetPlugin (file:///vercel/path0/node_modules/rollup/dist/es/shared/node-entry.js:20689:28)
+[12:10:46.523]     at async file:///vercel/path0/node_modules/rollup/dist/es/shared/node-entry.js:19809:33
+[12:10:46.523]     at async Queue.work (file:///vercel/path0/node_modules/rollup/dist/es/shared/node-entry.js:20899:32)[39m
+[12:10:46.543] Error: Command "npm run build" exited with 1
+[12:10:46.807] 
+[12:10:49.755] Exiting build container
