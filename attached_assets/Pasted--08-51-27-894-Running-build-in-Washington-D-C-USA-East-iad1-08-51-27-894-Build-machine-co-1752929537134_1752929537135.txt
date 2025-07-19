@@ -1,0 +1,61 @@
+[08:51:27.894] Running build in Washington, D.C., USA (East) – iad1
+[08:51:27.894] Build machine configuration: 2 cores, 8 GB
+[08:51:27.912] Cloning github.com/edduval373/aisentinel (Branch: main, Commit: fa9381f)
+[08:51:28.550] Cloning completed: 638.000ms
+[08:51:28.626] Found .vercelignore
+[08:51:28.668] Removed 201 ignored files defined in .vercelignore
+[08:51:28.669]   /.git/config
+[08:51:28.669]   /.git/description
+[08:51:28.669]   /.git/FETCH_HEAD
+[08:51:28.669]   /.git/HEAD
+[08:51:28.670]   /.git/hooks/applypatch-msg.sample
+[08:51:28.670]   /.git/hooks/commit-msg.sample
+[08:51:28.670]   /.git/hooks/fsmonitor-watchman.sample
+[08:51:28.670]   /.git/hooks/post-update.sample
+[08:51:28.670]   /.git/hooks/pre-applypatch.sample
+[08:51:28.670]   /.git/hooks/pre-commit.sample
+[08:51:29.143] Restored build cache from previous deployment (2zTsU9uY9DvFF8xvni11ckzudYTP)
+[08:51:31.440] Running "vercel build"
+[08:51:32.343] Vercel CLI 44.4.3
+[08:51:33.130] Running "install" command: `npm install`...
+[08:51:35.598] 
+[08:51:35.599] up to date, audited 700 packages in 2s
+[08:51:35.600] 
+[08:51:35.600] 171 packages are looking for funding
+[08:51:35.600]   run `npm fund` for details
+[08:51:35.608] 
+[08:51:35.609] 9 vulnerabilities (3 low, 4 moderate, 2 high)
+[08:51:35.609] 
+[08:51:35.610] To address issues that do not require attention, run:
+[08:51:35.610]   npm audit fix
+[08:51:35.610] 
+[08:51:35.610] To address all issues possible (including breaking changes), run:
+[08:51:35.610]   npm audit fix --force
+[08:51:35.611] 
+[08:51:35.611] Some issues need review, and may require choosing
+[08:51:35.611] a different dependency.
+[08:51:35.611] 
+[08:51:35.611] Run `npm audit` for details.
+[08:51:35.860] 
+[08:51:35.864] > rest-express@1.0.0 build
+[08:51:35.864] > vite build --config vite.config.production.ts && esbuild server/index.ts --    platform=node --packages=external --bundle --format=esm --outdir=dist
+[08:51:35.865] 
+[08:51:36.106] ✘ [ERROR] Could not resolve "/vercel/path0/vite.config.production.ts"
+[08:51:36.107] 
+[08:51:36.108] [31mfailed to load config from /vercel/path0/vite.config.production.ts[39m
+[08:51:36.109] [31merror during build:
+[08:51:36.109] Error: Build failed with 1 error:
+[08:51:36.109] error: Could not resolve "/vercel/path0/vite.config.production.ts"
+[08:51:36.109]     at failureErrorWithLog (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:1472:15)
+[08:51:36.109]     at /vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:945:25
+[08:51:36.110]     at runOnEndCallbacks (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:1315:45)
+[08:51:36.110]     at buildResponseToResult (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:943:7)
+[08:51:36.110]     at /vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:970:16
+[08:51:36.110]     at responseCallbacks.<computed> (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:622:9)
+[08:51:36.110]     at handleIncomingPacket (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:677:12)
+[08:51:36.110]     at Socket.readFromStdout (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:600:7)
+[08:51:36.110]     at Socket.emit (node:events:518:28)
+[08:51:36.111]     at addChunk (node:internal/streams/readable:561:12)[39m
+[08:51:36.128] Error: Command "npm run build" exited with 1
+[08:51:36.381] 
+[08:51:39.227] Exiting build container
