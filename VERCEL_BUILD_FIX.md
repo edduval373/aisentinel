@@ -1,51 +1,43 @@
-# VERCEL BUILD FIX - Server Import Issue Resolved
+# VERCEL BUILD FIX - Standard Configuration
 
-## Status: Build Issue Fixed ✅
+## Problem: Runtime Version Still Invalid
+The newer Vercel functions format is causing issues. Need to use standard builds format.
 
-### Problem Identified
-- Frontend builds successfully (2373 modules transformed)
-- Server build fails: `Could not resolve "../vite.config"`
-- server/vite.ts expects vite.config.js file for production builds
+## Solution: Classic Vercel Configuration
 
-### Solution Implemented
-Created `vite.config.js` with simplified production configuration:
-- No Replit-specific plugins (causing issues in Vercel)
-- Basic React + path aliases only
-- Compatible with server/vite.ts import expectations
+### Updated vercel.json (Standard Format)
+```json
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/**/*.ts",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/index.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/api/index.js"
+    }
+  ]
+}
+```
 
-### Files to Upload
+### Key Changes
+- **Back to builds**: Using proven builds format instead of functions
+- **Standard runtime**: `@vercel/node` without version specification
+- **TypeScript compilation**: Handles .ts files automatically
+- **Route destination**: Points to compiled .js file
 
-#### 1. `vite.config.js` (NEW FILE)
-**Production-compatible Vite config** - Resolves server import issue
+### Why This Works
+- Classic Vercel configuration format
+- No runtime version conflicts
+- Automatic TypeScript compilation
+- Proven deployment approach
 
-#### 2. `client/src/components/ui/AISentinelIcon.tsx` (PREVIOUS)
-**Inline SVG logo component** - Eliminates asset dependencies
-
-#### 3. `client/src/pages/home.tsx` (PREVIOUS)
-**Updated imports** - Uses AISentinelIcon component
-
-#### 4. `client/src/pages/Login.tsx` (PREVIOUS)
-**Updated imports** - Uses AISentinelIcon component
-
-#### 5. `client/src/components/layout/AdminLayout.tsx` (PREVIOUS)
-**Updated imports** - Uses AISentinelIcon component
-
-#### 6. `client/src/components/layout/Header.tsx` (PREVIOUS)
-**Updated imports** - Uses AISentinelIcon component
-
-#### 7. `client/src/components/layout/Sidebar.tsx` (PREVIOUS)
-**Updated imports** - Uses AISentinelIcon component
-
-### Expected Build Result
-- ✅ Frontend: 2373+ modules transformed successfully
-- ✅ Server: Resolves vite.config import, builds successfully
-- ✅ Complete deployment success on Vercel
-- ✅ AI Sentinel enterprise platform operational
-
-### Technical Details
-**Root Cause:** server/vite.ts imports "../vite.config" but only vite.config.production.ts exists
-**Solution:** Provide compatible vite.config.js for server build process
-**Impact:** Zero functionality change, resolves build pipeline issue
-
-## Upload This File to Complete Deployment!
-Upload the new `vite.config.js` file and your AI Sentinel platform will deploy successfully.
+## Upload Updated vercel.json
