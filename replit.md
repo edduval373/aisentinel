@@ -136,10 +136,22 @@ The application is configured for deployment on Vercel with the following setup:
 - `APP_URL`: Deployed application URL
 - `NODE_ENV`: Set to 'production'
 
-## Changelog
+## Recent Changes
 
 ```
-Changelog:
+Recent Updates:
+- July 19, 2025. GitHub Integration Restored:
+  * Removed demo mode and restored full application functionality
+  * Updated API routes to use complete server implementation instead of demo endpoints
+  * Created production-ready build configuration with build.js script
+  * Updated Vercel configuration for proper serverless deployment
+  * Added comprehensive .gitignore and README.md for GitHub repository
+  * Restored all server services: aiService, contentFilter, fileStorageService, authService
+  * Authentication system fully operational with Replit Auth integration
+  * Multi-tenant company management and role-based access control active
+  * Ready for GitHub push and Vercel deployment
+
+Previous Changelog:
 - July 07, 2025. Initial setup
 - July 07, 2025. Enhanced MessageRenderer with intelligent content detection:
   * Added support for JSON table conversion (handles nested objects like Perplexity format)

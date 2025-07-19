@@ -65,16 +65,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Authentication disabled for complete bypass
-  // setupAuthRoutes(app);
+  // Setup authentication routes
+  setupAuthRoutes(app);
 
-  // Replit Auth disabled
-  // if (process.env.ENABLE_REPLIT_AUTH === 'true') {
-  //   await setupAuth(app);
-  // }
+  // Enable Replit Auth if configured
+  if (process.env.ENABLE_REPLIT_AUTH === 'true') {
+    await setupAuth(app);
+  }
 
-  // Initialize default AI models and activity types (disabled for demo mode)
-  // await initializeDefaultData();
+  // Initialize default AI models and activity types
+  await initializeDefaultData();
 
   // Legacy auth route (for backward compatibility) - only if Replit Auth is enabled
   if (process.env.ENABLE_REPLIT_AUTH === 'true') {
