@@ -97,11 +97,11 @@ export default function Login() {
               <Button 
                 variant="ghost" 
                 size="sm"
-                onClick={() => window.close()}
+                onClick={() => window.location.href = '/'}
                 className="text-slate-600 hover:text-slate-900"
               >
                 <X className="w-4 h-4 mr-2" />
-                Exit
+                Continue to Chat
               </Button>
             </div>
           </div>
@@ -235,23 +235,34 @@ export default function Login() {
               </Alert>
             )}
 
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className="w-full"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Sending Verification...
-                </>
-              ) : (
-                <>
-                  <Mail className="w-4 h-4 mr-2" />
-                  Send Verification Email
-                </>
-              )}
-            </Button>
+            <div className="space-y-3">
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="w-full"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Sending Verification...
+                  </>
+                ) : (
+                  <>
+                    <Mail className="w-4 h-4 mr-2" />
+                    Send Verification Email
+                  </>
+                )}
+              </Button>
+              
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => window.location.href = '/'}
+                className="w-full"
+              >
+                Continue to Chat (Demo Mode)
+              </Button>
+            </div>
           </form>
 
           <div className="mt-6 text-center text-sm text-gray-500">
