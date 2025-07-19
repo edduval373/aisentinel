@@ -45,12 +45,15 @@ export default function Home() {
   const [currentSession, setCurrentSession] = useState<number | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Redirect to login if not authenticated (disabled for demo)
+  // Redirect to login if not authenticated
   useEffect(() => {
-    // Demo mode - no redirect needed
     if (!isLoading && !isAuthenticated) {
-      // Silently handle unauthenticated state
-      console.log('Running in demo mode');
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to access AI Sentinel",
+        variant: "default",
+      });
+      window.location.href = '/login';
     }
   }, [isAuthenticated, isLoading, toast]);
 
@@ -65,10 +68,9 @@ export default function Home() {
     );
   }
 
-  // Always show main interface in demo mode
-  // if (!isAuthenticated) {
-  //   return null;
-  // }
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50">

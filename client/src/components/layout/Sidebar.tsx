@@ -44,8 +44,10 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
     return null;
   }
 
-  const handleLogout = () => {
-    window.location.href = "/api/logout";
+  const { logout } = useAuth();
+  
+  const handleLogout = async () => {
+    await logout();
   };
 
   const toggleSection = (sectionId: string) => {
