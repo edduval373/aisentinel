@@ -50,8 +50,8 @@ export default function AdminActivityTypes() {
 
   // Fetch activity types from database
   const { data: activityTypes, isLoading: typesLoading } = useQuery<ActivityType[]>({
-    queryKey: ['/api/admin/activity-types'],
-    enabled: isAuthenticated && !isLoading,
+    queryKey: ['/api/activity-types'],
+    enabled: !isLoading,
     onError: (error) => {
       if (isUnauthorizedError(error)) {
         toast({

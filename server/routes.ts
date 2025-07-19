@@ -36,6 +36,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to fetch companies" });
     }
   });
+
+  // Unauthenticated AI models route for authentication bypass
+  app.get('/api/ai-models', async (req: any, res) => {
+    try {
+      console.log("Fetching AI models for authentication bypass...");
+      // For authentication bypass, use company ID 1 (Horizon Edge Enterprises) from Railway
+      const aiModels = await storage.getAiModels(1);
+      console.log("AI Models fetched:", aiModels.length);
+      res.json(aiModels);
+    } catch (error) {
+      console.error("Error fetching AI models for bypass:", error);
+      res.status(500).json({ message: "Failed to fetch AI models" });
+    }
+  });
+
+  // Unauthenticated activity types route for authentication bypass  
+  app.get('/api/activity-types', async (req: any, res) => {
+    try {
+      console.log("Fetching activity types for authentication bypass...");
+      // For authentication bypass, use company ID 1 (Horizon Edge Enterprises) from Railway
+      const activityTypes = await storage.getActivityTypes(1);
+      console.log("Activity Types fetched:", activityTypes.length);
+      res.json(activityTypes);
+    } catch (error) {
+      console.error("Error fetching activity types for bypass:", error);
+      res.status(500).json({ message: "Failed to fetch activity types" });
+    }
+  });
   
   // Authentication disabled for complete bypass
   // setupAuthRoutes(app);
