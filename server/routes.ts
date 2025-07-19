@@ -72,6 +72,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Unauthenticated route to get first available company (for demo access)
   app.get('/api/user/current-company', async (req: any, res) => {
     try {
+      // For complete authentication bypass, always return company ID 1 from Railway database
+      const company = await storage.getCompany(1);
+      if (company) {
+        return res.json(company);
+      }
+
       // Try authenticated access first
       if (req.cookies?.sessionToken) {
         const authService = await import('./services/authService');
