@@ -1,0 +1,59 @@
+[09:01:54.859] Running build in Washington, D.C., USA (East) – iad1
+[09:01:54.860] Build machine configuration: 2 cores, 8 GB
+[09:01:54.872] Cloning github.com/edduval373/aisentinel (Branch: main, Commit: 9a4ad83)
+[09:01:55.560] Cloning completed: 688.000ms
+[09:01:55.741] Found .vercelignore
+[09:01:55.788] Removed 204 ignored files defined in .vercelignore
+[09:01:55.788]   /.git/config
+[09:01:55.789]   /.git/description
+[09:01:55.789]   /.git/FETCH_HEAD
+[09:01:55.789]   /.git/HEAD
+[09:01:55.789]   /.git/hooks/applypatch-msg.sample
+[09:01:55.789]   /.git/hooks/commit-msg.sample
+[09:01:55.789]   /.git/hooks/fsmonitor-watchman.sample
+[09:01:55.790]   /.git/hooks/post-update.sample
+[09:01:55.790]   /.git/hooks/pre-applypatch.sample
+[09:01:55.790]   /.git/hooks/pre-commit.sample
+[09:01:56.167] Restored build cache from previous deployment (2zTsU9uY9DvFF8xvni11ckzudYTP)
+[09:01:58.788] Running "vercel build"
+[09:01:59.421] Vercel CLI 44.4.3
+[09:02:00.235] Running "install" command: `npm install`...
+[09:02:02.581] 
+[09:02:02.582] up to date, audited 700 packages in 2s
+[09:02:02.582] 
+[09:02:02.582] 171 packages are looking for funding
+[09:02:02.583]   run `npm fund` for details
+[09:02:02.594] 
+[09:02:02.595] 9 vulnerabilities (3 low, 4 moderate, 2 high)
+[09:02:02.595] 
+[09:02:02.595] To address issues that do not require attention, run:
+[09:02:02.595]   npm audit fix
+[09:02:02.595] 
+[09:02:02.596] To address all issues possible (including breaking changes), run:
+[09:02:02.596]   npm audit fix --force
+[09:02:02.596] 
+[09:02:02.596] Some issues need review, and may require choosing
+[09:02:02.597] a different dependency.
+[09:02:02.597] 
+[09:02:02.597] Run `npm audit` for details.
+[09:02:02.755] node:internal/modules/cjs/loader:1404
+[09:02:02.755]   throw err;
+[09:02:02.755]   ^
+[09:02:02.755] 
+[09:02:02.755] Error: Cannot find module '/vercel/path0/build.js'
+[09:02:02.755]     at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)
+[09:02:02.755]     at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+[09:02:02.756]     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+[09:02:02.756]     at Function._load (node:internal/modules/cjs/loader:1211:37)
+[09:02:02.756]     at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+[09:02:02.756]     at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+[09:02:02.756]     at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+[09:02:02.756]     at node:internal/main/run_main_module:36:49 {
+[09:02:02.756]   code: 'MODULE_NOT_FOUND',
+[09:02:02.756]   requireStack: []
+[09:02:02.756] }
+[09:02:02.756] 
+[09:02:02.756] Node.js v22.17.1
+[09:02:02.761] Error: Command "node build.js" exited with 1
+[09:02:03.075] 
+[09:02:06.186] Exiting build container
