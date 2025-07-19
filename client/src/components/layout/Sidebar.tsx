@@ -39,13 +39,13 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const isAdmin = user?.role === 'admin';
   const isRegularUser = user?.role === 'user';
   
-  // Show basic sidebar for unauthenticated users (demo mode)
-  const isUnauthenticated = !user;
+  // Always show sidebar - no authentication restrictions
+  // const isUnauthenticated = !user;
   
-  // Users cannot open the panel at all (unless unauthenticated - allow demo mode)
-  if (isRegularUser && !isUnauthenticated) {
-    return null;
-  }
+  // Remove all authentication restrictions
+  // if (isRegularUser && !isUnauthenticated) {
+  //   return null;
+  // }
 
   const { logout } = useAuth();
   

@@ -64,6 +64,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Unauthenticated route to get first available company (for demo access)
+  app.get('/api/user/current-company', async (req: any, res) => {
+    try {
+      // Try authenticated access first
+      if (req.cookies?.sessionToken) {
+        const authService = await import('./services/authService');
+        const session = await authService.authService.verifySession(req.cookies.sessionToken);
+        if (session && session.companyId) {
+          const company = await storage.getCompany(session.companyId);
+          if (company) {
+            return res.json(company);
+          }
+        }
+      }
+
+      // For unauthenticated access, return the first available company
+      const companies = await storage.getCompanies();
+      if (companies.length > 0) {
+        return res.json(companies[0]);
+      }
+
+      res.status(404).json({ message: "No company found" });
+    } catch (error) {
+      console.error("Error fetching current company:", error);
+      res.status(500).json({ message: "Failed to fetch company" });
+    }
+  });
+
   // AI Models routes - Support both auth methods
   app.get('/api/ai-models', async (req: any, res) => {
     try {
@@ -86,13 +114,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         companyId = user?.companyId;
       }
 
-      if (!user) {
-        // For unauthenticated users, return empty array instead of 401 error
-        return res.json([]);
-      }
-
-      if (!companyId) {
-        // For free users, return empty array or default models
+      if (!user || !companyId) {
+        // For unauthenticated users, try to get models from first available company
+        try {
+          const companies = await storage.getCompanies();
+          if (companies.length > 0) {
+            const firstCompanyId = companies[0].id;
+            const models = await storage.getEnabledAiModels(firstCompanyId);
+            return res.json(models);
+          }
+        } catch (error) {
+          console.error("Error fetching default company models:", error);
+        }
+        // Fallback to empty array
         return res.json([]);
       }
 
@@ -344,13 +378,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Activity Types routes
-  app.get('/api/activity-types', isAuthenticated, async (req: any, res) => {
+  app.get('/api/activity-types', async (req: any, res) => {
     try {
-      const user = await storage.getUser(req.user.claims.sub);
-      if (!user?.companyId) {
-        return res.status(400).json({ message: "No company associated with user" });
+      let user = null;
+      let companyId = null;
+
+      // Try cookie auth first
+      if (req.cookies?.sessionToken) {
+        const authService = await import('./services/authService');
+        const session = await authService.authService.verifySession(req.cookies.sessionToken);
+        if (session) {
+          user = await storage.getUser(session.userId);
+          companyId = session.companyId;
+        }
       }
-      const types = await storage.getEnabledActivityTypes(user.companyId);
+
+      // Fallback to Replit Auth (only if enabled)
+      if (!user && process.env.ENABLE_REPLIT_AUTH === 'true' && req.user?.claims?.sub) {
+        user = await storage.getUser(req.user.claims.sub);
+        companyId = user?.companyId;
+      }
+
+      if (!user || !companyId) {
+        // For unauthenticated users, try to get activity types from first available company
+        try {
+          const companies = await storage.getCompanies();
+          if (companies.length > 0) {
+            const firstCompanyId = companies[0].id;
+            const types = await storage.getEnabledActivityTypes(firstCompanyId);
+            return res.json(types);
+          }
+        } catch (error) {
+          console.error("Error fetching default company activity types:", error);
+        }
+        // Fallback to empty array
+        return res.json([]);
+      }
+
+      const types = await storage.getEnabledActivityTypes(companyId);
       res.json(types);
     } catch (error) {
       console.error("Error fetching activity types:", error);

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "@/hooks/useAuth";
+// import { useAuth } from "@/hooks/useAuth"; // Temporarily disabled
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { Button } from "@/components/ui/button";
@@ -41,27 +41,26 @@ const CompanyInfo = () => {
 
 export default function Home() {
   const { toast } = useToast();
-  const { isAuthenticated, isLoading } = useAuth();
+  // const { isAuthenticated, isLoading } = useAuth(); // Temporarily disabled
   const [currentSession, setCurrentSession] = useState<number | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Allow access without authentication for demo purposes
+  // Completely bypass authentication - always allow access
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      console.log('Running in demo mode - authentication not required');
-    }
-  }, [isAuthenticated, isLoading, toast]);
+    console.log('Authentication bypassed - direct access to main interface');
+  }, []);
 
-  if (isLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-slate-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sentinel-blue mx-auto mb-4"></div>
-          <p className="text-slate-600">Loading...</p>
-        </div>
-      </div>
-    );
-  }
+  // Remove loading check - go straight to main interface
+  // if (isLoading) {
+  //   return (
+  //     <div className="flex h-screen items-center justify-center bg-slate-50">
+  //       <div className="text-center">
+  //         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sentinel-blue mx-auto mb-4"></div>
+  //         <p className="text-slate-600">Loading...</p>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   // Show interface even without authentication for demo mode
   // if (!isAuthenticated) {
