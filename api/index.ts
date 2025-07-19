@@ -1,78 +1,83 @@
 // Vercel serverless function entry point
-import type { VercelRequest, VercelResponse } from '@vercel/node';
 import express from 'express';
+import cookieParser from 'cookie-parser';
+import fileUpload from 'express-fileupload';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { registerRoutes } from '../server/routes';
 
 const app = express();
 
-// Middleware
+// Configure Express middleware
 app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false, limit: '50mb' }));
+app.use(cookieParser());
+app.use(fileUpload({
+  limits: { fileSize: 50 * 1024 * 1024 },
+  abortOnLimit: true,
+  responseOnLimit: "File size limit exceeded",
+}));
 
-// Set CORS headers
+// Request logging middleware
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
-  
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
+  const start = Date.now();
+  const path = req.path;
+  let capturedJsonResponse: Record<string, any> | undefined = undefined;
+
+  const originalResJson = res.json;
+  res.json = function (bodyJson, ...args) {
+    capturedJsonResponse = bodyJson;
+    return originalResJson.apply(res, [bodyJson, ...args]);
+  };
+
+  res.on("finish", () => {
+    const duration = Date.now() - start;
+    if (path.startsWith("/api")) {
+      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
+      if (capturedJsonResponse) {
+        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
+      }
+      if (logLine.length > 80) {
+        logLine = logLine.slice(0, 79) + "…";
+      }
+      console.log(logLine);
+    }
+  });
+
   next();
 });
 
-// API routes for demo mode
-app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'ok', 
-    timestamp: new Date().toISOString(),
-    deployment: 'vercel-serverless'
-  });
+// Initialize routes and static serving
+let routesInitialized = false;
+const initializeRoutes = async () => {
+  if (!routesInitialized) {
+    await registerRoutes(app);
+    
+    // Serve static files from dist/public
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
+    const publicPath = path.join(__dirname, '../dist/public');
+    app.use(express.static(publicPath));
+    
+    // Catch-all handler for React routing
+    app.get('*', (req, res) => {
+      if (!req.path.startsWith('/api')) {
+        res.sendFile(path.join(publicPath, 'index.html'));
+      }
+    });
+    
+    routesInitialized = true;
+  }
+};
+
+// Error handling middleware
+app.use((err: any, req: any, res: any, next: any) => {
+  const status = err.status || err.statusCode || 500;
+  const message = err.message || "Internal Server Error";
+  res.status(status).json({ message });
 });
 
-app.get('/api/auth/me', (req, res) => {
-  res.json({ authenticated: false });
-});
-
-app.get('/api/auth/user', (req, res) => {
-  res.json({ 
-    id: 'demo-user', 
-    email: 'demo@aisentinel.com', 
-    name: 'Demo User' 
-  });
-});
-
-// Demo chat sessions
-app.get('/api/chat/sessions', (req, res) => {
-  res.json([]);
-});
-
-app.post('/api/chat/sessions', (req, res) => {
-  res.json({ 
-    id: 1, 
-    title: 'Demo Session',
-    createdAt: new Date().toISOString(),
-    messageCount: 0
-  });
-});
-
-app.get('/api/user/current-company', (req, res) => {
-  res.json({
-    id: 1,
-    name: 'Demo Company',
-    logo: null
-  });
-});
-
-// Catch-all API routes
-app.use('/api/*', (req, res) => {
-  res.status(404).json({ message: 'API endpoint not found', path: req.path });
-});
-
-export default function handler(req: VercelRequest, res: VercelResponse) {
+// Export the handler for Vercel
+export default async (req: any, res: any) => {
+  await initializeRoutes();
   return app(req, res);
-}
-
+};
