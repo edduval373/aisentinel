@@ -1,63 +1,41 @@
-# Vercel Framework Settings Fix
+# VERCEL FRAMEWORK SETTINGS FIX
 
-## Current Issue
-Vite is transforming "0 modules" - it's not finding any files to build. This indicates a path resolution problem.
+## Problem: Invalid Runtime Version
+Error: `Function Runtimes must have a valid version, for example 'now-php@1.0.0'`
 
-## Root Cause Analysis
-The issue is likely in the `vite.config.ts` path resolution. The `__dirname` may not resolve correctly in Vercel's build environment.
+## Solution: Corrected Runtime Configuration
 
-## Solution: Update vite.config.ts in GitHub
-
-Replace your `vite.config.ts` with this version that uses `import.meta.url` for better path resolution:
-
-```typescript
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import path from "path";
-import { fileURLToPath } from "url";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-export default defineConfig({
-  plugins: [react()],
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "client/src"),
-      "@shared": path.resolve(__dirname, "shared"),
-      "@assets": path.resolve(__dirname, "attached_assets"),
+### Updated vercel.json
+```json
+{
+  "version": 2,
+  "functions": {
+    "api/index.ts": {
+      "runtime": "@vercel/node@20.x"
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/index.ts"
     },
-  },
-  root: path.resolve(__dirname, "client"),
-  build: {
-    outDir: path.resolve(__dirname, "dist/public"),
-    emptyOutDir: true,
-  },
-});
+    {
+      "src": "/(.*)",
+      "dest": "/api/index.ts"
+    }
+  ]
+}
 ```
 
-## Alternative Simple Version
+### Key Changes
+- **Runtime**: Changed from `@vercel/node@3` to `@vercel/node@20.x`
+- **Valid Version**: Uses proper Vercel runtime versioning format
+- **Node 20**: Latest stable version for serverless functions
 
-If the above doesn't work, try this minimal version:
+### Expected Result
+- ✅ Build will proceed without runtime errors
+- ✅ Serverless function compiles correctly
+- ✅ Deployment completes successfully
+- ✅ AI Sentinel landing page loads
 
-```typescript
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-
-export default defineConfig({
-  plugins: [react()],
-  root: "client",
-  build: {
-    outDir: "../dist/public",
-    emptyOutDir: true,
-  },
-  resolve: {
-    alias: {
-      "@": "/client/src",
-      "@shared": "/shared",
-    },
-  },
-});
-```
-
-## Expected Result
-After updating, Vite should find the index.html in the client folder and transform all React modules successfully.
+## Upload Updated vercel.json File
