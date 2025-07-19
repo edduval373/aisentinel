@@ -27,6 +27,7 @@ import ModelFusion from "@/pages/admin/model-fusion.tsx";
 import CompanySetup from "@/pages/company-setup.tsx";
 import NotFound from "@/pages/not-found.tsx";
 
+
 function Router() {
   return (
     <Switch>
@@ -35,7 +36,7 @@ function Router() {
       <Route path="/verify" component={VerificationSuccess} />
       
       {/* Main application routes */}
-      <Route path="/" component={Home} />
+      <Route path="/" component={Home} exact />
           <Route path="/admin" component={CompanyManagement} />
           <Route path="/admin/models" component={AdminModels} />
           <Route path="/admin/activity-types" component={AdminActivityTypes} />
@@ -55,7 +56,7 @@ function Router() {
           <Route path="/admin/companies" component={CompanyManagement} />
           <Route path="/company-setup" component={CompanySetup} />
           <Route path="/admin/company-setup" component={CompanySetup} />
-      <Route component={NotFound} />
+      <Route path="*" component={NotFound} />
     </Switch>
   );
 }

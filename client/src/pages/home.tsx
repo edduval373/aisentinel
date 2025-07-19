@@ -65,9 +65,10 @@ export default function Home() {
     );
   }
 
-  if (!isAuthenticated) {
-    return null;
-  }
+  // Always show main interface in demo mode
+  // if (!isAuthenticated) {
+  //   return null;
+  // }
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50">

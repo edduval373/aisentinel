@@ -11,25 +11,22 @@ app.use(express.urlencoded({ extended: true }));
 
 (async () => {
   try {
-    // Register API routes first, before Vite middleware
-    console.log('Registering API routes...');
     const server = await registerRoutes(app);
-    console.log('API routes registered successfully');
 
-    // Setup vite in development (this adds the catchall route)
-    if (process.env.NODE_ENV === "development") {
-      await setupVite(app, server);
-    } else {
-      serveStatic(app);
-    }
-
-    // Error handler (should be last)
+    // Error handler
     app.use((err: any, req: Request, res: Response, next: NextFunction) => {
       console.error('Error:', err.message);
       if (!res.headersSent) {
         res.status(500).json({ error: 'Internal server error' });
       }
     });
+
+    // Setup vite in development
+    if (process.env.NODE_ENV === "development") {
+      await setupVite(app, server);
+    } else {
+      serveStatic(app);
+    }
 
     server.listen({
       port,

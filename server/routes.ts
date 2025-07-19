@@ -17,6 +17,12 @@ import mammoth from "mammoth";
 import * as XLSX from "xlsx";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Test API route first - highest priority
+  app.get('/api/health', (req, res) => {
+    console.log('Health check API route hit');
+    res.json({ status: 'OK', timestamp: new Date().toISOString() });
+  });
+  
   // Setup cookie-based authentication routes (primary authentication method)
   setupAuthRoutes(app);
 
