@@ -38,8 +38,13 @@ function Router() {
       <Route path="/verify" component={VerificationSuccess} />
       
       {/* Protected routes */}
-      {isLoading || !isAuthenticated ? (
+      {isLoading ? (
         <Route path="/" component={Landing} />
+      ) : !isAuthenticated ? (
+        <Switch>
+          <Route path="/demo" component={Home} />
+          <Route path="/" component={Landing} />
+        </Switch>
       ) : (
         <>
           <Route path="/" component={Home} />

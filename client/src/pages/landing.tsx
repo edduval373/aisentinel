@@ -46,11 +46,12 @@ export default function Landing() {
               Get Started
             </Button>
             <Button
+              onClick={() => window.location.href = "/demo"}
               variant="outline"
               size="lg"
               className="text-lg px-8 py-3 border-sentinel-blue text-sentinel-blue hover:bg-sentinel-blue hover:text-white"
             >
-              Learn More
+              Try Demo
             </Button>
           </div>
         </div>
