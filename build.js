@@ -15,7 +15,7 @@ async function buildForVercel() {
     await build({
       root: resolve(__dirname, 'client'),
       build: {
-        outDir: resolve(__dirname, 'dist/public'),
+        outDir: resolve(__dirname, 'dist'),
         emptyOutDir: true,
       },
       resolve: {
