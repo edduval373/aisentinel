@@ -66,6 +66,7 @@ export interface IStorage {
   deleteUserSession(sessionToken: string): Promise<void>;
   
   // Company operations
+  getCompany(id: number): Promise<Company | undefined>;
   getCompanyByDomain(domain: string): Promise<Company | undefined>;
   getCompanyByEmailDomain(email: string): Promise<Company | undefined>;
   getCompanyEmployeeByEmail(email: string): Promise<CompanyEmployee | undefined>;
@@ -250,6 +251,11 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Company operations
+  async getCompany(id: number): Promise<Company | undefined> {
+    const [company] = await db.select().from(companies).where(eq(companies.id, id));
+    return company;
+  }
+
   async getCompanyByDomain(domain: string): Promise<Company | undefined> {
     const [company] = await db.select().from(companies).where(eq(companies.domain, domain));
     return company;

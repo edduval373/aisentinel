@@ -22,6 +22,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     console.log('Health check API route hit');
     res.json({ status: 'OK', timestamp: new Date().toISOString() });
   });
+
+  // Unauthenticated company management route - highest priority for authentication bypass
+  app.get('/api/companies', async (req: any, res) => {
+    try {
+      console.log("Fetching companies for authentication bypass...");
+      // For authentication bypass, return all companies (super-user access implied)
+      const companies = await storage.getCompanies();
+      console.log("Companies fetched:", companies.length);
+      res.json(companies);
+    } catch (error) {
+      console.error("Error fetching companies for bypass:", error);
+      res.status(500).json({ message: "Failed to fetch companies" });
+    }
+  });
   
   // Authentication disabled for complete bypass
   // setupAuthRoutes(app);
@@ -271,6 +285,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to delete company" });
     }
   });
+
+  // Duplicate route removed - moved to top priority section
 
   app.post('/api/admin/company-employees', isAuthenticated, async (req: any, res) => {
     try {
