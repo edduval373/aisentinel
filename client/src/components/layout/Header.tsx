@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Shield, Wifi, WifiOff, Download } from "lucide-react";
-import iconPath from "../../../attached_assets/icononly_nobuffer_1752067577689.png";
+import { AISentinelIcon } from "@/components/ui/AISentinelIcon";
 
 interface HeaderProps {
   title: string;

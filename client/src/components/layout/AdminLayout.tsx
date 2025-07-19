@@ -3,16 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import Sidebar from "./Sidebar";
 
-import iconPath from "../../../attached_assets/icononly_nobuffer_1752067577689.png";
-
-// AI Sentinel Logo Component
-const AISentinelIcon = ({ className = "w-10 h-10" }) => (
-  <img 
-    src={iconPath} 
-    alt="AI Sentinel" 
-    className={className}
-  />
-);
+import { AISentinelIcon } from "@/components/ui/AISentinelIcon";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
