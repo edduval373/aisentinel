@@ -15,13 +15,19 @@ export default async function handler(req: any, res: any) {
   try {
     console.log(`${req.method} ${req.url}`);
 
+    // Parse URL to handle Vercel routing
+    const url = new URL(req.url, `http://${req.headers.host}`);
+    const pathname = url.pathname;
+    
+    console.log(`Processing ${req.method} ${pathname}`);
+
     // Health check
-    if (req.url === '/api/health' && req.method === 'GET') {
+    if (pathname.includes('health') && req.method === 'GET') {
       return res.json({ status: 'OK', timestamp: new Date().toISOString() });
     }
 
-    // Chat session creation
-    if (req.url === '/api/chat/session' && req.method === 'POST') {
+    // Chat session creation  
+    if (pathname.includes('chat/session') && req.method === 'POST') {
       try {
         // Use default company and user for unauthenticated access
         const companies = await storage.getCompanies();
@@ -42,19 +48,19 @@ export default async function handler(req: any, res: any) {
     }
 
     // Companies list
-    if (req.url === '/api/companies' && req.method === 'GET') {
+    if (pathname.includes('companies') && req.method === 'GET') {
       const companies = await storage.getCompanies();
       return res.json(companies);
     }
 
     // AI models list
-    if (req.url === '/api/ai-models' && req.method === 'GET') {
+    if (pathname.includes('ai-models') && req.method === 'GET') {
       const aiModels = await storage.getAiModels(1);
       return res.json(aiModels);
     }
 
     // Activity types list
-    if (req.url === '/api/activity-types' && req.method === 'GET') {
+    if (pathname.includes('activity-types') && req.method === 'GET') {
       const activityTypes = await storage.getActivityTypes(1);
       return res.json(activityTypes);
     }

@@ -146,8 +146,11 @@ Recent Updates:
   * Updated Vercel build command to externalize problematic vite development imports
   * Build now completes successfully in ~9 seconds (client) + ~19ms (server)
   * Verified production server functionality with health checks (200 OK responses)
-  * Deployment ready - only requires DATABASE_URL environment variable in Vercel
+  * Deployment ready - environment variables configured in Vercel  
   * Created VERCEL_DATABASE_SETUP.md with critical deployment instructions
+  * Fixed API serverless function routing issues for proper Vercel deployment
+  * Simplified API handler with direct database access and CORS support
+  * Updated Vercel configuration to use rewrites for better serverless function routing
 - July 19, 2025. GitHub Integration Restored:
   * Removed demo mode and restored full application functionality
   * Updated API routes to use complete server implementation instead of demo endpoints
