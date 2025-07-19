@@ -9,7 +9,7 @@ import { Mail, CheckCircle2, Loader2, X, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 
-import iconPath from "@assets/icononly_nobuffer_1752067577689.png";
+import iconPath from "../../../attached_assets/icononly_nobuffer_1752067577689.png";
 
 // AI Sentinel Logo Component
 const AISentinelIcon = ({ className = "w-16 h-16" }) => (

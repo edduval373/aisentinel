@@ -8,7 +8,7 @@ import ChatInterface from "@/components/chat/ChatInterface";
 import { useQuery } from "@tanstack/react-query";
 import { Building2 } from "lucide-react";
 
-import iconPath from "@assets/icononly_nobuffer_1752067577689.png";
+import iconPath from "../../../attached_assets/icononly_nobuffer_1752067577689.png";
 
 // AI Sentinel Logo Component
 const AISentinelIcon = ({ className = "w-10 h-10" }) => (
