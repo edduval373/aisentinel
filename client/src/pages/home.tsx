@@ -45,18 +45,12 @@ export default function Home() {
   const [currentSession, setCurrentSession] = useState<number | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Redirect to login if not authenticated
+  // Redirect to login if not authenticated (disabled for demo)
   useEffect(() => {
+    // Demo mode - no redirect needed
     if (!isLoading && !isAuthenticated) {
-      toast({
-        title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
-        variant: "destructive",
-      });
-      setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
-      return;
+      // Silently handle unauthenticated state
+      console.log('Running in demo mode');
     }
   }, [isAuthenticated, isLoading, toast]);
 

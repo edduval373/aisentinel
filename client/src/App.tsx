@@ -39,12 +39,12 @@ function Router() {
       
       {/* Protected routes */}
       {isLoading ? (
-        <Route path="/" component={Landing} />
-      ) : !isAuthenticated ? (
-        <Switch>
-          <Route path="/demo" component={Home} />
-          <Route path="/" component={Landing} />
-        </Switch>
+        <div className="flex h-screen items-center justify-center bg-slate-50">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sentinel-blue mx-auto mb-4"></div>
+            <p className="text-slate-600">Loading AI Sentinel...</p>
+          </div>
+        </div>
       ) : (
         <>
           <Route path="/" component={Home} />
