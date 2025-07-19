@@ -910,7 +910,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Parse string values to numbers (FormData sends everything as strings)
       const parsedAiModelId = isModelFusion ? null : parseInt(aiModelId);
       const parsedActivityTypeId = parseInt(activityTypeId);
-      const parsedSessionId = parseInt(sessionId);
+      const parsedSessionId = sessionId && !isNaN(parseInt(sessionId)) ? parseInt(sessionId) : null;
+      
+      console.log('Chat message request:', { sessionId, parsedSessionId, aiModelId, activityTypeId });
       
       let userId = null;
       let companyId = null;
@@ -949,10 +951,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
-      // Validate that the session belongs to the user's company
-      const session = await storage.getChatSession(parsedSessionId, companyId);
-      if (!session) {
-        return res.status(404).json({ message: "Chat session not found" });
+      // Validate session ID and get/create session
+      let session;
+      if (parsedSessionId) {
+        session = await storage.getChatSession(parsedSessionId, companyId);
+        if (!session) {
+          return res.status(404).json({ message: "Chat session not found" });
+        }
+      } else {
+        // Create new session if no valid sessionId provided
+        session = await storage.createChatSession({
+          companyId: companyId,
+          userId: userId,
+          title: "New Chat",
+          aiModel: isModelFusion ? "Model Fusion" : "Unknown",
+          activityType: "general"
+        });
+        console.log('Created new chat session:', session.id);
       }
 
       // Apply content filtering
@@ -1088,7 +1103,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Create chat message with company isolation
       const chatMessage = await storage.createChatMessage({
         companyId: companyId,
-        sessionId: parsedSessionId,
+        sessionId: session.id, // Use the session ID from the found/created session
         userId,
         aiModelId: isModelFusion ? null : parsedAiModelId, // null for Model Fusion
         activityTypeId: parsedActivityTypeId,
