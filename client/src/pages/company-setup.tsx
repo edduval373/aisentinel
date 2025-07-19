@@ -47,7 +47,7 @@ export default function CompanySetup() {
 
   // Fetch available companies for owners/super-users
   const { data: companies = [], isLoading: companiesLoading } = useQuery({
-    queryKey: ["/api/admin/companies"],
+    queryKey: ["/api/companies"],
     enabled: user?.role === 'super-user' || user?.role === 'owner',
   });
 
