@@ -15,7 +15,6 @@ app.get('/api/user/current-company', (req, res) => res.json({ id: 1, name: 'Demo
 const server = createServer(app);
 
 (async () => {
-
   if (process.env.NODE_ENV === "development") {
     await setupVite(app, server);
   } else {
