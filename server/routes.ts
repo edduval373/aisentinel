@@ -25,8 +25,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     await setupAuth(app);
   }
 
-  // Initialize default AI models and activity types
-  await initializeDefaultData();
+  // Initialize default AI models and activity types (disabled for demo mode)
+  // await initializeDefaultData();
 
   // Legacy auth route (for backward compatibility) - only if Replit Auth is enabled
   if (process.env.ENABLE_REPLIT_AUTH === 'true') {

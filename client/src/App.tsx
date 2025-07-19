@@ -5,7 +5,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
 import { CompanyProvider } from "@/hooks/useCompanyContext";
-import Landing from "@/pages/landing.tsx";
 import Home from "@/pages/home.tsx";
 import Login from "@/pages/Login.tsx";
 import VerificationSuccess from "@/pages/VerificationSuccess.tsx";
@@ -29,25 +28,14 @@ import CompanySetup from "@/pages/company-setup.tsx";
 import NotFound from "@/pages/not-found.tsx";
 
 function Router() {
-  const { isAuthenticated, isLoading } = useAuth();
-
   return (
     <Switch>
       {/* Authentication routes - always available */}
       <Route path="/login" component={Login} />
       <Route path="/verify" component={VerificationSuccess} />
       
-      {/* Protected routes */}
-      {isLoading ? (
-        <div className="flex h-screen items-center justify-center bg-slate-50">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sentinel-blue mx-auto mb-4"></div>
-            <p className="text-slate-600">Loading AI Sentinel...</p>
-          </div>
-        </div>
-      ) : (
-        <>
-          <Route path="/" component={Home} />
+      {/* Main application routes */}
+      <Route path="/" component={Home} />
           <Route path="/admin" component={CompanyManagement} />
           <Route path="/admin/models" component={AdminModels} />
           <Route path="/admin/activity-types" component={AdminActivityTypes} />
@@ -67,8 +55,6 @@ function Router() {
           <Route path="/admin/companies" component={CompanyManagement} />
           <Route path="/company-setup" component={CompanySetup} />
           <Route path="/admin/company-setup" component={CompanySetup} />
-        </>
-      )}
       <Route component={NotFound} />
     </Switch>
   );
