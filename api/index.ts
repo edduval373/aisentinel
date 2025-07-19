@@ -1,7 +1,4 @@
 // Vercel serverless function entry point
-import { storage } from '../server/storage';
-
-// Simple health check function
 export default async function handler(req: any, res: any) {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -13,24 +10,26 @@ export default async function handler(req: any, res: any) {
   }
 
   try {
-    console.log(`${req.method} ${req.url}`);
-
-    // Parse URL to handle Vercel routing
-    const url = new URL(req.url, `http://${req.headers.host}`);
-    const pathname = url.pathname;
+    // Simple routing based on query parameter or URL path
+    const { query } = req;
+    const path = req.url || '';
     
-    console.log(`Processing ${req.method} ${pathname}`);
+    console.log(`API Request: ${req.method} ${path}`, { query });
 
     // Health check
-    if (pathname.includes('health') && req.method === 'GET') {
+    if (path.includes('health') && req.method === 'GET') {
       return res.json({ status: 'OK', timestamp: new Date().toISOString() });
     }
 
     // Chat session creation  
-    if (pathname.includes('chat/session') && req.method === 'POST') {
+    if (path.includes('chat/session') && req.method === 'POST') {
+      console.log('Creating chat session...');
       try {
-        // Use default company and user for unauthenticated access
+        // Import storage dynamically to avoid module loading issues
+        const { storage } = await import('../server/storage');
         const companies = await storage.getCompanies();
+        console.log('Companies found:', companies.length);
+        
         if (companies.length === 0) {
           return res.status(400).json({ message: "No companies available" });
         }
@@ -40,29 +39,49 @@ export default async function handler(req: any, res: any) {
           userId: '42450602' 
         });
         
+        console.log('Session created:', session.id);
         return res.json(session);
       } catch (error) {
         console.error("Error creating chat session:", error);
-        return res.status(500).json({ message: "Failed to create chat session" });
+        return res.status(500).json({ 
+          message: "Failed to create chat session", 
+          error: error.message,
+          stack: error.stack?.substring(0, 500)
+        });
       }
     }
 
     // Companies list
-    if (pathname.includes('companies') && req.method === 'GET') {
-      const companies = await storage.getCompanies();
-      return res.json(companies);
+    if (path.includes('companies') && req.method === 'GET') {
+      try {
+        const { storage } = await import('../server/storage');
+        const companies = await storage.getCompanies();
+        return res.json(companies);
+      } catch (error) {
+        return res.status(500).json({ message: "Database error", error: error.message });
+      }
     }
 
-    // AI models list
-    if (pathname.includes('ai-models') && req.method === 'GET') {
-      const aiModels = await storage.getAiModels(1);
-      return res.json(aiModels);
+    // AI models list  
+    if (path.includes('ai-models') && req.method === 'GET') {
+      try {
+        const { storage } = await import('../server/storage');
+        const aiModels = await storage.getAiModels(1);
+        return res.json(aiModels);
+      } catch (error) {
+        return res.status(500).json({ message: "Database error", error: error.message });
+      }
     }
 
     // Activity types list
-    if (pathname.includes('activity-types') && req.method === 'GET') {
-      const activityTypes = await storage.getActivityTypes(1);
-      return res.json(activityTypes);
+    if (path.includes('activity-types') && req.method === 'GET') {
+      try {
+        const { storage } = await import('../server/storage');
+        const activityTypes = await storage.getActivityTypes(1);
+        return res.json(activityTypes);
+      } catch (error) {
+        return res.status(500).json({ message: "Database error", error: error.message });
+      }
     }
 
     // Default 404
