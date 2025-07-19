@@ -54,6 +54,11 @@ class ContentFilter {
     let blocked = false;
     let reason = '';
 
+    // Validate input
+    if (!message || typeof message !== 'string') {
+      return { blocked: false, flags: [], reason: '' };
+    }
+
     // Check for PII patterns
     for (const pattern of this.piiPatterns) {
       if (pattern.test(message)) {

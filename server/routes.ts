@@ -904,15 +904,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { message, aiModelId, activityTypeId, sessionId } = req.body;
       
+      console.log('Chat message request:', { message, sessionId, aiModelId, activityTypeId });
+      
+      // Validate required fields
+      if (!message || message.trim() === '') {
+        return res.status(400).json({ message: "Message is required" });
+      }
+      
       // Handle Model Fusion special case
       const isModelFusion = aiModelId === "model-fusion";
       
       // Parse string values to numbers (FormData sends everything as strings)
-      const parsedAiModelId = isModelFusion ? null : parseInt(aiModelId);
-      const parsedActivityTypeId = parseInt(activityTypeId);
+      const parsedAiModelId = isModelFusion ? null : (aiModelId ? parseInt(aiModelId) : 1); // Default to model 1
+      const parsedActivityTypeId = activityTypeId ? parseInt(activityTypeId) : 1; // Default to activity type 1
       const parsedSessionId = sessionId && !isNaN(parseInt(sessionId)) ? parseInt(sessionId) : null;
-      
-      console.log('Chat message request:', { sessionId, parsedSessionId, aiModelId, activityTypeId });
       
       let userId = null;
       let companyId = null;
