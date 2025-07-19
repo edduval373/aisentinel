@@ -1,0 +1,62 @@
+[09:04:21.350] Running build in Washington, D.C., USA (East) – iad1
+[09:04:21.351] Build machine configuration: 2 cores, 8 GB
+[09:04:21.372] Cloning github.com/edduval373/aisentinel (Branch: main, Commit: b3f47f3)
+[09:04:21.918] Cloning completed: 546.000ms
+[09:04:21.994] Found .vercelignore
+[09:04:22.034] Removed 205 ignored files defined in .vercelignore
+[09:04:22.035]   /.git/config
+[09:04:22.035]   /.git/description
+[09:04:22.035]   /.git/FETCH_HEAD
+[09:04:22.035]   /.git/HEAD
+[09:04:22.035]   /.git/hooks/applypatch-msg.sample
+[09:04:22.035]   /.git/hooks/commit-msg.sample
+[09:04:22.035]   /.git/hooks/fsmonitor-watchman.sample
+[09:04:22.035]   /.git/hooks/post-update.sample
+[09:04:22.035]   /.git/hooks/pre-applypatch.sample
+[09:04:22.035]   /.git/hooks/pre-commit.sample
+[09:04:22.577] Restored build cache from previous deployment (2zTsU9uY9DvFF8xvni11ckzudYTP)
+[09:04:24.965] Running "vercel build"
+[09:04:25.442] Vercel CLI 44.4.3
+[09:04:26.362] Running "install" command: `npm install`...
+[09:04:28.625] 
+[09:04:28.626] up to date, audited 700 packages in 2s
+[09:04:28.626] 
+[09:04:28.627] 171 packages are looking for funding
+[09:04:28.627]   run `npm fund` for details
+[09:04:28.644] 
+[09:04:28.644] 9 vulnerabilities (3 low, 4 moderate, 2 high)
+[09:04:28.644] 
+[09:04:28.644] To address issues that do not require attention, run:
+[09:04:28.644]   npm audit fix
+[09:04:28.645] 
+[09:04:28.645] To address all issues possible (including breaking changes), run:
+[09:04:28.645]   npm audit fix --force
+[09:04:28.645] 
+[09:04:28.645] Some issues need review, and may require choosing
+[09:04:28.645] a different dependency.
+[09:04:28.645] 
+[09:04:28.645] Run `npm audit` for details.
+[09:04:29.049] [36mvite v5.4.19 [32mbuilding for production...[36m[39m
+[09:04:29.097] transforming...
+[09:04:34.075] [32m✓[39m 2371 modules transformed.
+[09:04:34.683] rendering chunks...
+[09:04:34.697] computing gzip size...
+[09:04:34.724] [2m../dist/public/[22m[32mindex.html                 [39m[1m[2m    0.44 kB[22m[1m[22m[2m │ gzip:   0.30 kB[22m
+[09:04:34.724] [2m../dist/public/[22m[2massets/[22m[35mindex-pV_TaSSC.css  [39m[1m[2m    4.74 kB[22m[1m[22m[2m │ gzip:   1.38 kB[22m
+[09:04:34.724] [2m../dist/public/[22m[2massets/[22m[36mindex-DoCP9kiE.js   [39m[1m[33m1,013.68 kB[39m[22m[2m │ gzip: 292.64 kB[22m
+[09:04:34.725] [33m
+[09:04:34.725] (!) Some chunks are larger than 500 kB after minification. Consider:
+[09:04:34.725] - Using dynamic import() to code-split the application
+[09:04:34.725] - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+[09:04:34.725] - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+[09:04:34.726] [32m✓ built in 5.65s[39m
+[09:04:34.783] ✘ [ERROR] Could not resolve "../vite.config"
+[09:04:34.784] 
+[09:04:34.784]     server/vite.ts:6:23:
+[09:04:34.784]       6 │ import viteConfig from "../vite.config";
+[09:04:34.785]         ╵                        ~~~~~~~~~~~~~~~~
+[09:04:34.785] 
+[09:04:34.792] 1 error
+[09:04:34.796] Error: Command "vite build --config vite.config.production.ts && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist" exited with 1
+[09:04:35.070] 
+[09:04:37.957] Exiting build container
