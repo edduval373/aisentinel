@@ -1,8 +1,8 @@
-# URGENT: Database Setup Required for Vercel Deployment
+# URGENT: API Function Fix for Vercel Deployment
 
-## Issue: "Failed to create chat session" Error
+## Issue: "Failed to create chat session" Error  
 
-Your AI Sentinel app is deployed but showing this error because the **DATABASE_URL environment variable is missing**.
+Your AI Sentinel app is deployed with correct environment variables, but the serverless function wasn't properly configured.
 
 ## Solution: Add Database Environment Variable
 

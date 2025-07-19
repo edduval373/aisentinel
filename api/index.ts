@@ -1,83 +1,69 @@
 // Vercel serverless function entry point
-import express from 'express';
-import cookieParser from 'cookie-parser';
-import fileUpload from 'express-fileupload';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { registerRoutes } from '../server/routes';
+import { storage } from '../server/storage';
 
-const app = express();
-
-// Configure Express middleware
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: false, limit: '50mb' }));
-app.use(cookieParser());
-app.use(fileUpload({
-  limits: { fileSize: 50 * 1024 * 1024 },
-  abortOnLimit: true,
-  responseOnLimit: "File size limit exceeded",
-}));
-
-// Request logging middleware
-app.use((req, res, next) => {
-  const start = Date.now();
-  const path = req.path;
-  let capturedJsonResponse: Record<string, any> | undefined = undefined;
-
-  const originalResJson = res.json;
-  res.json = function (bodyJson, ...args) {
-    capturedJsonResponse = bodyJson;
-    return originalResJson.apply(res, [bodyJson, ...args]);
-  };
-
-  res.on("finish", () => {
-    const duration = Date.now() - start;
-    if (path.startsWith("/api")) {
-      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
-      }
-      if (logLine.length > 80) {
-        logLine = logLine.slice(0, 79) + "…";
-      }
-      console.log(logLine);
-    }
-  });
-
-  next();
-});
-
-// Initialize routes and static serving
-let routesInitialized = false;
-const initializeRoutes = async () => {
-  if (!routesInitialized) {
-    await registerRoutes(app);
-    
-    // Serve static files from dist/public
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
-    const publicPath = path.join(__dirname, '../dist/public');
-    app.use(express.static(publicPath));
-    
-    // Catch-all handler for React routing
-    app.get('*', (req, res) => {
-      if (!req.path.startsWith('/api')) {
-        res.sendFile(path.join(publicPath, 'index.html'));
-      }
-    });
-    
-    routesInitialized = true;
+// Simple health check function
+export default async function handler(req: any, res: any) {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
   }
-};
 
-// Error handling middleware
-app.use((err: any, req: any, res: any, next: any) => {
-  const status = err.status || err.statusCode || 500;
-  const message = err.message || "Internal Server Error";
-  res.status(status).json({ message });
-});
+  try {
+    console.log(`${req.method} ${req.url}`);
 
-// Export the handler for Vercel
-export default async (req: any, res: any) => {
-  await initializeRoutes();
-  return app(req, res);
-};
+    // Health check
+    if (req.url === '/api/health' && req.method === 'GET') {
+      return res.json({ status: 'OK', timestamp: new Date().toISOString() });
+    }
+
+    // Chat session creation
+    if (req.url === '/api/chat/session' && req.method === 'POST') {
+      try {
+        // Use default company and user for unauthenticated access
+        const companies = await storage.getCompanies();
+        if (companies.length === 0) {
+          return res.status(400).json({ message: "No companies available" });
+        }
+        
+        const session = await storage.createChatSession({ 
+          companyId: companies[0].id, 
+          userId: '42450602' 
+        });
+        
+        return res.json(session);
+      } catch (error) {
+        console.error("Error creating chat session:", error);
+        return res.status(500).json({ message: "Failed to create chat session" });
+      }
+    }
+
+    // Companies list
+    if (req.url === '/api/companies' && req.method === 'GET') {
+      const companies = await storage.getCompanies();
+      return res.json(companies);
+    }
+
+    // AI models list
+    if (req.url === '/api/ai-models' && req.method === 'GET') {
+      const aiModels = await storage.getAiModels(1);
+      return res.json(aiModels);
+    }
+
+    // Activity types list
+    if (req.url === '/api/activity-types' && req.method === 'GET') {
+      const activityTypes = await storage.getActivityTypes(1);
+      return res.json(activityTypes);
+    }
+
+    // Default 404
+    return res.status(404).json({ message: 'API endpoint not found' });
+    
+  } catch (error) {
+    console.error('API Error:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+}
