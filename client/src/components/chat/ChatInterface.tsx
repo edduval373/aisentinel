@@ -37,6 +37,13 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
     queryKey: ['/api/ai-models'],
     // Removed authentication error handling
   });
+  
+  // Auto-select first available AI model
+  useEffect(() => {
+    if (aiModels && aiModels.length > 0 && selectedModel === null) {
+      setSelectedModel(aiModels[0].id);
+    }
+  }, [aiModels, selectedModel]);
 
   // Fetch Model Fusion config
   const { data: modelFusionConfig } = useQuery({
@@ -48,6 +55,13 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
     queryKey: ['/api/activity-types'],
     // Removed authentication error handling
   });
+  
+  // Auto-select first available activity type
+  useEffect(() => {
+    if (activityTypes && activityTypes.length > 0 && selectedActivityType === null) {
+      setSelectedActivityType(activityTypes[0].id);
+    }
+  }, [activityTypes, selectedActivityType]);
 
   // Fetch current company details
   const { data: currentCompany, isLoading: companyLoading } = useQuery<Company>({
@@ -223,7 +237,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   }, [messages]);
 
   const handleSendMessage = (message: string, attachments?: File[]) => {
-    if (!selectedModel || !selectedActivityType || !currentSession) {
+    if (!selectedModel || !selectedActivityType) {
       toast({
         title: "Error",
         description: "Please select AI model and activity type",
@@ -239,7 +253,11 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
     formData.append('message', message);
     formData.append('aiModelId', selectedModel.toString());
     formData.append('activityTypeId', selectedActivityType.toString());
-    formData.append('sessionId', currentSession.toString());
+    
+    // Session will be created automatically if not provided
+    if (currentSession) {
+      formData.append('sessionId', currentSession.toString());
+    }
 
     if (attachments && attachments.length > 0) {
       attachments.forEach((file) => {
