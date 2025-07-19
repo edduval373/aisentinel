@@ -10,23 +10,32 @@ export default async function handler(req: any, res: any) {
   }
 
   try {
-    // Simple routing based on query parameter or URL path
-    const { query } = req;
     const path = req.url || '';
-    
-    console.log(`API Request: ${req.method} ${path}`, { query });
+    console.log(`API Request: ${req.method} ${path}`);
 
-    // Health check
+    // Health check - no dependencies
     if (path.includes('health') && req.method === 'GET') {
-      return res.json({ status: 'OK', timestamp: new Date().toISOString() });
+      return res.json({ 
+        status: 'OK', 
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV || 'unknown',
+        hasDatabase: !!process.env.DATABASE_URL
+      });
     }
 
     // Chat session creation  
     if (path.includes('chat/session') && req.method === 'POST') {
       console.log('Creating chat session...');
       try {
-        // Import storage dynamically to avoid module loading issues
-        const { storage } = await import('../server/storage');
+        // Test basic functionality first
+        if (!process.env.DATABASE_URL) {
+          return res.status(500).json({ message: "DATABASE_URL not configured" });
+        }
+        
+        // Try to import and use storage
+        const storageModule = await import('../server/storage');
+        const { storage } = storageModule;
+        
         const companies = await storage.getCompanies();
         console.log('Companies found:', companies.length);
         
@@ -46,7 +55,8 @@ export default async function handler(req: any, res: any) {
         return res.status(500).json({ 
           message: "Failed to create chat session", 
           error: error.message,
-          stack: error.stack?.substring(0, 500)
+          stack: error.stack?.substring(0, 500),
+          databaseUrl: process.env.DATABASE_URL ? 'configured' : 'missing'
         });
       }
     }
