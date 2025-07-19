@@ -1,5 +1,5 @@
 import { useState } from "react";
-// import { useAuth } from "@/hooks/useAuth"; // Temporarily disabled
+import { useAuth } from "@/hooks/useAuth";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { 
@@ -30,8 +30,7 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
-  // const { user } = useAuth(); // Temporarily disabled
-  const user = null; // Bypass authentication
+  const { user } = useAuth(); // Re-enabled to get Railway database user data
   const [location, navigate] = useLocation();
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
@@ -360,8 +359,12 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                 : user?.email || "User"
               }
             </p>
-            <p className="text-slate-400 text-xs capitalize">
-              {user?.role || "Standard User"}
+            <p className="text-slate-400 text-xs">
+              {user?.role === 'super-user' ? 'Super User' 
+                : user?.role === 'admin' ? 'Admin'
+                : user?.role === 'owner' ? 'Owner'
+                : user?.role === 'user' ? 'Standard User'
+                : 'Standard User'}
             </p>
           </div>
           <Button
