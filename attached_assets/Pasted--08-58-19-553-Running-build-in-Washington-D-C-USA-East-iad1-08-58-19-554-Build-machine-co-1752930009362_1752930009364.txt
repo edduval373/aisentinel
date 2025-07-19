@@ -1,0 +1,51 @@
+[08:58:19.553] Running build in Washington, D.C., USA (East) – iad1
+[08:58:19.554] Build machine configuration: 2 cores, 8 GB
+[08:58:19.574] Cloning github.com/edduval373/aisentinel (Branch: main, Commit: 87bba42)
+[08:58:20.416] Cloning completed: 841.000ms
+[08:58:20.608] Found .vercelignore
+[08:58:20.746] Removed 203 ignored files defined in .vercelignore
+[08:58:20.747]   /.git/config
+[08:58:20.748]   /.git/description
+[08:58:20.748]   /.git/FETCH_HEAD
+[08:58:20.748]   /.git/HEAD
+[08:58:20.748]   /.git/hooks/applypatch-msg.sample
+[08:58:20.748]   /.git/hooks/commit-msg.sample
+[08:58:20.748]   /.git/hooks/fsmonitor-watchman.sample
+[08:58:20.749]   /.git/hooks/post-update.sample
+[08:58:20.749]   /.git/hooks/pre-applypatch.sample
+[08:58:20.750]   /.git/hooks/pre-commit.sample
+[08:58:20.906] Restored build cache from previous deployment (7ZdoNcYoRnpJjPHukRVLqnYct5Up)
+[08:58:24.211] Running "vercel build"
+[08:58:25.122] Vercel CLI 44.4.3
+[08:58:25.380] WARN! Due to `builds` existing in your configuration file, the Build and Development Settings defined in your Project Settings will not apply. Learn More: https://vercel.link/unused-build-settings
+[08:58:27.466] Installing dependencies...
+[08:58:30.005] 
+[08:58:30.006] up to date in 2s
+[08:58:30.006] 
+[08:58:30.006] 175 packages are looking for funding
+[08:58:30.006]   run `npm fund` for details
+[08:58:30.059] Running "npm run build"
+[08:58:30.223] 
+[08:58:30.224] > rest-express@1.0.0 build
+[08:58:30.225] > vite build --config vite.config.production.ts && esbuild server/index.ts --    platform=node --packages=external --bundle --format=esm --outdir=dist
+[08:58:30.225] 
+[08:58:30.673] [36mvite v5.4.19 [32mbuilding for production...[36m[39m
+[08:58:30.748] transforming...
+[08:58:37.853] [32m✓[39m 2371 modules transformed.
+[08:58:39.067] rendering chunks...
+[08:58:39.088] computing gzip size...
+[08:58:39.125] [2m../dist/public/[22m[32mindex.html                 [39m[1m[2m    0.44 kB[22m[1m[22m[2m │ gzip:   0.30 kB[22m
+[08:58:39.126] [2m../dist/public/[22m[2massets/[22m[35mindex-pV_TaSSC.css  [39m[1m[2m    4.74 kB[22m[1m[22m[2m │ gzip:   1.38 kB[22m
+[08:58:39.126] [2m../dist/public/[22m[2massets/[22m[36mindex-DoCP9kiE.js   [39m[1m[33m1,013.68 kB[39m[22m[2m │ gzip: 292.64 kB[22m
+[08:58:39.127] [33m
+[08:58:39.127] (!) Some chunks are larger than 500 kB after minification. Consider:
+[08:58:39.128] - Using dynamic import() to code-split the application
+[08:58:39.128] - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+[08:58:39.128] - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+[08:58:39.131] [32m✓ built in 8.42s[39m
+[08:58:39.220] ✘ [ERROR] Invalid build flag: "--"
+[08:58:39.221] 
+[08:58:39.221] 1 error
+[08:58:39.234] Error: Command "npm run build" exited with 1
+[08:58:40.313] 
+[08:58:43.363] Exiting build container

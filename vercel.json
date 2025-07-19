@@ -1,19 +1,7 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "buildCommand": "node build.js",
-        "outputDirectory": "dist/public"
-      }
-    },
-    {
-      "src": "api/index.ts",
-      "use": "@vercel/node"
-    }
-  ],
+  "buildCommand": "node build.js",
+  "outputDirectory": "dist/public",
   "routes": [
     {
       "src": "/api/(.*)",
