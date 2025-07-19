@@ -42,9 +42,9 @@ export default function CompanyManagement() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Fetch all companies
+  // Fetch all companies (using authentication bypass route)
   const { data: companies = [], isLoading: companiesLoading } = useQuery({
-    queryKey: ["/api/admin/companies"],
+    queryKey: ["/api/companies"],
   });
 
   const companyForm = useForm<z.infer<typeof companySchema>>({
@@ -65,7 +65,7 @@ export default function CompanyManagement() {
     mutationFn: (data: z.infer<typeof companySchema>) =>
       apiRequest(`/api/admin/companies`, "POST", data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/companies"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/companies"] });
       setShowAddCompany(false);
       companyForm.reset();
       toast({ title: "Success", description: "Company created successfully" });
@@ -97,7 +97,7 @@ export default function CompanyManagement() {
     mutationFn: ({ id, data }: { id: number; data: z.infer<typeof companySchema> }) =>
       apiRequest(`/api/admin/companies/${id}`, "PATCH", data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/companies"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/companies"] });
       setShowEditCompany(false);
       setEditingCompany(null);
       companyForm.reset();
@@ -118,7 +118,7 @@ export default function CompanyManagement() {
     mutationFn: (id: number) =>
       apiRequest(`/api/admin/companies/${id}`, "DELETE"),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/companies"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/companies"] });
       toast({ title: "Success", description: "Company deleted successfully" });
     },
     onError: () => {
