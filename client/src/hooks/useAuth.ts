@@ -21,13 +21,14 @@ export function useAuth() {
   const queryClient = useQueryClient();
   
   const { data, isLoading, error } = useQuery<AuthData>({
-    queryKey: ['/api/auth/me'],
+    queryKey: ['/api/user/current'],
     queryFn: async () => {
       try {
-        return await apiRequest('/api/auth/me');
+        const user = await apiRequest('/api/user/current');
+        return { authenticated: true, user };
       } catch (error: any) {
         // If authentication fails, return unauthenticated state
-        if (error.status === 401) {
+        if (error.status === 401 || error.status === 404) {
           return { authenticated: false };
         }
         throw error;

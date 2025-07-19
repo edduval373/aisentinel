@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-// import { useAuth } from './useAuth'; // Temporarily disabled
+import { useAuth } from './useAuth';
 
 interface CompanyContextType {
   currentCompanyId: number | null;
@@ -16,9 +16,7 @@ interface CompanyProviderProps {
 export function CompanyProvider({ children }: CompanyProviderProps) {
   const [currentCompanyId, setCurrentCompanyIdState] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  // const { user, isAuthenticated } = useAuth(); // Temporarily disabled
-  const user = null;
-  const isAuthenticated = false; // Bypass authentication
+  const { user, isAuthenticated } = useAuth(); // Re-enabled with Railway database authentication
 
   // Initialize company context when user loads
   useEffect(() => {

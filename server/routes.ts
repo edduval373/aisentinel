@@ -53,14 +53,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   }
 
-  // New cookie-based auth route
-  app.get('/api/user/current', cookieAuth, async (req: AuthenticatedRequest, res) => {
+  // Unauthenticated route to get current user (pulls super-user from Railway database)
+  app.get('/api/user/current', async (req: any, res) => {
     try {
-      const user = await storage.getUser(req.user!.userId);
-      res.json(user);
+      // For complete authentication bypass, always return the super-user from Railway database
+      const superUsers = await storage.getUsersByRole('super-user');
+      if (superUsers.length > 0) {
+        return res.json(superUsers[0]);
+      }
+
+      res.status(404).json({ message: "No super-user found in Railway database" });
     } catch (error) {
-      console.error("Error fetching current user:", error);
-      res.status(500).json({ message: "Failed to fetch user" });
+      console.error("Error fetching super-user from Railway database:", error);
+      res.status(500).json({ message: "Failed to fetch user from Railway database" });
     }
   });
 
@@ -563,25 +568,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/user/current-company', isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      if (!user?.companyId) {
-        return res.status(400).json({ message: "No company associated with user" });
-      }
 
-      const company = await storage.getCompanyById(user.companyId);
-      if (!company) {
-        return res.status(404).json({ message: "Company not found" });
-      }
-
-      res.json(company);
-    } catch (error) {
-      console.error("Error fetching current company:", error);
-      res.status(500).json({ message: "Failed to fetch current company" });
-    }
-  });
 
   // Whisper API route
   app.post('/api/transcribe', isAuthenticated, async (req: any, res) => {
