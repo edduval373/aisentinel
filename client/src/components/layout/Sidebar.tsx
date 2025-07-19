@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAuth } from "@/hooks/useAuth";
+// import { useAuth } from "@/hooks/useAuth"; // Temporarily disabled
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { 
@@ -30,7 +30,8 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
-  const { user } = useAuth();
+  // const { user } = useAuth(); // Temporarily disabled
+  const user = null; // Bypass authentication
   const [location, navigate] = useLocation();
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
@@ -47,10 +48,11 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   //   return null;
   // }
 
-  const { logout } = useAuth();
+  // const { logout } = useAuth(); // Temporarily disabled
   
   const handleLogout = async () => {
-    await logout();
+    // await logout(); // Temporarily disabled
+    console.log('Logout functionality disabled in unauthenticated mode');
   };
 
   const toggleSection = (sectionId: string) => {

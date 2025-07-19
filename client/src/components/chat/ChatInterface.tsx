@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAuth } from "@/hooks/useAuth";
+// import { useAuth } from "@/hooks/useAuth"; // Temporarily disabled
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { isUnauthorizedError } from "@/lib/authUtils";
+// import { isUnauthorizedError } from "@/lib/authUtils"; // Temporarily disabled
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
@@ -19,7 +19,8 @@ interface ChatInterfaceProps {
 }
 
 export default function ChatInterface({ currentSession, setCurrentSession }: ChatInterfaceProps) {
-  const { user } = useAuth();
+  // const { user } = useAuth(); // Temporarily disabled
+  const user = null; // Bypass authentication
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -34,18 +35,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   // Fetch AI models
   const { data: aiModels, isLoading: modelsLoading } = useQuery<AiModel[]>({
     queryKey: ['/api/ai-models'],
-    onError: (error) => {
-      if (isUnauthorizedError(error)) {
-        toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
-      }
-    },
+    // Removed authentication error handling
   });
 
   // Fetch Model Fusion config
@@ -56,35 +46,13 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   // Fetch activity types
   const { data: activityTypes, isLoading: typesLoading } = useQuery<ActivityType[]>({
     queryKey: ['/api/activity-types'],
-    onError: (error) => {
-      if (isUnauthorizedError(error)) {
-        toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
-      }
-    },
+    // Removed authentication error handling
   });
 
   // Fetch current company details
   const { data: currentCompany, isLoading: companyLoading } = useQuery<Company>({
     queryKey: ['/api/user/current-company'],
-    onError: (error) => {
-      if (isUnauthorizedError(error)) {
-        toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
-      }
-    },
+    // Removed authentication error handling
   });
 
   // Fetch chat messages when session changes
@@ -92,18 +60,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
     queryKey: ['/api/chat/session', currentSession, 'messages'],
     queryFn: () => apiRequest(`/api/chat/session/${currentSession}/messages`),
     enabled: !!currentSession,
-    onError: (error) => {
-      if (isUnauthorizedError(error)) {
-        toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
-      }
-    },
+    // Authentication error handling removed
   });
 
   // Fetch previous chat sessions with message details
@@ -123,17 +80,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       queryClient.invalidateQueries({ queryKey: ['/api/chat/session'] });
     },
     onError: (error) => {
-      if (isUnauthorizedError(error)) {
-        toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
-        return;
-      }
+      // Authentication error handling removed
       toast({
         title: "Error",
         description: "Failed to create chat session",
@@ -178,17 +125,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
 
       // Check if this is actually an error (not an empty object from successful request)
       if (error && Object.keys(error).length > 0 && error.message) {
-        if (isUnauthorizedError(error)) {
-          toast({
-            title: "Unauthorized",
-            description: "You are logged out. Logging in again...",
-            variant: "destructive",
-          });
-          setTimeout(() => {
-            window.location.href = "/api/login";
-          }, 500);
-          return;
-        }
+        // Authentication error handling removed
 
         // Handle blocked messages
         if (error.message.includes("403")) {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 // import { useAuth } from "@/hooks/useAuth"; // Temporarily disabled
 import { useToast } from "@/hooks/use-toast";
-import { isUnauthorizedError } from "@/lib/authUtils";
+// import { isUnauthorizedError } from "@/lib/authUtils"; // Temporarily disabled
 import { Button } from "@/components/ui/button";
 import Sidebar from "@/components/layout/Sidebar";
 import ChatInterface from "@/components/chat/ChatInterface";
