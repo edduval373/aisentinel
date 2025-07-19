@@ -36,7 +36,9 @@ function Router() {
       <Route path="/verify" component={VerificationSuccess} />
       
       {/* Main application routes */}
-      <Route path="/" component={Home} exact />
+      <Route path="/" component={Home} />
+      <Route path="/demo" component={Home} />
+      <Route path="/test" component={() => <div>Test Route Works!</div>} />
           <Route path="/admin" component={CompanyManagement} />
           <Route path="/admin/models" component={AdminModels} />
           <Route path="/admin/activity-types" component={AdminActivityTypes} />
