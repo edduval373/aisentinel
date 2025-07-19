@@ -23,13 +23,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ status: 'OK', timestamp: new Date().toISOString() });
   });
   
-  // Setup cookie-based authentication routes (primary authentication method)
-  setupAuthRoutes(app);
+  // Authentication disabled for complete bypass
+  // setupAuthRoutes(app);
 
-  // Optional: Setup Replit Auth only if explicitly enabled
-  if (process.env.ENABLE_REPLIT_AUTH === 'true') {
-    await setupAuth(app);
-  }
+  // Replit Auth disabled
+  // if (process.env.ENABLE_REPLIT_AUTH === 'true') {
+  //   await setupAuth(app);
+  // }
 
   // Initialize default AI models and activity types (disabled for demo mode)
   // await initializeDefaultData();
@@ -766,14 +766,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Chat routes
-  app.post('/api/chat/session', isAuthenticated, async (req: any, res) => {
+  app.post('/api/chat/session', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      if (!user?.companyId) {
-        return res.status(400).json({ message: "No company associated with user" });
+      let userId = null;
+      let companyId = null;
+
+      // Try cookie auth first
+      if (req.cookies?.sessionToken) {
+        const authService = await import('./services/authService');
+        const session = await authService.authService.verifySession(req.cookies.sessionToken);
+        if (session) {
+          userId = session.userId;
+          companyId = session.companyId;
+        }
       }
-      const session = await storage.createChatSession({ companyId: user.companyId, userId });
+
+      // Fallback to Replit Auth (only if enabled)
+      if (!userId && process.env.ENABLE_REPLIT_AUTH === 'true' && req.user?.claims?.sub) {
+        userId = req.user.claims.sub;
+        const user = await storage.getUser(userId);
+        companyId = user?.companyId;
+      }
+
+      if (!userId || !companyId) {
+        // For unauthenticated users, use first available company and super-user account
+        try {
+          const companies = await storage.getCompanies();
+          if (companies.length > 0) {
+            companyId = companies[0].id;
+            // Use the existing super-user ID to maintain role structure
+            userId = '42450602';
+          } else {
+            return res.status(400).json({ message: "No companies available" });
+          }
+        } catch (error) {
+          console.error("Error finding default company:", error);
+          return res.status(500).json({ message: "Failed to find company" });
+        }
+      }
+
+      const session = await storage.createChatSession({ companyId, userId });
       res.json(session);
     } catch (error) {
       console.error("Error creating chat session:", error);
@@ -781,14 +813,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/chat/sessions', isAuthenticated, async (req: any, res) => {
+  app.get('/api/chat/sessions', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      if (!user?.companyId) {
-        return res.status(400).json({ message: "No company associated with user" });
+      let userId = null;
+      let companyId = null;
+
+      // Try cookie auth first
+      if (req.cookies?.sessionToken) {
+        const authService = await import('./services/authService');
+        const session = await authService.authService.verifySession(req.cookies.sessionToken);
+        if (session) {
+          userId = session.userId;
+          companyId = session.companyId;
+        }
       }
-      const sessions = await storage.getUserChatSessions(userId, user.companyId);
+
+      // Fallback to Replit Auth (only if enabled)
+      if (!userId && process.env.ENABLE_REPLIT_AUTH === 'true' && req.user?.claims?.sub) {
+        userId = req.user.claims.sub;
+        const user = await storage.getUser(userId);
+        companyId = user?.companyId;
+      }
+
+      if (!userId || !companyId) {
+        // For unauthenticated users, use first available company and anonymous user
+        try {
+          const companies = await storage.getCompanies();
+          if (companies.length > 0) {
+            companyId = companies[0].id;
+            userId = '42450602';
+          } else {
+            return res.json([]); // Return empty array if no companies
+          }
+        } catch (error) {
+          console.error("Error finding default company:", error);
+          return res.json([]);
+        }
+      }
+
+      const sessions = await storage.getUserChatSessions(userId, companyId);
       res.json(sessions);
     } catch (error) {
       console.error("Error fetching chat sessions:", error);
@@ -796,7 +859,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/chat/session/:id/messages', isAuthenticated, async (req: any, res) => {
+  app.get('/api/chat/session/:id/messages', async (req: any, res) => {
     try {
       const sessionId = parseInt(req.params.id);
       
@@ -805,12 +868,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid session ID" });
       }
       
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      if (!user?.companyId) {
-        return res.status(400).json({ message: "No company associated with user" });
+      let userId = null;
+      let companyId = null;
+
+      // Try cookie auth first
+      if (req.cookies?.sessionToken) {
+        const authService = await import('./services/authService');
+        const session = await authService.authService.verifySession(req.cookies.sessionToken);
+        if (session) {
+          userId = session.userId;
+          companyId = session.companyId;
+        }
       }
-      const messages = await storage.getChatMessages(sessionId, user.companyId);
+
+      // Fallback to Replit Auth (only if enabled)
+      if (!userId && process.env.ENABLE_REPLIT_AUTH === 'true' && req.user?.claims?.sub) {
+        userId = req.user.claims.sub;
+        const user = await storage.getUser(userId);
+        companyId = user?.companyId;
+      }
+
+      if (!userId || !companyId) {
+        // For unauthenticated users, use first available company and anonymous user
+        try {
+          const companies = await storage.getCompanies();
+          if (companies.length > 0) {
+            companyId = companies[0].id;
+            userId = '42450602';
+          } else {
+            return res.json([]); // Return empty array if no companies
+          }
+        } catch (error) {
+          console.error("Error finding default company:", error);
+          return res.json([]);
+        }
+      }
+
+      // Remove company check since we're allowing anonymous access
+      const messages = await storage.getChatMessages(sessionId, companyId);
       res.json(messages);
     } catch (error) {
       console.error("Error fetching chat messages:", error);
@@ -818,7 +913,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/chat/message', isAuthenticated, async (req: any, res) => {
+  app.post('/api/chat/message', async (req: any, res) => {
     try {
       const { message, aiModelId, activityTypeId, sessionId } = req.body;
       
@@ -830,15 +925,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const parsedActivityTypeId = parseInt(activityTypeId);
       const parsedSessionId = parseInt(sessionId);
       
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      
-      if (!user?.companyId) {
-        return res.status(400).json({ message: "No company associated with user" });
+      let userId = null;
+      let companyId = null;
+
+      // Try cookie auth first
+      if (req.cookies?.sessionToken) {
+        const authService = await import('./services/authService');
+        const session = await authService.authService.verifySession(req.cookies.sessionToken);
+        if (session) {
+          userId = session.userId;
+          companyId = session.companyId;
+        }
+      }
+
+      // Fallback to Replit Auth (only if enabled)
+      if (!userId && process.env.ENABLE_REPLIT_AUTH === 'true' && req.user?.claims?.sub) {
+        userId = req.user.claims.sub;
+        const user = await storage.getUser(userId);
+        companyId = user?.companyId;
+      }
+
+      if (!userId || !companyId) {
+        // For unauthenticated users, use first available company and super-user account
+        try {
+          const companies = await storage.getCompanies();
+          if (companies.length > 0) {
+            companyId = companies[0].id;
+            // Use the existing super-user ID to maintain role structure
+            userId = '42450602';
+          } else {
+            return res.status(400).json({ message: "No companies available" });
+          }
+        } catch (error) {
+          console.error("Error finding default company:", error);
+          return res.status(500).json({ message: "Failed to find company" });
+        }
       }
 
       // Validate that the session belongs to the user's company
-      const session = await storage.getChatSession(parsedSessionId, user.companyId);
+      const session = await storage.getChatSession(parsedSessionId, companyId);
       if (!session) {
         return res.status(404).json({ message: "Chat session not found" });
       }
@@ -848,7 +973,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (filterResult.blocked) {
         // Log the security violation
         await storage.createUserActivity({
-          companyId: user.companyId,
+          companyId,
           userId,
           activityTypeId: parsedActivityTypeId,
           description: `Content blocked: ${filterResult.reason}`,
@@ -865,7 +990,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Validate AI model exists and is enabled (skip for Model Fusion)
       let selectedModel = null;
       if (!isModelFusion) {
-        const models = await storage.getAiModels(user.companyId);
+        const models = await storage.getAiModels(companyId);
         selectedModel = models.find(m => m.id === parsedAiModelId);
         if (!selectedModel) {
           return res.status(400).json({ message: "AI model not found" });
@@ -875,7 +1000,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       } else {
         // For Model Fusion, verify the feature is enabled
-        const modelFusionConfig = await storage.getModelFusionConfig(user.companyId);
+        const modelFusionConfig = await storage.getModelFusionConfig(companyId);
         if (!modelFusionConfig || !modelFusionConfig.isEnabled) {
           return res.status(400).json({ message: "Model Fusion is not enabled" });
         }
@@ -968,14 +1093,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let aiResponse;
       if (isModelFusion) {
         // For Model Fusion, use a special method that runs across all models
-        aiResponse = await aiService.generateModelFusionResponse(contextMessage, user.companyId, parsedActivityTypeId);
+        aiResponse = await aiService.generateModelFusionResponse(contextMessage, companyId, parsedActivityTypeId);
       } else {
-        aiResponse = await aiService.generateResponse(contextMessage, parsedAiModelId, user.companyId, parsedActivityTypeId);
+        aiResponse = await aiService.generateResponse(contextMessage, parsedAiModelId, companyId, parsedActivityTypeId);
       }
       
       // Create chat message with company isolation
       const chatMessage = await storage.createChatMessage({
-        companyId: user.companyId,
+        companyId: companyId,
         sessionId: parsedSessionId,
         userId,
         aiModelId: isModelFusion ? null : parsedAiModelId, // null for Model Fusion
@@ -999,7 +1124,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             );
 
             const attachment = await storage.createChatAttachment({
-              companyId: user.companyId,
+              companyId: companyId,
               messageId: chatMessage.id,
               fileName,
               originalName: file.name,
@@ -1018,7 +1143,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Log the user activity
       await storage.createUserActivity({
-        companyId: user.companyId,
+        companyId: companyId,
         userId,
         activityTypeId: parsedActivityTypeId,
         description: `Chat message sent${attachments.length > 0 ? ` with ${attachments.length} attachment(s)` : ''}`,
