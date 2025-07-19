@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MessageSquare, Settings } from "lucide-react";
-import { AISentinelIcon } from "@/components/ui/AISentinelIcon";
+
 
 export default function SimpleHome() {
   const [message, setMessage] = useState('');
@@ -38,7 +38,11 @@ export default function SimpleHome() {
       {/* Header */}
       <div className="bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <AISentinelIcon className="w-8 h-8" />
+          <img 
+            src="/ai-sentinel-logo.png" 
+            alt="AI Sentinel" 
+            className="w-8 h-8 object-contain"
+          />
           <div>
             <h1 className="text-lg font-bold text-slate-800">AI Sentinel</h1>
             <Badge variant="outline" className="text-xs">Demo Mode</Badge>

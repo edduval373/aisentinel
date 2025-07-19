@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import Sidebar from "./Sidebar";
 
-import { AISentinelIcon } from "@/components/ui/AISentinelIcon";
+
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -27,7 +27,11 @@ export default function AdminLayout({ children, title, subtitle }: AdminLayoutPr
             onClick={() => setSidebarOpen(true)}
             className="text-slate-600 hover:text-slate-900 hover:bg-slate-100"
           >
-            <AISentinelIcon className="w-10 h-10" />
+            <img 
+              src="/ai-sentinel-logo.png" 
+              alt="AI Sentinel" 
+              className="w-10 h-10 object-contain"
+            />
           </Button>
           <div>
             <h1 className="text-lg font-semibold text-slate-800">{title}</h1>

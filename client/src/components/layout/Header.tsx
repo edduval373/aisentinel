@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Shield, Wifi, WifiOff, Download } from "lucide-react";
-import { AISentinelIcon } from "@/components/ui/AISentinelIcon";
+
 
 interface HeaderProps {
   title: string;
@@ -73,14 +73,14 @@ export default function Header({
         <div className="flex items-center space-x-4">
           {/* AI Sentinel Logo and Title */}
           <div className="flex items-center space-x-2">
-            <div className="w-6 h-6 bg-black rounded flex items-center justify-center p-0.5">
+            <div className="w-8 h-8 flex items-center justify-center">
               <img 
-                src={iconPath} 
+                src="/ai-sentinel-logo.png" 
                 alt="AI Sentinel" 
                 className="w-full h-full object-contain"
               />
             </div>
-            <span className="text-sm font-medium text-slate-700">AI Sentinel</span>
+            <span className="text-sm font-medium text-slate-700">AI Sentinel Chat</span>
           </div>
           
           {children}
