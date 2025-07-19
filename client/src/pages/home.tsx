@@ -8,7 +8,7 @@ import ChatInterface from "@/components/chat/ChatInterface";
 import { useQuery } from "@tanstack/react-query";
 import { Building2 } from "lucide-react";
 
-import { AISentinelIcon } from "@/components/ui/AISentinelIcon";
+
 
 // Company Info Component
 const CompanyInfo = () => {
@@ -82,7 +82,11 @@ export default function Home() {
               className="text-slate-600 hover:text-slate-900 hover:bg-slate-100"
               style={{ transform: 'translateY(10px)' }}
             >
-              <AISentinelIcon className="w-14 h-14" />
+              <img 
+                src="/ai-sentinel-logo.png" 
+                alt="AI Sentinel" 
+                className="w-14 h-14 object-contain"
+              />
             </Button>
             <CompanyInfo />
           </div>
