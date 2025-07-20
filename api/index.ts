@@ -29,26 +29,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (path.includes('chat/session') && req.method === 'POST') {
       console.log('Creating chat session...');
       try {
-        // Test basic functionality first
-        if (!process.env.DATABASE_URL) {
-          return res.status(500).json({ message: "DATABASE_URL not configured" });
-        }
-        
-        // Try to import and use storage
-        const storageModule = await import('../server/storage');
-        const { storage } = storageModule;
-        
-        const companies = await storage.getCompanies();
-        console.log('Companies found:', companies.length);
-        
-        if (companies.length === 0) {
-          return res.status(400).json({ message: "No companies available" });
-        }
-        
-        const session = await storage.createChatSession({ 
-          companyId: companies[0].id, 
-          userId: '42450602' 
-        });
+        // Return a simple mock session for demo purposes
+        const session = {
+          id: `session_${Date.now()}`,
+          companyId: 1,
+          userId: 'demo-user',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
         
         console.log('Session created:', session.id);
         return res.json(session);
@@ -56,9 +44,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         console.error("Error creating chat session:", error);
         return res.status(500).json({ 
           message: "Failed to create chat session", 
-          error: error.message,
-          stack: error.stack?.substring(0, 500),
-          databaseUrl: process.env.DATABASE_URL ? 'configured' : 'missing'
+          error: error.message
         });
       }
     }
