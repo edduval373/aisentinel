@@ -49,7 +49,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     }
 
-    // User current endpoint (for authentication bypass)
+    // User current endpoint (for authentication bypass with super-user access)
     if (path.includes('user/current') && req.method === 'GET') {
       try {
         const { storage } = await import('../server/storage');
@@ -63,8 +63,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           lastName: 'User',
           companyId: company?.id || 1,
           companyName: company?.name || 'Horizon Edge Enterprises',
-          role: 'user',
-          roleLevel: 1
+          role: 'super-user',
+          roleLevel: 100
         });
       } catch (error) {
         return res.json({
@@ -74,8 +74,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           lastName: 'User',
           companyId: 1,
           companyName: 'Horizon Edge Enterprises',
-          role: 'user',
-          roleLevel: 1
+          role: 'super-user',
+          roleLevel: 100
         });
       }
     }
@@ -148,6 +148,57 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.json(activityTypes);
       } catch (error) {
         return res.status(500).json({ message: "Database error", error: error.message });
+      }
+    }
+
+    // Add API endpoints for super-user API key management
+    if (path.includes('admin/update-api-key') && req.method === 'POST') {
+      try {
+        const { provider, apiKey } = req.body;
+        const { storage } = await import('../server/storage');
+        
+        // Update all models for this provider with the new API key
+        const companies = await storage.getCompanies();
+        const companyId = companies[0]?.id || 1;
+        const models = await storage.getAIModels(companyId);
+        
+        const providerModels = models.filter(m => m.provider === provider);
+        
+        for (const model of providerModels) {
+          await storage.updateAIModel(model.id, { apiKey });
+        }
+        
+        return res.json({ success: true, updated: providerModels.length });
+      } catch (error) {
+        console.error('Error updating API key:', error);
+        return res.status(500).json({ message: 'Failed to update API key', error: error.message });
+      }
+    }
+
+    if (path.includes('admin/test-api-key') && req.method === 'POST') {
+      try {
+        const { provider, apiKey } = req.body;
+        
+        // Simple validation for now
+        if (!apiKey || apiKey.startsWith('placeholder-')) {
+          throw new Error('Invalid API key');
+        }
+        
+        // Basic format validation
+        if (provider === 'openai' && !apiKey.startsWith('sk-')) {
+          throw new Error('OpenAI API keys should start with sk-');
+        }
+        if (provider === 'anthropic' && !apiKey.startsWith('sk-ant-')) {
+          throw new Error('Anthropic API keys should start with sk-ant-');
+        }
+        if (provider === 'perplexity' && !apiKey.startsWith('pplx-')) {
+          throw new Error('Perplexity API keys should start with pplx-');
+        }
+        
+        return res.json({ success: true, message: 'API key format is valid' });
+      } catch (error) {
+        console.error('Error testing API key:', error);
+        return res.status(400).json({ message: error.message });
       }
     }
 

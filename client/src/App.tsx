@@ -25,6 +25,7 @@ import AdminModelSettings from "@/pages/admin/model-settings.tsx";
 import AdminContextManagement from "@/pages/admin/context-management.tsx";
 import CreateModels from "@/pages/admin/create-models.tsx";
 import ModelFusion from "@/pages/admin/model-fusion.tsx";
+import SetupApiKeys from "@/pages/admin/setup-api-keys.tsx";
 import CompanySetup from "@/pages/company-setup.tsx";
 import NotFound from "@/pages/not-found.tsx";
 
@@ -77,6 +78,7 @@ function Router() {
           <Route path="/admin/context-management" component={AdminContextManagement} />
           <Route path="/admin/create-models" component={CreateModels} />
           <Route path="/admin/model-fusion" component={ModelFusion} />
+          <Route path="/admin/setup-api-keys" component={SetupApiKeys} />
           <Route path="/admin/companies" component={CompanyManagement} />
           <Route path="/company-setup" component={CompanySetup} />
           <Route path="/admin/company-setup" component={CompanySetup} />

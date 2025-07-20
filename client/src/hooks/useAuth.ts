@@ -20,20 +20,30 @@ interface AuthData {
 export function useAuth() {
   const queryClient = useQueryClient();
   
-  // BYPASS AUTHENTICATION FOR PRODUCTION - DIRECT ACCESS TO CHAT
+  // BYPASS AUTHENTICATION FOR PRODUCTION - DIRECT ACCESS TO CHAT AS SUPER-USER
   const { data, isLoading, error } = useQuery<AuthData>({
     queryKey: ['/api/user/current'],
     queryFn: async () => {
-      // Always return authenticated state to bypass landing page
-      return { 
-        authenticated: true, 
-        user: { 
-          id: 'demo-user', 
-          email: 'demo@aisentinel.app', 
-          name: 'Demo User',
-          role: 'user'
-        } 
-      };
+      try {
+        const user = await apiRequest('/api/user/current');
+        return { 
+          authenticated: true, 
+          user: user
+        };
+      } catch (error) {
+        // Fallback to super-user if API fails
+        return { 
+          authenticated: true, 
+          user: { 
+            id: 'demo-user', 
+            email: 'demo@aisentinel.app', 
+            firstName: 'Demo',
+            lastName: 'User',
+            role: 'super-user',
+            roleLevel: 100
+          } 
+        };
+      }
     },
     retry: false,
     refetchOnWindowFocus: false,

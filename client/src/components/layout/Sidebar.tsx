@@ -18,7 +18,8 @@ import {
   ChevronRight,
   Building,
   FileText,
-  Brain
+  Brain,
+  Key
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -34,10 +35,10 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const [location, navigate] = useLocation();
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
-  const isSuperUser = user?.role === 'super-user';
-  const isOwner = user?.role === 'owner';
-  const isAdmin = user?.role === 'admin';
-  const isRegularUser = user?.role === 'user';
+  const isSuperUser = user?.role === 'super-user' || user?.roleLevel >= 100;
+  const isOwner = user?.role === 'owner' || user?.roleLevel >= 99;
+  const isAdmin = user?.role === 'admin' || user?.roleLevel >= 2;
+  const isRegularUser = user?.role === 'user' || user?.roleLevel === 1;
   
   // Always show sidebar - no authentication restrictions
   // const isUnauthenticated = !user;
@@ -73,6 +74,12 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       name: "Company Management",
       href: "/admin/company-management",
       icon: Building,
+    },
+    {
+      id: "setup-api-keys",
+      name: "Setup API Keys", 
+      href: "/admin/setup-api-keys",
+      icon: Key,
     }
   ];
 
@@ -217,6 +224,25 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                   location === "/admin" ? "text-sentinel-blue" : "text-slate-400"
                 )} />
                 <span>Company Management</span>
+              </button>
+              
+              <button
+                onClick={() => {
+                  navigate("/admin/setup-api-keys");
+                  if (window.innerWidth < 1024) onToggle();
+                }}
+                className={cn(
+                  "w-full flex items-center space-x-3 text-left rounded-lg px-3 py-2 transition-colors",
+                  location === "/admin/setup-api-keys"
+                    ? "text-white bg-slate-700"
+                    : "text-slate-300 hover:text-white hover:bg-slate-700"
+                )}
+              >
+                <Key className={cn(
+                  "w-5 h-5",
+                  location === "/admin/setup-api-keys" ? "text-sentinel-blue" : "text-slate-400"
+                )} />
+                <span>Setup API Keys</span>
               </button>
             </>
           )}
