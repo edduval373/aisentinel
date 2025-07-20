@@ -26,18 +26,15 @@ const modelSchema = z.object({
   contextWindow: z.number().min(1, "Context window must be at least 1"),
   isEnabled: z.boolean().default(true),
   capabilities: z.array(z.string()).default([]),
-  // API Configuration
+  // API Configuration - simplified
   apiKey: z.string().min(1, "API key is required"),
   apiEndpoint: z.string().url("Must be a valid URL"),
-  authMethod: z.string().default("bearer"),
-  requestHeaders: z.string().default("{}"),
   maxTokens: z.number().min(1, "Max tokens must be at least 1").default(1000),
   temperature: z.number().min(0).max(2).default(0.7),
   // Advanced settings
   maxRetries: z.number().min(0).max(10).default(3),
   timeout: z.number().min(1000).max(60000).default(30000),
   rateLimit: z.number().min(1).max(1000).default(100),
-  organizationId: z.string().optional(),
 });
 
 interface AiModel {
@@ -49,18 +46,15 @@ interface AiModel {
   contextWindow: number;
   isEnabled: boolean;
   capabilities: string[];
-  // API Configuration
+  // API Configuration - simplified
   apiKey: string;
   apiEndpoint: string;
-  authMethod: string;
-  requestHeaders: string;
   maxTokens: number;
   temperature: number;
   // Advanced settings
   maxRetries: number;
   timeout: number;
   rateLimit: number;
-  organizationId?: string;
   // Status
   lastTested?: string;
   isWorking?: boolean;
@@ -154,14 +148,11 @@ export default function CreateModels() {
       capabilities: [],
       apiKey: "",
       apiEndpoint: "",
-      authMethod: "bearer",
-      requestHeaders: '{"Content-Type": "application/json"}',
       maxTokens: 1000,
       temperature: 0.7,
       maxRetries: 3,
       timeout: 30000,
       rateLimit: 100,
-      organizationId: "company-1",
     },
   });
 
@@ -213,21 +204,23 @@ export default function CreateModels() {
   });
 
   const onSubmitModel = (data: z.infer<typeof modelSchema>) => {
+    // Automatically add organizationId and requestHeaders
+    const enrichedData = {
+      ...data,
+      organizationId: "company-1", // Auto-set company ID
+      authMethod: "bearer", // Default auth method
+      requestHeaders: '{"Content-Type": "application/json"}' // Default headers
+    };
+    
     if (editingModel) {
-      updateModelMutation.mutate({ id: editingModel.id, data });
+      updateModelMutation.mutate({ id: editingModel.id, data: enrichedData });
     } else {
-      createModelMutation.mutate(data);
+      createModelMutation.mutate(enrichedData);
     }
   };
 
   const handleEditModel = (model: AiModel) => {
     setEditingModel(model);
-    // Ensure requestHeaders is a valid JSON string
-    let headers = model.requestHeaders;
-    if (!headers || headers === "[object Object]") {
-      headers = '{"Content-Type": "application/json"}';
-    }
-    
     modelForm.reset({
       name: model.name,
       provider: model.provider,
@@ -238,14 +231,11 @@ export default function CreateModels() {
       capabilities: model.capabilities,
       apiKey: model.apiKey,
       apiEndpoint: model.apiEndpoint,
-      authMethod: model.authMethod,
-      requestHeaders: headers,
       maxTokens: model.maxTokens,
       temperature: model.temperature,
       maxRetries: model.maxRetries,
       timeout: model.timeout,
       rateLimit: model.rateLimit,
-      organizationId: model.organizationId || "company-1",
     });
     setShowEditDialog(true);
   };
@@ -480,60 +470,12 @@ export default function CreateModels() {
                           </FormItem>
                         )}
                       />
-                      <FormField
-                        control={modelForm.control}
-                        name="authMethod"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Authentication Method</FormLabel>
-                            <Select onValueChange={field.onChange} value={field.value}>
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select auth method" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                {authMethods.map((method) => (
-                                  <SelectItem key={method.value} value={method.value}>
-                                    {method.label}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={modelForm.control}
-                        name="requestHeaders"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Request Headers (JSON)</FormLabel>
-                            <FormControl>
-                              <Textarea 
-                                placeholder='{"Content-Type": "application/json"}' 
-                                {...field} 
-                                rows={3}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={modelForm.control}
-                        name="organizationId"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Organization ID (Optional)</FormLabel>
-                            <FormControl>
-                              <Input placeholder="org-..." {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                      {/* Authentication and headers are now handled automatically */}
+                      <div className="bg-green-50 p-3 rounded-lg border border-green-200">
+                        <p className="text-sm text-green-700">
+                          ✓ Authentication method, request headers, and organization ID are configured automatically
+                        </p>
+                      </div>
                     </TabsContent>
 
                     <TabsContent value="settings" className="space-y-4 mt-4">
@@ -963,60 +905,12 @@ export default function CreateModels() {
                         </FormItem>
                       )}
                     />
-                    <FormField
-                      control={modelForm.control}
-                      name="authMethod"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Authentication Method</FormLabel>
-                          <Select onValueChange={field.onChange} value={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select auth method" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {authMethods.map((method) => (
-                                <SelectItem key={method.value} value={method.value}>
-                                  {method.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={modelForm.control}
-                      name="requestHeaders"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Request Headers (JSON)</FormLabel>
-                          <FormControl>
-                            <Textarea 
-                              placeholder='{"Content-Type": "application/json"}' 
-                              {...field} 
-                              rows={3}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={modelForm.control}
-                      name="organizationId"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Organization ID (Optional)</FormLabel>
-                          <FormControl>
-                            <Input placeholder="org-..." {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    {/* Authentication and headers are now handled automatically */}
+                    <div className="bg-green-50 p-3 rounded-lg border border-green-200">
+                      <p className="text-sm text-green-700">
+                        ✓ Authentication method, request headers, and organization ID are configured automatically
+                      </p>
+                    </div>
                   </TabsContent>
 
                   <TabsContent value="settings" className="space-y-4 mt-4">
