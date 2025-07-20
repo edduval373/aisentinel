@@ -63,6 +63,62 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     }
 
+    // User current endpoint (for authentication bypass)
+    if (path.includes('user/current') && req.method === 'GET') {
+      return res.json({
+        id: 'demo-user',
+        email: 'demo@aisentinel.app',
+        firstName: 'Demo',
+        lastName: 'User',
+        companyId: 1,
+        companyName: 'Horizon Edge Enterprises',
+        role: 'user',
+        roleLevel: 1
+      });
+    }
+
+    // AI Models endpoint
+    if (path.includes('ai-models') && req.method === 'GET') {
+      return res.json([
+        {
+          id: 1,
+          name: 'Claude 3',
+          provider: 'Anthropic',
+          model: 'claude-3-sonnet-20240229',
+          enabled: true,
+          companyId: 1
+        },
+        {
+          id: 2,
+          name: 'GPT-4',
+          provider: 'OpenAI',
+          model: 'gpt-4',
+          enabled: true,
+          companyId: 1
+        }
+      ]);
+    }
+
+    // Activity Types endpoint
+    if (path.includes('activity-types') && req.method === 'GET') {
+      return res.json([
+        {
+          id: 1,
+          name: 'Brainstorming',
+          description: 'Creative idea generation',
+          enabled: true,
+          companyId: 1
+        },
+        {
+          id: 2,
+          name: 'Analysis',
+          description: 'Data analysis and insights',
+          enabled: true,
+          companyId: 1
+        }
+      ]);
+    }
+
     // Companies list
     if (path.includes('companies') && req.method === 'GET') {
       try {
