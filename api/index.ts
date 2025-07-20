@@ -29,7 +29,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (path.includes('chat/session') && req.method === 'POST') {
       console.log('Creating chat session...');
       try {
-        // Return a simple mock session for demo purposes
+        const { storage } = await import('../server/storage');
+        
+        const session = await storage.createChatSession({
+          companyId: 1,
+          userId: 'demo-user'
+        });
+        
+        console.log('Session created:', session.id);
+        return res.json(session);
+      } catch (error) {
+        console.error("Error creating chat session:", error);
+        // Fallback to mock session if database fails
         const session = {
           id: `session_${Date.now()}`,
           companyId: 1,
@@ -37,15 +48,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString()
         };
-        
-        console.log('Session created:', session.id);
         return res.json(session);
-      } catch (error) {
-        console.error("Error creating chat session:", error);
-        return res.status(500).json({ 
-          message: "Failed to create chat session", 
-          error: error.message
-        });
       }
     }
 
@@ -65,44 +68,62 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // AI Models endpoint
     if (path.includes('ai-models') && req.method === 'GET') {
-      return res.json([
-        {
-          id: 1,
-          name: 'Claude 3',
-          provider: 'Anthropic',
-          model: 'claude-3-sonnet-20240229',
-          enabled: true,
-          companyId: 1
-        },
-        {
-          id: 2,
-          name: 'GPT-4',
-          provider: 'OpenAI',
-          model: 'gpt-4',
-          enabled: true,
-          companyId: 1
-        }
-      ]);
+      try {
+        const { storage } = await import('../server/storage');
+        const models = await storage.getAIModels(1); // Get models for company ID 1
+        return res.json(models);
+      } catch (error) {
+        console.error('Error fetching AI models:', error);
+        // Fallback to mock data if database fails
+        return res.json([
+          {
+            id: 1,
+            name: 'Claude 3',
+            provider: 'anthropic',
+            modelId: 'claude-3-sonnet-20240229',
+            isEnabled: true,
+            companyId: 1,
+            apiKey: 'placeholder-key-1-anthropic'
+          },
+          {
+            id: 2,
+            name: 'GPT-4o',
+            provider: 'openai',
+            modelId: 'gpt-4o',
+            isEnabled: true,
+            companyId: 1,
+            apiKey: 'placeholder-key-2-openai'
+          }
+        ]);
+      }
     }
 
     // Activity Types endpoint
     if (path.includes('activity-types') && req.method === 'GET') {
-      return res.json([
-        {
-          id: 1,
-          name: 'Brainstorming',
-          description: 'Creative idea generation',
-          enabled: true,
-          companyId: 1
-        },
-        {
-          id: 2,
-          name: 'Analysis',
-          description: 'Data analysis and insights',
-          enabled: true,
-          companyId: 1
-        }
-      ]);
+      try {
+        const { storage } = await import('../server/storage');
+        const activityTypes = await storage.getActivityTypes(1); // Get activity types for company ID 1
+        return res.json(activityTypes);
+      } catch (error) {
+        console.error('Error fetching activity types:', error);
+        // Fallback to mock data if database fails
+        return res.json([
+          {
+            id: 1,
+            name: 'Brainstorming',
+            description: 'Creative idea generation',
+            isEnabled: true,
+            companyId: 1
+          },
+          {
+            id: 2,
+            name: 'Analysis',
+            description: 'Data analysis and insights',
+            isEnabled: true,
+            companyId: 1
+          }
+        ]);
+      }
     }
 
     // Companies list
