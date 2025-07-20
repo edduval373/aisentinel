@@ -1,11 +1,17 @@
-import { execSync } from 'child_process';
+import { build } from 'vite';
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 console.log('Building application for Vercel...');
 
 try {
-  // Clean build for Vercel
-  console.log('Building client...');
-  execSync('vite build --config vite.config.production.ts', { stdio: 'inherit' });
+  // Use Vite API directly to avoid command line issues
+  await build({
+    configFile: path.resolve(__dirname, 'vite.config.production.ts'),
+    mode: 'production'
+  });
   
   console.log('Build completed successfully!');
 } catch (error) {
