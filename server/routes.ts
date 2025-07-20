@@ -37,16 +37,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Unauthenticated AI models route for authentication bypass
-  app.get('/api/ai-models', async (req: any, res) => {
+  // AI models route with proper authentication
+  app.get('/api/ai-models', optionalAuth, async (req: any, res) => {
     try {
-      console.log("Fetching AI models for authentication bypass...");
-      // For authentication bypass, use company ID 1 (Horizon Edge Enterprises) from Railway
-      const aiModels = await storage.getAiModels(1);
+      let companyId = 1; // Default fallback
+      
+      if (req.user) {
+        // Authenticated user - get their company
+        const user = await storage.getUser(req.user.claims.sub);
+        companyId = user?.companyId || 1;
+        console.log("Fetching AI models for authenticated user, company:", companyId);
+      } else {
+        // Unauthenticated - use default company for demo
+        console.log("Fetching AI models for unauthenticated user, using default company:", companyId);
+      }
+      
+      const aiModels = await storage.getAiModels(companyId);
       console.log("AI Models fetched:", aiModels.length);
       res.json(aiModels);
     } catch (error) {
-      console.error("Error fetching AI models for bypass:", error);
+      console.error("Error fetching AI models:", error);
       res.status(500).json({ message: "Failed to fetch AI models" });
     }
   });
@@ -65,13 +75,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Unauthenticated AI model update route for authentication bypass
-  app.patch('/api/ai-models/:id', async (req: any, res) => {
+  // AI model update route with role-based authentication
+  app.patch('/api/ai-models/:id', optionalAuth, async (req: any, res) => {
     try {
-      console.log("Updating AI model for authentication bypass...");
       const id = parseInt(req.params.id);
       
-      // Auto-add missing fields as we do in the frontend
+      if (req.user) {
+        // Authenticated user - check role permissions
+        const user = await storage.getUser(req.user.claims.sub);
+        const userRoleLevel = user?.roleLevel || 1;
+        
+        if (userRoleLevel < 99) { // Must be owner (99) or super-user (100)
+          return res.status(403).json({ message: "Owner access required to update AI models" });
+        }
+        
+        console.log("Updating AI model for authenticated user:", user.email, "role level:", userRoleLevel);
+      } else {
+        // Allow unauthenticated updates for demo mode
+        console.log("Updating AI model for unauthenticated demo user");
+      }
+      
+      // Auto-add missing fields
       const modelData = {
         ...req.body,
         organizationId: req.body.organizationId || "company-1",
@@ -84,7 +108,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("Model updated successfully:", updatedModel.id);
       res.json(updatedModel);
     } catch (error) {
-      console.error("Error updating AI model for bypass:", error);
+      console.error("Error updating AI model:", error);
       res.status(500).json({ message: "Failed to update AI model", error: error.message });
     }
   });
@@ -92,46 +116,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication routes
   setupAuthRoutes(app);
 
-  // Enable Replit Auth if configured
-  if (process.env.ENABLE_REPLIT_AUTH === 'true') {
-    await setupAuth(app);
-  }
+  // Enable Replit Auth (always enabled for proper role-based access)
+  process.env.ENABLE_REPLIT_AUTH = 'true';
+  await setupAuth(app);
 
   // Initialize default AI models and activity types
   await initializeDefaultData();
 
-  // Legacy auth route (for backward compatibility) - only if Replit Auth is enabled
-  if (process.env.ENABLE_REPLIT_AUTH === 'true') {
-    app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
-      try {
+  // Auth route for getting authenticated user
+  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      res.json(user);
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      res.status(500).json({ message: "Failed to fetch user" });
+    }
+  });
+
+  // Current user route with proper authentication
+  app.get('/api/user/current', optionalAuth, async (req: any, res) => {
+    try {
+      if (req.user) {
+        // Authenticated user - return their actual data
         const userId = req.user.claims.sub;
         const user = await storage.getUser(userId);
-        res.json(user);
-      } catch (error) {
-        console.error("Error fetching user:", error);
-        res.status(500).json({ message: "Failed to fetch user" });
+        
+        if (user) {
+          console.log("Returning authenticated user:", user.email, "role:", user.role);
+          return res.json(user);
+        } else {
+          return res.status(404).json({ message: "User not found" });
+        }
+      } else {
+        // Unauthenticated - return demo super-user for demo mode
+        console.log("Returning demo super-user for unauthenticated access");
+        const superUsers = await storage.getUsersByRole('super-user');
+        if (superUsers.length > 0) {
+          return res.json(superUsers[0]);
+        }
+        
+        return res.status(404).json({ message: "No super-user found in database" });
       }
-    });
-  } else {
-    // Return unauthorized if Replit Auth is disabled
-    app.get('/api/auth/user', async (req: any, res) => {
-      res.status(401).json({ message: "Unauthorized" });
-    });
-  }
-
-  // Unauthenticated route to get current user (pulls super-user from Railway database)
-  app.get('/api/user/current', async (req: any, res) => {
-    try {
-      // For complete authentication bypass, always return the super-user from Railway database
-      const superUsers = await storage.getUsersByRole('super-user');
-      if (superUsers.length > 0) {
-        return res.json(superUsers[0]);
-      }
-
-      res.status(404).json({ message: "No super-user found in Railway database" });
     } catch (error) {
-      console.error("Error fetching super-user from Railway database:", error);
-      res.status(500).json({ message: "Failed to fetch user from Railway database" });
+      console.error("Error fetching current user:", error);
+      res.status(500).json({ message: "Failed to fetch user" });
     }
   });
 

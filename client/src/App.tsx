@@ -31,7 +31,7 @@ import NotFound from "@/pages/not-found.tsx";
 
 
 function Router() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user, isSuperUser, isOwner, isAdmin } = useAuth();
 
   // Show loading state while checking authentication
   if (isLoading) {
@@ -45,34 +45,75 @@ function Router() {
     );
   }
 
+  // Create role-based route guard
+  const RoleGuard = ({ children, requiredRole }: { children: React.ReactNode; requiredRole: 'admin' | 'owner' | 'super-user' }) => {
+    const hasAccess = 
+      requiredRole === 'admin' && (isAdmin || isOwner || isSuperUser) ||
+      requiredRole === 'owner' && (isOwner || isSuperUser) ||
+      requiredRole === 'super-user' && isSuperUser;
+
+    if (!isAuthenticated) {
+      return <Landing />;
+    }
+
+    if (!hasAccess) {
+      return (
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Access Denied</h2>
+            <p className="text-gray-600 mb-4">You need {requiredRole} privileges to access this section.</p>
+            <p className="text-sm text-gray-500">Current role: {user?.role || 'user'}</p>
+          </div>
+        </div>
+      );
+    }
+
+    return <>{children}</>;
+  };
+
   return (
     <Switch>
       {/* Authentication routes - always available */}
       <Route path="/login" component={Login} />
       <Route path="/verify" component={VerificationSuccess} />
+      <Route path="/landing" component={Landing} />
       
-      {/* BYPASS LANDING PAGE - GO DIRECTLY TO CHAT */}
-      
-      {/* Always show chat interface - authentication bypassed */}
-      <Route path="/" component={Home} />
+      {/* Main routes */}
+      <Route path="/" component={isAuthenticated ? Home : Landing} />
       <Route path="/demo" component={Home} />
       
-      {/* Protected routes - always accessible in bypass mode */}
-      {(isAuthenticated || true) && (
-        <>
-          <Route path="/demo" component={Home} />
-          <Route path="/test" component={() => <div>Test Route Works!</div>} />
-          <Route path="/admin" component={CompanyManagement} />
-          <Route path="/admin/models" component={AdminModels} />
-          <Route path="/admin/activity-types" component={AdminActivityTypes} />
-          <Route path="/admin/users" component={AdminUsers} />
-          <Route path="/admin/policies" component={AdminPolicies} />
-          <Route path="/admin/logs" component={AdminLogs} />
-          <Route path="/admin/security" component={AdminSecurity} />
-          <Route path="/admin/roles" component={AdminRoles} />
-          <Route path="/admin/analytics" component={AdminAnalytics} />
-          <Route path="/admin/api-config" component={AdminApiConfig} />
-          <Route path="/admin/security-settings" component={AdminSecuritySettings} />
+      {/* Protected admin routes with role-based access */}
+      <Route path="/admin">
+        {() => (
+          <RoleGuard requiredRole="super-user">
+            <CompanyManagement />
+          </RoleGuard>
+        )}
+      </Route>
+      
+      <Route path="/admin/models">
+        {() => (
+          <RoleGuard requiredRole="owner">
+            <AdminModels />
+          </RoleGuard>
+        )}
+      </Route>
+      
+      <Route path="/admin/activity-types">
+        {() => (
+          <RoleGuard requiredRole="admin">
+            <AdminActivityTypes />
+          </RoleGuard>
+        )}
+      </Route>
+      
+      <Route path="/admin/users">
+        {() => (
+          <RoleGuard requiredRole="admin">
+            <AdminUsers />
+          </RoleGuard>
+        )}
+      </Route>
           <Route path="/admin/permissions" component={AdminPermissions} />
           <Route path="/admin/model-settings" component={AdminModelSettings} />
           <Route path="/admin/context-management" component={AdminContextManagement} />

@@ -62,11 +62,38 @@ export function useAuth() {
     }
   };
 
+  // Extract user data for role-based authentication
+  const user = data?.user || null;
+  const isAuthenticated = data?.authenticated || false;
+  const roleLevel = user?.roleLevel || 1;
+  
+  // Role level hierarchy: super-user (100), owner (99), admin (2), user (1)
+  const isAdmin = roleLevel >= 2;
+  const isOwner = roleLevel >= 99;
+  const isSuperUser = roleLevel >= 100;
+  
+  const hasRole = (requiredLevel: number) => {
+    return roleLevel >= requiredLevel;
+  };
+
+  console.log("Authentication check:", {
+    isAuthenticated,
+    role: user?.role,
+    roleLevel,
+    isAdmin,
+    isOwner,
+    isSuperUser
+  });
+
   return {
-    user: data?.user || null,
+    user,
     isLoading,
-    isAuthenticated: data?.authenticated || false,
-    authMethod: 'email-verification',
+    isAuthenticated,
+    isAdmin,
+    isOwner,
+    isSuperUser,
+    hasRole,
+    authMethod: 'replit-auth',
     logout,
     error,
   };
