@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "npx vite build --config vite.config.production.ts",
+  "buildCommand": "cp package-deploy.json package.json && npm run build",
   "outputDirectory": "dist/public",
   "functions": {
     "api/index.ts": {
