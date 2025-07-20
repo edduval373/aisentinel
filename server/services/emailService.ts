@@ -24,10 +24,8 @@ export class EmailService {
   async sendVerificationEmail(email: string, token: string): Promise<boolean> {
     console.log(`Sending verification email to ${email}`);
     
-    // Use the current request URL or fallback to localhost for development
-    const baseUrl = process.env.APP_URL || 
-                   process.env.REPLIT_DEV_DOMAIN ? `https://${process.env.REPLIT_DEV_DOMAIN}` : 
-                   'http://localhost:5000';
+    // Use production URL for deployed app
+    const baseUrl = process.env.APP_URL || 'https://aisentinel.app';
     const verificationUrl = `${baseUrl}/api/auth/verify?token=${token}`;
     
     try {
