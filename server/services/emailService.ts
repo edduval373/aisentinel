@@ -95,6 +95,7 @@ export class EmailService {
         html,
       });
       console.log(`✓ Verification email sent successfully to ${email}`);
+      console.log(`✓ Verification URL for manual access: ${verificationUrl}`);
       return true;
     } catch (error) {
       console.error('SendGrid email error:', error);
