@@ -52,10 +52,13 @@ function Router() {
       
       {/* BYPASS LANDING PAGE - GO DIRECTLY TO CHAT */}
       
-      {/* Protected routes - only show when authenticated */}
-      {isAuthenticated && (
+      {/* Always show chat interface - authentication bypassed */}
+      <Route path="/" component={Home} />
+      <Route path="/demo" component={Home} />
+      
+      {/* Protected routes - always accessible in bypass mode */}
+      {(isAuthenticated || true) && (
         <>
-          <Route path="/" component={Home} />
           <Route path="/demo" component={Home} />
           <Route path="/test" component={() => <div>Test Route Works!</div>} />
           <Route path="/admin" component={CompanyManagement} />
