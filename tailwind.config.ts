@@ -61,6 +61,13 @@ export default {
           border: "var(--sidebar-border)",
           ring: "var(--sidebar-ring)",
         },
+        // AI Sentinel custom colors
+        "sentinel-blue": "var(--sentinel-blue)",
+        "sentinel-green": "var(--sentinel-green)",
+        "sentinel-amber": "var(--sentinel-amber)",
+        "sentinel-red": "var(--sentinel-red)",
+        "sentinel-slate": "var(--sentinel-slate)",
+        "sentinel-slate-light": "var(--sentinel-slate-light)",
       },
       keyframes: {
         "accordion-down": {
