@@ -140,6 +140,14 @@ The application is configured for deployment on Vercel with the following setup:
 
 ```
 Recent Updates:
+- July 20, 2025. Fixed Vercel Serverless Function Authentication Routes:
+  * Added missing authentication verification routes to api/index.ts for production deployment
+  * Implemented auth/verify endpoint to handle email verification links on aisentinel.app
+  * Added auth/request-verification endpoint for sending verification emails from production
+  * Updated user/current endpoint to use real session-based authentication instead of demo mode
+  * Fixed "FUNCTION_INVOCATION_FAILED" error on Vercel by implementing proper authentication handlers
+  * Email verification links now work correctly on the deployed production site
+  * Maintained session cookie handling for secure authentication across serverless functions
 - July 20, 2025. Removed Demo Mode and Implemented Full Authentication:
   * Completely removed all demo/bypass authentication logic from server and client
   * Updated all API routes to require proper Replit Auth authentication (requireAuth middleware)

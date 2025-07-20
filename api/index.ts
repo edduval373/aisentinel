@@ -25,20 +25,34 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
     }
 
-    // Chat session creation  
+    // Chat session creation (authentication required)
     if (path.includes('chat/session') && req.method === 'POST') {
       console.log('Creating chat session...');
       try {
+        const sessionToken = req.headers.cookie?.match(/sessionToken=([^;]+)/)?.[1];
+        
+        if (!sessionToken) {
+          return res.status(401).json({ message: "Authentication required" });
+        }
+
         const { storage } = await import('../server/storage');
-        const companies = await storage.getCompanies();
-        const companyId = companies[0]?.id || 1;
+        const userSession = await storage.getUserSession(sessionToken);
+        
+        if (!userSession) {
+          return res.status(401).json({ message: "Invalid session" });
+        }
+
+        const user = await storage.getUser(userSession.userId);
+        if (!user || !user.companyId) {
+          return res.status(401).json({ message: "User not found or no company assigned" });
+        }
         
         const session = await storage.createChatSession({
-          companyId: companyId,
-          userId: 'demo-user'
+          companyId: user.companyId,
+          userId: user.id
         });
         
-        console.log('Session created for company:', companyId, 'session:', session.id);
+        console.log('Session created for company:', user.companyId, 'session:', session.id);
         return res.json(session);
       } catch (error) {
         console.error("Error creating chat session:", error);
@@ -49,46 +63,129 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     }
 
-    // User current endpoint (for authentication bypass with super-user access)
-    if (path.includes('user/current') && req.method === 'GET') {
+    // Authentication verification endpoint
+    if (path.includes('auth/verify') && req.method === 'GET') {
       try {
+        const { authService } = await import('../server/services/authService');
         const { storage } = await import('../server/storage');
-        const companies = await storage.getCompanies();
-        const company = companies[0]; // Get first company
         
-        return res.json({
-          id: 'demo-user',
-          email: 'demo@aisentinel.app',
-          firstName: 'Demo',
-          lastName: 'User',
-          companyId: company?.id || 1,
-          companyName: company?.name || 'Horizon Edge Enterprises',
-          role: 'super-user',
-          roleLevel: 100
-        });
-      } catch (error) {
-        return res.json({
-          id: 'demo-user',
-          email: 'demo@aisentinel.app',
-          firstName: 'Demo',
-          lastName: 'User',
-          companyId: 1,
-          companyName: 'Horizon Edge Enterprises',
-          role: 'super-user',
-          roleLevel: 100
-        });
+        const token = req.query.token as string;
+        
+        if (!token) {
+          return res.status(400).json({ success: false, message: "No verification token provided" });
+        }
+
+        const session = await authService.verifyEmailToken(token);
+        
+        if (!session) {
+          return res.status(400).json({ success: false, message: "Invalid or expired verification token" });
+        }
+
+        // Set session cookie
+        res.setHeader('Set-Cookie', [
+          `sessionToken=${session.sessionToken}; HttpOnly; Secure; SameSite=Strict; Max-Age=${30 * 24 * 60 * 60}; Path=/`
+        ]);
+
+        // Redirect to frontend verification success page
+        return res.redirect('/verify?success=true');
+      } catch (error: any) {
+        console.error("Verification error:", error);
+        return res.status(500).json({ success: false, message: "An error occurred during verification" });
       }
     }
 
-    // AI Models endpoint
+    // Email verification request endpoint
+    if (path.includes('auth/request-verification') && req.method === 'POST') {
+      try {
+        const { authService } = await import('../server/services/authService');
+        const { email } = req.body;
+
+        if (!email) {
+          return res.status(400).json({ success: false, message: "Email is required" });
+        }
+
+        const success = await authService.initiateEmailVerification(email);
+        
+        if (success) {
+          return res.json({ success: true, message: "Verification email sent" });
+        } else {
+          return res.status(500).json({ success: false, message: "Failed to send verification email" });
+        }
+      } catch (error: any) {
+        console.error("Request verification error:", error);
+        return res.status(500).json({ success: false, message: "An error occurred" });
+      }
+    }
+
+    // User current endpoint (authentication required)
+    if (path.includes('user/current') && req.method === 'GET') {
+      try {
+        const sessionToken = req.headers.cookie?.match(/sessionToken=([^;]+)/)?.[1];
+        
+        if (!sessionToken) {
+          return res.status(401).json({ message: "Not authenticated" });
+        }
+
+        const { storage } = await import('../server/storage');
+        const session = await storage.getUserSession(sessionToken);
+        
+        if (!session) {
+          return res.status(401).json({ message: "Invalid session" });
+        }
+
+        const user = await storage.getUser(session.userId);
+        
+        if (!user) {
+          return res.status(401).json({ message: "User not found" });
+        }
+
+        let companyName = null;
+        if (user.companyId) {
+          const company = await storage.getCompanyById(user.companyId);
+          companyName = company?.name;
+        }
+
+        return res.json({
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          companyId: user.companyId,
+          companyName,
+          role: user.role,
+          roleLevel: user.roleLevel
+        });
+      } catch (error) {
+        console.error("Current user error:", error);
+        return res.status(500).json({ message: "Internal server error" });
+      }
+    }
+
+
+
+    // AI Models endpoint (authentication required)
     if (path.includes('ai-models') && req.method === 'GET') {
       try {
-        const { storage } = await import('../server/storage');
-        const companies = await storage.getCompanies();
-        const companyId = companies[0]?.id || 1;
+        const sessionToken = req.headers.cookie?.match(/sessionToken=([^;]+)/)?.[1];
         
-        const models = await storage.getAIModels(companyId);
-        console.log(`Fetched ${models.length} AI models for company ${companyId}`);
+        if (!sessionToken) {
+          return res.status(401).json({ message: "Authentication required" });
+        }
+
+        const { storage } = await import('../server/storage');
+        const userSession = await storage.getUserSession(sessionToken);
+        
+        if (!userSession) {
+          return res.status(401).json({ message: "Invalid session" });
+        }
+
+        const user = await storage.getUser(userSession.userId);
+        if (!user || !user.companyId) {
+          return res.status(401).json({ message: "User not found or no company assigned" });
+        }
+        
+        const models = await storage.getAIModels(user.companyId);
+        console.log(`Fetched ${models.length} AI models for company ${user.companyId}`);
         return res.json(models);
       } catch (error) {
         console.error('Error fetching AI models:', error);
@@ -99,15 +196,29 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     }
 
-    // Activity Types endpoint
+    // Activity Types endpoint (authentication required)
     if (path.includes('activity-types') && req.method === 'GET') {
       try {
-        const { storage } = await import('../server/storage');
-        const companies = await storage.getCompanies();
-        const companyId = companies[0]?.id || 1;
+        const sessionToken = req.headers.cookie?.match(/sessionToken=([^;]+)/)?.[1];
         
-        const activityTypes = await storage.getActivityTypes(companyId);
-        console.log(`Fetched ${activityTypes.length} activity types for company ${companyId}`);
+        if (!sessionToken) {
+          return res.status(401).json({ message: "Authentication required" });
+        }
+
+        const { storage } = await import('../server/storage');
+        const userSession = await storage.getUserSession(sessionToken);
+        
+        if (!userSession) {
+          return res.status(401).json({ message: "Invalid session" });
+        }
+
+        const user = await storage.getUser(userSession.userId);
+        if (!user || !user.companyId) {
+          return res.status(401).json({ message: "User not found or no company assigned" });
+        }
+        
+        const activityTypes = await storage.getActivityTypes(user.companyId);
+        console.log(`Fetched ${activityTypes.length} activity types for company ${user.companyId}`);
         return res.json(activityTypes);
       } catch (error) {
         console.error('Error fetching activity types:', error);
@@ -118,34 +229,29 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     }
 
-    // Companies list
+    // Companies list (super-user only)
     if (path.includes('companies') && req.method === 'GET') {
       try {
+        const sessionToken = req.headers.cookie?.match(/sessionToken=([^;]+)/)?.[1];
+        
+        if (!sessionToken) {
+          return res.status(401).json({ message: "Authentication required" });
+        }
+
         const { storage } = await import('../server/storage');
+        const userSession = await storage.getUserSession(sessionToken);
+        
+        if (!userSession) {
+          return res.status(401).json({ message: "Invalid session" });
+        }
+
+        const user = await storage.getUser(userSession.userId);
+        if (!user || user.roleLevel < 100) {
+          return res.status(403).json({ message: "Super-user access required" });
+        }
+        
         const companies = await storage.getCompanies();
         return res.json(companies);
-      } catch (error) {
-        return res.status(500).json({ message: "Database error", error: error.message });
-      }
-    }
-
-    // AI models list  
-    if (path.includes('ai-models') && req.method === 'GET') {
-      try {
-        const { storage } = await import('../server/storage');
-        const aiModels = await storage.getAiModels(1);
-        return res.json(aiModels);
-      } catch (error) {
-        return res.status(500).json({ message: "Database error", error: error.message });
-      }
-    }
-
-    // Activity types list
-    if (path.includes('activity-types') && req.method === 'GET') {
-      try {
-        const { storage } = await import('../server/storage');
-        const activityTypes = await storage.getActivityTypes(1);
-        return res.json(activityTypes);
       } catch (error) {
         return res.status(500).json({ message: "Database error", error: error.message });
       }
