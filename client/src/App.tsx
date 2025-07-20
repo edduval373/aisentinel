@@ -114,18 +114,136 @@ function Router() {
           </RoleGuard>
         )}
       </Route>
-          <Route path="/admin/permissions" component={AdminPermissions} />
-          <Route path="/admin/model-settings" component={AdminModelSettings} />
-          <Route path="/admin/context-management" component={AdminContextManagement} />
-          <Route path="/admin/create-models" component={CreateModels} />
-          <Route path="/admin/model-fusion" component={ModelFusion} />
-          <Route path="/admin/setup-api-keys" component={SetupApiKeys} />
-          <Route path="/admin/companies" component={CompanyManagement} />
-          <Route path="/company-setup" component={CompanySetup} />
-          <Route path="/admin/company-setup" component={CompanySetup} />
-        </>
-      )}
       
+      <Route path="/admin/policies">
+        {() => (
+          <RoleGuard requiredRole="admin">
+            <AdminPolicies />
+          </RoleGuard>
+        )}
+      </Route>
+      
+      <Route path="/admin/logs">
+        {() => (
+          <RoleGuard requiredRole="admin">
+            <AdminLogs />
+          </RoleGuard>
+        )}
+      </Route>
+      
+      <Route path="/admin/security">
+        {() => (
+          <RoleGuard requiredRole="admin">
+            <AdminSecurity />
+          </RoleGuard>
+        )}
+      </Route>
+      
+      <Route path="/admin/roles">
+        {() => (
+          <RoleGuard requiredRole="admin">
+            <AdminRoles />
+          </RoleGuard>
+        )}
+      </Route>
+      
+      <Route path="/admin/analytics">
+        {() => (
+          <RoleGuard requiredRole="admin">
+            <AdminAnalytics />
+          </RoleGuard>
+        )}
+      </Route>
+      
+      <Route path="/admin/api-config">
+        {() => (
+          <RoleGuard requiredRole="owner">
+            <AdminApiConfig />
+          </RoleGuard>
+        )}
+      </Route>
+      
+      <Route path="/admin/security-settings">
+        {() => (
+          <RoleGuard requiredRole="admin">
+            <AdminSecuritySettings />
+          </RoleGuard>
+        )}
+      </Route>
+      
+      <Route path="/admin/permissions">
+        {() => (
+          <RoleGuard requiredRole="admin">
+            <AdminPermissions />
+          </RoleGuard>
+        )}
+      </Route>
+      
+      <Route path="/admin/model-settings">
+        {() => (
+          <RoleGuard requiredRole="owner">
+            <AdminModelSettings />
+          </RoleGuard>
+        )}
+      </Route>
+      
+      <Route path="/admin/context-management">
+        {() => (
+          <RoleGuard requiredRole="admin">
+            <AdminContextManagement />
+          </RoleGuard>
+        )}
+      </Route>
+      
+      <Route path="/admin/create-models">
+        {() => (
+          <RoleGuard requiredRole="owner">
+            <CreateModels />
+          </RoleGuard>
+        )}
+      </Route>
+      
+      <Route path="/admin/model-fusion">
+        {() => (
+          <RoleGuard requiredRole="owner">
+            <ModelFusion />
+          </RoleGuard>
+        )}
+      </Route>
+      
+      <Route path="/admin/setup-api-keys">
+        {() => (
+          <RoleGuard requiredRole="owner">
+            <SetupApiKeys />
+          </RoleGuard>
+        )}
+      </Route>
+      
+      <Route path="/admin/companies">
+        {() => (
+          <RoleGuard requiredRole="super-user">
+            <CompanyManagement />
+          </RoleGuard>
+        )}
+      </Route>
+      
+      <Route path="/company-setup">
+        {() => (
+          <RoleGuard requiredRole="owner">
+            <CompanySetup />
+          </RoleGuard>
+        )}
+      </Route>
+      
+      <Route path="/admin/company-setup">
+        {() => (
+          <RoleGuard requiredRole="owner">
+            <CompanySetup />
+          </RoleGuard>
+        )}
+      </Route>
+      
+      {/* Fallback route */}
       <Route path="*" component={NotFound} />
     </Switch>
   );

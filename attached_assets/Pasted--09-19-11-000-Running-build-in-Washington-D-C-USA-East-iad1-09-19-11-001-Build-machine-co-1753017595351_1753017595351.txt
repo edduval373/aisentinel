@@ -1,0 +1,77 @@
+[09:19:11.000] Running build in Washington, D.C., USA (East) – iad1
+[09:19:11.001] Build machine configuration: 2 cores, 8 GB
+[09:19:11.026] Cloning github.com/edduval373/aisentinel (Branch: main, Commit: fcc7cd0)
+[09:19:11.769] Cloning completed: 743.000ms
+[09:19:11.831] Found .vercelignore
+[09:19:11.866] Removed 247 ignored files defined in .vercelignore
+[09:19:11.866]   /.git/config
+[09:19:11.866]   /.git/description
+[09:19:11.866]   /.git/FETCH_HEAD
+[09:19:11.866]   /.git/HEAD
+[09:19:11.866]   /.git/hooks/applypatch-msg.sample
+[09:19:11.866]   /.git/hooks/commit-msg.sample
+[09:19:11.867]   /.git/hooks/fsmonitor-watchman.sample
+[09:19:11.867]   /.git/hooks/post-update.sample
+[09:19:11.867]   /.git/hooks/pre-applypatch.sample
+[09:19:11.867]   /.git/hooks/pre-commit.sample
+[09:19:12.455] Restored build cache from previous deployment (BfkzLDHJzpjUPM6DY43t3zU3tZss)
+[09:19:13.122] Running "vercel build"
+[09:19:14.659] Vercel CLI 44.4.3
+[09:19:15.658] Running "install" command: `npm install`...
+[09:19:18.154] 
+[09:19:18.154] up to date, audited 784 packages in 2s
+[09:19:18.154] 
+[09:19:18.155] 177 packages are looking for funding
+[09:19:18.155]   run `npm fund` for details
+[09:19:18.172] 
+[09:19:18.173] 12 vulnerabilities (3 low, 5 moderate, 4 high)
+[09:19:18.173] 
+[09:19:18.173] To address issues that do not require attention, run:
+[09:19:18.173]   npm audit fix
+[09:19:18.173] 
+[09:19:18.173] To address all issues possible (including breaking changes), run:
+[09:19:18.174]   npm audit fix --force
+[09:19:18.174] 
+[09:19:18.174] Some issues need review, and may require choosing
+[09:19:18.174] a different dependency.
+[09:19:18.174] 
+[09:19:18.174] Run `npm audit` for details.
+[09:19:18.944] [36mvite v5.4.19 [32mbuilding for production...[36m[39m
+[09:19:18.998] transforming...
+[09:19:19.044] [32m✓[39m 4 modules transformed.
+[09:19:19.046] [31mx[39m Build failed in 75ms
+[09:19:19.047] [31merror during build:
+[09:19:19.047] [31m[vite:esbuild] Transform failed with 2 errors:
+[09:19:19.047] /vercel/path0/client/src/App.tsx:126:10: ERROR: Unexpected closing fragment tag does not match opening "Switch" tag
+[09:19:19.047] /vercel/path0/client/src/App.tsx:130:13: ERROR: Unterminated regular expression[31m
+[09:19:19.048] file: [36m/vercel/path0/client/src/App.tsx:126:10[31m
+[09:19:19.048] [33m
+[09:19:19.048] [33mUnexpected closing fragment tag does not match opening "Switch" tag[33m
+[09:19:19.048] 124|            <Route path="/company-setup" component={CompanySetup} />
+[09:19:19.048] 125|            <Route path="/admin/company-setup" component={CompanySetup} />
+[09:19:19.049] 126|          </>
+[09:19:19.049]    |            ^
+[09:19:19.050] 127|        )}
+[09:19:19.050] 128|        
+[09:19:19.050] 
+[09:19:19.051] [33mUnterminated regular expression[33m
+[09:19:19.051] 128|        
+[09:19:19.051] 129|        <Route path="*" component={NotFound} />
+[09:19:19.051] 130|      </Switch>
+[09:19:19.051]    |               ^
+[09:19:19.051] 131|    );
+[09:19:19.051] 132|  }
+[09:19:19.051] [31m
+[09:19:19.051]     at failureErrorWithLog (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:1472:15)
+[09:19:19.051]     at /vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:755:50
+[09:19:19.051]     at responseCallbacks.<computed> (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:622:9)
+[09:19:19.052]     at handleIncomingPacket (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:677:12)
+[09:19:19.052]     at Socket.readFromStdout (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:600:7)
+[09:19:19.052]     at Socket.emit (node:events:518:28)
+[09:19:19.052]     at addChunk (node:internal/streams/readable:561:12)
+[09:19:19.052]     at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+[09:19:19.052]     at Readable.push (node:internal/streams/readable:392:5)
+[09:19:19.052]     at Pipe.onStreamRead (node:internal/stream_base_commons:189:23)[39m
+[09:19:19.070] Error: Command "rm -f public/index.html && npx vite build --config vite.config.production.ts" exited with 1
+[09:19:19.677] 
+[09:19:22.497] Exiting build container
