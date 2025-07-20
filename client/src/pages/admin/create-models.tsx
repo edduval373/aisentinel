@@ -161,7 +161,7 @@ export default function CreateModels() {
       maxRetries: 3,
       timeout: 30000,
       rateLimit: 100,
-      organizationId: "",
+      organizationId: "company-1",
     },
   });
 
@@ -222,6 +222,12 @@ export default function CreateModels() {
 
   const handleEditModel = (model: AiModel) => {
     setEditingModel(model);
+    // Ensure requestHeaders is a valid JSON string
+    let headers = model.requestHeaders;
+    if (!headers || headers === "[object Object]") {
+      headers = '{"Content-Type": "application/json"}';
+    }
+    
     modelForm.reset({
       name: model.name,
       provider: model.provider,
@@ -233,13 +239,13 @@ export default function CreateModels() {
       apiKey: model.apiKey,
       apiEndpoint: model.apiEndpoint,
       authMethod: model.authMethod,
-      requestHeaders: model.requestHeaders,
+      requestHeaders: headers,
       maxTokens: model.maxTokens,
       temperature: model.temperature,
       maxRetries: model.maxRetries,
       timeout: model.timeout,
       rateLimit: model.rateLimit,
-      organizationId: model.organizationId || "",
+      organizationId: model.organizationId || "company-1",
     });
     setShowEditDialog(true);
   };
@@ -273,6 +279,8 @@ export default function CreateModels() {
       if (providerConfig.defaultEndpoint) {
         modelForm.setValue("apiEndpoint", providerConfig.defaultEndpoint);
       }
+      modelForm.setValue("authMethod", providerConfig.authMethod);
+      modelForm.setValue("requestHeaders", providerConfig.defaultHeaders);
       modelForm.setValue("authMethod", providerConfig.authMethod);
       modelForm.setValue("requestHeaders", providerConfig.defaultHeaders);
     }
