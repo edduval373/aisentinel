@@ -2,6 +2,7 @@
   "version": 2,
   "buildCommand": "vite build --config vite.config.production.ts",
   "outputDirectory": "dist/public",
+  "installCommand": "npm install",
   "functions": {
     "api/index.ts": {
       "maxDuration": 30
@@ -11,6 +12,10 @@
     {
       "source": "/api/(.*)",
       "destination": "/api/index.ts"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
