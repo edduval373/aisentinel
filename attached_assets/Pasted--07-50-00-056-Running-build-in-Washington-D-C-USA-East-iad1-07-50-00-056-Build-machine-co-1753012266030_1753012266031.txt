@@ -1,0 +1,61 @@
+[07:50:00.056] Running build in Washington, D.C., USA (East) – iad1
+[07:50:00.056] Build machine configuration: 2 cores, 8 GB
+[07:50:00.097] Cloning github.com/edduval373/aisentinel (Branch: main, Commit: bb8b261)
+[07:50:00.798] Cloning completed: 701.000ms
+[07:50:00.872] Found .vercelignore
+[07:50:00.912] Removed 236 ignored files defined in .vercelignore
+[07:50:00.912]   /.git/config
+[07:50:00.912]   /.git/description
+[07:50:00.912]   /.git/FETCH_HEAD
+[07:50:00.912]   /.git/HEAD
+[07:50:00.912]   /.git/hooks/applypatch-msg.sample
+[07:50:00.912]   /.git/hooks/commit-msg.sample
+[07:50:00.913]   /.git/hooks/fsmonitor-watchman.sample
+[07:50:00.913]   /.git/hooks/post-update.sample
+[07:50:00.913]   /.git/hooks/pre-applypatch.sample
+[07:50:00.913]   /.git/hooks/pre-commit.sample
+[07:50:01.538] Restored build cache from previous deployment (2iaMJzo6GTQ632iQ4YbySAVF27x2)
+[07:50:03.909] Running "vercel build"
+[07:50:04.399] Vercel CLI 44.4.3
+[07:50:05.121] Running "install" command: `npm install`...
+[07:50:07.550] 
+[07:50:07.551] up to date, audited 784 packages in 2s
+[07:50:07.552] 
+[07:50:07.552] 177 packages are looking for funding
+[07:50:07.552]   run `npm fund` for details
+[07:50:07.567] 
+[07:50:07.567] 12 vulnerabilities (3 low, 5 moderate, 4 high)
+[07:50:07.568] 
+[07:50:07.568] To address issues that do not require attention, run:
+[07:50:07.568]   npm audit fix
+[07:50:07.568] 
+[07:50:07.569] To address all issues possible (including breaking changes), run:
+[07:50:07.569]   npm audit fix --force
+[07:50:07.569] 
+[07:50:07.569] Some issues need review, and may require choosing
+[07:50:07.571] a different dependency.
+[07:50:07.571] 
+[07:50:07.571] Run `npm audit` for details.
+[07:50:08.237] [36mvite v5.4.19 [32mbuilding for production...[36m[39m
+[07:50:08.238] [33m
+[07:50:08.238] [1m(!)[22m outDir [37m[2m/vercel/path0/dist/public[22m[33m is not inside project root and will not be emptied.
+[07:50:08.239] Use --emptyOutDir to override.
+[07:50:08.239] [39m
+[07:50:08.289] transforming...
+[07:50:08.384] [32m✓[39m 5 modules transformed.
+[07:50:08.390] [31mx[39m Build failed in 124ms
+[07:50:08.390] [31merror during build:
+[07:50:08.391] [31m[vite]: Rollup failed to resolve import "@/components/ui/toaster" from "/vercel/path0/client/src/App.tsx".
+[07:50:08.391] This is most likely unintended because it can break your application at runtime.
+[07:50:08.391] If you do want to externalize this module explicitly add it to
+[07:50:08.391] `build.rollupOptions.external`[31m
+[07:50:08.391]     at viteWarn (file:///vercel/path0/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:65839:17)
+[07:50:08.391]     at onRollupWarning (file:///vercel/path0/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:65871:5)
+[07:50:08.392]     at onwarn (file:///vercel/path0/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:65534:7)
+[07:50:08.392]     at file:///vercel/path0/node_modules/rollup/dist/es/shared/node-entry.js:19452:13
+[07:50:08.392]     at Object.logger [as onLog] (file:///vercel/path0/node_modules/rollup/dist/es/shared/node-entry.js:21178:9)
+[07:50:08.392]     at ModuleLoader.handleInvalidResolvedId (file:///vercel/path0/node_modules/rollup/dist/es/shared/node-entry.js:20067:26)
+[07:50:08.392]     at file:///vercel/path0/node_modules/rollup/dist/es/shared/node-entry.js:20025:26[39m
+[07:50:08.409] Error: Command "cd client && npx vite build --outDir ../dist/public" exited with 1
+[07:50:08.705] 
+[07:50:12.066] Exiting build container
