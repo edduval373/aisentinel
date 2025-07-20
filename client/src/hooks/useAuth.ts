@@ -26,11 +26,13 @@ export function useAuth() {
     queryFn: async () => {
       try {
         const user = await apiRequest('/api/user/current');
+        console.log("Authentication successful:", user);
         return { 
           authenticated: true, 
           user: user
         };
       } catch (error) {
+        console.log("Authentication failed:", error);
         // No fallback - user must be authenticated
         return { 
           authenticated: false, 

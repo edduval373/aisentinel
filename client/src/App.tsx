@@ -32,6 +32,8 @@ import NotFound from "@/pages/not-found.tsx";
 
 function Router() {
   const { isAuthenticated, isLoading, user, isSuperUser, isOwner, isAdmin } = useAuth();
+  
+  console.log("Authentication check:", { isAuthenticated, role: user?.role, roleLevel: user?.roleLevel, isAdmin, isOwner, isSuperUser });
 
   // Show loading state while checking authentication
   if (isLoading) {
@@ -78,8 +80,17 @@ function Router() {
       <Route path="/verify" component={VerificationSuccess} />
       <Route path="/landing" component={Landing} />
       
-      {/* Main routes - authentication required */}
-      <Route path="/" component={isAuthenticated ? Home : Landing} />
+      {/* Main routes - show landing page if not authenticated */}
+      <Route path="/">
+        {() => {
+          if (!isAuthenticated) {
+            console.log("Not authenticated, showing landing page");
+            return <Landing />;
+          }
+          console.log("Authenticated, showing home");
+          return <Home />;
+        }}
+      </Route>
       
       {/* Protected admin routes with role-based access */}
       <Route path="/admin">
