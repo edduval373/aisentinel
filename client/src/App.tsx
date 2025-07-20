@@ -78,9 +78,8 @@ function Router() {
       <Route path="/verify" component={VerificationSuccess} />
       <Route path="/landing" component={Landing} />
       
-      {/* Main routes */}
+      {/* Main routes - authentication required */}
       <Route path="/" component={isAuthenticated ? Home : Landing} />
-      <Route path="/demo" component={Home} />
       
       {/* Protected admin routes with role-based access */}
       <Route path="/admin">

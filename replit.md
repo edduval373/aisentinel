@@ -140,6 +140,15 @@ The application is configured for deployment on Vercel with the following setup:
 
 ```
 Recent Updates:
+- July 20, 2025. Removed Demo Mode and Implemented Full Authentication:
+  * Completely removed all demo/bypass authentication logic from server and client
+  * Updated all API routes to require proper Replit Auth authentication (requireAuth middleware)
+  * Removed fallback demo user and anonymous access patterns
+  * Updated frontend to show landing page for unauthenticated users only
+  * All chat sessions, AI models, and activity types now require authenticated user with valid company
+  * Enhanced API key management to use environment variables exclusively (no hardcoded keys)
+  * Perplexity API integration now uses proper environment variable (PERPLEXITY_API_KEY)
+  * Application now enforces proper role-based access control for all features
 - July 20, 2025. Fixed First Page Display Issue and Deployment Configuration:
   * Resolved routing logic to properly show landing page for unauthenticated users
   * Added authentication checks in Router component to prevent broken chat interface

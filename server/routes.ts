@@ -21,6 +21,8 @@ import multer from "multer";
 const upload = multer();
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Define authentication middleware
+  const requireAuth = isAuthenticated;
   // Test API route first - highest priority
   app.get('/api/health', (req, res) => {
     console.log('Health check API route hit');
@@ -41,20 +43,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // AI models route with proper authentication
-  app.get('/api/ai-models', optionalAuth, async (req: any, res) => {
+  // AI models route with required authentication
+  app.get('/api/ai-models', requireAuth, async (req: any, res) => {
     try {
-      let companyId = 1; // Default fallback
-      
-      if (req.user) {
-        // Authenticated user - get their company
-        const user = await storage.getUser(req.user.claims.sub);
-        companyId = user?.companyId || 1;
-        console.log("Fetching AI models for authenticated user, company:", companyId);
-      } else {
-        // Unauthenticated - use default company for demo
-        console.log("Fetching AI models for unauthenticated user, using default company:", companyId);
+      const user = await storage.getUser(req.user.claims.sub);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
       }
+      
+      const companyId = user.companyId;
+      console.log("Fetching AI models for authenticated user, company:", companyId);
       
       const aiModels = await storage.getAiModels(companyId);
       console.log("AI Models fetched:", aiModels.length);
@@ -65,44 +63,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Unauthenticated activity types route for authentication bypass  
-  app.get('/api/activity-types', async (req: any, res) => {
+  // Activity types route with required authentication
+  app.get('/api/activity-types', requireAuth, async (req: any, res) => {
     try {
-      console.log("Fetching activity types for authentication bypass...");
-      // For authentication bypass, use company ID 1 (Horizon Edge Enterprises) from Railway
-      const activityTypes = await storage.getActivityTypes(1);
+      const user = await storage.getUser(req.user.claims.sub);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      const companyId = user.companyId;
+      console.log("Fetching activity types for authenticated user, company:", companyId);
+      
+      const activityTypes = await storage.getActivityTypes(companyId);
       console.log("Activity Types fetched:", activityTypes.length);
       res.json(activityTypes);
     } catch (error) {
-      console.error("Error fetching activity types for bypass:", error);
+      console.error("Error fetching activity types:", error);
       res.status(500).json({ message: "Failed to fetch activity types" });
     }
   });
 
-  // AI model update route with role-based authentication
-  app.patch('/api/ai-models/:id', optionalAuth, async (req: any, res) => {
+  // AI model update route with required authentication and role-based authorization
+  app.patch('/api/ai-models/:id', requireAuth, async (req: any, res) => {
     try {
       const id = parseInt(req.params.id);
+      const user = await storage.getUser(req.user.claims.sub);
       
-      if (req.user) {
-        // Authenticated user - check role permissions
-        const user = await storage.getUser(req.user.claims.sub);
-        const userRoleLevel = user?.roleLevel || 1;
-        
-        if (userRoleLevel < 99) { // Must be owner (99) or super-user (100)
-          return res.status(403).json({ message: "Owner access required to update AI models" });
-        }
-        
-        console.log("Updating AI model for authenticated user:", user.email, "role level:", userRoleLevel);
-      } else {
-        // Allow unauthenticated updates for demo mode
-        console.log("Updating AI model for unauthenticated demo user");
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
       }
+      
+      const userRoleLevel = user.roleLevel || 1;
+      if (userRoleLevel < 99) { // Must be owner (99) or super-user (100)
+        return res.status(403).json({ message: "Owner access required to update AI models" });
+      }
+      
+      console.log("Updating AI model for authenticated user:", user.email, "role level:", userRoleLevel);
       
       // Auto-add missing fields
       const modelData = {
         ...req.body,
-        organizationId: req.body.organizationId || "company-1",
+        organizationId: req.body.organizationId || `company-${user.companyId}`,
         authMethod: req.body.authMethod || "bearer", 
         requestHeaders: req.body.requestHeaders || '{"Content-Type": "application/json"}'
       };
@@ -120,7 +121,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication routes
   setupAuthRoutes(app);
 
-  // Enable Replit Auth (always enabled for proper role-based access)
+  // Enable Replit Auth for production authentication
   process.env.ENABLE_REPLIT_AUTH = 'true';
   await setupAuth(app);
 
@@ -140,28 +141,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Current user route with proper authentication
-  app.get('/api/user/current', optionalAuth, async (req: any, res) => {
+  app.get('/api/user/current', requireAuth, async (req: any, res) => {
     try {
-      if (req.user) {
-        // Authenticated user - return their actual data
-        const userId = req.user.claims.sub;
-        const user = await storage.getUser(userId);
-        
-        if (user) {
-          console.log("Returning authenticated user:", user.email, "role:", user.role);
-          return res.json(user);
-        } else {
-          return res.status(404).json({ message: "User not found" });
-        }
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (user) {
+        console.log("Returning authenticated user:", user.email, "role:", user.role);
+        return res.json(user);
       } else {
-        // Unauthenticated - return demo super-user for demo mode
-        console.log("Returning demo super-user for unauthenticated access");
-        const superUsers = await storage.getUsersByRole('super-user');
-        if (superUsers.length > 0) {
-          return res.json(superUsers[0]);
-        }
-        
-        return res.status(404).json({ message: "No super-user found in database" });
+        return res.status(404).json({ message: "User not found" });
       }
     } catch (error) {
       console.error("Error fetching current user:", error);
@@ -867,46 +856,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Chat routes
-  app.post('/api/chat/session', async (req: any, res) => {
+  app.post('/api/chat/session', requireAuth, async (req: any, res) => {
     try {
-      let userId = null;
-      let companyId = null;
-
-      // Try cookie auth first
-      if (req.cookies?.sessionToken) {
-        const authService = await import('./services/authService');
-        const session = await authService.authService.verifySession(req.cookies.sessionToken);
-        if (session) {
-          userId = session.userId;
-          companyId = session.companyId;
-        }
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
       }
 
-      // Fallback to Replit Auth (only if enabled)
-      if (!userId && process.env.ENABLE_REPLIT_AUTH === 'true' && req.user?.claims?.sub) {
-        userId = req.user.claims.sub;
-        const user = await storage.getUser(userId);
-        companyId = user?.companyId;
-      }
-
-      if (!userId || !companyId) {
-        // For unauthenticated users, use first available company and super-user account
-        try {
-          const companies = await storage.getCompanies();
-          if (companies.length > 0) {
-            companyId = companies[0].id;
-            // Use the existing super-user ID to maintain role structure
-            userId = '42450602';
-          } else {
-            return res.status(400).json({ message: "No companies available" });
-          }
-        } catch (error) {
-          console.error("Error finding default company:", error);
-          return res.status(500).json({ message: "Failed to find company" });
-        }
-      }
-
-      const session = await storage.createChatSession({ companyId, userId });
+      const session = await storage.createChatSession({ companyId: user.companyId, userId });
       res.json(session);
     } catch (error) {
       console.error("Error creating chat session:", error);
@@ -914,45 +873,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/chat/sessions', async (req: any, res) => {
+  app.get('/api/chat/sessions', requireAuth, async (req: any, res) => {
     try {
-      let userId = null;
-      let companyId = null;
-
-      // Try cookie auth first
-      if (req.cookies?.sessionToken) {
-        const authService = await import('./services/authService');
-        const session = await authService.authService.verifySession(req.cookies.sessionToken);
-        if (session) {
-          userId = session.userId;
-          companyId = session.companyId;
-        }
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
       }
 
-      // Fallback to Replit Auth (only if enabled)
-      if (!userId && process.env.ENABLE_REPLIT_AUTH === 'true' && req.user?.claims?.sub) {
-        userId = req.user.claims.sub;
-        const user = await storage.getUser(userId);
-        companyId = user?.companyId;
-      }
-
-      if (!userId || !companyId) {
-        // For unauthenticated users, use first available company and anonymous user
-        try {
-          const companies = await storage.getCompanies();
-          if (companies.length > 0) {
-            companyId = companies[0].id;
-            userId = '42450602';
-          } else {
-            return res.json([]); // Return empty array if no companies
-          }
-        } catch (error) {
-          console.error("Error finding default company:", error);
-          return res.json([]);
-        }
-      }
-
-      const sessions = await storage.getUserChatSessions(userId, companyId);
+      const sessions = await storage.getUserChatSessions(userId, user.companyId);
       res.json(sessions);
     } catch (error) {
       console.error("Error fetching chat sessions:", error);

@@ -20,7 +20,7 @@ interface AuthData {
 export function useAuth() {
   const queryClient = useQueryClient();
   
-  // BYPASS AUTHENTICATION FOR PRODUCTION - DIRECT ACCESS TO CHAT AS SUPER-USER
+  // Real authentication - no bypass
   const { data, isLoading, error } = useQuery<AuthData>({
     queryKey: ['/api/user/current'],
     queryFn: async () => {
@@ -31,17 +31,10 @@ export function useAuth() {
           user: user
         };
       } catch (error) {
-        // Fallback to super-user if API fails
+        // No fallback - user must be authenticated
         return { 
-          authenticated: true, 
-          user: { 
-            id: 'demo-user', 
-            email: 'demo@aisentinel.app', 
-            firstName: 'Demo',
-            lastName: 'User',
-            role: 'super-user',
-            roleLevel: 100
-          } 
+          authenticated: false, 
+          user: undefined
         };
       }
     },
