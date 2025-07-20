@@ -17,13 +17,18 @@ const DEFAULT_ANTHROPIC_MODEL = "claude-sonnet-4-20250514";
 // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
 const DEFAULT_OPENAI_MODEL = "gpt-4o";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY_ENV_VAR || "default_key",
-});
+// Create OpenAI clients dynamically to always use the latest API key
+const getOpenAIClient = () => {
+  return new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY || "default_key",
+  });
+};
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_API_KEY_ENV_VAR || "default_key",
-});
+const getAnthropicClient = () => {
+  return new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY || "default_key",
+  });
+};
 
 class AIService {
   async transcribeAudio(audioBuffer: Buffer, filename: string): Promise<string> {
@@ -31,7 +36,7 @@ class AIService {
       // Create a File-like object from the buffer
       const file = new File([audioBuffer], filename, { type: 'audio/wav' });
       
-      const response = await openai.audio.transcriptions.create({
+      const response = await getOpenAIClient().audio.transcriptions.create({
         file: file,
         model: 'whisper-1',
         language: 'en', // Optional: specify language
@@ -210,7 +215,7 @@ Please provide a synthesized response that incorporates the best elements from a
 
   private async generateOpenAIResponse(message: string, modelId: string, systemPrompt: string): Promise<string> {
     try {
-      const response = await openai.chat.completions.create({
+      const response = await getOpenAIClient().chat.completions.create({
         model: modelId,
         messages: [
           {
@@ -235,7 +240,7 @@ Please provide a synthesized response that incorporates the best elements from a
 
   private async generateAnthropicResponse(message: string, modelId: string, systemPrompt: string): Promise<string> {
     try {
-      const response = await anthropic.messages.create({
+      const response = await getAnthropicClient().messages.create({
         model: modelId,
         system: systemPrompt,
         max_tokens: 1000,
