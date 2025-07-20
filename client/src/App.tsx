@@ -50,13 +50,7 @@ function Router() {
       <Route path="/login" component={Login} />
       <Route path="/verify" component={VerificationSuccess} />
       
-      {/* Show landing page for unauthenticated users */}
-      {!isAuthenticated && (
-        <>
-          <Route path="/" component={Landing} />
-          <Route path="/demo" component={Landing} />
-        </>
-      )}
+      {/* BYPASS LANDING PAGE - GO DIRECTLY TO CHAT */}
       
       {/* Protected routes - only show when authenticated */}
       {isAuthenticated && (
