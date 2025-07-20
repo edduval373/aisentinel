@@ -1,8 +1,7 @@
 {
   "version": 2,
-  "buildCommand": "npx vite build --config vite.config.production.ts",
+  "buildCommand": "./vercel-build.sh",
   "outputDirectory": "dist/public",
-  "installCommand": "npm install",
   "functions": {
     "api/index.ts": {
       "maxDuration": 30
