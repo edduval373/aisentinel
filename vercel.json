@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "cp package-deploy.json package.json && npm run build",
+  "buildCommand": "cd client && npx vite build --outDir ../dist/public",
   "outputDirectory": "dist/public",
   "functions": {
     "api/index.ts": {
