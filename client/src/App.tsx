@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
 import { CompanyProvider } from "@/hooks/useCompanyContext";
 import Home from "@/pages/home.tsx";
+import Landing from "@/pages/landing.tsx";
 import Login from "@/pages/Login.tsx";
 import VerificationSuccess from "@/pages/VerificationSuccess.tsx";
 import CompanyManagement from "@/pages/admin/company-management.tsx";
@@ -29,16 +30,40 @@ import NotFound from "@/pages/not-found.tsx";
 
 
 function Router() {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-slate-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sentinel-blue mx-auto mb-4"></div>
+          <p className="text-slate-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <Switch>
       {/* Authentication routes - always available */}
       <Route path="/login" component={Login} />
       <Route path="/verify" component={VerificationSuccess} />
       
-      {/* Main application routes */}
-      <Route path="/" component={Home} />
-      <Route path="/demo" component={Home} />
-      <Route path="/test" component={() => <div>Test Route Works!</div>} />
+      {/* Show landing page for unauthenticated users */}
+      {!isAuthenticated && (
+        <>
+          <Route path="/" component={Landing} />
+          <Route path="/demo" component={Landing} />
+        </>
+      )}
+      
+      {/* Protected routes - only show when authenticated */}
+      {isAuthenticated && (
+        <>
+          <Route path="/" component={Home} />
+          <Route path="/demo" component={Home} />
+          <Route path="/test" component={() => <div>Test Route Works!</div>} />
           <Route path="/admin" component={CompanyManagement} />
           <Route path="/admin/models" component={AdminModels} />
           <Route path="/admin/activity-types" component={AdminActivityTypes} />
@@ -58,6 +83,9 @@ function Router() {
           <Route path="/admin/companies" component={CompanyManagement} />
           <Route path="/company-setup" component={CompanySetup} />
           <Route path="/admin/company-setup" component={CompanySetup} />
+        </>
+      )}
+      
       <Route path="*" component={NotFound} />
     </Switch>
   );
