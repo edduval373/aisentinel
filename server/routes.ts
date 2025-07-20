@@ -15,6 +15,10 @@ import { db } from "./db";
 import { eq } from "drizzle-orm";
 import mammoth from "mammoth";
 import * as XLSX from "xlsx";
+import multer from "multer";
+
+// Configure multer for handling FormData
+const upload = multer();
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Test API route first - highest priority
@@ -1010,8 +1014,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/chat/message', async (req: any, res) => {
+  app.post('/api/chat/message', upload.any(), async (req: any, res) => {
     try {
+      // Extract data from FormData fields
       const { message, aiModelId, activityTypeId, sessionId } = req.body;
       
       console.log('Chat message request:', { message, sessionId, aiModelId, activityTypeId });
