@@ -194,7 +194,11 @@ export default function Login() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-3">
-              <AISentinelIcon className="w-10 h-10" />
+              <img 
+                src="/ai-sentinel-logo.png" 
+                alt="AI Sentinel" 
+                className="w-10 h-10 object-contain"
+              />
               <h1 className="text-xl font-bold text-slate-800">AI Sentinel</h1>
             </div>
             <Button 
@@ -215,7 +219,11 @@ export default function Login() {
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-1 text-center">
             <div className="flex items-center justify-center mb-4">
-              <AISentinelIcon className="w-16 h-16" />
+              <img 
+                src="/ai-sentinel-logo.png" 
+                alt="AI Sentinel" 
+                className="w-16 h-16 object-contain"
+              />
             </div>
             <CardTitle className="text-2xl font-bold">Welcome to AI Sentinel</CardTitle>
             <CardDescription>
