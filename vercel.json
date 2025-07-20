@@ -1,12 +1,23 @@
 {
   "version": 2,
-  "buildCommand": "./vercel-build.sh",
+  "buildCommand": "npm run build",
   "outputDirectory": "dist/public",
   "functions": {
     "api/index.ts": {
       "maxDuration": 30
     }
   },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/(.*)",
