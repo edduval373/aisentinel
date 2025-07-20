@@ -73,11 +73,11 @@ export default function Header({
         <div className="flex items-center space-x-4">
           {/* AI Sentinel Logo and Title */}
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 flex items-center justify-center">
+            <div className="w-6 h-6 flex items-center justify-center">
               <img 
                 src="/ai-sentinel-logo.png" 
                 alt="AI Sentinel" 
-                className="w-full h-full object-contain"
+                className="w-5 h-5 object-contain"
               />
             </div>
             <span className="text-sm font-medium text-slate-700">AI Sentinel Chat</span>

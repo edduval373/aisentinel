@@ -86,15 +86,22 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   // Create session mutation
   const createSessionMutation = useMutation({
     mutationFn: async () => {
+      console.log('Creating new chat session...');
       const response = await apiRequest("/api/chat/session", "POST");
+      console.log('Session created successfully:', response);
       return response;
     },
     onSuccess: (session) => {
+      console.log('Setting current session to:', session.id);
       setCurrentSession(session.id);
       queryClient.invalidateQueries({ queryKey: ['/api/chat/session'] });
+      toast({
+        title: "Success",
+        description: "New chat session created",
+      });
     },
     onError: (error) => {
-      // Authentication error handling removed
+      console.error('Session creation error:', error);
       toast({
         title: "Error",
         description: "Failed to create chat session",
