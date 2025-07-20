@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "vite build --config vite.config.production.ts",
+  "buildCommand": "node build-clean.js",
   "outputDirectory": "dist/public",
   "installCommand": "npm install",
   "functions": {
