@@ -10,6 +10,9 @@ window.addEventListener('error', (e) => {
 
 window.addEventListener('unhandledrejection', (e) => {
   console.error('Unhandled promise rejection:', e.reason);
+  console.error('Promise rejection stack:', e.reason?.stack);
+  // Prevent the default behavior to avoid the unhandled rejection warning
+  e.preventDefault();
 });
 
 try {

@@ -117,7 +117,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // For complete authentication bypass, always return company ID 1 from Railway database
       const company = await storage.getCompany(1);
       if (company) {
-        return res.json(company);
+        // Optimize logo for header display - truncate if too large
+        const optimizedCompany = {
+          ...company,
+          logo: company.logo && company.logo.length > 50000 ? 
+            company.logo.substring(0, 50000) + '...' : company.logo
+        };
+        return res.json(optimizedCompany);
       }
 
       // Try authenticated access first
