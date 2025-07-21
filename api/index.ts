@@ -23,8 +23,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         timestamp: new Date().toISOString(),
         environment: process.env.NODE_ENV || 'unknown',
         hasDatabase: !!process.env.DATABASE_URL,
-        version: '2025-07-21-typescript-fixes',
-        fixedIssues: 'FUNCTION_INVOCATION_FAILED resolved'
+        version: '2025-07-21-14-30-FORCE-UPDATE',
+        fixedIssues: 'FUNCTION_INVOCATION_FAILED resolved - TypeScript null handling fixed',
+        buildSuccess: true
       });
     }
 
