@@ -92,116 +92,10 @@ export default function Login() {
 
   if (emailSent) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-slate-200">
         {/* Header */}
-        <div className="bg-white shadow-sm border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-16">
-              <div className="flex items-center space-x-3">
-                <img 
-                  src="/ai-sentinel-logo.png" 
-                  alt="AI Sentinel" 
-                  className="w-10 h-10 object-contain"
-                  style={{maxWidth: "40px", maxHeight: "40px"}}
-                />
-                <h1 className="text-xl font-bold text-slate-800">AI Sentinel</h1>
-              </div>
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => window.location.href = '/'}
-                className="text-slate-600 hover:text-slate-900"
-              >
-                <X className="w-4 h-4 mr-2" />
-                Continue to Chat
-              </Button>
-            </div>
-          </div>
-        </div>
-        
-        {/* Content */}
-        <div className="flex items-center justify-center p-4 pt-20">
-          <Card className="w-full max-w-md">
-            <CardHeader className="space-y-1 text-center">
-              <div className="flex items-center justify-center mb-4">
-                <img 
-                  src="/ai-sentinel-logo.png" 
-                  alt="AI Sentinel" 
-                  className="w-16 h-16 object-contain"
-                  style={{maxWidth: "64px", maxHeight: "64px"}}
-                />
-              </div>
-              <CardTitle className="text-2xl font-bold">Check Your Email</CardTitle>
-              <CardDescription>
-                We've sent a verification link to your email address
-              </CardDescription>
-            </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="text-center">
-              <div className="flex items-center justify-center mb-4">
-                <CheckCircle2 className="w-12 h-12 text-green-500" />
-              </div>
-              <p className="text-gray-600 mb-2">
-                A verification email has been sent to:
-              </p>
-              <p className="font-semibold text-gray-800 mb-4">{email}</p>
-              <p className="text-sm text-gray-500 mb-6">
-                Click the link in the email to complete your login. The link will expire in 1 hour.
-              </p>
-            </div>
-
-            {error && (
-              <Alert variant="destructive">
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-
-            <div className="space-y-3">
-              <Button
-                onClick={handleResendEmail}
-                disabled={isLoading}
-                variant="outline"
-                className="w-full"
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Resending...
-                  </>
-                ) : (
-                  <>
-                    <Mail className="w-4 h-4 mr-2" />
-                    Resend Verification Email
-                  </>
-                )}
-              </Button>
-              
-              <Button
-                onClick={() => {
-                  setEmailSent(false);
-                  setEmail("");
-                  setError("");
-                }}
-                variant="ghost"
-                className="w-full"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Use Different Email
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+        <div className="absolute top-0 left-0 right-0 p-6">
+          <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <img 
                 src="/ai-sentinel-logo.png" 
@@ -209,26 +103,122 @@ export default function Login() {
                 className="w-10 h-10 object-contain"
                 style={{maxWidth: "40px", maxHeight: "40px"}}
               />
-              <h1 className="text-xl font-bold text-slate-800">AI Sentinel</h1>
+              <h1 className="text-xl font-semibold text-slate-800">AI Sentinel</h1>
             </div>
             <Button 
               variant="ghost" 
               size="sm"
-              onClick={() => window.close()}
+              onClick={() => window.location.href = '/'}
               className="text-slate-600 hover:text-slate-900"
             >
               <X className="w-4 h-4 mr-2" />
-              Exit
+              Continue to Chat
             </Button>
           </div>
+        </div>
+        
+        {/* Content */}
+        <div className="flex items-center justify-center min-h-screen p-4">
+          <Card className="w-full max-w-md bg-white shadow-xl">
+            <CardHeader className="space-y-6 text-center pt-8 pb-6">
+              <div className="flex items-center justify-center">
+                <CheckCircle2 className="w-16 h-16 text-green-500" />
+              </div>
+              <div className="space-y-2">
+                <CardTitle className="text-2xl font-bold text-slate-900">Check Your Email</CardTitle>
+                <CardDescription className="text-slate-600">
+                  We've sent a verification link to your email address
+                </CardDescription>
+              </div>
+            </CardHeader>
+            <CardContent className="px-8 pb-8">
+              <div className="text-center space-y-4 mb-6">
+                <p className="text-slate-600">
+                  A verification email has been sent to:
+                </p>
+                <p className="font-semibold text-slate-900 bg-slate-50 px-4 py-2 rounded-md">{email}</p>
+                <p className="text-sm text-slate-500">
+                  Click the link in the email to complete your login. The link will expire in 1 hour.
+                </p>
+              </div>
+
+              {error && (
+                <Alert variant="destructive" className="mb-6 text-sm">
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+
+              <div className="space-y-3">
+                <Button
+                  onClick={handleResendEmail}
+                  disabled={isLoading}
+                  variant="outline"
+                  className="w-full h-12 border-slate-300 text-slate-700 hover:bg-slate-50 font-medium rounded-md"
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Resending...
+                    </>
+                  ) : (
+                    <>
+                      <Mail className="w-4 h-4 mr-2" />
+                      Resend Verification Email
+                    </>
+                  )}
+                </Button>
+                
+                <Button
+                  onClick={() => {
+                    setEmailSent(false);
+                    setEmail("");
+                    setError("");
+                  }}
+                  variant="ghost"
+                  className="w-full h-12 text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-medium rounded-md"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Use Different Email
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-slate-200">
+      {/* Header */}
+      <div className="absolute top-0 left-0 right-0 p-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <img 
+              src="/ai-sentinel-logo.png" 
+              alt="AI Sentinel" 
+              className="w-10 h-10 object-contain"
+              style={{maxWidth: "40px", maxHeight: "40px"}}
+            />
+            <h1 className="text-xl font-semibold text-slate-800">AI Sentinel</h1>
+          </div>
+          <Button 
+            variant="ghost" 
+            size="sm"
+            onClick={() => window.close()}
+            className="text-slate-600 hover:text-slate-900"
+          >
+            <X className="w-4 h-4 mr-2" />
+            Exit
+          </Button>
         </div>
       </div>
       
       {/* Content */}
-      <div className="flex items-center justify-center p-4 pt-20">
-        <Card className="w-full max-w-md">
-          <CardHeader className="space-y-1 text-center">
-            <div className="flex items-center justify-center mb-4">
+      <div className="flex items-center justify-center min-h-screen p-4">
+        <Card className="w-full max-w-md bg-white shadow-xl">
+          <CardHeader className="space-y-6 text-center pt-8 pb-6">
+            <div className="flex items-center justify-center">
               <img 
                 src="/ai-sentinel-logo.png" 
                 alt="AI Sentinel" 
@@ -236,72 +226,74 @@ export default function Login() {
                 style={{maxWidth: "64px", maxHeight: "64px"}}
               />
             </div>
-            <CardTitle className="text-2xl font-bold">Welcome to AI Sentinel</CardTitle>
-            <CardDescription>
-              Enter your email address to get started
-            </CardDescription>
-          </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email Address</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="Enter your email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={isLoading}
-                className="w-full"
-              />
+              <CardTitle className="text-2xl font-bold text-slate-900">Welcome to AI Sentinel</CardTitle>
+              <CardDescription className="text-slate-600">
+                Enter your email address to get started
+              </CardDescription>
             </div>
+          </CardHeader>
+          <CardContent className="px-8 pb-8">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-sm font-medium text-slate-700">Email Address</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Enter your email address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={isLoading}
+                  className="w-full h-12 px-4 text-sm border-slate-200 focus:border-blue-500 focus:ring-blue-500"
+                />
+              </div>
 
-            {error && (
-              <Alert variant="destructive">
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
+              {error && (
+                <Alert variant="destructive" className="text-sm">
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
 
-            <div className="space-y-3">
-              <Button
-                type="submit"
-                disabled={isLoading}
-                className="w-full"
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Sending Verification...
-                  </>
-                ) : (
-                  <>
-                    <Mail className="w-4 h-4 mr-2" />
-                    Send Verification Email
-                  </>
-                )}
-              </Button>
-              
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => window.location.href = '/'}
-                className="w-full"
-              >
-                Continue to Chat (Demo Mode)
-              </Button>
+              <div className="space-y-3">
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md"
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Sending Verification...
+                    </>
+                  ) : (
+                    <>
+                      <Mail className="w-4 h-4 mr-2" />
+                      Send Verification Email
+                    </>
+                  )}
+                </Button>
+                
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => window.location.href = '/'}
+                  className="w-full h-12 border-slate-300 text-slate-700 hover:bg-slate-50 font-medium rounded-md"
+                >
+                  Continue to Chat (Demo Mode)
+                </Button>
+              </div>
+            </form>
+
+            <div className="mt-8 text-center space-y-3 text-sm text-slate-500">
+              <p>
+                We'll send you a secure link to verify your email address.
+              </p>
+              <p>
+                If you're part of a company, you'll automatically get access to your company's AI tools.
+              </p>
             </div>
-          </form>
-
-          <div className="mt-6 text-center text-sm text-gray-500">
-            <p>
-              We'll send you a secure link to verify your email address.
-            </p>
-            <p className="mt-2">
-              If you're part of a company, you'll automatically get access to your company's AI tools.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
