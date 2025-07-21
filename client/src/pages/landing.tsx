@@ -83,8 +83,24 @@ export default function Landing() {
       </header>
 
       {/* Hero Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto text-center">
+      <section 
+        className="py-20 px-4 sm:px-6 lg:px-8"
+        style={{
+          padding: '6rem 1rem',
+          minHeight: '80vh',
+          display: 'flex',
+          alignItems: 'center'
+        }}
+      >
+        <div 
+          className="max-w-7xl mx-auto text-center"
+          style={{
+            maxWidth: '72rem',
+            margin: '0 auto',
+            textAlign: 'center',
+            width: '100%'
+          }}
+        >
           <h2 
             className="text-4xl md:text-6xl font-bold text-slate-800 mb-6"
             style={{
@@ -124,7 +140,8 @@ export default function Landing() {
               flexDirection: 'row',
               gap: '1rem',
               justifyContent: 'center',
-              alignItems: 'center'
+              alignItems: 'center',
+              marginBottom: '2rem'
             }}
           >
             <Button
@@ -136,18 +153,19 @@ export default function Landing() {
                 color: 'white',
                 padding: '12px 24px',
                 fontSize: '1rem',
-                borderRadius: '8px',
+                borderRadius: '6px',
                 border: 'none',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontWeight: '500',
-                minWidth: '200px'
+                minWidth: '180px',
+                height: '48px'
               }}
             >
               Start 30-Day Free Trial
-              <CheckCircle className="ml-2 w-5 h-5" style={{marginLeft: '8px', color: 'white'}} />
+              <CheckCircle className="ml-2 w-5 h-5" style={{marginLeft: '8px', color: 'white', width: '20px', height: '20px'}} />
             </Button>
             <Button
               onClick={() => window.location.href = "/pricing"}
@@ -157,33 +175,34 @@ export default function Landing() {
               style={{
                 backgroundColor: 'white',
                 color: 'hsl(221, 83%, 53%)',
-                border: '2px solid #e5e7eb',
+                border: '1px solid #d1d5db',
                 padding: '12px 24px',
                 fontSize: '1rem',
-                borderRadius: '8px',
+                borderRadius: '6px',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontWeight: '500',
-                minWidth: '200px'
+                minWidth: '180px',
+                height: '48px'
               }}
             >
               View Pricing Plans
-              <BarChart3 className="ml-2 w-5 h-5" style={{marginLeft: '8px', color: 'hsl(221, 83%, 53%)'}} />
+              <BarChart3 className="ml-2 w-5 h-5" style={{marginLeft: '8px', color: 'hsl(221, 83%, 53%)', width: '20px', height: '20px'}} />
             </Button>
           </div>
           
           <div 
             className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg max-w-md mx-auto"
             style={{
-              marginTop: '2rem',
-              padding: '1rem',
+              marginTop: '0',
+              padding: '16px 20px',
               backgroundColor: '#eff6ff',
               border: '1px solid #bfdbfe',
               borderRadius: '8px',
-              maxWidth: '32rem',
-              margin: '2rem auto 0 auto'
+              maxWidth: '28rem',
+              margin: '0 auto'
             }}
           >
             <div 
