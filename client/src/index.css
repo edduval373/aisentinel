@@ -33,6 +33,33 @@
   --sentinel-slate-light: hsl(215, 20%, 65%);
 }
 
+/* Ensure Tailwind utilities are available */
+.bg-sentinel-blue {
+  background-color: hsl(221, 83%, 53%) !important;
+}
+
+.text-sentinel-blue {
+  color: hsl(221, 83%, 53%) !important;
+}
+
+.border-sentinel-blue {
+  border-color: hsl(221, 83%, 53%) !important;
+}
+
+.bg-gradient-to-br {
+  background-image: linear-gradient(to bottom right, var(--tw-gradient-stops)) !important;
+}
+
+.from-slate-50 {
+  --tw-gradient-from: #f8fafc !important;
+  --tw-gradient-to: rgb(248 250 252 / 0) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+
+.to-slate-100 {
+  --tw-gradient-to: #f1f5f9 !important;
+}
+
 .dark {
   --background: hsl(240, 10%, 3.9%);
   --foreground: hsl(0, 0%, 98%);
