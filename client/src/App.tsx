@@ -9,6 +9,7 @@ import Home from "@/pages/home.tsx";
 import Landing from "@/pages/landing.tsx";
 import Login from "@/pages/Login.tsx";
 import VerificationSuccess from "@/pages/VerificationSuccess.tsx";
+import PricingPage from "@/pages/pricing.tsx";
 import CompanyManagement from "@/pages/admin/company-management.tsx";
 import AdminModels from "@/pages/admin/models.tsx";
 import AdminActivityTypes from "@/pages/admin/activity-types.tsx";
@@ -79,6 +80,7 @@ function Router() {
       <Route path="/login" component={Login} />
       <Route path="/verify" component={VerificationSuccess} />
       <Route path="/landing" component={Landing} />
+      <Route path="/pricing" component={PricingPage} />
       
       {/* Main routes - show landing page if not authenticated */}
       <Route path="/">

@@ -352,10 +352,88 @@ export type InsertEmailVerificationToken = z.infer<typeof insertEmailVerificatio
 export type UserSession = typeof userSessions.$inferSelect;
 export type InsertUserSession = z.infer<typeof insertUserSessionSchema>;
 
-// New subscription and trial types
+// Subscription Plans
+export const subscriptionPlans = pgTable('subscription_plans', {
+  id: serial('id').primaryKey(),
+  name: varchar('name', { length: 100 }).notNull(), // 'trial', 'personal', 'company'
+  displayName: varchar('display_name', { length: 100 }).notNull(),
+  price: varchar('price', { length: 20 }).notNull(), // Store as string to avoid decimal issues
+  billingPeriod: varchar('billing_period', { length: 20 }).notNull(), // 'monthly', 'yearly'
+  maxUsers: integer('max_users'), // null for unlimited
+  dailyApiLimit: integer('daily_api_limit').notNull(),
+  monthlyApiLimit: integer('monthly_api_limit').notNull(),
+  requiresCreditCard: boolean('requires_credit_card').notNull().default(false),
+  requiresApiKey: boolean('requires_api_key').notNull().default(false),
+  features: text('features').array(), // JSON array of features
+  isActive: boolean('is_active').notNull().default(true),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+// User Subscriptions
+export const userSubscriptions = pgTable('user_subscriptions', {
+  id: serial('id').primaryKey(),
+  userId: varchar('user_id', { length: 255 }).notNull(),
+  companyId: integer('company_id').references(() => companies.id),
+  planId: integer('plan_id').references(() => subscriptionPlans.id).notNull(),
+  status: varchar('status', { length: 20 }).notNull(), // 'active', 'cancelled', 'expired', 'pending'
+  stripeCustomerId: varchar('stripe_customer_id', { length: 255 }),
+  stripeSubscriptionId: varchar('stripe_subscription_id', { length: 255 }),
+  currentPeriodStart: timestamp('current_period_start'),
+  currentPeriodEnd: timestamp('current_period_end'),
+  trialEnd: timestamp('trial_end'),
+  cancelAt: timestamp('cancel_at'),
+  canceledAt: timestamp('canceled_at'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+// API Usage Tracking
+export const apiUsageTracking = pgTable('api_usage_tracking', {
+  id: serial('id').primaryKey(),
+  userId: varchar('user_id', { length: 255 }).notNull(),
+  companyId: integer('company_id').references(() => companies.id),
+  subscriptionId: integer('subscription_id').references(() => userSubscriptions.id),
+  date: varchar('date', { length: 10 }).notNull(), // YYYY-MM-DD for daily tracking
+  apiCalls: integer('api_calls').notNull().default(0),
+  aiTokensUsed: integer('ai_tokens_used').notNull().default(0),
+  ipAddress: varchar('ip_address', { length: 45 }),
+  userAgent: varchar('user_agent', { length: 500 }),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+// Payment Information (for credit card validation)
+export const paymentMethods = pgTable('payment_methods', {
+  id: serial('id').primaryKey(),
+  userId: varchar('user_id', { length: 255 }).notNull(),
+  stripePaymentMethodId: varchar('stripe_payment_method_id', { length: 255 }).notNull(),
+  type: varchar('type', { length: 20 }).notNull(), // 'card'
+  cardBrand: varchar('card_brand', { length: 20 }), // 'visa', 'mastercard', etc.
+  cardLast4: varchar('card_last4', { length: 4 }),
+  cardExpMonth: integer('card_exp_month'),
+  cardExpYear: integer('card_exp_year'),
+  isDefault: boolean('is_default').notNull().default(false),
+  isValid: boolean('is_valid').notNull().default(true),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+// Updated trial usage for 30-day trial with credit card requirement
+export const insertSubscriptionPlanSchema = createInsertSchema(subscriptionPlans).omit({ id: true, createdAt: true });
+export const insertUserSubscriptionSchema = createInsertSchema(userSubscriptions).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertApiUsageTrackingSchema = createInsertSchema(apiUsageTracking).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertPaymentMethodSchema = createInsertSchema(paymentMethods).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertSubscriptionSchema = createInsertSchema(subscriptions);
 export const insertTrialUsageSchema = createInsertSchema(trialUsage);
 
+export type SubscriptionPlan = typeof subscriptionPlans.$inferSelect;
+export type InsertSubscriptionPlan = z.infer<typeof insertSubscriptionPlanSchema>;
+export type UserSubscription = typeof userSubscriptions.$inferSelect;
+export type InsertUserSubscription = z.infer<typeof insertUserSubscriptionSchema>;
+export type ApiUsageTracking = typeof apiUsageTracking.$inferSelect;
+export type InsertApiUsageTracking = z.infer<typeof insertApiUsageTrackingSchema>;
+export type PaymentMethod = typeof paymentMethods.$inferSelect;
+export type InsertPaymentMethod = z.infer<typeof insertPaymentMethodSchema>;
 export type Subscription = typeof subscriptions.$inferSelect;
 export type InsertSubscription = z.infer<typeof insertSubscriptionSchema>;
 export type TrialUsage = typeof trialUsage.$inferSelect;

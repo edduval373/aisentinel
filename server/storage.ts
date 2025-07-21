@@ -969,6 +969,75 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
+  // Subscription management methods
+  async getSubscriptionPlans(): Promise<SubscriptionPlan[]> {
+    return await db.select().from(subscriptionPlans).where(eq(subscriptionPlans.isActive, true));
+  }
+
+  async getSubscriptionPlan(id: number): Promise<SubscriptionPlan | null> {
+    const [result] = await db.select().from(subscriptionPlans).where(eq(subscriptionPlans.id, id));
+    return result || null;
+  }
+
+  async getSubscriptionPlanByName(name: string): Promise<SubscriptionPlan | null> {
+    const [result] = await db.select().from(subscriptionPlans).where(eq(subscriptionPlans.name, name));
+    return result || null;
+  }
+
+  async createSubscriptionPlan(data: InsertSubscriptionPlan): Promise<SubscriptionPlan> {
+    const [result] = await db.insert(subscriptionPlans).values(data).returning();
+    return result;
+  }
+
+  async createUserSubscription(data: InsertUserSubscription): Promise<UserSubscription> {
+    const [result] = await db.insert(userSubscriptions).values(data).returning();
+    return result;
+  }
+
+  async getUserActiveSubscription(userId: string): Promise<UserSubscription | null> {
+    const [result] = await db.select().from(userSubscriptions)
+      .where(and(eq(userSubscriptions.userId, userId), eq(userSubscriptions.status, 'active')))
+      .orderBy(desc(userSubscriptions.createdAt));
+    return result || null;
+  }
+
+  async getApiUsageForDate(userId: string, date: string): Promise<number> {
+    const [result] = await db.select({ total: sum(apiUsageTracking.apiCalls) })
+      .from(apiUsageTracking)
+      .where(and(eq(apiUsageTracking.userId, userId), eq(apiUsageTracking.date, date)));
+    return Number(result?.total || 0);
+  }
+
+  async getApiUsageForMonth(userId: string, month: string): Promise<number> {
+    const [result] = await db.select({ total: sum(apiUsageTracking.apiCalls) })
+      .from(apiUsageTracking)
+      .where(and(eq(apiUsageTracking.userId, userId), like(apiUsageTracking.date, `${month}%`)));
+    return Number(result?.total || 0);
+  }
+
+  async incrementApiUsage(userId: string, companyId: number | null, date: string, count: number = 1): Promise<void> {
+    const existing = await db.select().from(apiUsageTracking)
+      .where(and(eq(apiUsageTracking.userId, userId), eq(apiUsageTracking.date, date)));
+
+    if (existing.length > 0) {
+      await db.update(apiUsageTracking)
+        .set({ 
+          apiCalls: existing[0].apiCalls + count,
+          updatedAt: new Date()
+        })
+        .where(and(eq(apiUsageTracking.userId, userId), eq(apiUsageTracking.date, date)));
+    } else {
+      await db.insert(apiUsageTracking).values({
+        userId,
+        companyId,
+        subscriptionId: null, // Will be filled when subscription is created
+        date,
+        apiCalls: count,
+        aiTokensUsed: 0,
+      });
+    }
+  }
+
   // User update method
   async updateUser(id: string, userData: Partial<UpsertUser>): Promise<User> {
     const [updated] = await db

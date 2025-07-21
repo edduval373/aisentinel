@@ -41,18 +41,30 @@ export default function Landing() {
             <Button
               onClick={handleLogin}
               size="lg"
-              className="bg-sentinel-blue hover:bg-blue-600 text-lg px-8 py-3"
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg transform hover:scale-105 transition-all duration-200"
             >
-              Get Started
+              Start 30-Day Free Trial
+              <CheckCircle className="ml-2 w-5 h-5" />
             </Button>
             <Button
-              onClick={() => window.location.href = "/demo"}
+              onClick={() => window.location.href = "/pricing"}
               variant="outline"
               size="lg"
-              className="text-lg px-8 py-3 border-sentinel-blue text-sentinel-blue hover:bg-sentinel-blue hover:text-white"
+              className="border-2 border-blue-200 text-blue-700 hover:bg-blue-50 shadow-lg transform hover:scale-105 transition-all duration-200"
             >
-              Try Demo
+              View Pricing Plans
+              <BarChart3 className="ml-2 w-5 h-5" />
             </Button>
+          </div>
+          
+          <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg max-w-md mx-auto">
+            <div className="flex items-center space-x-2 text-blue-700">
+              <Lock className="w-4 h-4" />
+              <span className="text-sm font-medium">Secure Trial Requires Credit Card</span>
+            </div>
+            <p className="text-xs text-blue-600 mt-1">
+              No charges during 30-day trial. Card required to prevent abuse and ensure service quality.
+            </p>
           </div>
         </div>
       </section>

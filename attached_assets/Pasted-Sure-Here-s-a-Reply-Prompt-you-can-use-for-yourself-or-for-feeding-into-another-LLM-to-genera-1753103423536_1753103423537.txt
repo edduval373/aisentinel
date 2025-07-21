@@ -1,0 +1,38 @@
+Sure! Here's a **Reply Prompt** you can use (for yourself or for feeding into another LLM) to generate all the described **authentication tiers, rate limits, and API key options** — tailored for both personal and company users:
+
+### 🔁 **Prompt to Generate External Authentication Options**
+
+> I am designing a multi-tier external authentication and API access system for a SaaS platform. I need help generating the user plans, access limits, and API protection strategy. Please generate a detailed configuration covering:
+>
+> 1. **User Access Tiers**:
+>    - Trial plan (30-day free trial)
+>    - Personal paid plan ($9.99/month)
+>    - Company plan for     - Company plan for 50+ users ($99/month)
+>
+> 2. **Authentication Requirements**:
+>    - Personal users should not have to manage API keys
+>    - Company users should be required to use managed API keys for integrations
+>
+> 3. **API Usage Controls**:
+>    - Rate limits per user or company, appropriate for each pricing tier
+>    - Daily and/or monthly quota examples for each plan
+>    - How to track requests per user (e.g., session token, JWT, etc.)
+>    - Fallback or secondary rate limits (e.g., IP-based)
+>
+> 4. **Abuse Prevention Techniques**:
+>    - Prevent API abuse by free-trial users
+>    - Prevent one company sharing a single login across users
+>    - Optional pre-verification requirements (e.g., requiring a credit card or phone number for free trial)
+>
+> 5. **Error Handling and User Messaging**:
+>    - Example of how to notify users when approaching or exceeding their rate limits
+>    - Upgrade messaging for exceeded quotas
+>
+> 6. **Monitoring Strategy**:
+>    - How to audit and flag unusual activity or abuse
+>
+> Please include examples (with sample quota numbers) where needed, and make the output formatted as a clear, organized plan.
+
+You can use this prompt with an LLM (like this one!) to regenerate or fine-tune your entire access control configuration whenever your pricing or architecture evolves.
+
+Would you like me to run this prompt now and generate the complete draft for you?
