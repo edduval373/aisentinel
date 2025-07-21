@@ -7,6 +7,7 @@ import Sidebar from "@/components/layout/Sidebar";
 import ChatInterface from "@/components/chat/ChatInterface";
 import { useQuery } from "@tanstack/react-query";
 import { Building2 } from "lucide-react";
+import { TrialBanner } from "@/components/TrialBanner";
 
 
 
@@ -19,12 +20,14 @@ const CompanyInfo = () => {
 
   if (!currentCompany) return null;
 
+  const company = currentCompany as any; // Type assertion for now
+
   return (
     <div className="flex items-center space-x-2">
-      {currentCompany.logo ? (
+      {company.logo ? (
         <img 
-          src={currentCompany.logo} 
-          alt={`${currentCompany.name} logo`}
+          src={company.logo} 
+          alt={`${company.name} logo`}
           className="w-8 h-8 rounded object-cover"
         />
       ) : (
@@ -33,7 +36,7 @@ const CompanyInfo = () => {
         </div>
       )}
       <span className="text-lg font-semibold text-slate-800">
-        {currentCompany.name} ({currentCompany.id})
+        {company.name} ({company.id})
       </span>
     </div>
   );
@@ -98,6 +101,11 @@ export default function Home() {
         
         {/* Chat Interface Container */}
         <div className="flex-1 flex flex-col min-h-0">
+          {/* Trial Banner */}
+          <div className="px-4 pt-4">
+            <TrialBanner />
+          </div>
+          
           <ChatInterface 
             currentSession={currentSession} 
             setCurrentSession={setCurrentSession}

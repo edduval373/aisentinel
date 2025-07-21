@@ -36,8 +36,8 @@ export class AuthService {
     }
   }
 
-  // Verify email token and create session
-  async verifyEmailToken(token: string): Promise<AuthSession | null> {
+  // Verify email token and create session with trial system
+  async verifyEmailToken(token: string, ipAddress?: string, deviceFingerprint?: string): Promise<AuthSession | null> {
     try {
       const verificationToken = await storage.getEmailVerificationToken(token);
       
@@ -53,16 +53,18 @@ export class AuthService {
       // Check if user exists
       let user = await storage.getUserByEmail(email);
       let companyId: number | null = null;
-      let roleLevel = 1; // Default to user level
+      let roleLevel = 0; // Default to guest level
+      let isTrialUser = true;
 
       if (!user) {
-        // Check if email belongs to a company
+        // Try to match email to existing company employee for role assignment
         const company = await storage.getCompanyByEmailDomain(email);
         if (company) {
           const employee = await storage.getCompanyEmployeeByEmail(email);
-          if (employee) {
+          if (employee && employee.isActive) {
             companyId = company.id;
             roleLevel = this.getRoleLevelFromEmployeeRole(employee.role);
+            isTrialUser = false; // Company users get full access
           }
         }
 
@@ -76,10 +78,55 @@ export class AuthService {
           firstName: null,
           lastName: null,
           role: this.getRoleFromLevel(roleLevel),
+          isTrialUser,
+          lastLoginAt: new Date(),
+        });
+
+        // Create trial usage record for new users (including company users for tracking)
+        await storage.createTrialUsage({
+          userId: user.id,
+          companyId,
+          email,
+          ipAddress,
+          deviceFingerprint,
+          actionsUsed: 0,
+          maxActions: companyId ? 100 : 10, // Company users get more trial actions
+          trialStartDate: new Date(),
+          trialEndDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 14 days
         });
       } else {
-        companyId = user.companyId;
-        roleLevel = user.roleLevel || 1;
+        // Existing user - check if they should be matched to a company
+        if (!user.companyId) {
+          const company = await storage.getCompanyByEmailDomain(email);
+          if (company) {
+            const employee = await storage.getCompanyEmployeeByEmail(email);
+            if (employee && employee.isActive) {
+              companyId = company.id;
+              roleLevel = this.getRoleLevelFromEmployeeRole(employee.role);
+              isTrialUser = false;
+              
+              // Update user with company information
+              await storage.updateUser(user.id, {
+                companyId,
+                roleLevel,
+                role: this.getRoleFromLevel(roleLevel),
+                isTrialUser,
+                lastLoginAt: new Date(),
+              });
+              
+              user.companyId = companyId;
+              user.roleLevel = roleLevel;
+              user.isTrialUser = isTrialUser;
+            }
+          }
+        } else {
+          companyId = user.companyId;
+          roleLevel = user.roleLevel || 0;
+          isTrialUser = user.isTrialUser || false;
+        }
+
+        // Update last login
+        await storage.updateUser(user.id, { lastLoginAt: new Date() });
       }
 
       // Create session
@@ -104,6 +151,113 @@ export class AuthService {
       };
     } catch (error) {
       console.error('Error verifying email token:', error);
+      return null;
+    }
+  }
+
+  // External authentication flow - matches users to existing roles from cookies/external auth
+  async authenticateExternalUser(email: string, externalUserId: string, ipAddress?: string, deviceFingerprint?: string): Promise<AuthSession | null> {
+    try {
+      // Get or create user with automatic role matching
+      let user = await storage.getUserByEmail(email);
+      let companyId: number | null = null;
+      let roleLevel = 0; // Default to guest level
+      let isTrialUser = true;
+
+      if (!user) {
+        // Try to match email to existing company for automatic role assignment
+        const company = await storage.getCompanyByEmailDomain(email);
+        if (company) {
+          const employee = await storage.getCompanyEmployeeByEmail(email);
+          if (employee && employee.isActive) {
+            companyId = company.id;
+            roleLevel = this.getRoleLevelFromEmployeeRole(employee.role);
+            isTrialUser = false; // Company users get full access
+          }
+        }
+
+        // Create new user
+        user = await storage.upsertUser({
+          id: externalUserId,
+          email,
+          companyId,
+          roleLevel,
+          firstName: null,
+          lastName: null,
+          role: this.getRoleFromLevel(roleLevel),
+          isTrialUser,
+          lastLoginAt: new Date(),
+        });
+
+        // Create trial usage record
+        await storage.createTrialUsage({
+          userId: user.id,
+          companyId,
+          email,
+          ipAddress,
+          deviceFingerprint,
+          actionsUsed: 0,
+          maxActions: companyId ? 100 : 10, // Company users get more trial actions
+          trialStartDate: new Date(),
+          trialEndDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 14 days
+        });
+      } else {
+        // Existing user - check if they should be upgraded to company access
+        if (!user.companyId || user.roleLevel === 0) {
+          const company = await storage.getCompanyByEmailDomain(email);
+          if (company) {
+            const employee = await storage.getCompanyEmployeeByEmail(email);
+            if (employee && employee.isActive) {
+              companyId = company.id;
+              roleLevel = this.getRoleLevelFromEmployeeRole(employee.role);
+              isTrialUser = false;
+              
+              // Update user with company information
+              await storage.updateUser(user.id, {
+                companyId,
+                roleLevel,
+                role: this.getRoleFromLevel(roleLevel),
+                isTrialUser,
+                lastLoginAt: new Date(),
+              });
+              
+              user.companyId = companyId;
+              user.roleLevel = roleLevel;
+              user.isTrialUser = isTrialUser;
+            }
+          }
+        } else {
+          companyId = user.companyId;
+          roleLevel = user.roleLevel;
+          isTrialUser = user.isTrialUser || false;
+        }
+
+        // Update last login
+        await storage.updateUser(user.id, { lastLoginAt: new Date() });
+      }
+
+      // Create session
+      const sessionToken = this.generateSessionToken();
+      const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+
+      await storage.createUserSession({
+        userId: user.id,
+        sessionToken,
+        email,
+        companyId,
+        roleLevel,
+        expiresAt,
+      });
+
+      return {
+        userId: user.id,
+        email,
+        companyId,
+        roleLevel,
+        sessionToken,
+      };
+    } catch (error) {
+      console.error('Error authenticating external user:', error);
       return null;
     }
   }
@@ -161,7 +315,41 @@ export class AuthService {
     if (level >= 100) return 'super-user';
     if (level >= 99) return 'owner';
     if (level >= 2) return 'admin';
-    return 'user';
+    if (level >= 1) return 'user';
+    return 'guest';
+  }
+
+  // Check if user has trial actions remaining
+  async checkTrialUsage(userId: string): Promise<{ hasActionsRemaining: boolean; actionsUsed: number; maxActions: number; isTrialExpired: boolean } | null> {
+    try {
+      const trialUsage = await storage.getTrialUsageByUserId(userId);
+      if (!trialUsage) {
+        return null;
+      }
+
+      const isTrialExpired = trialUsage.trialEndDate ? trialUsage.trialEndDate < new Date() : false;
+      const hasActionsRemaining = trialUsage.actionsUsed < trialUsage.maxActions && !isTrialExpired;
+
+      return {
+        hasActionsRemaining,
+        actionsUsed: trialUsage.actionsUsed,
+        maxActions: trialUsage.maxActions,
+        isTrialExpired,
+      };
+    } catch (error) {
+      console.error('Error checking trial usage:', error);
+      return null;
+    }
+  }
+
+  // Increment trial usage when user performs an action
+  async incrementTrialUsage(userId: string): Promise<boolean> {
+    try {
+      return await storage.incrementTrialUsage(userId);
+    } catch (error) {
+      console.error('Error incrementing trial usage:', error);
+      return false;
+    }
   }
 
   // Extract email domain

@@ -63,6 +63,37 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     }
 
+    // Trial usage endpoint
+    if (path.includes('trial/usage') && req.method === 'GET') {
+      try {
+        console.log('Fetching trial usage...');
+        
+        const sessionToken = req.headers.cookie?.match(/sessionToken=([^;]+)/)?.[1];
+        if (!sessionToken) {
+          return res.status(401).json({ message: "Authentication required" });
+        }
+
+        const { storage } = await import('../server/storage');
+        const userSession = await storage.getUserSession(sessionToken);
+        
+        if (!userSession) {
+          return res.status(401).json({ message: "Invalid session" });
+        }
+
+        const { authService } = await import('../server/services/authService');
+        const trialStatus = await authService.checkTrialUsage(userSession.userId);
+        
+        if (!trialStatus) {
+          return res.status(404).json({ message: "Trial status not found" });
+        }
+        
+        return res.json(trialStatus);
+      } catch (error) {
+        console.error("Error fetching trial usage:", error);
+        return res.status(500).json({ message: "Failed to fetch trial usage" });
+      }
+    }
+
     // Authentication verification endpoint
     if (path.includes('auth/verify') && req.method === 'GET') {
       try {

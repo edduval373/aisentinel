@@ -14,6 +14,8 @@ import {
   modelFusionConfigs,
   emailVerificationTokens,
   userSessions,
+  subscriptions,
+  trialUsage,
   type User,
   type UpsertUser,
   type Company,
@@ -44,6 +46,10 @@ import {
   type InsertEmailVerificationToken,
   type UserSession,
   type InsertUserSession,
+  type Subscription,
+  type InsertSubscription,
+  type TrialUsage,
+  type InsertTrialUsage,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, count, sql } from "drizzle-orm";
@@ -146,6 +152,23 @@ export interface IStorage {
   getModelFusionConfig(companyId: number): Promise<ModelFusionConfig | undefined>;
   createModelFusionConfig(config: InsertModelFusionConfig): Promise<ModelFusionConfig>;
   updateModelFusionConfig(id: number, config: Partial<InsertModelFusionConfig>): Promise<ModelFusionConfig>;
+  
+  // Subscription operations
+  getSubscription(id: number): Promise<Subscription | undefined>;
+  getSubscriptionByUserId(userId: string): Promise<Subscription | undefined>;
+  getSubscriptionByCompanyId(companyId: number): Promise<Subscription | undefined>;
+  createSubscription(subscription: InsertSubscription): Promise<Subscription>;
+  updateSubscription(id: number, subscription: Partial<InsertSubscription>): Promise<Subscription>;
+  
+  // Trial operations
+  getTrialUsageByUserId(userId: string): Promise<TrialUsage | undefined>;
+  getTrialUsageByEmail(email: string): Promise<TrialUsage | undefined>;
+  createTrialUsage(trial: InsertTrialUsage): Promise<TrialUsage>;
+  updateTrialUsage(id: number, trial: Partial<InsertTrialUsage>): Promise<TrialUsage>;
+  incrementTrialUsage(userId: string): Promise<boolean>;
+  
+  // User update method
+  updateUser(id: string, userData: Partial<UpsertUser>): Promise<User>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -864,6 +887,97 @@ export class DatabaseStorage implements IStorage {
         updatedAt: new Date(),
       })
       .where(eq(modelFusionConfigs.id, id))
+      .returning();
+    return updated;
+  }
+
+  // Subscription operations
+  async getSubscription(id: number): Promise<Subscription | undefined> {
+    const [subscription] = await db.select().from(subscriptions).where(eq(subscriptions.id, id));
+    return subscription;
+  }
+
+  async getSubscriptionByUserId(userId: string): Promise<Subscription | undefined> {
+    const [subscription] = await db.select().from(subscriptions).where(eq(subscriptions.userId, userId));
+    return subscription;
+  }
+
+  async getSubscriptionByCompanyId(companyId: number): Promise<Subscription | undefined> {
+    const [subscription] = await db.select().from(subscriptions).where(eq(subscriptions.companyId, companyId));
+    return subscription;
+  }
+
+  async createSubscription(subscription: InsertSubscription): Promise<Subscription> {
+    const [created] = await db.insert(subscriptions).values(subscription).returning();
+    return created;
+  }
+
+  async updateSubscription(id: number, subscription: Partial<InsertSubscription>): Promise<Subscription> {
+    const [updated] = await db
+      .update(subscriptions)
+      .set({
+        ...subscription,
+        updatedAt: new Date(),
+      })
+      .where(eq(subscriptions.id, id))
+      .returning();
+    return updated;
+  }
+
+  // Trial operations
+  async getTrialUsageByUserId(userId: string): Promise<TrialUsage | undefined> {
+    const [trial] = await db.select().from(trialUsage).where(eq(trialUsage.userId, userId));
+    return trial;
+  }
+
+  async getTrialUsageByEmail(email: string): Promise<TrialUsage | undefined> {
+    const [trial] = await db.select().from(trialUsage).where(eq(trialUsage.email, email));
+    return trial;
+  }
+
+  async createTrialUsage(trial: InsertTrialUsage): Promise<TrialUsage> {
+    const [created] = await db.insert(trialUsage).values(trial).returning();
+    return created;
+  }
+
+  async updateTrialUsage(id: number, trial: Partial<InsertTrialUsage>): Promise<TrialUsage> {
+    const [updated] = await db
+      .update(trialUsage)
+      .set({
+        ...trial,
+        updatedAt: new Date(),
+      })
+      .where(eq(trialUsage.id, id))
+      .returning();
+    return updated;
+  }
+
+  async incrementTrialUsage(userId: string): Promise<boolean> {
+    try {
+      const [updated] = await db
+        .update(trialUsage)
+        .set({
+          actionsUsed: sql`${trialUsage.actionsUsed} + 1`,
+          updatedAt: new Date(),
+        })
+        .where(eq(trialUsage.userId, userId))
+        .returning();
+      return !!updated;
+    } catch (error) {
+      console.error('Error incrementing trial usage:', error);
+      return false;
+    }
+  }
+
+  // User update method
+  async updateUser(id: string, userData: Partial<UpsertUser>): Promise<User> {
+    const [updated] = await db
+      .update(users)
+      .set({
+        ...userData,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, id))
       .returning();
     return updated;
   }

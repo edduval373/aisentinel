@@ -104,14 +104,63 @@ export const users = pgTable("users", {
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
-  role: varchar("role").default("user").notNull(), // user, admin, owner, super-user (legacy field)
-  roleLevel: integer("role_level").default(1).notNull(), // 1=user, 2=admin, 99=owner, 100=super-user
+  role: varchar("role").default("guest").notNull(), // guest, user, admin, owner, super-user
+  roleLevel: integer("role_level").default(0).notNull(), // 0=guest, 1=user, 2=admin, 99=owner, 100=super-user
   companyRoleId: integer("company_role_id").references(() => companyRoles.id),
   companyId: integer("company_id").references(() => companies.id),
   department: varchar("department"),
+  isTrialUser: boolean("is_trial_user").default(true),
+  lastLoginAt: timestamp("last_login_at"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
+
+// Subscriptions table - manages both company and individual subscriptions
+export const subscriptions = pgTable("subscriptions", {
+  id: serial("id").primaryKey(),
+  type: varchar("type").notNull(), // "company", "individual"
+  companyId: integer("company_id").references(() => companies.id),
+  userId: varchar("user_id").references(() => users.id),
+  planId: varchar("plan_id").notNull(), // "trial", "basic", "pro", "enterprise"
+  status: varchar("status").notNull(), // "active", "cancelled", "expired", "suspended"
+  billingCycle: varchar("billing_cycle").default("monthly"), // "monthly", "yearly"
+  startDate: timestamp("start_date").defaultNow(),
+  endDate: timestamp("end_date"),
+  autoRenew: boolean("auto_renew").default(true),
+  maxUsers: integer("max_users"), // For company subscriptions
+  pricePerMonth: real("price_per_month"),
+  currency: varchar("currency").default("USD"),
+  stripeSubscriptionId: varchar("stripe_subscription_id"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => [
+  index("idx_subscription_company").on(table.companyId),
+  index("idx_subscription_user").on(table.userId),
+  index("idx_subscription_status").on(table.status),
+]);
+
+// Trial tracking table - manages free trial usage and limits
+export const trialUsage = pgTable("trial_usage", {
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+  companyId: integer("company_id").references(() => companies.id),
+  email: varchar("email").notNull(),
+  ipAddress: varchar("ip_address"),
+  deviceFingerprint: varchar("device_fingerprint"),
+  actionsUsed: integer("actions_used").default(0).notNull(),
+  maxActions: integer("max_actions").default(10).notNull(), // Free trial limit
+  trialStartDate: timestamp("trial_start_date").defaultNow(),
+  trialEndDate: timestamp("trial_end_date"),
+  isTrialExpired: boolean("is_trial_expired").default(false),
+  hasUpgraded: boolean("has_upgraded").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => [
+  index("idx_trial_user").on(table.userId),
+  index("idx_trial_email").on(table.email),
+  index("idx_trial_ip").on(table.ipAddress),
+  index("idx_trial_device").on(table.deviceFingerprint),
+]);
 
 // AI Models configuration
 export const aiModels = pgTable("ai_models", {
@@ -158,7 +207,7 @@ export const activityTypes = pgTable("activity_types", {
 // User activities tracking
 export const userActivities = pgTable("user_activities", {
   id: serial("id").primaryKey(),
-  companyId: integer("company_id").references(() => companies.id).notNull(),
+  companyId: integer("company_id").references(() => companies.id),
   userId: varchar("user_id").references(() => users.id).notNull(),
   aiModelId: integer("ai_model_id").references(() => aiModels.id),
   activityTypeId: integer("activity_type_id").references(() => activityTypes.id),
@@ -169,6 +218,8 @@ export const userActivities = pgTable("user_activities", {
   timestamp: timestamp("timestamp").defaultNow().notNull(),
   description: text("description").notNull(), // What activity was performed
   metadata: jsonb("metadata"), // Additional context data
+  isTrialAction: boolean("is_trial_action").default(false), // Track if this was a trial action
+  tokenUsage: jsonb("token_usage"), // Track API token usage for billing
 });
 
 // Chat sessions
@@ -300,3 +351,12 @@ export type EmailVerificationToken = typeof emailVerificationTokens.$inferSelect
 export type InsertEmailVerificationToken = z.infer<typeof insertEmailVerificationTokenSchema>;
 export type UserSession = typeof userSessions.$inferSelect;
 export type InsertUserSession = z.infer<typeof insertUserSessionSchema>;
+
+// New subscription and trial types
+export const insertSubscriptionSchema = createInsertSchema(subscriptions);
+export const insertTrialUsageSchema = createInsertSchema(trialUsage);
+
+export type Subscription = typeof subscriptions.$inferSelect;
+export type InsertSubscription = z.infer<typeof insertSubscriptionSchema>;
+export type TrialUsage = typeof trialUsage.$inferSelect;
+export type InsertTrialUsage = z.infer<typeof insertTrialUsageSchema>;

@@ -121,6 +121,97 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication routes
   setupAuthRoutes(app);
 
+  // Trial system routes
+  app.get('/api/trial/usage/:userId', requireAuth, async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const trialUsage = await storage.getTrialUsageByUserId(userId);
+      
+      if (!trialUsage) {
+        return res.status(404).json({ message: "Trial usage not found" });
+      }
+
+      const isTrialExpired = trialUsage.trialEndDate ? trialUsage.trialEndDate < new Date() : false;
+      const hasActionsRemaining = trialUsage.actionsUsed < trialUsage.maxActions && !isTrialExpired;
+
+      res.json({
+        hasActionsRemaining,
+        actionsUsed: trialUsage.actionsUsed,
+        maxActions: trialUsage.maxActions,
+        isTrialExpired,
+        trialEndDate: trialUsage.trialEndDate,
+      });
+    } catch (error) {
+      console.error("Error fetching trial usage:", error);
+      res.status(500).json({ message: "Failed to fetch trial usage" });
+    }
+  });
+
+  app.post('/api/trial/increment/:userId', requireAuth, async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const success = await storage.incrementTrialUsage(userId);
+      
+      if (success) {
+        const trialUsage = await storage.getTrialUsageByUserId(userId);
+        res.json({
+          success: true,
+          actionsUsed: trialUsage?.actionsUsed || 0,
+          maxActions: trialUsage?.maxActions || 10,
+        });
+      } else {
+        res.status(400).json({ success: false, message: "Failed to increment trial usage" });
+      }
+    } catch (error) {
+      console.error("Error incrementing trial usage:", error);
+      res.status(500).json({ message: "Failed to increment trial usage" });
+    }
+  });
+
+  // External authentication route for cookie-based login
+  app.post('/api/auth/external', async (req, res) => {
+    try {
+      const { email, externalUserId, ipAddress, deviceFingerprint } = req.body;
+      
+      if (!email || !externalUserId) {
+        return res.status(400).json({ message: "Email and external user ID required" });
+      }
+
+      const { authService } = await import('./services/authService');
+      const session = await authService.authenticateExternalUser(
+        email, 
+        externalUserId, 
+        ipAddress, 
+        deviceFingerprint
+      );
+
+      if (session) {
+        // Set session cookie
+        res.cookie('auth_session', session.sessionToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+          maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        });
+
+        res.json({
+          success: true,
+          user: {
+            userId: session.userId,
+            email: session.email,
+            companyId: session.companyId,
+            roleLevel: session.roleLevel,
+          },
+        });
+      } else {
+        res.status(401).json({ success: false, message: "Authentication failed" });
+      }
+    } catch (error) {
+      console.error("Error with external authentication:", error);
+      res.status(500).json({ message: "External authentication failed" });
+    }
+  });
+
   // Enable Replit Auth for production authentication
   process.env.ENABLE_REPLIT_AUTH = 'true';
   await setupAuth(app);
@@ -1020,6 +1111,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log('Created new chat session:', session.id);
       }
 
+      // Check trial usage for authenticated users
+      const user = await storage.getUser(userId);
+      if (user && user.isTrialUser) {
+        const { authService } = await import('./services/authService');
+        const trialStatus = await authService.checkTrialUsage(userId);
+        
+        if (trialStatus && !trialStatus.hasActionsRemaining) {
+          return res.status(403).json({ 
+            message: trialStatus.isTrialExpired 
+              ? "Your free trial has expired. Please upgrade to continue using AI features."
+              : `Trial limit reached. You've used ${trialStatus.actionsUsed}/${trialStatus.maxActions} free actions. Please upgrade to continue.`,
+            trialExpired: trialStatus.isTrialExpired,
+            actionsUsed: trialStatus.actionsUsed,
+            maxActions: trialStatus.maxActions
+          });
+        }
+      }
+
       // Apply content filtering
       const filterResult = await contentFilter.filterMessage(message);
       if (filterResult.blocked) {
@@ -1193,20 +1302,67 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
-      // Log the user activity
+      // Log the user activity with trial tracking
       await storage.createUserActivity({
         companyId: companyId,
         userId,
         activityTypeId: parsedActivityTypeId,
         description: `Chat message sent${attachments.length > 0 ? ` with ${attachments.length} attachment(s)` : ''}`,
         status: 'completed',
+        isTrialAction: user?.isTrialUser || false,
         metadata: { messageId: chatMessage.id, aiModelId: parsedAiModelId, attachmentCount: attachments.length }
       });
+
+      // Increment trial usage for trial users after successful AI response
+      if (user && user.isTrialUser && chatMessage.response) {
+        const { authService } = await import('./services/authService');
+        await authService.incrementTrialUsage(userId);
+      }
 
       res.json({ ...chatMessage, attachments });
     } catch (error) {
       console.error("Error creating chat message:", error);
       res.status(500).json({ message: "Failed to create chat message" });
+    }
+  });
+
+  // Trial Usage API endpoint
+  app.get('/api/trial/usage/:userId?', async (req: any, res) => {
+    try {
+      let userId = req.params.userId;
+      
+      // If no userId provided, try to get from authentication
+      if (!userId) {
+        // Try cookie auth first
+        if (req.cookies?.sessionToken) {
+          const authService = await import('./services/authService');
+          const session = await authService.authService.verifySession(req.cookies.sessionToken);
+          if (session) {
+            userId = session.userId;
+          }
+        }
+        
+        // Fallback to Replit Auth (only if enabled)
+        if (!userId && process.env.ENABLE_REPLIT_AUTH === 'true' && req.user?.claims?.sub) {
+          userId = req.user.claims.sub;
+        }
+        
+        if (!userId) {
+          return res.status(401).json({ message: "Authentication required" });
+        }
+      }
+
+      const { authService } = await import('./services/authService');
+      const trialStatus = await authService.checkTrialUsage(userId);
+      
+      if (!trialStatus) {
+        return res.status(404).json({ message: "Trial status not found" });
+      }
+      
+      res.json(trialStatus);
+    } catch (error) {
+      console.error("Error fetching trial usage:", error);
+      res.status(500).json({ message: "Failed to fetch trial usage" });
     }
   });
 

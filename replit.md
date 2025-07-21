@@ -140,6 +140,17 @@ The application is configured for deployment on Vercel with the following setup:
 
 ```
 Recent Updates:
+- July 21, 2025. Implemented Comprehensive Trial System with Role-Based Authentication:
+  * Added complete trial database schema with subscriptions and trial_usage tables
+  * Enhanced authentication service to handle external user role matching to existing company emails
+  * Implemented guest role (level 0) for trial users with automatic trial assignment for new users
+  * Integrated trial usage checking into chat API to enforce trial limits before AI interactions
+  * Created TrialBanner frontend component displaying trial status, usage progress, and upgrade prompts
+  * Added trial usage API endpoint (/api/trial/usage) with authentication support for real-time trial monitoring
+  * Enhanced chat message route to check trial limits and increment usage after successful AI responses
+  * Updated serverless function (api/index.ts) to include trial usage endpoint for production deployment
+  * Trial system now enforces usage limits with clear user feedback and prevents access when limits exceeded
+  * External authentication users are automatically matched to existing company roles capturing proper permissions
 - July 20, 2025. Fixed Vercel Serverless Function Authentication Routes:
   * Added missing authentication verification routes to api/index.ts for production deployment
   * Implemented auth/verify endpoint to handle email verification links on aisentinel.app
