@@ -1,4 +1,5 @@
 // Vercel serverless function entry point
+// Updated: 2025-07-21 TypeScript fixes applied for email verification
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {

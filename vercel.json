@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "rm -f public/index.html && npx vite build --config vite.config.production.ts",
+  "buildCommand": "rm -f public/index.html && npm run build",
   "outputDirectory": "dist/public",
   "functions": {
     "api/index.ts": {
