@@ -1,0 +1,66 @@
+[10:15:41.288] Running build in Washington, D.C., USA (East) – iad1
+[10:15:41.289] Build machine configuration: 2 cores, 8 GB
+[10:15:41.322] Cloning github.com/edduval373/aisentinel (Branch: main, Commit: 9787efe)
+[10:15:42.196] Cloning completed: 873.000ms
+[10:15:42.253] Found .vercelignore
+[10:15:42.284] Removed 278 ignored files defined in .vercelignore
+[10:15:42.284]   /.git/config
+[10:15:42.284]   /.git/description
+[10:15:42.284]   /.git/FETCH_HEAD
+[10:15:42.284]   /.git/HEAD
+[10:15:42.284]   /.git/hooks/applypatch-msg.sample
+[10:15:42.284]   /.git/hooks/commit-msg.sample
+[10:15:42.285]   /.git/hooks/fsmonitor-watchman.sample
+[10:15:42.285]   /.git/hooks/post-update.sample
+[10:15:42.285]   /.git/hooks/pre-applypatch.sample
+[10:15:42.285]   /.git/hooks/pre-commit.sample
+[10:15:43.228] Restored build cache from previous deployment (Gm3D6MfUh4HdxPbYMB2AnQjSczcJ)
+[10:15:45.728] Running "vercel build"
+[10:15:46.600] Vercel CLI 44.5.0
+[10:15:47.349] Running "install" command: `npm install`...
+[10:15:50.188] 
+[10:15:50.189] up to date, audited 784 packages in 3s
+[10:15:50.189] 
+[10:15:50.189] 177 packages are looking for funding
+[10:15:50.189]   run `npm fund` for details
+[10:15:50.204] 
+[10:15:50.205] 11 vulnerabilities (3 low, 5 moderate, 3 high)
+[10:15:50.205] 
+[10:15:50.206] To address issues that do not require attention, run:
+[10:15:50.206]   npm audit fix
+[10:15:50.206] 
+[10:15:50.206] To address all issues possible (including breaking changes), run:
+[10:15:50.207]   npm audit fix --force
+[10:15:50.207] 
+[10:15:50.209] Some issues need review, and may require choosing
+[10:15:50.209] a different dependency.
+[10:15:50.210] 
+[10:15:50.210] Run `npm audit` for details.
+[10:15:50.517] 
+[10:15:50.518] > rest-express@1.0.0 build
+[10:15:50.520] > vite build --config vite.config.production.ts && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+[10:15:50.520] 
+[10:15:50.815] [36mvite v5.4.19 [32mbuilding for production...[36m[39m
+[10:15:50.869] transforming...
+[10:15:56.086] [32m✓[39m 2378 modules transformed.
+[10:15:56.773] rendering chunks...
+[10:15:56.789] computing gzip size...
+[10:15:56.816] [2m../dist/public/[22m[32mindex.html                 [39m[1m[2m    1.52 kB[22m[1m[22m[2m │ gzip:   0.78 kB[22m
+[10:15:56.817] [2m../dist/public/[22m[2massets/[22m[35mindex-CrRdUkyD.css  [39m[1m[2m    7.56 kB[22m[1m[22m[2m │ gzip:   2.03 kB[22m
+[10:15:56.817] [2m../dist/public/[22m[2massets/[22m[36mindex-xLIy1Ayj.js   [39m[1m[33m1,046.18 kB[39m[22m[2m │ gzip: 300.12 kB[22m
+[10:15:56.818] [33m
+[10:15:56.818] (!) Some chunks are larger than 500 kB after minification. Consider:
+[10:15:56.818] - Using dynamic import() to code-split the application
+[10:15:56.818] - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+[10:15:56.818] - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+[10:15:56.818] [32m✓ built in 5.98s[39m
+[10:15:56.877] ✘ [ERROR] Could not resolve "../vite.config"
+[10:15:56.878] 
+[10:15:56.878]     server/vite.ts:6:23:
+[10:15:56.878]       6 │ import viteConfig from "../vite.config";
+[10:15:56.878]         ╵                        ~~~~~~~~~~~~~~~~
+[10:15:56.878] 
+[10:15:56.885] 1 error
+[10:15:56.899] Error: Command "rm -f public/index.html && npm run build" exited with 1
+[10:15:57.158] 
+[10:15:59.884] Exiting build container
