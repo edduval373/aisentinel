@@ -41,7 +41,9 @@ export default function Login() {
     setIsLoading(true);
 
     try {
+      console.log("Making request to:", "/api/auth/request-verification", "with email:", email);
       const response = await apiRequest("/api/auth/request-verification", "POST", { email });
+      console.log("Response received:", response);
       
       if (response.success) {
         setEmailSent(true);
@@ -54,6 +56,11 @@ export default function Login() {
       }
     } catch (error: any) {
       console.error("Login error:", error);
+      console.error("Error details:", {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
       setError(error.message || "An error occurred. Please try again.");
     } finally {
       setIsLoading(false);
@@ -95,6 +102,7 @@ export default function Login() {
                   src="/ai-sentinel-logo.png" 
                   alt="AI Sentinel" 
                   className="w-10 h-10 object-contain"
+                  style={{maxWidth: "40px", maxHeight: "40px"}}
                 />
                 <h1 className="text-xl font-bold text-slate-800">AI Sentinel</h1>
               </div>
@@ -120,6 +128,7 @@ export default function Login() {
                   src="/ai-sentinel-logo.png" 
                   alt="AI Sentinel" 
                   className="w-16 h-16 object-contain"
+                  style={{maxWidth: "64px", maxHeight: "64px"}}
                 />
               </div>
               <CardTitle className="text-2xl font-bold">Check Your Email</CardTitle>
@@ -198,6 +207,7 @@ export default function Login() {
                 src="/ai-sentinel-logo.png" 
                 alt="AI Sentinel" 
                 className="w-10 h-10 object-contain"
+                style={{maxWidth: "40px", maxHeight: "40px"}}
               />
               <h1 className="text-xl font-bold text-slate-800">AI Sentinel</h1>
             </div>
@@ -223,6 +233,7 @@ export default function Login() {
                 src="/ai-sentinel-logo.png" 
                 alt="AI Sentinel" 
                 className="w-16 h-16 object-contain"
+                style={{maxWidth: "64px", maxHeight: "64px"}}
               />
             </div>
             <CardTitle className="text-2xl font-bold">Welcome to AI Sentinel</CardTitle>
