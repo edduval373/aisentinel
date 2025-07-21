@@ -121,9 +121,10 @@ export default function Landing() {
             className="flex flex-col sm:flex-row gap-4 justify-center"
             style={{
               display: 'flex',
-              flexDirection: 'column',
+              flexDirection: 'row',
               gap: '1rem',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              alignItems: 'center'
             }}
           >
             <Button
@@ -131,18 +132,18 @@ export default function Landing() {
               size="lg"
               className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg transform hover:scale-105 transition-all duration-200"
               style={{
-                background: 'linear-gradient(90deg, hsl(221, 83%, 53%) 0%, hsl(239, 84%, 67%) 100%)',
+                background: 'hsl(221, 83%, 53%)',
                 color: 'white',
-                padding: '12px 32px',
-                fontSize: '1.125rem',
+                padding: '12px 24px',
+                fontSize: '1rem',
                 borderRadius: '8px',
                 border: 'none',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontWeight: '600',
-                boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)'
+                fontWeight: '500',
+                minWidth: '200px'
               }}
             >
               Start 30-Day Free Trial
@@ -154,22 +155,22 @@ export default function Landing() {
               size="lg"
               className="border-2 border-blue-200 text-blue-700 hover:bg-blue-50 shadow-lg transform hover:scale-105 transition-all duration-200"
               style={{
-                backgroundColor: 'transparent',
-                color: '#1d4ed8',
-                border: '2px solid #bfdbfe',
-                padding: '12px 32px',
-                fontSize: '1.125rem',
+                backgroundColor: 'white',
+                color: 'hsl(221, 83%, 53%)',
+                border: '2px solid #e5e7eb',
+                padding: '12px 24px',
+                fontSize: '1rem',
                 borderRadius: '8px',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontWeight: '600',
-                boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)'
+                fontWeight: '500',
+                minWidth: '200px'
               }}
             >
               View Pricing Plans
-              <BarChart3 className="ml-2 w-5 h-5" style={{marginLeft: '8px', color: '#1d4ed8'}} />
+              <BarChart3 className="ml-2 w-5 h-5" style={{marginLeft: '8px', color: 'hsl(221, 83%, 53%)'}} />
             </Button>
           </div>
           
@@ -181,7 +182,7 @@ export default function Landing() {
               backgroundColor: '#eff6ff',
               border: '1px solid #bfdbfe',
               borderRadius: '8px',
-              maxWidth: '28rem',
+              maxWidth: '32rem',
               margin: '2rem auto 0 auto'
             }}
           >
