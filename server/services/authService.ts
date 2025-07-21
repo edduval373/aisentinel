@@ -63,7 +63,7 @@ export class AuthService {
           const employee = await storage.getCompanyEmployeeByEmail(email);
           if (employee && employee.isActive) {
             companyId = company.id;
-            roleLevel = this.getRoleLevelFromEmployeeRole(employee.role);
+            roleLevel = this.getRoleLevelFromEmployeeRole(employee.role || 'employee');
             isTrialUser = false; // Company users get full access
           }
         }
@@ -102,7 +102,7 @@ export class AuthService {
             const employee = await storage.getCompanyEmployeeByEmail(email);
             if (employee && employee.isActive) {
               companyId = company.id;
-              roleLevel = this.getRoleLevelFromEmployeeRole(employee.role);
+              roleLevel = this.getRoleLevelFromEmployeeRole(employee.role || 'employee');
               isTrialUser = false;
               
               // Update user with company information
@@ -171,7 +171,7 @@ export class AuthService {
           const employee = await storage.getCompanyEmployeeByEmail(email);
           if (employee && employee.isActive) {
             companyId = company.id;
-            roleLevel = this.getRoleLevelFromEmployeeRole(employee.role);
+            roleLevel = this.getRoleLevelFromEmployeeRole(employee.role || 'employee');
             isTrialUser = false; // Company users get full access
           }
         }
@@ -209,7 +209,7 @@ export class AuthService {
             const employee = await storage.getCompanyEmployeeByEmail(email);
             if (employee && employee.isActive) {
               companyId = company.id;
-              roleLevel = this.getRoleLevelFromEmployeeRole(employee.role);
+              roleLevel = this.getRoleLevelFromEmployeeRole(employee.role || 'employee');
               isTrialUser = false;
               
               // Update user with company information
@@ -278,7 +278,7 @@ export class AuthService {
         userId: session.userId,
         email: session.email,
         companyId: session.companyId,
-        roleLevel: session.roleLevel,
+        roleLevel: session.roleLevel || 0,
         sessionToken: session.sessionToken,
       };
     } catch (error) {
