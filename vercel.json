@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "rm -f public/index.html && node build-fix.js",
+  "buildCommand": "rm -f public/index.html && npm run build",
   "outputDirectory": "dist/public",
   "functions": {
     "api/index.ts": {
