@@ -22,7 +22,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         status: 'OK', 
         timestamp: new Date().toISOString(),
         environment: process.env.NODE_ENV || 'unknown',
-        hasDatabase: !!process.env.DATABASE_URL
+        hasDatabase: !!process.env.DATABASE_URL,
+        version: '2025-07-21-typescript-fixes',
+        fixedIssues: 'FUNCTION_INVOCATION_FAILED resolved'
       });
     }
 
@@ -139,7 +141,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const success = await authService.initiateEmailVerification(email);
         
         if (success) {
-          return res.json({ success: true, message: "Verification email sent" });
+          return res.json({ success: true, message: "Verification email sent successfully" });
         } else {
           return res.status(500).json({ success: false, message: "Failed to send verification email" });
         }

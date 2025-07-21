@@ -1,3 +1,0 @@
-Deployment trigger: 2025-07-21 14:13
-TypeScript fixes applied for email verification API
-Fixed FUNCTION_INVOCATION_FAILED errors
