@@ -1,16 +1,33 @@
+import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield, Users, BarChart3, Lock, CheckCircle, AlertTriangle } from "lucide-react";
 
 export default function Landing() {
+  console.log("[LANDING DEBUG] Landing component rendering...");
+  
   const handleLogin = () => {
+    console.log("[LANDING DEBUG] Login button clicked");
     window.location.href = "/login";
   };
 
+  console.log("[LANDING DEBUG] About to return JSX");
+  
+  // Add a simple test element to verify React is working
+  React.useEffect(() => {
+    console.log("[LANDING DEBUG] Landing component mounted successfully");
+    document.title = "AI Sentinel - Landing Page (React Working)";
+  }, []);
+  
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100" style={{backgroundColor: '#f8fafc', minHeight: '100vh'}}>
+      {/* Debug Test - Simple HTML to verify React is working */}
+      <div style={{position: 'fixed', top: '10px', left: '10px', background: 'red', color: 'white', padding: '10px', zIndex: 9999}}>
+        REACT WORKING - Landing Component Rendered
+      </div>
+      
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-white shadow-sm border-b" style={{backgroundColor: 'white', borderBottom: '1px solid #e2e8f0'}}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-2">

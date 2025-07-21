@@ -32,12 +32,16 @@ import NotFound from "@/pages/not-found.tsx";
 
 
 function Router() {
+  console.log("[APP DEBUG] Router component rendering...");
+  
   const { isAuthenticated, isLoading, user, isSuperUser, isOwner, isAdmin } = useAuth();
   
-  console.log("Authentication check:", { isAuthenticated, role: user?.role, roleLevel: user?.roleLevel, isAdmin, isOwner, isSuperUser });
+  console.log("[APP DEBUG] Authentication check:", { isAuthenticated, role: user?.role, roleLevel: user?.roleLevel, isAdmin, isOwner, isSuperUser });
+  console.log("[APP DEBUG] useAuth hook returned:", { isAuthenticated, isLoading, user: !!user, isSuperUser, isOwner, isAdmin });
 
   // Show loading state while checking authentication
   if (isLoading) {
+    console.log("[APP DEBUG] Showing loading state");
     return (
       <div className="flex h-screen items-center justify-center bg-slate-50">
         <div className="text-center">
@@ -86,10 +90,11 @@ function Router() {
       <Route path="/">
         {() => {
           if (!isAuthenticated) {
-            console.log("Not authenticated, showing landing page");
+            console.log("[APP DEBUG] Not authenticated, showing landing page");
+            console.log("[APP DEBUG] About to render Landing component");
             return <Landing />;
           }
-          console.log("Authenticated, showing home");
+          console.log("[APP DEBUG] Authenticated, showing home");
           return <Home />;
         }}
       </Route>
