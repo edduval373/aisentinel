@@ -1,0 +1,25 @@
+Here is a **revised AI prompt** incorporating your new requirements about security, cookie-based recognition, and automated role assignment:
+
+**Prompt:**  
+Act as an expert product architect for a SaaS AI platform. Design a subscription and access management system for an application where:
+
+- Companies can purchase a subscription for their organization, enabling all invited employees (company users) to have full access as long as the company’s subscription is active.
+- Individual users not affiliated with a company can also purchase personal subscriptions.
+- All new users (company or individual) should receive a limited free trial upon first signup, allowing a predefined number of AI tests or actions before they must subscribe.
+- The application’s external security should integrate with the application's existing role-based access control (RBAC) system. When a user accesses the application:
+    - If a user’s browser contains an existing authentication cookie, the system should extract the user's email from the cookie.
+    - The system then checks the email against the roles in the application’s database to determine the user’s assigned role.
+    - If the user does not have any roles assigned, the user should be automatically assigned a **Guest** profile with limited permissions.
+- Ensure the system prevents users from abusing the trial via multiple sign-ups (for example, restrict by email, device, or IP).
+- Describe onboarding flows for both company-invited users and self-signup individuals. Include steps for trial access, subscription upgrade prompts, and transitions from personal to company access if an invited user later joins a subscribed company.
+- Specify technical and data safeguards for managing user roles, subscription states, and trial limitations.
+- Output your response as a plan with sections for:  
+  1. Database structure (key fields for users, subscriptions, companies, roles, trials)
+  2. API endpoints and access logic  
+  3. Onboarding and upgrade user journeys  
+  4. Abuse prevention strategies  
+  5. Example transition scenarios (trial to paid personal, trial to company, company to personal)  
+  6. How the system validates cookies and enforces role-based assignment, including the default Guest role assignment  
+  7. Suggestions for clear in-app subscription messaging and notifications  
+
+Reference best practices for SaaS subscription management, cookie-based authentication, and role-based access governance in your recommendations.
