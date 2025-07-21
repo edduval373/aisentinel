@@ -33,31 +33,211 @@
   --sentinel-slate-light: hsl(215, 20%, 65%);
 }
 
-/* Ensure Tailwind utilities are available */
-.bg-sentinel-blue {
-  background-color: hsl(221, 83%, 53%) !important;
+/* AI Sentinel Custom CSS - Reliable styling without Tailwind dependencies */
+
+/* Layout and Structure */
+.ai-sentinel-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
 }
 
-.text-sentinel-blue {
-  color: hsl(221, 83%, 53%) !important;
+.ai-sentinel-header {
+  background-color: white;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 }
 
-.border-sentinel-blue {
-  border-color: hsl(221, 83%, 53%) !important;
+.ai-sentinel-header-container {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 0 1rem;
 }
 
-.bg-gradient-to-br {
-  background-image: linear-gradient(to bottom right, var(--tw-gradient-stops)) !important;
+.ai-sentinel-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 4rem;
 }
 
-.from-slate-50 {
-  --tw-gradient-from: #f8fafc !important;
-  --tw-gradient-to: rgb(248 250 252 / 0) !important;
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+.ai-sentinel-logo-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.to-slate-100 {
-  --tw-gradient-to: #f1f5f9 !important;
+.ai-sentinel-logo {
+  width: 32px;
+  height: 32px;
+  background-color: hsl(221, 83%, 53%);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ai-sentinel-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #1e293b;
+}
+
+.ai-sentinel-sign-in {
+  background-color: hsl(221, 83%, 53%);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+/* Hero Section */
+.ai-sentinel-hero {
+  padding: 6rem 1rem;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+}
+
+.ai-sentinel-hero-container {
+  max-width: 72rem;
+  margin: 0 auto;
+  text-align: center;
+  width: 100%;
+}
+
+.ai-sentinel-hero-title {
+  font-size: clamp(2.5rem, 5vw, 3.75rem);
+  font-weight: bold;
+  color: #1e293b;
+  margin-bottom: 1.5rem;
+  line-height: 1.1;
+}
+
+.ai-sentinel-hero-subtitle {
+  font-size: 1.25rem;
+  color: #475569;
+  margin-bottom: 2rem;
+  max-width: 48rem;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.7;
+}
+
+.ai-sentinel-button-container {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.ai-sentinel-button-primary {
+  background: hsl(221, 83%, 53%);
+  color: white;
+  padding: 12px 24px;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  min-width: 180px;
+  height: 48px;
+  text-decoration: none;
+}
+
+.ai-sentinel-button-secondary {
+  background-color: white;
+  color: hsl(221, 83%, 53%);
+  border: 1px solid #d1d5db;
+  padding: 12px 24px;
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  min-width: 180px;
+  height: 48px;
+  text-decoration: none;
+}
+
+.ai-sentinel-credit-notice {
+  margin-top: 0;
+  padding: 16px 20px;
+  background-color: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  max-width: 28rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ai-sentinel-credit-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #1d4ed8;
+}
+
+.ai-sentinel-credit-title {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.ai-sentinel-credit-text {
+  font-size: 0.75rem;
+  color: #2563eb;
+  margin-top: 4px;
+}
+
+/* Features Section */
+.ai-sentinel-features {
+  padding: 5rem 1rem;
+  background-color: white;
+}
+
+.ai-sentinel-features-container {
+  max-width: 80rem;
+  margin: 0 auto;
+}
+
+.ai-sentinel-features-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.ai-sentinel-features-title {
+  font-size: 1.875rem;
+  font-weight: bold;
+  color: #1e293b;
+  margin-bottom: 1rem;
+}
+
+.ai-sentinel-features-subtitle {
+  font-size: 1.25rem;
+  color: #475569;
+  max-width: 42rem;
+  margin: 0 auto;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .ai-sentinel-button-container {
+    flex-direction: column;
+  }
+  
+  .ai-sentinel-button-primary,
+  .ai-sentinel-button-secondary {
+    width: 100%;
+    max-width: 280px;
+  }
 }
 
 .dark {
