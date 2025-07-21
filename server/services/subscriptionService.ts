@@ -37,7 +37,7 @@ export class SubscriptionService {
       {
         name: 'company',
         displayName: 'Company Plan',
-        price: '99.00',
+        price: '50.00',
         billingPeriod: 'monthly',
         maxUsers: null, // Unlimited users
         dailyApiLimit: 1000,

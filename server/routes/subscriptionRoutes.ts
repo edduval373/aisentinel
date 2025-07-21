@@ -52,7 +52,7 @@ router.get('/plans', async (req: Request, res: Response) => {
         id: 3,
         name: 'company',
         displayName: 'Company Plan',
-        price: '99.00',
+        price: '50.00',
         billingPeriod: 'monthly',
         maxUsers: null,
         dailyApiLimit: 1000,

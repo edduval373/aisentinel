@@ -64,7 +64,7 @@ export default function PricingPage() {
     {
       name: "company",
       displayName: "Company Plan",
-      price: "$99",
+      price: "$50",
       billing: "/month",
       description: "Complete solution for teams and organizations",
       maxUsers: "Unlimited users",

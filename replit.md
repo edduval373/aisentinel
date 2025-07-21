@@ -143,7 +143,7 @@ Recent Updates:
 - July 21, 2025. Implemented Comprehensive Credit Card-Required Pricing System:
   * REMOVED ALL DEMO MODE functionality from landing page and application
   * Implemented mandatory $0 credit card validation for ALL trial users to prevent abuse
-  * Created comprehensive pricing page (/pricing) with three tiers: Trial ($0), Personal ($9.99), Company ($99)
+  * Created comprehensive pricing page (/pricing) with three tiers: Trial ($0), Personal ($9.99), Company ($50)
   * Added subscription database schema (subscriptionPlans, userSubscriptions, apiUsageTracking, paymentMethods)
   * Enhanced landing page with credit card security notice and removed "Try Demo" button
   * Implemented subscription API routes (/api/subscription/plans, /api/subscription/status, /api/subscription/can-request)
