@@ -215,7 +215,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           return res.status(401).json({ message: "User not found or no company assigned" });
         }
         
-        const models = await storage.getAIModels(user.companyId);
+        const models = await storage.getAiModels(user.companyId);
         console.log(`Fetched ${models.length} AI models for company ${user.companyId}`);
         return res.json(models);
       } catch (error) {
@@ -297,12 +297,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         // Update all models for this provider with the new API key
         const companies = await storage.getCompanies();
         const companyId = companies[0]?.id || 1;
-        const models = await storage.getAIModels(companyId);
+        const models = await storage.getAiModels(companyId);
         
         const providerModels = models.filter(m => m.provider === provider);
         
         for (const model of providerModels) {
-          await storage.updateAIModel(model.id, { apiKey });
+          await storage.updateAiModel(model.id, { apiKey });
         }
         
         return res.json({ success: true, updated: providerModels.length });
