@@ -106,7 +106,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           return res.status(400).json({ success: false, message: "No verification token provided" });
         }
 
-        const session = await authService.verifyEmailToken(token);
+        const session = await authService.verifyEmailToken(token, req.headers['x-forwarded-for'] as string, req.headers['user-agent'] as string);
         
         if (!session) {
           return res.status(400).json({ success: false, message: "Invalid or expired verification token" });
