@@ -96,12 +96,15 @@ export class EmailService {
       });
       console.log(`✓ Verification email sent successfully to ${email}`);
       console.log(`✓ Verification URL for manual access: ${verificationUrl}`);
+      console.log(`📧 IMPORTANT: If email doesn't arrive, check spam/junk folder or use the verification URL above`);
       return true;
     } catch (error) {
       console.error('SendGrid email error:', error);
       if (error.response) {
-        console.error('SendGrid response:', error.response.body);
+        console.error('SendGrid response status:', error.response.status);
+        console.error('SendGrid response body:', error.response.body);
       }
+      console.log(`🔗 Manual verification available at: ${verificationUrl}`);
       return false;
     }
   }
