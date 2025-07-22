@@ -97,10 +97,25 @@ export default function Landing() {
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div style={{
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
+            gap: '2rem',
+            maxWidth: '1200px',
+            margin: '0 auto'
+          }}>
             <Card className="border-slate-200 hover:shadow-lg transition-shadow">
               <CardHeader>
-                <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center mb-4">
+                <div style={{
+                  width: '48px', 
+                  height: '48px', 
+                  backgroundColor: '#eff6ff', 
+                  borderRadius: '8px', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  marginBottom: '16px'
+                }}>
                   <Shield className="w-6 h-6 text-blue-600" />
                 </div>
                 <CardTitle className="text-slate-800">Security & Compliance</CardTitle>
@@ -112,7 +127,16 @@ export default function Landing() {
 
             <Card className="border-slate-200 hover:shadow-lg transition-shadow">
               <CardHeader>
-                <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center mb-4">
+                <div style={{
+                  width: '48px', 
+                  height: '48px', 
+                  backgroundColor: '#f0fdf4', 
+                  borderRadius: '8px', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  marginBottom: '16px'
+                }}>
                   <Users className="w-6 h-6 text-green-600" />
                 </div>
                 <CardTitle className="text-slate-800">User Management</CardTitle>
@@ -124,7 +148,16 @@ export default function Landing() {
 
             <Card className="border-slate-200 hover:shadow-lg transition-shadow">
               <CardHeader>
-                <div className="w-12 h-12 bg-yellow-50 rounded-lg flex items-center justify-center mb-4">
+                <div style={{
+                  width: '48px', 
+                  height: '48px', 
+                  backgroundColor: '#fefce8', 
+                  borderRadius: '8px', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  marginBottom: '16px'
+                }}>
                   <BarChart3 className="w-6 h-6 text-yellow-600" />
                 </div>
                 <CardTitle className="text-slate-800">Analytics & Reporting</CardTitle>
