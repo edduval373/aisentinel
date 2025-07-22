@@ -252,7 +252,11 @@ Please provide a synthesized response that incorporates the best elements from a
         ],
       });
 
-      return response.content[0].text || "I apologize, but I couldn't generate a response at this time.";
+      const content = response.content[0];
+      if (content.type === 'text') {
+        return content.text || "I apologize, but I couldn't generate a response at this time.";
+      }
+      return "I apologize, but I couldn't generate a response at this time.";
     } catch (error) {
       console.error("Anthropic API error:", error);
       throw new Error("Failed to get response from Anthropic");
