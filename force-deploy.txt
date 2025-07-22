@@ -1,1 +1,4 @@
-Force deployment: Mon Jul 21 02:15:06 PM UTC 2025
+Deploy timestamp: 2025-07-22 14:09:00 UTC
+Fixed Vercel routing configuration to properly serve static assets
+CSS and JS files should now load correctly instead of returning HTML
+This deployment should fix the blank production page issue
