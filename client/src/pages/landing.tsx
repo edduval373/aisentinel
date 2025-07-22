@@ -274,17 +274,46 @@ export default function Landing() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-blue-600">
-        <div className="max-w-4xl mx-auto text-center">
-          <h3 className="text-3xl font-bold text-white mb-6">
+      <section style={{ 
+        background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%)', 
+        padding: '5rem 1rem', 
+        textAlign: 'center' 
+      }}>
+        <div style={{ maxWidth: '64rem', margin: '0 auto' }}>
+          <h3 style={{ 
+            fontSize: '30px', 
+            fontWeight: 700, 
+            color: 'white', 
+            marginBottom: '24px' 
+          }}>
             Ready to Secure Your AI Usage?
           </h3>
-          <p className="text-xl text-blue-100 mb-8">
+          <p style={{ 
+            fontSize: '20px', 
+            color: '#bfdbfe', 
+            marginBottom: '32px' 
+          }}>
             Join organizations that trust AI Sentinel for secure, compliant AI interactions.
           </p>
           <button
             onClick={handleLogin}
-            className="bg-white text-blue-600 hover:bg-slate-50 text-lg px-8 py-3 rounded-lg font-semibold inline-flex items-center justify-center transition-colors"
+            style={{
+              backgroundColor: 'white',
+              color: '#1e40af',
+              padding: '12px 32px',
+              borderRadius: '8px',
+              border: 'none',
+              fontSize: '18px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.backgroundColor = '#f3f4f6';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.backgroundColor = 'white';
+            }}
           >
             Start Now
           </button>
@@ -292,15 +321,23 @@ export default function Landing() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-800 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-center space-x-2">
-            <div className="w-6 h-6 bg-blue-600 rounded-md flex items-center justify-center">
-              <Shield className="w-3 h-3 text-white" />
+      <footer style={{ backgroundColor: '#1e293b', color: 'white', padding: '3rem 1rem' }}>
+        <div style={{ maxWidth: '80rem', margin: '0 auto', textAlign: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '16px' }}>
+            <div style={{ 
+              width: '24px', 
+              height: '24px', 
+              backgroundColor: '#2563eb', 
+              borderRadius: '6px', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center' 
+            }}>
+              <Shield style={{ width: '12px', height: '12px', color: 'white' }} />
             </div>
-            <span className="text-lg font-semibold">AI Sentinel</span>
+            <span style={{ fontSize: '18px', fontWeight: 600 }}>AI Sentinel</span>
           </div>
-          <p className="text-center text-slate-400 mt-4">
+          <p style={{ color: '#94a3b8' }}>
             Enterprise AI Governance Platform
           </p>
         </div>
