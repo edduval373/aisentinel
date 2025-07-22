@@ -20,10 +20,31 @@ interface AuthData {
 export function useAuth() {
   const queryClient = useQueryClient();
   
-  // Real authentication - no bypass
+  // Check if we're in demo mode
+  const isDemoMode = window.location.pathname === '/demo';
+  
+  // Real authentication - with demo mode bypass
   const { data, isLoading, error } = useQuery<AuthData>({
     queryKey: ['/api/user/current'],
     queryFn: async () => {
+      // If in demo mode, return demo user
+      if (isDemoMode) {
+        console.log("Demo mode activated - bypassing authentication");
+        return { 
+          authenticated: true, 
+          user: {
+            id: 'demo-user',
+            email: 'demo@aisentinel.app',
+            firstName: 'Demo',
+            lastName: 'User',
+            companyId: 1,
+            companyName: 'Demo Company',
+            role: 'user',
+            roleLevel: 1
+          }
+        };
+      }
+      
       try {
         const user = await apiRequest('/api/user/current');
         console.log("Authentication successful:", user);
@@ -33,7 +54,7 @@ export function useAuth() {
         };
       } catch (error) {
         console.log("Authentication failed:", error);
-        // No fallback - user must be authenticated
+        // No fallback - user must be authenticated (unless demo mode)
         return { 
           authenticated: false, 
           user: undefined

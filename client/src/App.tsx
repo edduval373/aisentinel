@@ -86,6 +86,14 @@ function Router() {
       <Route path="/landing" component={Landing} />
       <Route path="/pricing" component={PricingPage} />
       
+      {/* Demo route - accessible without authentication */}
+      <Route path="/demo">
+        {() => {
+          console.log("[APP DEBUG] Demo mode accessed");
+          return <Home />;
+        }}
+      </Route>
+      
       {/* Main routes - show landing page if not authenticated */}
       <Route path="/">
         {() => {

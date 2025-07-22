@@ -351,7 +351,10 @@ export default function Login() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => window.location.href = '/'}
+                  onClick={() => {
+                    console.log("[LOGIN DEBUG] Demo button clicked");
+                    window.location.href = '/demo';
+                  }}
                   style={{
                     width: '100%',
                     height: '48px',
