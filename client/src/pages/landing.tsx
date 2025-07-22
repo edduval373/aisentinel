@@ -179,7 +179,7 @@ export default function Landing() {
             <div className="bg-white p-8 rounded-xl shadow-lg">
               <div className="flex items-center justify-between mb-6">
                 <h4 className="text-lg font-semibold text-slate-800">Security Alert</h4>
-                <AlertTriangle className="w-5 h-5 text-sentinel-amber" />
+                <AlertTriangle className="w-5 h-5 text-amber-600" />
               </div>
               <div className="space-y-4">
                 <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
