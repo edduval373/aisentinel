@@ -5,23 +5,7 @@ export default {
     "./index.html",
     "../components.json"
   ],
-  safelist: [
-    'bg-sentinel-blue-50',
-    'bg-sentinel-green-50', 
-    'bg-sentinel-amber-50',
-    'bg-sentinel-red-50',
-    'text-sentinel-blue-600',
-    'text-sentinel-green-600',
-    'text-sentinel-amber-600',
-    'text-sentinel-red-600',
-    'text-sentinel-amber-700',
-    'text-sentinel-red-700',
-    'text-sentinel-green-700',
-    'border-sentinel-blue-200',
-    'border-sentinel-green-200',
-    'border-sentinel-amber-200',
-    'border-sentinel-red-200'
-  ],
+
   theme: {
     extend: {
       colors: {
