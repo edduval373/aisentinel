@@ -86,7 +86,7 @@ export default function Landing() {
       </section>
 
       {/* Features Section */}
-      <section className="ai-sentinel-features">
+      <section className="ai-sentinel-features" style={{ marginTop: '-72px' }}>
         <div className="ai-sentinel-features-container">
           <div className="ai-sentinel-features-header">
             <h3 className="ai-sentinel-features-title">
@@ -116,7 +116,7 @@ export default function Landing() {
                   justifyContent: 'center', 
                   marginBottom: '16px'
                 }}>
-                  <Shield className="w-6 h-6 text-blue-600" />
+                  <Shield style={{ width: '24px', height: '24px', color: '#2563eb' }} />
                 </div>
                 <CardTitle className="text-slate-800">Security & Compliance</CardTitle>
                 <CardDescription>
@@ -137,7 +137,7 @@ export default function Landing() {
                   justifyContent: 'center', 
                   marginBottom: '16px'
                 }}>
-                  <Users className="w-6 h-6 text-green-600" />
+                  <Users style={{ width: '24px', height: '24px', color: '#16a34a' }} />
                 </div>
                 <CardTitle className="text-slate-800">User Management</CardTitle>
                 <CardDescription>
@@ -158,7 +158,7 @@ export default function Landing() {
                   justifyContent: 'center', 
                   marginBottom: '16px'
                 }}>
-                  <BarChart3 className="w-6 h-6 text-yellow-600" />
+                  <BarChart3 style={{ width: '24px', height: '24px', color: '#ca8a04' }} />
                 </div>
                 <CardTitle className="text-slate-800">Analytics & Reporting</CardTitle>
                 <CardDescription>
