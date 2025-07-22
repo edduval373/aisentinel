@@ -1,4 +1,4 @@
-Deploy timestamp: 2025-07-22 14:09:00 UTC
-Fixed Vercel routing configuration to properly serve static assets
-CSS and JS files should now load correctly instead of returning HTML
-This deployment should fix the blank production page issue
+Deploy timestamp: 2025-07-22 14:12:00 UTC
+Fixed Vercel routing with negative lookahead regex to exclude /assets/ from HTML rewrite
+This prevents CSS/JS files from being served as HTML content
+Production deployment should now work correctly - v2
