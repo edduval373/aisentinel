@@ -100,8 +100,8 @@ export default function Landing() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <Card className="border-slate-200 hover:shadow-lg transition-shadow">
               <CardHeader>
-                <div className="w-12 h-12 bg-sentinel-blue/10 rounded-lg flex items-center justify-center mb-4">
-                  <Shield className="w-6 h-6 text-sentinel-blue" />
+                <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center mb-4">
+                  <Shield className="w-6 h-6 text-blue-600" />
                 </div>
                 <CardTitle className="text-slate-800">Security & Compliance</CardTitle>
                 <CardDescription>
@@ -112,8 +112,8 @@ export default function Landing() {
 
             <Card className="border-slate-200 hover:shadow-lg transition-shadow">
               <CardHeader>
-                <div className="w-12 h-12 bg-sentinel-green/10 rounded-lg flex items-center justify-center mb-4">
-                  <Users className="w-6 h-6 text-sentinel-green" />
+                <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center mb-4">
+                  <Users className="w-6 h-6 text-green-600" />
                 </div>
                 <CardTitle className="text-slate-800">User Management</CardTitle>
                 <CardDescription>
@@ -124,8 +124,8 @@ export default function Landing() {
 
             <Card className="border-slate-200 hover:shadow-lg transition-shadow">
               <CardHeader>
-                <div className="w-12 h-12 bg-sentinel-amber/10 rounded-lg flex items-center justify-center mb-4">
-                  <BarChart3 className="w-6 h-6 text-sentinel-amber" />
+                <div className="w-12 h-12 bg-yellow-50 rounded-lg flex items-center justify-center mb-4">
+                  <BarChart3 className="w-6 h-6 text-yellow-600" />
                 </div>
                 <CardTitle className="text-slate-800">Analytics & Reporting</CardTitle>
                 <CardDescription>
@@ -147,28 +147,28 @@ export default function Landing() {
               </h3>
               <div className="space-y-4">
                 <div className="flex items-start space-x-3">
-                  <CheckCircle className="w-5 h-5 text-sentinel-green mt-1 flex-shrink-0" />
+                  <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
                   <div>
                     <h4 className="font-semibold text-slate-800">PII Detection</h4>
                     <p className="text-slate-600">Automatically detects and blocks personally identifiable information</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-3">
-                  <CheckCircle className="w-5 h-5 text-sentinel-green mt-1 flex-shrink-0" />
+                  <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
                   <div>
                     <h4 className="font-semibold text-slate-800">Financial Data Protection</h4>
                     <p className="text-slate-600">Prevents sharing of sensitive financial information</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-3">
-                  <CheckCircle className="w-5 h-5 text-sentinel-green mt-1 flex-shrink-0" />
+                  <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
                   <div>
                     <h4 className="font-semibold text-slate-800">Real-time Monitoring</h4>
                     <p className="text-slate-600">Continuous monitoring of all AI interactions</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-3">
-                  <CheckCircle className="w-5 h-5 text-sentinel-green mt-1 flex-shrink-0" />
+                  <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
                   <div>
                     <h4 className="font-semibold text-slate-800">Configurable Policies</h4>
                     <p className="text-slate-600">Customizable governance policies for your organization</p>
@@ -182,29 +182,29 @@ export default function Landing() {
                 <AlertTriangle className="w-5 h-5 text-sentinel-amber" />
               </div>
               <div className="space-y-4">
-                <div className="bg-sentinel-amber/10 border border-sentinel-amber/30 rounded-lg p-4">
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
                   <div className="flex items-start space-x-3">
-                    <AlertTriangle className="w-4 h-4 text-sentinel-amber mt-0.5 flex-shrink-0" />
+                    <AlertTriangle className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className="text-sm font-medium text-sentinel-amber">Financial Data Detected</p>
+                      <p className="text-sm font-medium text-amber-700">Financial Data Detected</p>
                       <p className="text-sm text-slate-600">Message contains references to company financial data</p>
                     </div>
                   </div>
                 </div>
-                <div className="bg-sentinel-red/10 border border-sentinel-red/30 rounded-lg p-4">
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                   <div className="flex items-start space-x-3">
-                    <Lock className="w-4 h-4 text-sentinel-red mt-0.5 flex-shrink-0" />
+                    <Lock className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className="text-sm font-medium text-sentinel-red">PII Blocked</p>
+                      <p className="text-sm font-medium text-red-700">PII Blocked</p>
                       <p className="text-sm text-slate-600">Personal information automatically filtered</p>
                     </div>
                   </div>
                 </div>
-                <div className="bg-sentinel-green/10 border border-sentinel-green/30 rounded-lg p-4">
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                   <div className="flex items-start space-x-3">
-                    <CheckCircle className="w-4 h-4 text-sentinel-green mt-0.5 flex-shrink-0" />
+                    <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className="text-sm font-medium text-sentinel-green">Message Approved</p>
+                      <p className="text-sm font-medium text-green-700">Message Approved</p>
                       <p className="text-sm text-slate-600">Content meets security requirements</p>
                     </div>
                   </div>
