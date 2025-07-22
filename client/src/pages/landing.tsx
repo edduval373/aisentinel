@@ -171,74 +171,99 @@ export default function Landing() {
       </section>
 
       {/* Security Features */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-slate-50">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <section style={{ padding: '5rem 1rem', backgroundColor: '#f8fafc' }}>
+        <div style={{ maxWidth: '80rem', margin: '0 auto' }}>
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', 
+            gap: '3rem', 
+            alignItems: 'center'
+          }}>
             <div>
-              <h3 className="text-3xl font-bold text-slate-800 mb-6">
+              <h3 style={{ fontSize: '30px', fontWeight: 700, color: '#1e293b', marginBottom: '24px' }}>
                 Advanced Security Features
               </h3>
-              <div className="space-y-4">
-                <div className="flex items-start space-x-3">
-                  <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '16px' }}>
+                  <CheckCircle style={{ width: '20px', height: '20px', color: '#16a34a', marginTop: '4px', flexShrink: 0 }} />
                   <div>
-                    <h4 className="font-semibold text-slate-800">PII Detection</h4>
-                    <p className="text-slate-600">Automatically detects and blocks personally identifiable information</p>
+                    <h4 style={{ fontWeight: 600, color: '#1e293b', marginBottom: '4px' }}>PII Detection</h4>
+                    <p style={{ color: '#64748b' }}>Automatically detects and blocks personally identifiable information</p>
                   </div>
                 </div>
-                <div className="flex items-start space-x-3">
-                  <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '16px' }}>
+                  <CheckCircle style={{ width: '20px', height: '20px', color: '#16a34a', marginTop: '4px', flexShrink: 0 }} />
                   <div>
-                    <h4 className="font-semibold text-slate-800">Financial Data Protection</h4>
-                    <p className="text-slate-600">Prevents sharing of sensitive financial information</p>
+                    <h4 style={{ fontWeight: 600, color: '#1e293b', marginBottom: '4px' }}>Financial Data Protection</h4>
+                    <p style={{ color: '#64748b' }}>Prevents sharing of sensitive financial information</p>
                   </div>
                 </div>
-                <div className="flex items-start space-x-3">
-                  <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '16px' }}>
+                  <CheckCircle style={{ width: '20px', height: '20px', color: '#16a34a', marginTop: '4px', flexShrink: 0 }} />
                   <div>
-                    <h4 className="font-semibold text-slate-800">Real-time Monitoring</h4>
-                    <p className="text-slate-600">Continuous monitoring of all AI interactions</p>
+                    <h4 style={{ fontWeight: 600, color: '#1e293b', marginBottom: '4px' }}>Real-time Monitoring</h4>
+                    <p style={{ color: '#64748b' }}>Continuous monitoring of all AI interactions</p>
                   </div>
                 </div>
-                <div className="flex items-start space-x-3">
-                  <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '16px' }}>
+                  <CheckCircle style={{ width: '20px', height: '20px', color: '#16a34a', marginTop: '4px', flexShrink: 0 }} />
                   <div>
-                    <h4 className="font-semibold text-slate-800">Configurable Policies</h4>
-                    <p className="text-slate-600">Customizable governance policies for your organization</p>
+                    <h4 style={{ fontWeight: 600, color: '#1e293b', marginBottom: '4px' }}>Configurable Policies</h4>
+                    <p style={{ color: '#64748b' }}>Customizable governance policies for your organization</p>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="bg-white p-8 rounded-xl shadow-lg">
-              <div className="flex items-center justify-between mb-6">
-                <h4 className="text-lg font-semibold text-slate-800">Security Alert</h4>
-                <AlertTriangle className="w-5 h-5 text-amber-600" />
+            <div style={{ 
+              backgroundColor: 'white', 
+              padding: '2rem', 
+              borderRadius: '12px', 
+              boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' 
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+                <h4 style={{ fontSize: '18px', fontWeight: 600, color: '#1e293b' }}>Security Alert</h4>
+                <AlertTriangle style={{ width: '20px', height: '20px', color: '#d97706' }} />
               </div>
-              <div className="space-y-4">
-                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                  <div className="flex items-start space-x-3">
-                    <AlertTriangle className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div style={{ 
+                  backgroundColor: '#fffbeb', 
+                  border: '1px solid #fed7aa', 
+                  borderRadius: '8px', 
+                  padding: '16px' 
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                    <AlertTriangle style={{ width: '16px', height: '16px', color: '#d97706', marginTop: '2px', flexShrink: 0 }} />
                     <div>
-                      <p className="text-sm font-medium text-amber-700">Financial Data Detected</p>
-                      <p className="text-sm text-slate-600">Message contains references to company financial data</p>
+                      <p style={{ fontSize: '14px', fontWeight: 500, color: '#b45309', marginBottom: '4px' }}>Financial Data Detected</p>
+                      <p style={{ fontSize: '14px', color: '#64748b' }}>Message contains references to company financial data</p>
                     </div>
                   </div>
                 </div>
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                  <div className="flex items-start space-x-3">
-                    <Lock className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
+                <div style={{ 
+                  backgroundColor: '#fef2f2', 
+                  border: '1px solid #fecaca', 
+                  borderRadius: '8px', 
+                  padding: '16px' 
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                    <Lock style={{ width: '16px', height: '16px', color: '#dc2626', marginTop: '2px', flexShrink: 0 }} />
                     <div>
-                      <p className="text-sm font-medium text-red-700">PII Blocked</p>
-                      <p className="text-sm text-slate-600">Personal information automatically filtered</p>
+                      <p style={{ fontSize: '14px', fontWeight: 500, color: '#b91c1c', marginBottom: '4px' }}>PII Blocked</p>
+                      <p style={{ fontSize: '14px', color: '#64748b' }}>Personal information automatically filtered</p>
                     </div>
                   </div>
                 </div>
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                  <div className="flex items-start space-x-3">
-                    <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                <div style={{ 
+                  backgroundColor: '#f0fdf4', 
+                  border: '1px solid #bbf7d0', 
+                  borderRadius: '8px', 
+                  padding: '16px' 
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                    <CheckCircle style={{ width: '16px', height: '16px', color: '#16a34a', marginTop: '2px', flexShrink: 0 }} />
                     <div>
-                      <p className="text-sm font-medium text-green-700">Message Approved</p>
-                      <p className="text-sm text-slate-600">Content meets security requirements</p>
+                      <p style={{ fontSize: '14px', fontWeight: 500, color: '#15803d', marginBottom: '4px' }}>Message Approved</p>
+                      <p style={{ fontSize: '14px', color: '#64748b' }}>Content meets security requirements</p>
                     </div>
                   </div>
                 </div>
