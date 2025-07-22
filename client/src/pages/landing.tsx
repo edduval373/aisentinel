@@ -22,29 +22,49 @@ export default function Landing() {
   return (
     <div className="ai-sentinel-page">
       {/* Header */}
-      <header className="ai-sentinel-header">
-        <div className="ai-sentinel-header-container">
-          <div className="ai-sentinel-header-content">
-            <div className="ai-sentinel-logo-container">
-              <div className="ai-sentinel-logo">
-                <Shield className="w-4 h-4 text-white" style={{color: 'white'}} />
-              </div>
-              <h1 className="ai-sentinel-title">
-                AI Sentinel
-              </h1>
-            </div>
-            <Button 
-              onClick={handleLogin} 
-              className="ai-sentinel-sign-in"
-            >
-              Sign In
-            </Button>
+      <header style={{ 
+        position: 'fixed', 
+        top: 0, 
+        left: 0, 
+        right: 0, 
+        backgroundColor: 'white', 
+        borderBottom: '1px solid #e2e8f0', 
+        zIndex: 50,
+        padding: '0 1rem'
+      }}>
+        <div style={{ 
+          maxWidth: '80rem', 
+          margin: '0 auto', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'space-between', 
+          height: '64px' 
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <img 
+              src="/ai-sentinel-logo.png" 
+              alt="AI Sentinel" 
+              style={{ width: '40px', height: '40px' }}
+            />
+            <h1 style={{ 
+              fontSize: '20px', 
+              fontWeight: 600, 
+              color: '#1e293b' 
+            }}>
+              AI Sentinel
+            </h1>
           </div>
+          <Button 
+            onClick={handleLogin} 
+            className="ai-sentinel-sign-in"
+          >
+            Sign In
+          </Button>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="ai-sentinel-hero" style={{ paddingTop: '4rem' }}>
+      <section className="ai-sentinel-hero" style={{ paddingTop: '8rem' }}>
         <div className="ai-sentinel-hero-container">
           <h2 className="ai-sentinel-hero-title">
             Enterprise AI
