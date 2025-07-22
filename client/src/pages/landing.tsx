@@ -44,7 +44,7 @@ export default function Landing() {
       </header>
 
       {/* Hero Section */}
-      <section className="ai-sentinel-hero">
+      <section className="ai-sentinel-hero" style={{ paddingTop: '4rem' }}>
         <div className="ai-sentinel-hero-container">
           <h2 className="ai-sentinel-hero-title">
             Enterprise AI
