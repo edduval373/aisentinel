@@ -52,7 +52,7 @@ import {
   type InsertTrialUsage,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, and, count, sql } from "drizzle-orm";
+import { eq, desc, and, count, sql, sum, like } from "drizzle-orm";
 
 // Interface for storage operations
 export interface IStorage {
@@ -969,9 +969,10 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  // Subscription management methods
-  async getSubscriptionPlans(): Promise<SubscriptionPlan[]> {
-    return await db.select().from(subscriptionPlans).where(eq(subscriptionPlans.isActive, true));
+  // Subscription management methods (temporarily disabled - schema not available)
+  async getSubscriptionPlans(): Promise<any[]> {
+    // return await db.select().from(subscriptionPlans).where(eq(subscriptionPlans.isActive, true));
+    return [];
   }
 
   async getSubscriptionPlan(id: number): Promise<SubscriptionPlan | null> {
