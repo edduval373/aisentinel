@@ -216,7 +216,7 @@ export default function Landing() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-sentinel-blue">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-blue-600">
         <div className="max-w-4xl mx-auto text-center">
           <h3 className="text-3xl font-bold text-white mb-6">
             Ready to Secure Your AI Usage?
@@ -224,14 +224,12 @@ export default function Landing() {
           <p className="text-xl text-blue-100 mb-8">
             Join organizations that trust AI Sentinel for secure, compliant AI interactions.
           </p>
-          <Button
+          <button
             onClick={handleLogin}
-            size="lg"
-            variant="secondary"
-            className="bg-white text-sentinel-blue hover:bg-slate-50 text-lg px-8 py-3"
+            className="bg-white text-blue-600 hover:bg-slate-50 text-lg px-8 py-3 rounded-lg font-semibold inline-flex items-center justify-center transition-colors"
           >
             Start Now
-          </Button>
+          </button>
         </div>
       </section>
 
@@ -239,7 +237,7 @@ export default function Landing() {
       <footer className="bg-slate-800 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-center space-x-2">
-            <div className="w-6 h-6 bg-sentinel-blue rounded-md flex items-center justify-center">
+            <div className="w-6 h-6 bg-blue-600 rounded-md flex items-center justify-center">
               <Shield className="w-3 h-3 text-white" />
             </div>
             <span className="text-lg font-semibold">AI Sentinel</span>
