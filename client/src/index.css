@@ -238,6 +238,7 @@
     width: 100%;
     max-width: 280px;
   }
+}
 
 .dark {
   --background: hsl(240, 10%, 3.9%);
@@ -500,5 +501,4 @@ table tbody tr:hover {
 .prose th,
 .prose td {
   @apply px-3 py-2 border border-slate-300;
-}
 }
