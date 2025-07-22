@@ -189,54 +189,108 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-slate-200">
+    <div style={{ 
+      minHeight: '100vh', 
+      background: 'linear-gradient(135deg, #f1f5f9 0%, #e0f2fe 50%, #e2e8f0 100%)' 
+    }}>
       {/* Header */}
-      <div className="absolute top-0 left-0 right-0 p-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
+      <div style={{ 
+        position: 'absolute', 
+        top: 0, 
+        left: 0, 
+        right: 0, 
+        padding: '24px' 
+      }}>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'space-between' 
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <img 
               src="/ai-sentinel-logo.png" 
               alt="AI Sentinel" 
-              className="w-10 h-10 object-contain"
-              style={{maxWidth: "40px", maxHeight: "40px"}}
+              style={{ width: '40px', height: '40px', objectFit: 'contain' }}
             />
-            <h1 className="text-xl font-semibold text-slate-800">AI Sentinel</h1>
+            <h1 style={{ 
+              fontSize: '20px', 
+              fontWeight: 600, 
+              color: '#1e293b' 
+            }}>AI Sentinel</h1>
           </div>
           <Button 
             variant="ghost" 
             size="sm"
             onClick={() => window.close()}
-            className="text-slate-600 hover:text-slate-900"
+            style={{ 
+              color: '#64748b', 
+              padding: '8px 12px', 
+              border: 'none', 
+              background: 'transparent' 
+            }}
           >
-            <X className="w-4 h-4 mr-2" />
+            <X style={{ width: '16px', height: '16px', marginRight: '8px' }} />
             Exit
           </Button>
         </div>
       </div>
       
       {/* Content */}
-      <div className="flex items-center justify-center min-h-screen p-4">
-        <Card className="w-full max-w-md bg-white shadow-xl">
-          <CardHeader className="space-y-6 text-center pt-8 pb-6">
-            <div className="flex items-center justify-center">
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        minHeight: '100vh', 
+        padding: '16px' 
+      }}>
+        <Card style={{ 
+          width: '100%', 
+          maxWidth: '448px', 
+          backgroundColor: 'white', 
+          boxShadow: '0 25px 50px -12px rgb(0 0 0 / 0.25)', 
+          borderRadius: '12px',
+          border: '1px solid #e2e8f0'
+        }}>
+          <CardHeader style={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            gap: '24px', 
+            textAlign: 'center', 
+            paddingTop: '32px', 
+            paddingBottom: '24px',
+            paddingLeft: '32px',
+            paddingRight: '32px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <img 
                 src="/ai-sentinel-logo.png" 
                 alt="AI Sentinel" 
-                className="w-16 h-16 object-contain"
-                style={{maxWidth: "64px", maxHeight: "64px"}}
+                style={{ width: '64px', height: '64px', objectFit: 'contain' }}
               />
             </div>
-            <div className="space-y-2">
-              <CardTitle className="text-2xl font-bold text-slate-900">Welcome to AI Sentinel</CardTitle>
-              <CardDescription className="text-slate-600">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <CardTitle style={{ 
+                fontSize: '24px', 
+                fontWeight: 700, 
+                color: '#0f172a' 
+              }}>Welcome to AI Sentinel</CardTitle>
+              <CardDescription style={{ color: '#64748b' }}>
                 Enter your email address to get started
               </CardDescription>
             </div>
           </CardHeader>
-          <CardContent className="px-8 pb-8">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-sm font-medium text-slate-700">Email Address</Label>
+          <CardContent style={{ 
+            paddingLeft: '32px', 
+            paddingRight: '32px', 
+            paddingBottom: '32px' 
+          }}>
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <Label htmlFor="email" style={{ 
+                  fontSize: '14px', 
+                  fontWeight: 500, 
+                  color: '#374151' 
+                }}>Email Address</Label>
                 <Input
                   id="email"
                   type="email"
@@ -244,30 +298,51 @@ export default function Login() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={isLoading}
-                  className="w-full h-12 px-4 text-sm border-slate-200 focus:border-blue-500 focus:ring-blue-500"
+                  style={{
+                    width: '100%',
+                    height: '48px',
+                    padding: '0 16px',
+                    fontSize: '14px',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '6px',
+                    backgroundColor: 'white'
+                  }}
                 />
               </div>
 
               {error && (
-                <Alert variant="destructive" className="text-sm">
-                  <AlertDescription>{error}</AlertDescription>
+                <Alert variant="destructive" style={{ fontSize: '14px' }}>
+                  <AlertDescription style={{ color: '#dc2626' }}>{error}</AlertDescription>
                 </Alert>
               )}
 
-              <div className="space-y-3">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md"
+                  style={{
+                    width: '100%',
+                    height: '48px',
+                    backgroundColor: '#2563eb',
+                    color: 'white',
+                    fontWeight: 500,
+                    borderRadius: '6px',
+                    border: 'none',
+                    cursor: isLoading ? 'not-allowed' : 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px'
+                  }}
                 >
                   {isLoading ? (
                     <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      <Loader2 style={{ width: '16px', height: '16px', animation: 'spin 1s linear infinite' }} />
                       Sending Verification...
                     </>
                   ) : (
                     <>
-                      <Mail className="w-4 h-4 mr-2" />
+                      <Mail style={{ width: '16px', height: '16px' }} />
                       Send Verification Email
                     </>
                   )}
@@ -277,14 +352,31 @@ export default function Login() {
                   type="button"
                   variant="outline"
                   onClick={() => window.location.href = '/'}
-                  className="w-full h-12 border-slate-300 text-slate-700 hover:bg-slate-50 font-medium rounded-md"
+                  style={{
+                    width: '100%',
+                    height: '48px',
+                    border: '1px solid #d1d5db',
+                    color: '#374151',
+                    backgroundColor: 'white',
+                    fontWeight: 500,
+                    borderRadius: '6px',
+                    cursor: 'pointer'
+                  }}
                 >
                   Continue to Chat (Demo Mode)
                 </Button>
               </div>
             </form>
 
-            <div className="mt-8 text-center space-y-3 text-sm text-slate-500">
+            <div style={{ 
+              marginTop: '32px', 
+              textAlign: 'center', 
+              display: 'flex', 
+              flexDirection: 'column', 
+              gap: '12px', 
+              fontSize: '14px', 
+              color: '#64748b' 
+            }}>
               <p>
                 We'll send you a secure link to verify your email address.
               </p>
