@@ -1,22 +1,22 @@
-# Critical Production Fix Ready for Deployment
+# URGENT: Email Verification Serverless Function Fix
 
 ## Issue: 
-Production site (aisentinel.app) shows blank page while development works perfectly
+Email verification links causing FUNCTION_INVOCATION_FAILED errors on Vercel
 
 ## Root Cause:
-Vercel routing was serving HTML for CSS/JS files causing React app to fail loading
+Serverless function `/api/auth/verify` was crashing due to improper error handling and cookie setting
 
 ## Fix Applied:
-1. **vercel.json**: Updated routing to exclude /assets/ from HTML rewrite using regex `/((?!assets/).*)`
-2. **landing.tsx**: Replaced ALL broken Tailwind classes with inline CSS for guaranteed rendering
-3. **Layout fixes**: 3-column grid, 2-column security section, blue CTA, footer - all working with inline styles
+1. **api/index.ts**: Enhanced verification endpoint with comprehensive error handling
+2. **Improved logging**: Added step-by-step console logs for debugging
+3. **Fixed cookie format**: Proper cookie setting for both development and production
+4. **Better redirects**: Explicit 302 redirect to success page
 
 ## Files Changed:
-- vercel.json (critical routing fix)
-- client/src/pages/landing.tsx (all layout sections fixed with inline CSS)
-- force-deploy.txt (deployment marker)
+- api/index.ts (serverless function fix)
+- server/services/emailService.ts (enhanced logging)
 
-## Expected Result:
-Production will display beautiful AI Sentinel landing page matching development preview
+## Current Working Verification URL:
+https://aisentinel.app/api/auth/verify?token=d2btzIUupaWaj7UGBTuHXliR43-ccITk
 
-## Deploy Status: READY - Push these changes to trigger Vercel deployment
+## Deploy Status: READY - This fixes the crashed verification system

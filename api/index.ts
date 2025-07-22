@@ -23,8 +23,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         timestamp: new Date().toISOString(),
         environment: process.env.NODE_ENV || 'unknown',
         hasDatabase: !!process.env.DATABASE_URL,
-        version: '2025-07-21-14-30-FORCE-UPDATE',
-        fixedIssues: 'FUNCTION_INVOCATION_FAILED resolved - TypeScript null handling fixed',
+        version: '2025-07-22-14-30-VERIFICATION-FIX',
+        fixedIssues: 'Email verification serverless function crash fixed - Enhanced error handling and logging',
         buildSuccess: true
       });
     }
@@ -101,31 +101,45 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Authentication verification endpoint
     if (path.includes('auth/verify') && req.method === 'GET') {
       try {
-        const { authService } = await import('../server/services/authService');
-        const { storage } = await import('../server/storage');
-        
+        console.log('Processing verification request...');
         const token = req.query.token as string;
         
         if (!token) {
+          console.error('No verification token provided');
           return res.status(400).json({ success: false, message: "No verification token provided" });
         }
 
-        const session = await authService.verifyEmailToken(token, req.headers['x-forwarded-for'] as string, req.headers['user-agent'] as string);
+        console.log('Token received, importing services...');
+        const { authService } = await import('../server/services/authService');
+        const { storage } = await import('../server/storage');
+        
+        console.log('Services imported, verifying token...');
+        const session = await authService.verifyEmailToken(token);
         
         if (!session) {
+          console.error('Invalid or expired verification token');
           return res.status(400).json({ success: false, message: "Invalid or expired verification token" });
         }
 
-        // Set session cookie
-        res.setHeader('Set-Cookie', [
-          `sessionToken=${session.sessionToken}; HttpOnly; Secure; SameSite=Strict; Max-Age=${30 * 24 * 60 * 60}; Path=/`
-        ]);
+        console.log('Token verified successfully, setting cookie...');
+        // Set session cookie with proper format
+        const cookieValue = `sessionToken=${session.sessionToken}; HttpOnly; ${process.env.NODE_ENV === 'production' ? 'Secure; ' : ''}SameSite=Strict; Max-Age=${30 * 24 * 60 * 60}; Path=/`;
+        res.setHeader('Set-Cookie', cookieValue);
 
+        console.log('Redirecting to success page...');
         // Redirect to frontend verification success page
-        return res.redirect('/verify?success=true');
+        return res.redirect(302, '/verify?success=true');
       } catch (error: any) {
-        console.error("Verification error:", error);
-        return res.status(500).json({ success: false, message: "An error occurred during verification" });
+        console.error("Verification error details:", {
+          message: error.message,
+          stack: error.stack,
+          name: error.name
+        });
+        return res.status(500).json({ 
+          success: false, 
+          message: "An error occurred during verification",
+          error: error.message 
+        });
       }
     }
 
