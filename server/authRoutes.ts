@@ -134,8 +134,8 @@ export function setupAuthRoutes(app: Express) {
   // Debug route for SendGrid connectivity testing
   app.get('/api/auth/debug/sendgrid', async (req, res) => {
     try {
-      // Direct import from the existing service
-      const { emailService } = require('./services/emailService');
+      // Direct access to emailService using existing import
+      const { emailService } = await import('./services/emailService');
       
       const configInfo = emailService.getConfigInfo();
       const connectionTest = await emailService.testSendGridConnection();
