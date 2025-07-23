@@ -230,7 +230,7 @@ export default function Login() {
           <Button 
             variant="ghost" 
             size="sm"
-            onClick={() => window.close()}
+            onClick={() => window.location.href = '/'}
             style={{ 
               color: '#64748b', 
               padding: '8px 12px', 
@@ -239,7 +239,7 @@ export default function Login() {
             }}
           >
             <X style={{ width: '16px', height: '16px', marginRight: '8px' }} />
-            Exit
+            Back to Home
           </Button>
         </div>
       </div>
