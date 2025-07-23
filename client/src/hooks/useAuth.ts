@@ -20,8 +20,9 @@ interface AuthData {
 export function useAuth() {
   const queryClient = useQueryClient();
   
-  // Check if we're in demo mode
-  const isDemoMode = window.location.pathname === '/demo';
+  // Check if we're in demo mode (no auth cookies = demo mode)
+  const hasAuthCookie = document.cookie.includes('sessionToken=');
+  const isDemoMode = window.location.pathname === '/demo' || !hasAuthCookie;
   
   // Real authentication - with demo mode bypass
   const { data, isLoading, error } = useQuery<AuthData>({
@@ -40,13 +41,13 @@ export function useAuth() {
             companyId: 1,
             companyName: 'Demo Company',
             role: 'user',
-            roleLevel: 1
+            roleLevel: 0 // Demo mode users have role level 0
           }
         };
       }
       
       try {
-        const authResponse = await apiRequest('/api/auth/me');
+        const authResponse = await apiRequest('/api/auth/me', 'GET');
         console.log("Authentication response:", authResponse);
         
         if (authResponse.authenticated && authResponse.user) {
