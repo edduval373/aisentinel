@@ -921,6 +921,65 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     }
 
+    // Chat session creation endpoint (supports demo mode) - MISSING IN PRODUCTION
+    if ((path.includes('chat/session') || pathname.includes('chat/session')) && req.method === 'POST') {
+      try {
+        console.log('=== PRODUCTION API CHAT SESSION CREATION DEBUG ===');
+        console.log('Request URL:', req.url);
+        console.log('Request method:', req.method);
+        console.log('Request headers:', JSON.stringify(req.headers, null, 2));
+        console.log('User agent:', req.headers['user-agent']);
+        console.log('Referer:', req.headers.referer);
+        console.log('Origin:', req.headers.origin);
+        console.log('Host:', req.headers.host);
+        console.log('Cookie header:', req.headers.cookie);
+        
+        // Always provide demo mode for users without authentication
+        const hasSessionCookie = req.headers.cookie?.includes('sessionToken=');
+        const isDemoMode = req.headers['x-demo-mode'] === 'true' || 
+                          req.headers.referer?.includes('/demo') || 
+                          !hasSessionCookie ||
+                          req.url?.includes('aisentinel.app'); // Production demo mode
+        
+        console.log('Production API - Chat session creation analysis:', {
+          isDemoMode,
+          hasSessionCookie,
+          referer: req.headers.referer,
+          url: req.url,
+          xDemoMode: req.headers['x-demo-mode'],
+          hostname: req.headers.host,
+          protocol: req.headers['x-forwarded-proto'] || 'http'
+        });
+        
+        if (isDemoMode) {
+          console.log("Production demo mode chat session creation");
+          
+          const demoSessionId = Math.floor(Math.random() * 1000000) + 1;
+          const demoSession = {
+            id: demoSessionId,
+            companyId: 1,
+            userId: 'demo-user',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          };
+          
+          console.log('Production demo session created successfully:', demoSession.id);
+          console.log('Session details:', demoSession);
+          console.log('=== END PRODUCTION API SESSION CREATION DEBUG ===');
+          return res.status(200).json(demoSession);
+        }
+        
+        console.log('Non-demo mode detected, requiring authentication');
+        console.log('=== END PRODUCTION API SESSION CREATION DEBUG ===');
+        return res.status(401).json({ message: "Authentication required for non-demo mode" });
+      } catch (error) {
+        console.error('Production API - Session creation error:', error);
+        console.error('Error stack:', error.stack);
+        console.log('=== END PRODUCTION API SESSION CREATION DEBUG (ERROR) ===');
+        return res.status(500).json({ message: "Failed to create chat session", error: error.message });
+      }
+    }
+
     // Chat message endpoint (supports demo mode)
     if ((path.includes('chat/message') || pathname.includes('chat/message')) && req.method === 'POST') {
       try {

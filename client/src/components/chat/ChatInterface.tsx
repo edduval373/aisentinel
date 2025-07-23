@@ -129,22 +129,44 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   // Send message mutation
   const sendMessageMutation = useMutation({
     mutationFn: async (data: FormData | { message: string; aiModelId: number; activityTypeId: number; sessionId: number }) => {
+      console.log('=== SEND MESSAGE DEBUG ===');
+      console.log('Message data type:', data instanceof FormData ? 'FormData' : 'Object');
+      console.log('Current session ID:', currentSession);
+      console.log('Selected AI Model:', selectedModel);
+      console.log('Selected Activity Type:', selectedActivityType);
+      
+      if (data instanceof FormData) {
+        console.log('FormData entries:');
+        for (let [key, value] of data.entries()) {
+          console.log(`  ${key}:`, value);
+        }
+      } else {
+        console.log('Message object:', data);
+      }
+      
       // Handle both FormData (with files) and regular object
       if (data instanceof FormData) {
+        console.log('Sending FormData to /api/chat/message');
         const response = await fetch("/api/chat/message", {
           method: "POST",
           body: data,
           credentials: "include",
         });
 
+        console.log('FormData response status:', response.status);
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({ message: "Request failed" }));
+          console.error('FormData request failed:', errorData);
           throw new Error(errorData.message || `HTTP ${response.status}`);
         }
 
-        return response.json();
+        const result = await response.json();
+        console.log('FormData response success:', result);
+        return result;
       } else {
+        console.log('Sending object via apiRequest to /api/chat/message');
         const response = await apiRequest("/api/chat/message", "POST", data);
+        console.log('Object response success:', response);
         return response;
       }
     },
@@ -197,6 +219,15 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
 
   // Create initial session
   useEffect(() => {
+    console.log('=== SESSION CREATION TRIGGER DEBUG ===');
+    console.log('currentSession:', currentSession);
+    console.log('createSessionMutation.isPending:', createSessionMutation.isPending);
+    console.log('Should create session:', !currentSession && !createSessionMutation.isPending);
+    console.log('AI Models loaded:', aiModels?.length || 0, 'models');
+    console.log('Activity Types loaded:', activityTypes?.length || 0, 'types');
+    console.log('Company loaded:', !!currentCompany);
+    console.log('=== END SESSION TRIGGER DEBUG ===');
+    
     if (!currentSession && !createSessionMutation.isPending) {
       createSessionMutation.mutate();
     }
@@ -221,22 +252,34 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
 
   // WebSocket connection
   useEffect(() => {
+    console.log('=== WEBSOCKET CONNECTION DEBUG ===');
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const wsUrl = `${protocol}//${window.location.host}/ws`;
+    console.log('WebSocket URL:', wsUrl);
+    console.log('Current protocol:', window.location.protocol);
+    console.log('Current host:', window.location.host);
+    console.log('Environment:', process.env.NODE_ENV);
+    
     const ws = new WebSocket(wsUrl);
 
     ws.onopen = () => {
       setIsConnected(true);
-      console.log('WebSocket connected');
+      console.log('✅ WebSocket connected successfully');
+      console.log('WebSocket readyState:', ws.readyState);
     };
 
-    ws.onclose = () => {
+    ws.onclose = (event) => {
       setIsConnected(false);
-      console.log('WebSocket disconnected');
+      console.log('❌ WebSocket disconnected');
+      console.log('Close event code:', event.code);
+      console.log('Close event reason:', event.reason);
+      console.log('Close event was clean:', event.wasClean);
     };
 
     ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
+      console.error('❌ WebSocket error:', error);
+      console.log('WebSocket readyState on error:', ws.readyState);
+      console.log('Error type:', error.type);
       setIsConnected(false);
     };
 
