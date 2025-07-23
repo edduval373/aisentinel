@@ -42,7 +42,7 @@ export default function Landing() {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <img 
-              src="/ai-sentinel-logo-mini.svg" 
+              src="/ai-sentinel-atomic-logo.svg" 
               alt="AI Sentinel" 
               style={{ width: '32px', height: '32px' }}
             />
@@ -64,7 +64,7 @@ export default function Landing() {
       </header>
 
       {/* Hero Section */}
-      <section className="ai-sentinel-hero" style={{ paddingTop: '4rem' }}>
+      <section className="ai-sentinel-hero" style={{ paddingTop: '2rem' }}>
         <div className="ai-sentinel-hero-container">
           <h2 className="ai-sentinel-hero-title">
             Enterprise AI
