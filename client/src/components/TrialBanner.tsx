@@ -31,14 +31,14 @@ export function TrialBanner() {
 
   if (trialUsage.isTrialExpired) {
     return (
-      <Alert className="bg-red-50 border-red-200 dark:bg-red-950 dark:border-red-800 mb-4">
-        <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400" />
-        <AlertDescription className="flex items-center justify-between">
-          <span className="text-red-800 dark:text-red-200">
+      <Alert style={{ backgroundColor: '#fef2f2', borderColor: '#fecaca', marginBottom: '16px' }}>
+        <AlertCircle style={{ height: '16px', width: '16px', color: '#dc2626' }} />
+        <AlertDescription style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ color: '#991b1b' }}>
             Your free trial has expired. Upgrade to continue using AI features.
           </span>
-          <Button size="sm" className="bg-red-600 hover:bg-red-700 text-white">
-            <Crown className="w-4 h-4 mr-1" />
+          <Button size="sm" style={{ backgroundColor: '#dc2626', color: 'white' }}>
+            <Crown style={{ width: '16px', height: '16px', marginRight: '4px' }} />
             Upgrade Now
           </Button>
         </AlertDescription>
@@ -48,14 +48,14 @@ export function TrialBanner() {
 
   if (!trialUsage.hasActionsRemaining) {
     return (
-      <Alert className="bg-orange-50 border-orange-200 dark:bg-orange-950 dark:border-orange-800 mb-4">
-        <AlertCircle className="h-4 w-4 text-orange-600 dark:text-orange-400" />
-        <AlertDescription className="flex items-center justify-between">
-          <span className="text-orange-800 dark:text-orange-200">
+      <Alert style={{ backgroundColor: '#fffbeb', borderColor: '#fed7aa', marginBottom: '16px' }}>
+        <AlertCircle style={{ height: '16px', width: '16px', color: '#ea580c' }} />
+        <AlertDescription style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ color: '#9a3412' }}>
             Trial limit reached. You've used all {trialUsage.maxActions} free actions.
           </span>
-          <Button size="sm" className="bg-orange-600 hover:bg-orange-700 text-white">
-            <Crown className="w-4 h-4 mr-1" />
+          <Button size="sm" style={{ backgroundColor: '#ea580c', color: 'white' }}>
+            <Crown style={{ width: '16px', height: '16px', marginRight: '4px' }} />
             Upgrade Now
           </Button>
         </AlertDescription>
@@ -65,23 +65,23 @@ export function TrialBanner() {
 
   // Show remaining actions for active trial
   return (
-    <Alert className="bg-blue-50 border-blue-200 dark:bg-blue-950 dark:border-blue-800 mb-4">
-      <Crown className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-      <AlertDescription className="space-y-2">
-        <div className="flex items-center justify-between">
-          <span className="text-blue-800 dark:text-blue-200 font-medium">
+    <Alert style={{ backgroundColor: '#dbeafe', borderColor: '#bfdbfe', marginBottom: '16px' }}>
+      <Crown style={{ height: '16px', width: '16px', color: '#2563eb' }} />
+      <AlertDescription style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ color: '#1e40af', fontWeight: 500 }}>
             Free Trial: {remainingActions} actions remaining
           </span>
-          <Button size="sm" variant="outline" className="border-blue-300 text-blue-700 hover:bg-blue-100">
+          <Button size="sm" variant="outline" style={{ borderColor: '#93c5fd', color: '#1d4ed8' }}>
             Upgrade
           </Button>
         </div>
-        <div className="space-y-1">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
           <Progress 
             value={progressPercentage} 
-            className="h-2 bg-blue-200 dark:bg-blue-900" 
+            style={{ height: '8px', backgroundColor: '#bfdbfe' }}
           />
-          <div className="text-xs text-blue-600 dark:text-blue-400">
+          <div style={{ fontSize: '12px', color: '#2563eb' }}>
             {trialUsage.actionsUsed} of {trialUsage.maxActions} actions used
           </div>
         </div>

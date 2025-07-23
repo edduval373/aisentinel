@@ -361,7 +361,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
               }}
               disabled={modelsLoading}
             >
-              <SelectTrigger className="w-48 font-semibold">
+              <SelectTrigger style={{ width: '192px', fontWeight: 600 }}>
                 <SelectValue placeholder="Select AI Model" />
               </SelectTrigger>
               <SelectContent>
@@ -372,12 +372,12 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                 ))}
                 {modelFusionConfig?.isEnabled && (
                   <>
-                    <Separator className="my-1" />
+                    <Separator style={{ margin: '4px 0' }} />
                     <SelectItem value="model-fusion">
-                      <div className="flex items-center gap-2">
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         Model Fusion
                         <Badge variant="default" style={{ backgroundColor: 'hsl(221, 83%, 53%)' }}>
-                          <Brain className="w-3 h-3 mr-1" />
+                          <Brain style={{ width: '12px', height: '12px', marginRight: '4px' }} />
                           Multi-AI
                         </Badge>
                       </div>
@@ -393,7 +393,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
               onValueChange={(value) => setSelectedActivityType(parseInt(value))}
               disabled={typesLoading}
             >
-              <SelectTrigger className="w-48 font-semibold">
+              <SelectTrigger style={{ width: '192px', fontWeight: 600 }}>
                 <SelectValue placeholder="Select Activity Type" />
               </SelectTrigger>
               <SelectContent>
