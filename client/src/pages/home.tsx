@@ -116,7 +116,7 @@ export default function Home() {
               }}
             >
               <img 
-                src="/ai-sentinel-logo.png" 
+                src="/ai-sentinel-logo-mini.svg" 
                 alt="AI Sentinel" 
                 style={{ width: '16px', height: '16px', objectFit: 'contain' }}
               />

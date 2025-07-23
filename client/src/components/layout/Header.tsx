@@ -75,7 +75,7 @@ export default function Header({
           <div className="flex items-center space-x-2">
             <div className="w-6 h-6 flex items-center justify-center">
               <img 
-                src="/ai-sentinel-logo.png" 
+                src="/ai-sentinel-logo-mini.svg" 
                 alt="AI Sentinel" 
                 className="w-5 h-5 object-contain"
               />

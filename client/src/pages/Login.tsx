@@ -98,7 +98,7 @@ export default function Login() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <img 
-                src="/ai-sentinel-logo.png" 
+                src="/ai-sentinel-logo-mini.svg" 
                 alt="AI Sentinel" 
                 className="w-10 h-10 object-contain"
                 style={{maxWidth: "40px", maxHeight: "40px"}}
@@ -208,7 +208,7 @@ export default function Login() {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <img 
-              src="/ai-sentinel-logo.png" 
+              src="/ai-sentinel-logo-mini.svg" 
               alt="AI Sentinel" 
               style={{ width: '40px', height: '40px', objectFit: 'contain' }}
             />
@@ -263,7 +263,7 @@ export default function Login() {
           }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <img 
-                src="/ai-sentinel-logo.png" 
+                src="/ai-sentinel-logo-mini.svg" 
                 alt="AI Sentinel" 
                 style={{ width: '64px', height: '64px', objectFit: 'contain' }}
               />

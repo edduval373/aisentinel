@@ -156,7 +156,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 flex items-center justify-center">
               <img 
-                src="/ai-sentinel-logo.png" 
+                src="/ai-sentinel-logo-mini.svg" 
                 alt="AI Sentinel" 
                 className="w-8 h-8 object-contain"
               />
