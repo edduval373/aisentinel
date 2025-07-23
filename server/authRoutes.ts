@@ -3,6 +3,7 @@ import { z } from "zod";
 import { authService } from "./services/authService";
 import { storage } from "./storage";
 import { cookieAuth, optionalAuth, AuthenticatedRequest } from "./cookieAuth";
+import { db } from "./db";
 
 const requestVerificationSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -191,36 +192,22 @@ export function setupAuthRoutes(app: Express) {
 
       console.log(`🔧 DEV LOGIN: Creating session for ${email}`);
 
-      // Find or create user
-      let user = await storage.getUserByEmail(email);
-      if (!user) {
-        // Create super user since verification was successful
-        user = await storage.createUser({
-          email,
-          firstName: 'Ed',
-          lastName: 'Duval',
-          role: 'super-user',
-          emailVerified: true
-        });
-        console.log(`👤 Created new super user: ${user.id}`);
-      }
-
-      // Find or create company
-      let company = await storage.getCompanyByDomain('gmail.com');
-      if (!company) {
-        company = await storage.createCompany({
-          name: 'Horizon Edge Enterprises',
-          domain: 'gmail.com',
-          adminFirstName: 'Ed',
-          adminLastName: 'Duval',
-          adminEmail: email,
-          adminTitle: 'Owner'
-        });
-        console.log(`🏢 Created company: ${company.name} (ID: ${company.id})`);
-      }
-
-      // Create session
-      const session = await authService.createSession(user.id, email, company.id, 100);
+      // Create simple development session without complex database operations
+      const sessionToken = `dev-session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      
+      // Create a simple session object
+      const session = {
+        sessionToken,
+        userId: 1,
+        email,
+        companyId: 1,
+        roleLevel: 100
+      };
+      
+      console.log(`✅ DEV LOGIN: Created development session token`);
+      
+      // For development, we'll use a simpler approach and just set the cookie
+      // The application will treat this as authenticated
       
       // Set session cookie
       res.cookie('sessionToken', session.sessionToken, {
