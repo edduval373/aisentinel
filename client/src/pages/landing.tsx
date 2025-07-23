@@ -20,14 +20,15 @@ export default function Landing() {
   }, []);
   
   return (
-    <div className="ai-sentinel-page">
+    <div className="ai-sentinel-page" style={{ margin: 0, padding: 0, minHeight: '100vh' }}>
       {/* Header */}
       <header style={{ 
         position: 'relative', 
         width: '100%',
         backgroundColor: 'white', 
         borderBottom: '1px solid #e2e8f0', 
-        padding: '16px 1rem',
+        padding: '20px 1rem',
+        margin: 0,
         boxSizing: 'border-box'
       }}>
         <div style={{ 
