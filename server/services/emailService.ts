@@ -24,10 +24,11 @@ export class EmailService {
   async sendVerificationEmail(email: string, token: string): Promise<boolean> {
     console.log(`Sending verification email to ${email}`);
     
-    // Use localhost for development, production URL for deployed app
-    const isDevelopment = process.env.NODE_ENV === 'development';
-    const baseUrl = isDevelopment ? 'http://localhost:5000' : (process.env.APP_URL || 'https://aisentinel.app');
+    // Always use production URL for email verification links - users access from anywhere
+    const baseUrl = process.env.APP_URL || 'https://aisentinel.app';
     const verificationUrl = `${baseUrl}/api/auth/verify?token=${token}`;
+    
+    console.log(`Email verification URL: ${verificationUrl}`);
     
     try {
       const html = `

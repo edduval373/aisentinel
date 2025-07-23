@@ -141,6 +141,13 @@ The application is configured for deployment on Vercel with the following setup:
 
 ```
 Recent Updates:
+- July 23, 2025. PRODUCTION AUTHENTICATION ISSUE IDENTIFIED AND FIXED:
+  * DIAGNOSED: Enhanced API logging revealed email verification URLs pointing to localhost
+  * FIXED: Email service now always uses production URLs (https://aisentinel.app) for verification links
+  * ENHANCED: Comprehensive client and server-side API logging for production debugging
+  * IMPROVED: Request/response timing, content-type validation, and error tracking
+  * READY: Authentication fix ready for deployment - emails will contain correct production URLs
+  * TESTED: Local development flow working, production URLs will work after deployment
 - July 23, 2025. PRODUCTION DEPLOYMENT IN PROGRESS: Fixed Vercel Build Conflict:
   * RESOLVED: Vercel build error - removed conflicting api/index.ts file (kept api/index.js)
   * DEPLOYED: Production build initiated at 10:06:46 UTC (Commit: e6de503)
