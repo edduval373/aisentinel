@@ -29,16 +29,32 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
     }
 
-    // Chat session creation (authentication required)
+    // Chat session creation (supports both authenticated and demo mode)
     if (path.includes('chat/session') && req.method === 'POST') {
       console.log('Creating chat session...');
       try {
         const sessionToken = req.headers.cookie?.match(/sessionToken=([^;]+)/)?.[1];
+        const referrer = req.headers.referer || '';
+        const isDemoMode = referrer.includes('/demo') || req.headers['x-demo-mode'] === 'true';
         
-        if (!sessionToken) {
-          return res.status(401).json({ message: "Authentication required" });
+        // Handle demo mode
+        if (isDemoMode || !sessionToken) {
+          console.log('Demo mode chat session creation');
+          
+          // Create a demo session with demo company ID
+          const demoSession = {
+            id: Date.now(), // Simple demo session ID
+            companyId: 1, // Demo company ID
+            userId: 'demo-user', // Demo user ID
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          };
+          
+          console.log('Demo session created:', demoSession.id);
+          return res.json(demoSession);
         }
 
+        // Handle authenticated mode
         const { storage } = await import('../server/storage');
         const userSession = await storage.getUserSession(sessionToken);
         
@@ -56,7 +72,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           userId: user.id
         });
         
-        console.log('Session created for company:', user.companyId, 'session:', session.id);
+        console.log('Authenticated session created for company:', user.companyId, 'session:', session.id);
         return res.json(session);
       } catch (error) {
         console.error("Error creating chat session:", error);
@@ -499,10 +515,47 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
 
 
-    // AI Models endpoint (authentication required)
+    // AI Models endpoint (supports demo mode)
     if (path.includes('ai-models') && req.method === 'GET') {
       try {
         const sessionToken = req.headers.cookie?.match(/sessionToken=([^;]+)/)?.[1];
+        const referrer = req.headers.referer || '';
+        const isDemoMode = referrer.includes('/demo') || req.headers['x-demo-mode'] === 'true';
+        
+        // Handle demo mode
+        if (isDemoMode || !sessionToken) {
+          console.log('Demo mode AI models request');
+          
+          // Return demo AI models
+          const demoModels = [
+            {
+              id: 1,
+              name: "GPT-4o",
+              provider: "OpenAI",
+              modelId: "gpt-4o",
+              isEnabled: true,
+              capabilities: ["text", "analysis"],
+              contextWindow: 128000,
+              temperature: 0.7,
+              maxTokens: 4096,
+              companyId: 1
+            },
+            {
+              id: 2,
+              name: "Claude Sonnet 4",
+              provider: "Anthropic", 
+              modelId: "claude-3-5-sonnet-20241022",
+              isEnabled: true,
+              capabilities: ["text", "analysis", "coding"],
+              contextWindow: 200000,
+              temperature: 0.7,
+              maxTokens: 8192,
+              companyId: 1
+            }
+          ];
+          
+          return res.json(demoModels);
+        }
         
         if (!sessionToken) {
           return res.status(401).json({ message: "Authentication required" });
@@ -532,10 +585,41 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     }
 
-    // Activity Types endpoint (authentication required)
+    // Activity Types endpoint (supports demo mode)
     if (path.includes('activity-types') && req.method === 'GET') {
       try {
         const sessionToken = req.headers.cookie?.match(/sessionToken=([^;]+)/)?.[1];
+        const referrer = req.headers.referer || '';
+        const isDemoMode = referrer.includes('/demo') || req.headers['x-demo-mode'] === 'true';
+        
+        // Handle demo mode
+        if (isDemoMode || !sessionToken) {
+          console.log('Demo mode activity types request');
+          
+          // Return demo activity types
+          const demoActivityTypes = [
+            {
+              id: 1,
+              name: "General Chat",
+              description: "General conversation and assistance",
+              prePrompt: "You are a helpful AI assistant. Please provide accurate and helpful responses.",
+              riskLevel: "low",
+              isEnabled: true,
+              companyId: 1
+            },
+            {
+              id: 2, 
+              name: "Code Review",
+              description: "Code analysis and review assistance",
+              prePrompt: "You are an expert code reviewer. Please analyze the code for best practices, security issues, and improvement opportunities.",
+              riskLevel: "medium",
+              isEnabled: true,
+              companyId: 1
+            }
+          ];
+          
+          return res.json(demoActivityTypes);
+        }
         
         if (!sessionToken) {
           return res.status(401).json({ message: "Authentication required" });

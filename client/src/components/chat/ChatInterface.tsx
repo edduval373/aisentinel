@@ -87,9 +87,31 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   const createSessionMutation = useMutation({
     mutationFn: async () => {
       console.log('Creating new chat session...');
-      const response = await apiRequest("/api/chat/session", "POST");
-      console.log('Session created successfully:', response);
-      return response;
+      
+      // Add demo mode header if in demo mode
+      const isDemoMode = window.location.pathname === '/demo';
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json'
+      };
+      
+      if (isDemoMode) {
+        headers['x-demo-mode'] = 'true';
+      }
+      
+      const response = await fetch("/api/chat/session", {
+        method: "POST",
+        headers,
+        credentials: "include"
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: "Request failed" }));
+        throw new Error(errorData.message || "Failed to create session");
+      }
+      
+      const sessionData = await response.json();
+      console.log('Session created successfully:', sessionData);
+      return sessionData;
     },
     onSuccess: (session) => {
       console.log('Setting current session to:', session.id);

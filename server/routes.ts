@@ -48,9 +48,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // AI models route with required authentication
-  app.get('/api/ai-models', requireAuth, async (req: any, res) => {
+  // AI models route with demo mode support
+  app.get('/api/ai-models', async (req: any, res) => {
     try {
+      const isDemoMode = req.headers['x-demo-mode'] === 'true' || req.headers.referer?.includes('/demo');
+      
+      // Handle demo mode
+      if (isDemoMode) {
+        console.log("Demo mode AI models request");
+        const demoModels = [
+          {
+            id: 1,
+            name: "GPT-4o",
+            provider: "OpenAI",
+            modelId: "gpt-4o",
+            isEnabled: true,
+            capabilities: ["text", "analysis"],
+            contextWindow: 128000,
+            temperature: 0.7,
+            maxTokens: 4096,
+            companyId: 1
+          },
+          {
+            id: 2,
+            name: "Claude Sonnet 4",
+            provider: "Anthropic", 
+            modelId: "claude-3-5-sonnet-20241022",
+            isEnabled: true,
+            capabilities: ["text", "analysis", "coding"],
+            contextWindow: 200000,
+            temperature: 0.7,
+            maxTokens: 8192,
+            companyId: 1
+          }
+        ];
+        return res.json(demoModels);
+      }
+      
+      // Require authentication for non-demo mode
+      if (!req.user || !req.user.claims) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
+      
       const user = await storage.getUser(req.user.claims.sub);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
@@ -68,9 +107,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Activity types route with required authentication
-  app.get('/api/activity-types', requireAuth, async (req: any, res) => {
+  // Activity types route with demo mode support
+  app.get('/api/activity-types', async (req: any, res) => {
     try {
+      const isDemoMode = req.headers['x-demo-mode'] === 'true' || req.headers.referer?.includes('/demo');
+      
+      // Handle demo mode
+      if (isDemoMode) {
+        console.log("Demo mode activity types request");
+        const demoActivityTypes = [
+          {
+            id: 1,
+            name: "General Chat",
+            description: "General conversation and assistance",
+            prePrompt: "You are a helpful AI assistant. Please provide accurate and helpful responses.",
+            riskLevel: "low",
+            isEnabled: true,
+            companyId: 1
+          },
+          {
+            id: 2, 
+            name: "Code Review",
+            description: "Code analysis and review assistance",
+            prePrompt: "You are an expert code reviewer. Please analyze the code for best practices, security issues, and improvement opportunities.",
+            riskLevel: "medium",
+            isEnabled: true,
+            companyId: 1
+          }
+        ];
+        return res.json(demoActivityTypes);
+      }
+      
+      // Require authentication for non-demo mode
+      if (!req.user || !req.user.claims) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
+      
       const user = await storage.getUser(req.user.claims.sub);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
@@ -951,9 +1023,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Chat routes
-  app.post('/api/chat/session', requireAuth, async (req: any, res) => {
+  // Chat routes with demo mode support
+  app.post('/api/chat/session', async (req: any, res) => {
     try {
+      const isDemoMode = req.headers['x-demo-mode'] === 'true' || req.headers.referer?.includes('/demo');
+      
+      // Handle demo mode
+      if (isDemoMode) {
+        console.log("Demo mode chat session creation");
+        
+        const demoSession = {
+          id: Date.now(), // Simple demo session ID
+          companyId: 1, // Demo company ID
+          userId: 'demo-user', // Demo user ID
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+        
+        console.log('Demo session created:', demoSession.id);
+        return res.json(demoSession);
+      }
+      
+      // Require authentication for non-demo mode
+      if (!req.user || !req.user.claims) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
+      
       const userId = req.user.claims.sub;
       const user = await storage.getUser(userId);
       
