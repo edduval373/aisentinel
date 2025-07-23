@@ -202,7 +202,8 @@ export default function Home() {
                   width: '51px', 
                   height: '51px', 
                   objectFit: 'contain',
-                  flexShrink: 0
+                  flexShrink: 0,
+                  filter: 'brightness(0.7)'
                 }}
               />
             </Button>

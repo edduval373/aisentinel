@@ -141,6 +141,10 @@ The application is configured for deployment on Vercel with the following setup:
 
 ```
 Recent Updates:
+- July 23, 2025. Enhanced AI Sentinel Logo Darkness in Chat Interface:
+  * APPLIED: 30% brightness reduction using CSS filter (brightness(0.7)) on chat screen logo
+  * MAINTAINED: Logo size at 51px x 51px in top-left header position
+  * ENHANCED: Visual prominence and readability of AI Sentinel branding
 - July 23, 2025. Implemented Role-Based Sidebar Access Control with Demo Mode Formalization:
   * DEFINED: Demo mode users have role level 0, regular users have role level 1
   * RESTRICTED: Only super users (100), owners (99), and admins (2+) can access sidebar
