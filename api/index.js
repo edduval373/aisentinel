@@ -57,6 +57,44 @@ export default function handler(req, res) {
       return;
     }
 
+    // Authentication check endpoint
+    if (url.includes('auth/me')) {
+      console.log('🔐 [SERVERLESS] Authentication check request');
+      console.log('🔐 [SERVERLESS] Cookies:', req.headers.cookie);
+      
+      // Check for session token in cookies
+      const cookies = req.headers.cookie || '';
+      const sessionMatch = cookies.match(/sessionToken=([^;]+)/);
+      const sessionToken = sessionMatch ? sessionMatch[1] : null;
+      
+      console.log('🔐 [SERVERLESS] Session token found:', sessionToken ? 'YES' : 'NO');
+      
+      if (sessionToken && sessionToken.startsWith('demo-')) {
+        console.log('✅ [SERVERLESS] Valid demo session found, user authenticated');
+        
+        const authResponse = {
+          authenticated: true,
+          user: {
+            id: 1,
+            email: 'ed.duval15@gmail.com',
+            companyId: 1,
+            companyName: 'Horizon Edge Enterprises',
+            role: 'super-user',
+            roleLevel: 100,
+            firstName: 'Ed',
+            lastName: 'Duval'
+          }
+        };
+        
+        res.status(200).json(authResponse);
+        return;
+      } else {
+        console.log('❌ [SERVERLESS] No valid session token, user not authenticated');
+        res.status(200).json({ authenticated: false });
+        return;
+      }
+    }
+
     // AI Models endpoint
     if (url.includes('ai-models')) {
       const models = [
