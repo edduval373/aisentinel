@@ -1,0 +1,6 @@
+[
+  { "id": 1, "name": "General Chat", "description": "General conversation", "enabled": true },
+  { "id": 2, "name": "Code Review", "description": "Code analysis and review", "enabled": true },
+  { "id": 3, "name": "Business Analysis", "description": "Business document analysis", "enabled": true },
+  { "id": 4, "name": "Document Review", "description": "Document review and analysis", "enabled": true }
+]

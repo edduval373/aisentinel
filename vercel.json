@@ -3,7 +3,7 @@
   "buildCommand": "rm -f public/index.html && npm run build",
   "outputDirectory": "dist/public",
   "functions": {
-    "api/index.ts": {
+    "api/index.js": {
       "maxDuration": 30
     }
   },
@@ -28,8 +28,24 @@
   ],
   "rewrites": [
     {
+      "source": "/api/health",
+      "destination": "/api/health.json"
+    },
+    {
+      "source": "/api/ai-models",
+      "destination": "/api/ai-models.json"
+    },
+    {
+      "source": "/api/activity-types",
+      "destination": "/api/activity-types.json"
+    },
+    {
+      "source": "/api/user/current-company",
+      "destination": "/api/user/current-company.json"
+    },
+    {
       "source": "/api/(.*)",
-      "destination": "/api/index.ts"
+      "destination": "/api/index.js"
     },
     {
       "source": "/((?!assets/).*)",

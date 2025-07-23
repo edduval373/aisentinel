@@ -1,0 +1,8 @@
+[
+  { "id": 1, "name": "GPT-4o", "provider": "OpenAI", "enabled": true },
+  { "id": 2, "name": "Claude Sonnet 4", "provider": "Anthropic", "enabled": true },
+  { "id": 3, "name": "Claude Haiku", "provider": "Anthropic", "enabled": true },
+  { "id": 4, "name": "GPT-4 Turbo", "provider": "OpenAI", "enabled": true },
+  { "id": 5, "name": "Claude Opus", "provider": "Anthropic", "enabled": true },
+  { "id": 6, "name": "Perplexity Sonar", "provider": "Perplexity", "enabled": true }
+]
