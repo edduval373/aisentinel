@@ -63,6 +63,13 @@ export async function apiRequest(
   method: string,
   data?: unknown | undefined,
 ): Promise<any> {
+  const startTime = Date.now();
+  
+  console.log(`🔄 [API ${method}] ${url} - Start`);
+  console.log(`🔄 [API ${method}] Full URL: ${window.location.origin}${url}`);
+  console.log(`🔄 [API ${method}] Data:`, data);
+  console.log(`🔄 [API ${method}] Environment: ${import.meta.env.MODE}`);
+  
   try {
     const res = await fetch(url, {
       method,
@@ -71,19 +78,34 @@ export async function apiRequest(
       credentials: "include",
     });
 
+    const duration = Date.now() - startTime;
+    console.log(`📊 [API ${method}] ${url} - Status: ${res.status} (${duration}ms)`);
+    console.log(`📊 [API ${method}] Headers:`, Object.fromEntries(res.headers.entries()));
+
     await throwIfResNotOk(res);
     
-    // Return JSON for all successful responses
-    if (res.headers.get("content-type")?.includes("application/json")) {
-      return await res.json();
-    }
+    // Check content type and return appropriate response
+    const contentType = res.headers.get("content-type");
+    console.log(`📊 [API ${method}] Content-Type: ${contentType}`);
     
-    return res;
+    if (contentType?.includes("application/json")) {
+      const data = await res.json();
+      console.log(`✅ [API ${method}] ${url} - Success:`, data);
+      return data;
+    } else {
+      const text = await res.text();
+      console.error(`❌ [API ${method}] ${url} - Expected JSON but got ${contentType}`);
+      console.error(`❌ [API ${method}] Response preview:`, text.substring(0, 200));
+      throw new Error(`Expected JSON response but got ${contentType}`);
+    }
   } catch (error) {
+    const duration = Date.now() - startTime;
+    console.error(`❌ [API ${method}] ${url} - Failed (${duration}ms):`, error);
+    
     // Try fallback response for production API failures
     const fallback = await getFallbackResponse(url, method, data);
     if (fallback) {
-      console.log('Using production fallback for:', url);
+      console.log(`🔄 [API ${method}] ${url} - Using production fallback`);
       return fallback;
     }
     throw error;
@@ -96,16 +118,46 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    const res = await fetch(queryKey[0] as string, {
-      credentials: "include",
-    });
+    const url = queryKey[0] as string;
+    const startTime = Date.now();
+    
+    console.log(`🔄 [QUERY] ${url} - Start`);
+    console.log(`🔄 [QUERY] Full URL: ${window.location.origin}${url}`);
+    
+    try {
+      const res = await fetch(url, {
+        credentials: "include",
+      });
 
-    if (unauthorizedBehavior === "returnNull" && res.status === 401) {
-      return null;
+      const duration = Date.now() - startTime;
+      console.log(`📊 [QUERY] ${url} - Status: ${res.status} (${duration}ms)`);
+      console.log(`📊 [QUERY] Headers:`, Object.fromEntries(res.headers.entries()));
+
+      if (unauthorizedBehavior === "returnNull" && res.status === 401) {
+        console.log(`🔒 [QUERY] ${url} - Unauthorized, returning null`);
+        return null;
+      }
+
+      await throwIfResNotOk(res);
+      
+      const contentType = res.headers.get("content-type");
+      console.log(`📊 [QUERY] Content-Type: ${contentType}`);
+      
+      if (!contentType?.includes("application/json")) {
+        const text = await res.text();
+        console.error(`❌ [QUERY] ${url} - Expected JSON but got ${contentType}`);
+        console.error(`❌ [QUERY] Response preview:`, text.substring(0, 200));
+        throw new Error(`Expected JSON response but got ${contentType}`);
+      }
+      
+      const data = await res.json();
+      console.log(`✅ [QUERY] ${url} - Success:`, data);
+      return data;
+    } catch (error) {
+      const duration = Date.now() - startTime;
+      console.error(`❌ [QUERY] ${url} - Failed (${duration}ms):`, error);
+      throw error;
     }
-
-    await throwIfResNotOk(res);
-    return await res.json();
   };
 
 export const queryClient = new QueryClient({

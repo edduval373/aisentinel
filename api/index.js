@@ -1,30 +1,42 @@
 // Minimal Vercel serverless function for AI Sentinel (JavaScript)
 export default function handler(req, res) {
+  // Enhanced server-side logging
+  const startTime = Date.now();
+  const url = req.url || '';
+  const method = req.method || 'GET';
+  
+  console.log(`🚀 [SERVERLESS] ${method} ${url} - Start`);
+  console.log(`🚀 [SERVERLESS] Headers:`, req.headers);
+  console.log(`🚀 [SERVERLESS] Query:`, req.query);
+  console.log(`🚀 [SERVERLESS] Body:`, req.body);
+  
   // Set CORS headers for all requests
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Demo-Mode');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Content-Type', 'application/json');
   
   // Handle preflight requests
   if (req.method === 'OPTIONS') {
+    console.log(`🚀 [SERVERLESS] OPTIONS request handled`);
     res.status(200).end();
     return;
   }
 
   try {
-    const url = req.url || '';
-    const method = req.method || 'GET';
-    
-    console.log(`${method} ${url}`);
 
     // Health check endpoint
     if (url.includes('health')) {
-      res.status(200).json({ 
+      const response = { 
         status: 'OK', 
         timestamp: new Date().toISOString(),
-        version: 'production-minimal-js-v1'
-      });
+        version: 'production-minimal-js-v2-enhanced-logging',
+        url: url,
+        method: method
+      };
+      console.log(`✅ [SERVERLESS] Health check response:`, response);
+      res.status(200).json(response);
       return;
     }
 
@@ -152,18 +164,30 @@ export default function handler(req, res) {
     }
 
     // Default 404 response
-    console.log(`Unhandled endpoint: ${method} ${url}`);
+    const duration = Date.now() - startTime;
+    console.log(`❌ [SERVERLESS] 404 - Unhandled endpoint: ${method} ${url} (${duration}ms)`);
     res.status(404).json({ 
       message: 'Endpoint not found',
       endpoint: url,
-      method: method
+      method: method,
+      availableRoutes: [
+        '/api/health',
+        '/api/ai-models', 
+        '/api/activity-types',
+        '/api/auth/me',
+        '/api/chat/session',
+        '/api/chat/message'
+      ]
     });
 
   } catch (error) {
-    console.error('API Error:', error);
+    const duration = Date.now() - startTime;
+    console.error(`💥 [SERVERLESS] Error in ${method} ${url} (${duration}ms):`, error);
     res.status(500).json({ 
       message: 'Internal server error',
-      error: error.message || 'Unknown error'
+      error: error.message || 'Unknown error',
+      url: url,
+      method: method
     });
   }
 }
