@@ -120,6 +120,36 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     }
 
+    // Demo AI models endpoint - always returns company 1 models
+    if (path.includes('ai-models') && req.method === 'GET') {
+      try {
+        console.log('Production demo mode: Returning AI models for company 1');
+        
+        const { storage } = await import('../server/storage');
+        const models = await storage.getEnabledAiModels(1);
+        console.log('Returning demo AI models for company 1:', models.length, 'models');
+        return res.json(models);
+      } catch (error) {
+        console.error("Error fetching demo AI models:", error);
+        return res.status(500).json({ message: "Failed to fetch AI models" });
+      }
+    }
+
+    // Demo activity types endpoint - always returns company 1 activity types  
+    if (path.includes('activity-types') && req.method === 'GET') {
+      try {
+        console.log('Production demo mode: Returning activity types for company 1');
+        
+        const { storage } = await import('../server/storage');
+        const activityTypes = await storage.getActivityTypes(1);
+        console.log('Returning demo activity types for company 1:', activityTypes.length, 'types');
+        return res.json(activityTypes);
+      } catch (error) {
+        console.error("Error fetching demo activity types:", error);
+        return res.status(500).json({ message: "Failed to fetch activity types" });
+      }
+    }
+
     // Trial usage endpoint
     if (path.includes('trial/usage') && req.method === 'GET') {
       try {

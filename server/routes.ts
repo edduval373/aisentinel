@@ -48,114 +48,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // AI models route with demo mode support
+  // Demo AI models route - always returns company 1 models
   app.get('/api/ai-models', async (req: any, res) => {
     try {
-      const isDemoMode = req.headers['x-demo-mode'] === 'true' || req.headers.referer?.includes('/demo');
+      console.log("Demo mode AI models request");
       
-      // Handle demo mode
-      if (isDemoMode) {
-        console.log("Demo mode AI models request");
-        const demoModels = [
-          {
-            id: 1,
-            name: "GPT-4o",
-            provider: "OpenAI",
-            modelId: "gpt-4o",
-            isEnabled: true,
-            capabilities: ["text", "analysis"],
-            contextWindow: 128000,
-            temperature: 0.7,
-            maxTokens: 4096,
-            companyId: 1
-          },
-          {
-            id: 2,
-            name: "Claude Sonnet 4",
-            provider: "Anthropic", 
-            modelId: "claude-3-5-sonnet-20241022",
-            isEnabled: true,
-            capabilities: ["text", "analysis", "coding"],
-            contextWindow: 200000,
-            temperature: 0.7,
-            maxTokens: 8192,
-            companyId: 1
-          }
-        ];
-        return res.json(demoModels);
-      }
-      
-      // Require authentication for non-demo mode
-      if (!req.user || !req.user.claims) {
-        return res.status(401).json({ message: "Authentication required" });
-      }
-      
-      const user = await storage.getUser(req.user.claims.sub);
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-      
-      const companyId = user.companyId;
-      console.log("Fetching AI models for authenticated user, company:", companyId);
-      
-      const aiModels = await storage.getAiModels(companyId);
-      console.log("AI Models fetched:", aiModels.length);
-      res.json(aiModels);
+      // Always return models from company ID 1 for demo mode
+      const models = await storage.getEnabledAiModels(1);
+      console.log("Returning demo models for company 1:", models.length, "models");
+      return res.json(models);
     } catch (error) {
-      console.error("Error fetching AI models:", error);
+      console.error("Error fetching demo AI models:", error);
       res.status(500).json({ message: "Failed to fetch AI models" });
     }
   });
 
-  // Activity types route with demo mode support
+  // Demo activity types route - always returns company 1 activity types
   app.get('/api/activity-types', async (req: any, res) => {
     try {
-      const isDemoMode = req.headers['x-demo-mode'] === 'true' || req.headers.referer?.includes('/demo');
+      console.log("Demo mode activity types request");
       
-      // Handle demo mode
-      if (isDemoMode) {
-        console.log("Demo mode activity types request");
-        const demoActivityTypes = [
-          {
-            id: 1,
-            name: "General Chat",
-            description: "General conversation and assistance",
-            prePrompt: "You are a helpful AI assistant. Please provide accurate and helpful responses.",
-            riskLevel: "low",
-            isEnabled: true,
-            companyId: 1
-          },
-          {
-            id: 2, 
-            name: "Code Review",
-            description: "Code analysis and review assistance",
-            prePrompt: "You are an expert code reviewer. Please analyze the code for best practices, security issues, and improvement opportunities.",
-            riskLevel: "medium",
-            isEnabled: true,
-            companyId: 1
-          }
-        ];
-        return res.json(demoActivityTypes);
-      }
-      
-      // Require authentication for non-demo mode
-      if (!req.user || !req.user.claims) {
-        return res.status(401).json({ message: "Authentication required" });
-      }
-      
-      const user = await storage.getUser(req.user.claims.sub);
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-      
-      const companyId = user.companyId;
-      console.log("Fetching activity types for authenticated user, company:", companyId);
-      
-      const activityTypes = await storage.getActivityTypes(companyId);
-      console.log("Activity Types fetched:", activityTypes.length);
-      res.json(activityTypes);
+      // Always return activity types from company ID 1 for demo mode
+      const activityTypes = await storage.getActivityTypes(1);
+      console.log("Returning demo activity types for company 1:", activityTypes.length, "types");
+      return res.json(activityTypes);
     } catch (error) {
-      console.error("Error fetching activity types:", error);
+      console.error("Error fetching demo activity types:", error);
       res.status(500).json({ message: "Failed to fetch activity types" });
     }
   });
@@ -355,51 +273,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // AI Models routes - Support both auth methods
-  app.get('/api/ai-models', async (req: any, res) => {
-    try {
-      let user = null;
-      let companyId = null;
 
-      // Try cookie auth first
-      if (req.cookies?.sessionToken) {
-        const authService = await import('./services/authService');
-        const session = await authService.authService.verifySession(req.cookies.sessionToken);
-        if (session) {
-          user = await storage.getUser(session.userId);
-          companyId = session.companyId;
-        }
-      }
-
-      // Fallback to Replit Auth (only if enabled)
-      if (!user && process.env.ENABLE_REPLIT_AUTH === 'true' && req.user?.claims?.sub) {
-        user = await storage.getUser(req.user.claims.sub);
-        companyId = user?.companyId;
-      }
-
-      if (!user || !companyId) {
-        // For unauthenticated users, try to get models from first available company
-        try {
-          const companies = await storage.getCompanies();
-          if (companies.length > 0) {
-            const firstCompanyId = companies[0].id;
-            const models = await storage.getEnabledAiModels(firstCompanyId);
-            return res.json(models);
-          }
-        } catch (error) {
-          console.error("Error fetching default company models:", error);
-        }
-        // Fallback to empty array
-        return res.json([]);
-      }
-
-      const models = await storage.getEnabledAiModels(companyId);
-      res.json(models);
-    } catch (error) {
-      console.error("Error fetching AI models:", error);
-      res.status(500).json({ message: "Failed to fetch AI models" });
-    }
-  });
 
   app.get('/api/admin/ai-models', isAuthenticated, async (req: any, res) => {
     try {
@@ -642,51 +516,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Activity Types routes
-  app.get('/api/activity-types', async (req: any, res) => {
-    try {
-      let user = null;
-      let companyId = null;
 
-      // Try cookie auth first
-      if (req.cookies?.sessionToken) {
-        const authService = await import('./services/authService');
-        const session = await authService.authService.verifySession(req.cookies.sessionToken);
-        if (session) {
-          user = await storage.getUser(session.userId);
-          companyId = session.companyId;
-        }
-      }
-
-      // Fallback to Replit Auth (only if enabled)
-      if (!user && process.env.ENABLE_REPLIT_AUTH === 'true' && req.user?.claims?.sub) {
-        user = await storage.getUser(req.user.claims.sub);
-        companyId = user?.companyId;
-      }
-
-      if (!user || !companyId) {
-        // For unauthenticated users, try to get activity types from first available company
-        try {
-          const companies = await storage.getCompanies();
-          if (companies.length > 0) {
-            const firstCompanyId = companies[0].id;
-            const types = await storage.getEnabledActivityTypes(firstCompanyId);
-            return res.json(types);
-          }
-        } catch (error) {
-          console.error("Error fetching default company activity types:", error);
-        }
-        // Fallback to empty array
-        return res.json([]);
-      }
-
-      const types = await storage.getEnabledActivityTypes(companyId);
-      res.json(types);
-    } catch (error) {
-      console.error("Error fetching activity types:", error);
-      res.status(500).json({ message: "Failed to fetch activity types" });
-    }
-  });
 
   app.get('/api/admin/activity-types', isAuthenticated, async (req: any, res) => {
     try {
