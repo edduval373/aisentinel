@@ -116,7 +116,7 @@ export default function Login() {
               className="text-slate-600 hover:text-slate-900"
             >
               <X className="w-4 h-4 mr-2" />
-              Continue to Chat
+              Return to Home
             </Button>
           </div>
         </div>

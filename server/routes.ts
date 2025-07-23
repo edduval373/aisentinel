@@ -845,9 +845,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Chat routes with demo mode support
   app.post('/api/chat/session', async (req: any, res) => {
     try {
-      // Always provide demo mode for users without authentication
+      // Demo mode only when explicitly accessing /demo path
       const hasSessionCookie = req.headers.cookie?.includes('sessionToken=');
-      const isDemoMode = req.headers['x-demo-mode'] === 'true' || req.headers.referer?.includes('/demo') || !hasSessionCookie;
+      const isDemoMode = req.headers['x-demo-mode'] === 'true' || req.headers.referer?.includes('/demo');
       
       console.log('Chat session creation - isDemoMode:', isDemoMode, 'hasSessionCookie:', hasSessionCookie);
       
@@ -869,19 +869,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.json(demoSession);
       }
       
-      // Require authentication for non-demo mode (only if not demo mode)
-      if (!req.user || !req.user.claims) {
-        return res.status(401).json({ message: "Authentication required for non-demo mode" });
-      }
-      
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
+      // Handle authenticated users with cookies
+      let userId = null;
+      let companyId = null;
+
+      // Try cookie auth first
+      if (req.cookies?.sessionToken) {
+        const authService = await import('./services/authService');
+        const session = await authService.authService.verifySession(req.cookies.sessionToken);
+        if (session) {
+          userId = session.userId;
+          companyId = session.companyId;
+          console.log('Cookie authentication successful:', { userId, companyId });
+        }
       }
 
-      const session = await storage.createChatSession({ companyId: user.companyId, userId });
+      // Fallback to Replit Auth (only if enabled)
+      if (!userId && process.env.ENABLE_REPLIT_AUTH === 'true' && req.user?.claims?.sub) {
+        userId = req.user.claims.sub;
+        const user = await storage.getUser(userId);
+        companyId = user?.companyId;
+        console.log('Replit authentication successful:', { userId, companyId });
+      }
+      
+      // If no authentication, return error (user should be on landing page)
+      if (!userId || !companyId) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
+
+      const session = await storage.createChatSession({ 
+        companyId: companyId, 
+        userId: userId,
+        title: "New Chat",
+        aiModel: "Default",
+        activityType: "general"
+      });
       res.json(session);
     } catch (error) {
       console.error("Error creating chat session:", error);

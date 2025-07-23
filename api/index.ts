@@ -934,12 +934,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         console.log('Host:', req.headers.host);
         console.log('Cookie header:', req.headers.cookie);
         
-        // Always provide demo mode for users without authentication
+        // Demo mode only when explicitly accessing /demo path
         const hasSessionCookie = req.headers.cookie?.includes('sessionToken=');
         const isDemoMode = req.headers['x-demo-mode'] === 'true' || 
-                          req.headers.referer?.includes('/demo') || 
-                          !hasSessionCookie ||
-                          req.url?.includes('aisentinel.app'); // Production demo mode
+                          req.headers.referer?.includes('/demo');
         
         console.log('Production API - Chat session creation analysis:', {
           isDemoMode,

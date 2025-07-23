@@ -21,9 +21,9 @@ interface Company {
 function CompanyInfo() {
   const { user } = useAuth();
   
-  // Check if we're in demo mode or user has role level 0 (demo) or 1 (regular user)
-  const isDemoMode = window.location.pathname.includes('/demo') || window.location.search.includes('demo');
-  const userRoleLevel = user?.roleLevel || 0;
+  // Check if we're in demo mode (only when explicitly accessing /demo)
+  const isDemoMode = window.location.pathname === '/demo';
+  const userRoleLevel = user?.roleLevel || 1;
   const isLimitedAccess = userRoleLevel <= 1 || isDemoMode;
   
   const { data: currentCompany } = useQuery<Company>({
