@@ -11,7 +11,7 @@ import { TrialBanner } from "@/components/TrialBanner";
 
 
 
-// Company Info Component - Fixed for production with inline styles
+// Company Info Component - Using Tailwind with production fallbacks
 const CompanyInfo = () => {
   const { data: currentCompany } = useQuery({
     queryKey: ['/api/user/current-company'],
@@ -23,11 +23,12 @@ const CompanyInfo = () => {
   const company = currentCompany as any; // Type assertion for now
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+    <div className="flex items-center space-x-2" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
       {company.logo ? (
         <img 
           src={company.logo} 
           alt={`${company.name} logo`}
+          className="w-8 h-8 rounded object-cover"
           style={{ 
             width: '32px', 
             height: '32px', 
@@ -36,7 +37,7 @@ const CompanyInfo = () => {
           }}
         />
       ) : (
-        <div style={{ 
+        <div className="w-8 h-8 rounded bg-slate-300 flex items-center justify-center" style={{ 
           width: '32px', 
           height: '32px', 
           borderRadius: '4px', 
@@ -45,10 +46,10 @@ const CompanyInfo = () => {
           alignItems: 'center', 
           justifyContent: 'center' 
         }}>
-          <Building2 style={{ width: '16px', height: '16px', color: '#64748b' }} />
+          <Building2 className="w-4 h-4 text-slate-600" style={{ width: '16px', height: '16px', color: '#64748b' }} />
         </div>
       )}
-      <span style={{ 
+      <span className="text-lg font-semibold text-slate-800" style={{ 
         fontSize: '18px', 
         fontWeight: 600, 
         color: '#1e293b' 
