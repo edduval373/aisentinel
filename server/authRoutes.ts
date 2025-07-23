@@ -222,7 +222,7 @@ export function setupAuthRoutes(app: Express) {
       const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
       
       await storage.createUserSession({
-        userId: 1,
+        userId: "42450602",
         sessionToken,
         email,
         companyId: 1,
@@ -233,7 +233,7 @@ export function setupAuthRoutes(app: Express) {
       console.log(`✅ DEV LOGIN: Created and stored development session in database`);
       
       // Set session cookie
-      res.cookie('sessionToken', session.sessionToken, {
+      res.cookie('sessionToken', sessionToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
@@ -246,13 +246,13 @@ export function setupAuthRoutes(app: Express) {
         success: true,
         message: "Development authentication successful",
         user: {
-          id: session.userId,
-          email: session.email,
+          id: "42450602",
+          email: email,
           firstName: 'Ed',
           lastName: 'Duval',
           role: 'super-user',
           roleLevel: 100,
-          companyId: session.companyId,
+          companyId: 1,
           companyName: 'Horizon Edge Enterprises'
         }
       });
