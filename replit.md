@@ -8,7 +8,7 @@ AI Sentinel is a comprehensive enterprise AI governance platform that provides s
 
 ### Frontend Architecture
 - **Framework**: React 18 with TypeScript
-- **Styling**: Tailwind CSS with shadcn/ui components
+- **Styling**: Pure CSS with inline styles (Tailwind CSS removed for production consistency)
 - **State Management**: TanStack Query for server state management
 - **Routing**: Wouter for client-side routing
 - **Build Tool**: Vite for development and production builds
@@ -23,7 +23,8 @@ AI Sentinel is a comprehensive enterprise AI governance platform that provides s
 ### Key Design Decisions
 - **Monorepo Structure**: Shared schemas and types between client and server
 - **Database-First Approach**: PostgreSQL chosen for ACID compliance and complex queries
-- **Component-Based UI**: shadcn/ui for consistent, accessible components
+- **Pure CSS Implementation**: Inline styles used throughout for guaranteed production consistency
+- **Logo Standardization**: Atomic/molecular logo design (ai-sentinel-logo.png) used consistently
 - **Type Safety**: Full TypeScript implementation across the stack
 
 ## Key Components
@@ -90,8 +91,8 @@ AI Sentinel is a comprehensive enterprise AI governance platform that provides s
 - **ESBuild**: Production bundling for server code
 
 ### UI Libraries
-- **Radix UI**: Headless component primitives
-- **Tailwind CSS**: Utility-first styling framework
+- **Radix UI**: Headless component primitives (structural only)
+- **Pure CSS**: Inline styles for guaranteed cross-environment consistency
 - **Lucide React**: Icon library for consistent iconography
 
 ## Deployment Strategy
@@ -140,6 +141,13 @@ The application is configured for deployment on Vercel with the following setup:
 
 ```
 Recent Updates:
+- July 23, 2025. Logo Standardization and Production Consistency Fix:
+  * IMPLEMENTED: Unified atomic/molecular logo design across all components
+  * FIXED: Logo sizing issues in landing page (40px), main app (24px), admin layout (32px), sidebar (32px)
+  * STANDARDIZED: All logo references now use /ai-sentinel-logo.png with proper object-fit properties
+  * REMOVED: Corrupted PNG logo file that contained form interface instead of logo
+  * ENSURED: Logo displays consistently in both development and production environments
+  * CONFIRMED: Pure CSS styling approach guarantees identical rendering across all environments
 - July 23, 2025. Complete Tailwind CSS Elimination and Pure CSS Implementation:
   * REMOVED ALL TAILWIND DEPENDENCIES: Uninstalled tailwindcss, autoprefixer, @tailwindcss packages
   * DELETED ALL CONFIG FILES: Removed tailwind.config.ts, postcss.config.js, client/tailwind.config.js, client/postcss.config.js  
