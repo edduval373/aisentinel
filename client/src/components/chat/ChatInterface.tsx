@@ -328,22 +328,30 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       {/* Chat Header - Fixed at top */}
-      <div className="chat-header">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <h2 className="text-lg font-semibold text-slate-700">AI Assistant</h2>
-            <div className="flex items-center gap-2">
+      <div style={{ 
+        backgroundColor: 'white', 
+        borderBottom: '1px solid #e2e8f0', 
+        padding: '12px 16px', 
+        flexShrink: 0 
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          {/* Left side - AI Assistant and Status */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#374151' }}>AI Assistant</h2>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               {isConnected ? (
                 <Wifi style={{ width: '16px', height: '16px', color: '#22c55e' }} />
               ) : (
                 <WifiOff style={{ width: '16px', height: '16px', color: '#94a3b8' }} />
               )}
-              <span className="text-sm text-slate-600">
+              <span style={{ fontSize: '14px', color: '#64748b' }}>
                 {isConnected ? 'Connected' : 'Disconnected'}
               </span>
             </div>
           </div>
-          <div className="flex items-center gap-4">
+
+          {/* Center and Right - Controls spread evenly */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1, justifyContent: 'flex-end' }}>
             {/* AI Model Dropdown */}
             <Select
               value={selectedModel?.toString()}
@@ -356,7 +364,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
               }}
               disabled={modelsLoading}
             >
-              <SelectTrigger style={{ width: '192px', fontWeight: 600 }}>
+              <SelectTrigger style={{ width: '180px', fontWeight: 600 }}>
                 <SelectValue placeholder="Select AI Model" />
               </SelectTrigger>
               <SelectContent>
@@ -388,7 +396,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
               onValueChange={(value) => setSelectedActivityType(parseInt(value))}
               disabled={typesLoading}
             >
-              <SelectTrigger style={{ width: '192px', fontWeight: 600 }}>
+              <SelectTrigger style={{ width: '180px', fontWeight: 600 }}>
                 <SelectValue placeholder="Select Activity Type" />
               </SelectTrigger>
               <SelectContent>
@@ -401,40 +409,57 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
             </Select>
 
             {/* Chat Management Buttons */}
-            <div className="flex items-center gap-2" style={{ 
-              borderLeft: '1px solid #e2e8f0', 
-              paddingLeft: '16px' 
-            }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Button
                 variant={showPreviousChats ? "default" : "outline"}
                 size="sm"
                 onClick={() => setShowPreviousChats(!showPreviousChats)}
-                style={{ display: 'flex', alignItems: 'center', gap: '4px' }}
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '6px',
+                  padding: '8px 12px',
+                  fontSize: '14px',
+                  fontWeight: 600
+                }}
               >
                 <History style={{ width: '16px', height: '16px' }} />
-                <span style={{ fontWeight: 600 }}>{showPreviousChats ? "Hide History" : "History"}</span>
+                History
               </Button>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleRepeatLast}
                 disabled={!lastMessage}
-                style={{ display: 'flex', alignItems: 'center', gap: '4px' }}
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '6px',
+                  padding: '8px 12px',
+                  fontSize: '14px',
+                  fontWeight: 600
+                }}
               >
                 <RotateCcw style={{ width: '16px', height: '16px' }} />
-                <span style={{ fontWeight: 600 }}>Repeat</span>
+                Repeat
               </Button>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleClearChat}
-                style={{ display: 'flex', alignItems: 'center', gap: '4px' }}
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '6px',
+                  padding: '8px 12px',
+                  fontSize: '14px',
+                  fontWeight: 600
+                }}
               >
                 <Trash2 style={{ width: '16px', height: '16px' }} />
-                <span style={{ fontWeight: 600 }}>Clear</span>
+                Clear
               </Button>
             </div>
-
           </div>
         </div>
       </div>

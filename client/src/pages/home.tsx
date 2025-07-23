@@ -51,42 +51,71 @@ export default function Home() {
         <div style={{ 
           backgroundColor: 'white', 
           borderBottom: '1px solid #e2e8f0', 
-          padding: '8px 16px', 
+          padding: '12px 16px', 
           display: 'flex', 
           alignItems: 'center', 
           justifyContent: 'space-between',
           flexShrink: 0,
-          minHeight: '56px'
+          minHeight: '64px'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {/* Left side - Logo and Company */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setSidebarOpen(true)}
               style={{ 
-                color: '#64748b',
-                padding: '4px',
-                minWidth: '32px',
-                height: '32px',
+                padding: '8px',
+                minWidth: '40px',
+                height: '40px',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                border: 'none',
+                background: 'transparent'
               }}
             >
               <img 
                 src="/ai-sentinel-logo.png" 
                 alt="AI Sentinel" 
                 style={{ 
-                  width: '24px', 
-                  height: '24px', 
+                  width: '32px', 
+                  height: '32px', 
                   objectFit: 'contain',
                   flexShrink: 0
                 }}
               />
             </Button>
+            
+            {/* Company Info */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ 
+                width: '32px', 
+                height: '32px', 
+                backgroundColor: '#3b82f6', 
+                borderRadius: '6px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'white',
+                fontSize: '14px',
+                fontWeight: 600
+              }}>
+                HE
+              </div>
+              <div>
+                <div style={{ fontSize: '14px', fontWeight: 600, color: '#1e293b' }}>
+                  Horizon Edge Enterprises
+                </div>
+                <div style={{ fontSize: '12px', color: '#64748b' }}>
+                  Demo Company
+                </div>
+              </div>
+            </div>
           </div>
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {/* Right side - Page Title */}
+          <div style={{ display: 'flex', alignItems: 'center' }}>
             <h1 style={{ fontSize: '18px', fontWeight: 600, color: '#1e293b' }}>AI Sentinel Chat</h1>
           </div>
         </div>
