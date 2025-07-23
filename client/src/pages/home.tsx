@@ -142,10 +142,10 @@ export default function Home() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setSidebarOpen(true)}
+              onClick={() => setSidebarOpen(!sidebarOpen)}
               style={{ 
                 padding: '4px',
-                minWidth: '64px',
+                minWidth: '51px',
                 height: '48px',
                 display: 'flex',
                 alignItems: 'center',
@@ -158,8 +158,8 @@ export default function Home() {
                 src="/ai-sentinel-logo.png" 
                 alt="AI Sentinel" 
                 style={{ 
-                  width: '64px', 
-                  height: '64px', 
+                  width: '51px', 
+                  height: '51px', 
                   objectFit: 'contain',
                   flexShrink: 0
                 }}

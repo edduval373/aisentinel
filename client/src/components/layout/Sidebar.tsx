@@ -139,14 +139,30 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       )}
       
       {/* Sidebar */}
-      <div className={cn(
-        "fixed inset-y-0 left-0 z-50 flex flex-col transition-transform duration-300 ease-in-out",
-        isOpen ? "translate-x-0" : "-translate-x-full",
-        "w-80"
-      )} style={{ backgroundColor: '#1e3a8a' }}>
+      <div style={{ 
+        position: 'fixed',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        zIndex: 50,
+        display: 'flex',
+        flexDirection: 'column',
+        width: '320px',
+        backgroundColor: '#1e3a8a',
+        transform: isOpen ? 'translateX(0)' : 'translateX(-100%)',
+        transition: 'transform 300ms ease-in-out'
+      }}>
         {/* Header */}
-        <div className="flex items-center justify-between h-16 px-4" style={{ backgroundColor: '#1e40af', borderBottom: '1px solid #3b82f6' }}>
-          <div className="flex items-center space-x-3">
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'space-between', 
+          height: '64px', 
+          padding: '0 16px',
+          backgroundColor: '#1e40af', 
+          borderBottom: '1px solid #3b82f6' 
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <div style={{ 
               width: '40px', 
               height: '40px', 
