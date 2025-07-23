@@ -117,17 +117,24 @@ export default function ChatInput({ onSendMessage, disabled, prefillMessage }: C
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Type your message here..."
-            className="min-h-[40px] max-h-32 resize-none border border-blue-300 focus:border-sentinel-blue focus:ring-1 focus:ring-sentinel-blue"
+            style={{ 
+              minHeight: '40px', 
+              maxHeight: '128px', 
+              resize: 'none', 
+              border: '1px solid #93c5fd', 
+              borderRadius: '6px',
+              padding: '8px 12px'
+            }}
             disabled={disabled}
           />
         </div>
-        <div className="flex items-end space-x-2">
+        <div style={{ display: 'flex', alignItems: 'end', gap: '8px' }}>
           <input
             ref={fileInputRef}
             type="file"
             multiple
             onChange={handleFileSelect}
-            className="hidden"
+            style={{ display: 'none' }}
             accept="image/*,text/*,.pdf,.json,.xlsx,.docx,.txt,.md"
           />
           <TooltipProvider>
@@ -139,9 +146,9 @@ export default function ChatInput({ onSendMessage, disabled, prefillMessage }: C
                   size="sm"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={disabled}
-                  className="px-3 py-2"
+                  style={{ padding: '8px 12px' }}
                 >
-                  <Paperclip className="w-8 h-8" />
+                  <Paperclip style={{ width: '32px', height: '32px' }} />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
@@ -156,13 +163,20 @@ export default function ChatInput({ onSendMessage, disabled, prefillMessage }: C
           <Button
             type="submit"
             disabled={(!message.trim() && attachments.length === 0) || disabled}
-            className="bg-sentinel-blue hover:bg-blue-600 px-4 py-2"
+            style={{ backgroundColor: 'hsl(221, 83%, 53%)', color: 'white', padding: '8px 16px' }}
           >
-            <Send className="w-4 h-4" />
+            <Send style={{ width: '16px', height: '16px' }} />
           </Button>
         </div>
       </form>
-      <div className="flex items-center justify-between mt-2 text-xs text-slate-500">
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'space-between', 
+        marginTop: '8px', 
+        fontSize: '12px', 
+        color: '#64748b' 
+      }}>
         <span>All conversations are monitored and logged for compliance.</span>
         <span>Press Enter to send • Max 10MB per file</span>
       </div>
