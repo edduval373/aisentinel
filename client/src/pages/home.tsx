@@ -96,33 +96,36 @@ export default function Home() {
         <div style={{ 
           backgroundColor: 'white', 
           borderBottom: '1px solid #e2e8f0', 
-          padding: '12px 16px', 
+          padding: '8px 16px', 
           display: 'flex', 
           alignItems: 'center', 
           justifyContent: 'space-between',
-          flexShrink: 0
+          flexShrink: 0,
+          minHeight: '56px'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setSidebarOpen(true)}
               style={{ 
                 color: '#64748b',
-                padding: '8px'
+                padding: '4px',
+                minWidth: '32px',
+                height: '32px'
               }}
             >
               <img 
                 src="/ai-sentinel-logo.png" 
                 alt="AI Sentinel" 
-                style={{ width: '24px', height: '24px', objectFit: 'contain' }}
+                style={{ width: '20px', height: '20px', objectFit: 'contain' }}
               />
             </Button>
             <CompanyInfo />
           </div>
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <h1 style={{ fontSize: '18px', fontWeight: 600, color: '#1e293b' }}>AI Sentinel Chat</h1>
+            <h1 style={{ fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>AI Sentinel Chat</h1>
           </div>
         </div>
         
