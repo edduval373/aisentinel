@@ -1,36 +1,56 @@
 import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
 
-import { cn } from "@/lib/utils"
+export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
+  variant?: "default" | "secondary" | "destructive" | "outline"
+}
 
-const badgeVariants = cva(
-  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-  {
-    variants: {
-      variant: {
-        default:
-          "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
-        secondary:
-          "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        destructive:
-          "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
-        outline: "text-foreground",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
+const getBadgeStyles = (variant: string) => {
+  const baseStyles = {
+    display: 'inline-flex',
+    alignItems: 'center',
+    borderRadius: '9999px',
+    padding: '2px 10px',
+    fontSize: '12px',
+    fontWeight: 600,
+    transition: 'colors 0.2s',
+    outline: 'none'
   }
-)
 
-export interface BadgeProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof badgeVariants> {}
+  const variantStyles = {
+    default: {
+      border: 'none',
+      backgroundColor: 'hsl(221, 83%, 53%)',
+      color: 'white'
+    },
+    secondary: {
+      border: 'none',
+      backgroundColor: '#f1f5f9',
+      color: '#1e293b'
+    },
+    destructive: {
+      border: 'none', 
+      backgroundColor: 'hsl(0, 84%, 60%)',
+      color: 'white'
+    },
+    outline: {
+      border: '1px solid #e2e8f0',
+      backgroundColor: 'transparent',
+      color: '#1e293b'
+    }
+  }
 
-function Badge({ className, variant, ...props }: BadgeProps) {
+  return {
+    ...baseStyles,
+    ...variantStyles[variant as keyof typeof variantStyles]
+  }
+}
+
+function Badge({ variant = "default", style, ...props }: BadgeProps) {
+  const badgeStyles = getBadgeStyles(variant)
+  
   return (
-    <div className={cn(badgeVariants({ variant }), className)} {...props} />
+    <div style={{ ...badgeStyles, ...style }} {...props} />
   )
 }
 
-export { Badge, badgeVariants }
+export { Badge }
