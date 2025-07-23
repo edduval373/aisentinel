@@ -19,6 +19,9 @@ interface Company {
 }
 
 function CompanyInfo() {
+  // Check if we're in demo mode
+  const isDemoMode = window.location.pathname.includes('/demo') || window.location.search.includes('demo');
+  
   const { data: currentCompany } = useQuery<Company>({
     queryKey: ['/api/user/current-company'],
   });
@@ -29,21 +32,26 @@ function CompanyInfo() {
         <div style={{ 
           width: '48px', 
           height: '48px', 
-          backgroundColor: '#3b82f6', 
+          backgroundColor: '#f59e0b', 
           borderRadius: '8px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           color: 'white',
-          fontSize: '16px',
+          fontSize: '14px',
           fontWeight: 600
         }}>
-          ?
+          DEMO
         </div>
         <div>
           <div style={{ fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>
-            Loading...
+            {isDemoMode ? 'Demo Company' : 'Loading...'}
           </div>
+          {isDemoMode && (
+            <div style={{ fontSize: '12px', color: '#f59e0b', fontWeight: 500 }}>
+              Using AI Sentinel API Keys
+            </div>
+          )}
         </div>
       </div>
     );
@@ -51,7 +59,22 @@ function CompanyInfo() {
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-      {currentCompany.logo ? (
+      {isDemoMode ? (
+        <div style={{ 
+          width: '48px', 
+          height: '48px', 
+          backgroundColor: '#f59e0b', 
+          borderRadius: '8px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'white',
+          fontSize: '14px',
+          fontWeight: 600
+        }}>
+          DEMO
+        </div>
+      ) : currentCompany.logo ? (
         <img 
           src={currentCompany.logo} 
           alt={currentCompany.name}
@@ -81,9 +104,13 @@ function CompanyInfo() {
       )}
       <div>
         <div style={{ fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>
-          {currentCompany.name}
+          {isDemoMode ? 'Demo Company' : currentCompany.name}
         </div>
-        {currentCompany.description && (
+        {isDemoMode ? (
+          <div style={{ fontSize: '12px', color: '#f59e0b', fontWeight: 500 }}>
+            Using AI Sentinel API Keys
+          </div>
+        ) : currentCompany.description && (
           <div style={{ fontSize: '12px', color: '#64748b' }}>
             {currentCompany.description}
           </div>
@@ -98,6 +125,9 @@ export default function Home() {
   // const { isAuthenticated, isLoading } = useAuth(); // Temporarily disabled
   const [currentSession, setCurrentSession] = useState<number | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  
+  // Check if we're in demo mode
+  const isDemoMode = window.location.pathname.includes('/demo') || window.location.search.includes('demo');
 
   // Completely bypass authentication - always allow access
   useEffect(() => {
@@ -123,7 +153,7 @@ export default function Home() {
 
   return (
     <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', backgroundColor: '#f8fafc' }}>
-      <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
+      {!isDemoMode && <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />}
       
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
         {/* Top Header with Menu Button - Fixed Header */}
@@ -142,7 +172,8 @@ export default function Home() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setSidebarOpen(!sidebarOpen)}
+              onClick={isDemoMode ? undefined : () => setSidebarOpen(!sidebarOpen)}
+              disabled={isDemoMode}
               style={{ 
                 padding: '4px',
                 minWidth: '51px',
@@ -151,7 +182,9 @@ export default function Home() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 border: 'none',
-                background: 'transparent'
+                background: 'transparent',
+                cursor: isDemoMode ? 'default' : 'pointer',
+                opacity: isDemoMode ? 0.6 : 1
               }}
             >
               <img 

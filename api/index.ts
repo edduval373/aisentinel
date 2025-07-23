@@ -83,38 +83,34 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     }
 
-    // Current company endpoint (supports demo mode)
+    // Demo company endpoint - always returns first company for demo mode
     if (path.includes('user/current-company') && req.method === 'GET') {
       try {
-        console.log('Fetching current company for production...');
+        console.log('Production demo mode: Always returning first company as demo company');
         console.log('Database URL available:', !!process.env.DATABASE_URL);
         
         const { storage } = await import('../server/storage');
         
-        // For demo mode or unauthenticated access, return company ID 1
-        const company = await storage.getCompany(1);
-        if (company) {
-          // Optimize logo for header display - truncate if too large
+        // Always return the first available company as the demo company
+        const companies = await storage.getCompanies();
+        if (companies.length > 0) {
+          const demoCompany = companies[0];
+          console.log('Returning demo company:', demoCompany.name, 'ID:', demoCompany.id);
+          
+          // Optimize logo for header display
           const optimizedCompany = {
-            ...company,
-            logo: company.logo && company.logo.length > 50000 ? 
-              company.logo.substring(0, 50000) + '...' : company.logo
+            ...demoCompany,
+            logo: demoCompany.logo && demoCompany.logo.length > 50000 ? 
+              demoCompany.logo.substring(0, 50000) + '...' : demoCompany.logo
           };
-          console.log('Returning company:', optimizedCompany.name, 'ID:', optimizedCompany.id);
+          
           return res.json(optimizedCompany);
         }
 
-        // Fallback: try to get any available company
-        const companies = await storage.getCompanies();
-        if (companies.length > 0) {
-          console.log('Fallback: returning first company:', companies[0].name);
-          return res.json(companies[0]);
-        }
-
-        console.log('No companies found');
+        console.log('No companies found in database');
         return res.status(404).json({ message: "No company found" });
       } catch (error) {
-        console.error("Error fetching current company:", error);
+        console.error("Error fetching demo company:", error);
         console.error("Full error details:", error.stack);
         return res.status(500).json({ 
           message: "Failed to fetch company",

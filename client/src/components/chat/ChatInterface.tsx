@@ -541,19 +541,21 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       <div className="chat-main">
       {/* Chat Messages Area */}
       <div className="chat-messages-container">
-        {/* System Message */}
+        {/* Demo Mode Notice */}
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <div style={{ 
-            backgroundColor: '#f1f5f9', 
+            backgroundColor: '#fef3c7', 
             borderRadius: '8px', 
             padding: '8px 16px', 
             fontSize: '14px', 
-            color: '#64748b',
+            color: '#92400e',
+            fontWeight: 500,
             display: 'flex',
-            alignItems: 'center'
+            alignItems: 'center',
+            border: '1px solid #f59e0b'
           }}>
-            <Shield style={{ width: '16px', height: '16px', color: '#3b82f6', marginRight: '8px' }} />
-            AI Sentinel is monitoring this conversation for compliance and security.
+            <Shield style={{ width: '16px', height: '16px', color: '#f59e0b', marginRight: '8px' }} />
+            Demo Mode - Using AI Sentinel API Keys. This is a preview of our enterprise AI governance platform.
           </div>
         </div>
 

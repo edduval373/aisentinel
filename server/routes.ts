@@ -326,42 +326,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Unauthenticated route to get first available company (for demo access)
+  // Demo company route - always returns first company for demo mode
   app.get('/api/user/current-company', async (req: any, res) => {
     try {
-      // For complete authentication bypass, always return company ID 1 from Railway database
-      const company = await storage.getCompany(1);
-      if (company) {
-        // Optimize logo for header display - truncate if too large
+      console.log("Demo mode: Always returning first company as demo company");
+      
+      // Always return the first available company as the demo company
+      const companies = await storage.getCompanies();
+      if (companies.length > 0) {
+        const demoCompany = companies[0];
+        console.log("Returning demo company:", demoCompany.name, "ID:", demoCompany.id);
+        
+        // Optimize logo for header display
         const optimizedCompany = {
-          ...company,
-          logo: company.logo && company.logo.length > 50000 ? 
-            company.logo.substring(0, 50000) + '...' : company.logo
+          ...demoCompany,
+          logo: demoCompany.logo && demoCompany.logo.length > 50000 ? 
+            demoCompany.logo.substring(0, 50000) + '...' : demoCompany.logo
         };
+        
         return res.json(optimizedCompany);
       }
 
-      // Try authenticated access first
-      if (req.cookies?.sessionToken) {
-        const authService = await import('./services/authService');
-        const session = await authService.authService.verifySession(req.cookies.sessionToken);
-        if (session && session.companyId) {
-          const company = await storage.getCompany(session.companyId);
-          if (company) {
-            return res.json(company);
-          }
-        }
-      }
-
-      // For unauthenticated access, return the first available company
-      const companies = await storage.getCompanies();
-      if (companies.length > 0) {
-        return res.json(companies[0]);
-      }
-
+      console.log("No companies found in database");
       res.status(404).json({ message: "No company found" });
     } catch (error) {
-      console.error("Error fetching current company:", error);
+      console.error("Error fetching demo company:", error);
       res.status(500).json({ message: "Failed to fetch company" });
     }
   });
