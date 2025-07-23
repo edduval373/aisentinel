@@ -185,7 +185,9 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                   width: '32px', 
                   height: '32px', 
                   objectFit: 'contain',
-                  flexShrink: 0
+                  flexShrink: 0,
+                  filter: 'brightness(0) invert(1)',
+                  backgroundColor: 'transparent'
                 }}
               />
             </div>
@@ -257,7 +259,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                 <h3 style={{ 
                   color: '#94a3b8', 
                   fontSize: '12px', 
-                  fontWeight: 600, 
+                  fontWeight: 700, 
                   textTransform: 'uppercase', 
                   letterSpacing: '0.05em',
                   margin: 0
@@ -351,7 +353,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                 <h3 style={{ 
                   color: '#94a3b8', 
                   fontSize: '12px', 
-                  fontWeight: 600, 
+                  fontWeight: 700, 
                   textTransform: 'uppercase', 
                   letterSpacing: '0.05em',
                   margin: 0
@@ -489,7 +491,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                 <h3 style={{ 
                   color: '#94a3b8', 
                   fontSize: '12px', 
-                  fontWeight: 600, 
+                  fontWeight: 700, 
                   textTransform: 'uppercase', 
                   letterSpacing: '0.05em',
                   margin: 0
