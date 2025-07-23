@@ -47,53 +47,42 @@ export default function Home() {
       <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
       
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
-        {/* Top Header with Menu Button - Fixed Header */}
+        {/* Top Header - Simple and compact */}
         <div style={{ 
           backgroundColor: 'white', 
           borderBottom: '1px solid #e2e8f0', 
-          padding: '6px 12px', 
+          padding: '4px 8px', 
           display: 'flex', 
           alignItems: 'center', 
-          justifyContent: 'space-between',
+          justifyContent: 'center',
           flexShrink: 0,
-          minHeight: '48px'
+          height: '40px',
+          position: 'relative'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flex: '0 0 auto' }}>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setSidebarOpen(true)}
-              style={{ 
-                color: '#64748b',
-                padding: '2px',
-                minWidth: '24px',
-                height: '24px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-            >
-              <img 
-                src="/ai-sentinel-logo-mini.svg" 
-                alt="AI Sentinel" 
-                style={{ width: '18px', height: '18px', objectFit: 'contain' }}
-              />
-            </Button>
-            <span style={{ 
-              fontSize: '12px', 
-              fontWeight: 500, 
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setSidebarOpen(true)}
+            style={{ 
+              position: 'absolute',
+              left: '8px',
               color: '#64748b',
-              whiteSpace: 'nowrap'
-            }}>
-              Demo
-            </span>
-          </div>
+              padding: '4px',
+              minWidth: '32px',
+              height: '32px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <img 
+              src="/ai-sentinel-logo-mini.svg" 
+              alt="Menu" 
+              style={{ width: '20px', height: '20px', objectFit: 'contain' }}
+            />
+          </Button>
           
-          <div style={{ flex: '1 1 auto', textAlign: 'center' }}>
-            <h1 style={{ fontSize: '14px', fontWeight: 600, color: '#1e293b' }}>AI Sentinel Chat</h1>
-          </div>
-          
-          <div style={{ flex: '0 0 auto', width: '60px' }}></div>
+          <h1 style={{ fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>AI Sentinel</h1>
         </div>
         
         {/* Chat Interface Container */}
