@@ -141,6 +141,14 @@ The application is configured for deployment on Vercel with the following setup:
 
 ```
 Recent Updates:
+- July 23, 2025. Implemented Role-Based Sidebar Access Control with Demo Mode Formalization:
+  * DEFINED: Demo mode users have role level 0, regular users have role level 1
+  * RESTRICTED: Only super users (100), owners (99), and admins (2+) can access sidebar
+  * DISABLED: Logo click for demo mode and regular users - sidebar completely inaccessible
+  * ENHANCED: Demo mode detection shows orange "DEMO" badge with "Using AI Sentinel API Keys" message
+  * IMPLEMENTED: Role-based UI logic that prevents unauthorized sidebar access
+  * SECURED: Company information API always returns first company as demo company
+  * DOCUMENTED: Added role-based access preferences to user configuration
 - July 23, 2025. Logo Standardization and Production Consistency Fix:
   * IMPLEMENTED: Unified atomic/molecular logo design across all components
   * FIXED: Logo sizing issues in landing page (40px), main app (24px), admin layout (32px), sidebar (32px)
@@ -522,4 +530,6 @@ Previous Changelog:
 
 ```
 Preferred communication style: Simple, everyday language.
+Role-based sidebar access: Only super users (100), owners (99), and admins (2+) can access sidebar. Regular users (1) and demo users (0) cannot open sidebar.
+Demo mode identification: Demo mode uses role level 0, shows orange "DEMO" badge, and displays "Using AI Sentinel API Keys" message.
 ```

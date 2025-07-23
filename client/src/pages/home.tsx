@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-// import { useAuth } from "@/hooks/useAuth"; // Temporarily disabled
+import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 // import { isUnauthorizedError } from "@/lib/authUtils"; // Temporarily disabled
 import { Button } from "@/components/ui/button";
@@ -19,8 +19,12 @@ interface Company {
 }
 
 function CompanyInfo() {
-  // Check if we're in demo mode
+  const { user } = useAuth();
+  
+  // Check if we're in demo mode or user has role level 0 (demo) or 1 (regular user)
   const isDemoMode = window.location.pathname.includes('/demo') || window.location.search.includes('demo');
+  const userRoleLevel = user?.roleLevel || 0;
+  const isLimitedAccess = userRoleLevel <= 1 || isDemoMode;
   
   const { data: currentCompany } = useQuery<Company>({
     queryKey: ['/api/user/current-company'],
@@ -45,9 +49,9 @@ function CompanyInfo() {
         </div>
         <div>
           <div style={{ fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>
-            {isDemoMode ? 'Demo Company' : 'Loading...'}
+            {isLimitedAccess ? 'Demo Company' : 'Loading...'}
           </div>
-          {isDemoMode && (
+          {isLimitedAccess && (
             <div style={{ fontSize: '12px', color: '#f59e0b', fontWeight: 500 }}>
               Using AI Sentinel API Keys
             </div>
@@ -59,7 +63,7 @@ function CompanyInfo() {
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-      {isDemoMode ? (
+      {isLimitedAccess ? (
         <div style={{ 
           width: '48px', 
           height: '48px', 
@@ -104,9 +108,9 @@ function CompanyInfo() {
       )}
       <div>
         <div style={{ fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>
-          {isDemoMode ? 'Demo Company' : currentCompany.name}
+          {isLimitedAccess ? 'Demo Company' : currentCompany.name}
         </div>
-        {isDemoMode ? (
+        {isLimitedAccess ? (
           <div style={{ fontSize: '12px', color: '#f59e0b', fontWeight: 500 }}>
             Using AI Sentinel API Keys
           </div>
@@ -122,12 +126,16 @@ function CompanyInfo() {
 
 export default function Home() {
   const { toast } = useToast();
-  // const { isAuthenticated, isLoading } = useAuth(); // Temporarily disabled
+  const { isAuthenticated, user, isSuperUser, isOwner, isAdmin } = useAuth();
   const [currentSession, setCurrentSession] = useState<number | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   
-  // Check if we're in demo mode
+  // Check if we're in demo mode or if user is regular user (role level 1)
   const isDemoMode = window.location.pathname.includes('/demo') || window.location.search.includes('demo');
+  const userRoleLevel = user?.roleLevel || 0;
+  
+  // Determine if sidebar access is allowed (super users, owners, admins only - role level 2+)
+  const canAccessSidebar = isAuthenticated && (isSuperUser || isOwner || isAdmin || userRoleLevel >= 2);
 
   // Completely bypass authentication - always allow access
   useEffect(() => {
@@ -153,7 +161,7 @@ export default function Home() {
 
   return (
     <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', backgroundColor: '#f8fafc' }}>
-      {!isDemoMode && <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />}
+      {canAccessSidebar && <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />}
       
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
         {/* Top Header with Menu Button - Fixed Header */}
@@ -172,8 +180,8 @@ export default function Home() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={isDemoMode ? undefined : () => setSidebarOpen(!sidebarOpen)}
-              disabled={isDemoMode}
+              onClick={canAccessSidebar ? () => setSidebarOpen(!sidebarOpen) : undefined}
+              disabled={!canAccessSidebar}
               style={{ 
                 padding: '4px',
                 minWidth: '51px',
@@ -183,8 +191,8 @@ export default function Home() {
                 justifyContent: 'center',
                 border: 'none',
                 background: 'transparent',
-                cursor: isDemoMode ? 'default' : 'pointer',
-                opacity: isDemoMode ? 0.6 : 1
+                cursor: canAccessSidebar ? 'pointer' : 'default',
+                opacity: canAccessSidebar ? 1 : 0.6
               }}
             >
               <img 
