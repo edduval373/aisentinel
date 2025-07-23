@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Test Session</title>
+</head>
+<body>
+    <h1>Create Super-User Test Session</h1>
+    <button onclick="createSession()">Create Session for Ed Duval (Super-User)</button>
+    <div id="result"></div>
+
+    <script>
+        async function createSession() {
+            try {
+                const response = await fetch('/api/auth/create-test-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: 'ed.duval15@gmail.com',
+                        name: 'Ed Duval',
+                        roleLevel: 100,
+                        companyId: 1
+                    }),
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                document.getElementById('result').innerHTML = 
+                    '<pre>' + JSON.stringify(data, null, 2) + '</pre>' +
+                    '<br><a href="/chat">Go to Chat Interface</a>';
+                    
+                console.log('Session created:', data);
+            } catch (error) {
+                document.getElementById('result').innerHTML = 
+                    '<div style="color: red;">Error: ' + error.message + '</div>';
+                console.error('Error:', error);
+            }
+        }
+    </script>
+</body>
+</html>

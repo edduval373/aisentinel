@@ -179,4 +179,47 @@ export function setupAuthRoutes(app: Express) {
       });
     }
   });
+
+  // Development-only test session creation endpoint
+  app.post('/api/auth/create-test-session', async (req, res) => {
+    try {
+      if (process.env.NODE_ENV === 'production') {
+        return res.status(403).json({ message: 'Test sessions not allowed in production' });
+      }
+
+      const { email, name, roleLevel, companyId } = req.body;
+      
+      // Create a test session with the provided user data
+      const testUserId = `test-${email}`;
+      
+      // Store user data in session
+      (req as any).session.userId = testUserId;
+      (req as any).session.email = email;
+      (req as any).session.name = name;
+      (req as any).session.roleLevel = roleLevel || 100;
+      (req as any).session.companyId = companyId || 1;
+      (req as any).session.authenticated = true;
+      
+      console.log(`Created test session for ${email} with role level ${roleLevel}`);
+      
+      res.json({
+        success: true,
+        message: 'Test session created',
+        user: {
+          id: testUserId,
+          email,
+          name,
+          roleLevel: roleLevel || 100,
+          companyId: companyId || 1
+        }
+      });
+    } catch (error: any) {
+      console.error('Test session creation error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to create test session',
+        error: error.message
+      });
+    }
+  });
 }
