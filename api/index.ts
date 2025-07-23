@@ -840,6 +840,178 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     }
 
+    // Chat message endpoint (supports demo mode)
+    if (path.includes('chat/message') && req.method === 'POST') {
+      try {
+        console.log('Chat message request:', req.body);
+        const { message, sessionId, aiModelId, activityTypeId } = req.body;
+        
+        if (!message || !sessionId || !aiModelId || !activityTypeId) {
+          return res.status(400).json({ 
+            message: "Missing required fields: message, sessionId, aiModelId, activityTypeId" 
+          });
+        }
+
+        const sessionToken = req.headers.cookie?.match(/sessionToken=([^;]+)/)?.[1];
+        const referrer = req.headers.referer || '';
+        const isDemoMode = referrer.includes('/demo') || req.headers['x-demo-mode'] === 'true' || !sessionToken;
+        
+        // Handle demo mode
+        if (isDemoMode) {
+          console.log('Processing demo mode chat message');
+          
+          // Create demo AI response
+          const demoResponse = `I'm a demo AI assistant. You asked: "${message}"\n\nThis is a preview of our enterprise AI governance platform. In the full version, I would process your request using the selected AI model (${aiModelId}) and activity type (${activityTypeId}) with proper security monitoring and compliance tracking.`;
+          
+          // Create demo message objects
+          const userMessage = {
+            id: Math.floor(Math.random() * 1000000),
+            sessionId: parseInt(sessionId),
+            role: 'user',
+            content: message,
+            aiModelId: parseInt(aiModelId),
+            activityTypeId: parseInt(activityTypeId),
+            createdAt: new Date().toISOString(),
+            isSecurityFlagged: false
+          };
+
+          const assistantMessage = {
+            id: Math.floor(Math.random() * 1000000),
+            sessionId: parseInt(sessionId),
+            role: 'assistant', 
+            content: demoResponse,
+            aiModelId: parseInt(aiModelId),
+            activityTypeId: parseInt(activityTypeId),
+            createdAt: new Date().toISOString(),
+            isSecurityFlagged: false
+          };
+
+          console.log('Demo response created:', { userMessage: userMessage.id, assistantMessage: assistantMessage.id });
+          return res.json({ userMessage, assistantMessage });
+        }
+
+        // Handle authenticated mode (real AI processing)
+        const { storage } = await import('../server/storage');
+        const userSession = await storage.getUserSession(sessionToken);
+        
+        if (!userSession) {
+          return res.status(401).json({ message: "Invalid session" });
+        }
+
+        const user = await storage.getUser(userSession.userId);
+        if (!user || !user.companyId) {
+          return res.status(401).json({ message: "User not found or no company assigned" });
+        }
+
+        // Process real AI message
+        const { aiService } = await import('../server/services/aiService');
+        const { contentFilter } = await import('../server/services/contentFilter');
+        
+        // Filter content
+        const filterResult = await contentFilter.filterMessage(message);
+        
+        // Create user message
+        const userMessage = await storage.createChatMessage({
+          sessionId: parseInt(sessionId),
+          role: 'user',
+          content: message,
+          aiModelId: parseInt(aiModelId),
+          activityTypeId: parseInt(activityTypeId),
+          isSecurityFlagged: filterResult.blocked
+        });
+
+        if (filterResult.blocked) {
+          const blockedMessage = await storage.createChatMessage({
+            sessionId: parseInt(sessionId),
+            role: 'assistant',
+            content: 'This message has been blocked due to security policy violations.',
+            aiModelId: parseInt(aiModelId),
+            activityTypeId: parseInt(activityTypeId),
+            isSecurityFlagged: false
+          });
+          
+          return res.json({ userMessage, assistantMessage: blockedMessage });
+        }
+
+        // Get AI response using available models and activity types
+        const aiModels = await storage.getAiModels(user.companyId);
+        const activityTypes = await storage.getActivityTypes(user.companyId);
+        
+        const aiModel = aiModels.find(m => m.id === parseInt(aiModelId));
+        const activityType = activityTypes.find(a => a.id === parseInt(activityTypeId));
+        
+        if (!aiModel || !activityType) {
+          return res.status(400).json({ message: "Invalid AI model or activity type" });
+        }
+        
+        const aiResponse = await aiService.generateResponse(
+          message,
+          aiModel,
+          activityType
+        );
+
+        const assistantMessage = await storage.createChatMessage({
+          sessionId: parseInt(sessionId),
+          role: 'assistant',
+          content: aiResponse,
+          aiModelId: parseInt(aiModelId),
+          activityTypeId: parseInt(activityTypeId),
+          isSecurityFlagged: false
+        });
+
+        return res.json({ userMessage, assistantMessage });
+      } catch (error) {
+        console.error('Chat message error:', error);
+        return res.status(500).json({ 
+          message: "Failed to process message", 
+          error: error.message 
+        });
+      }
+    }
+
+    // Chat messages history endpoint  
+    if (path.includes('chat/messages') && req.method === 'GET') {
+      try {
+        const sessionId = req.query.sessionId as string;
+        
+        if (!sessionId) {
+          return res.status(400).json({ message: "Session ID required" });
+        }
+
+        const sessionToken = req.headers.cookie?.match(/sessionToken=([^;]+)/)?.[1];
+        const referrer = req.headers.referer || '';
+        const isDemoMode = referrer.includes('/demo') || req.headers['x-demo-mode'] === 'true' || !sessionToken;
+        
+        // Handle demo mode - return empty messages for new sessions
+        if (isDemoMode) {
+          console.log('Demo mode chat messages request for session:', sessionId);
+          return res.json([]); // Empty messages for demo
+        }
+
+        // Handle authenticated mode
+        const { storage } = await import('../server/storage');
+        const userSession = await storage.getUserSession(sessionToken);
+        
+        if (!userSession) {
+          return res.status(401).json({ message: "Invalid session" });
+        }
+
+        const user = await storage.getUser(userSession.userId);
+        if (!user || !user.companyId) {
+          return res.status(401).json({ message: "User not found or no company assigned" });
+        }
+
+        const messages = await storage.getChatMessages(parseInt(sessionId), user.companyId);
+        return res.json(messages);
+      } catch (error) {
+        console.error('Chat messages error:', error);
+        return res.status(500).json({ 
+          message: "Failed to fetch messages", 
+          error: error.message 
+        });
+      }
+    }
+
     // Add API endpoints for super-user API key management
     if (path.includes('admin/update-api-key') && req.method === 'POST') {
       try {
