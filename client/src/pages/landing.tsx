@@ -23,15 +23,11 @@ export default function Landing() {
     <div className="ai-sentinel-page">
       {/* Header */}
       <header style={{ 
-        position: 'fixed', 
-        top: 0, 
-        left: 0, 
-        right: 0, 
+        position: 'relative', 
+        width: '100%',
         backgroundColor: 'white', 
         borderBottom: '1px solid #e2e8f0', 
-        zIndex: 50,
-        padding: '8px 1rem',
-        minHeight: '64px',
+        padding: '16px 1rem',
         boxSizing: 'border-box'
       }}>
         <div style={{ 
@@ -47,7 +43,7 @@ export default function Landing() {
             <img 
               src="/ai-sentinel-logo.png" 
               alt="AI Sentinel" 
-              style={{ width: '32px', height: '32px' }}
+              style={{ width: '40px', height: '40px' }}
             />
             <h1 style={{ 
               fontSize: '20px', 
@@ -67,7 +63,7 @@ export default function Landing() {
       </header>
 
       {/* Hero Section */}
-      <section className="ai-sentinel-hero" style={{ paddingTop: '80px' }}>
+      <section className="ai-sentinel-hero" style={{ paddingTop: '2rem' }}>
         <div className="ai-sentinel-hero-container">
           <h2 className="ai-sentinel-hero-title">
             Enterprise AI
