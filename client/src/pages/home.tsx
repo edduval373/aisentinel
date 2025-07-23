@@ -11,8 +11,87 @@ import { TrialBanner } from "@/components/TrialBanner";
 
 
 
-// Company Info Component - Pure CSS styling like landing page
-// Removed CompanyInfo component - now handled directly in header
+interface Company {
+  id: number;
+  name: string;
+  logo?: string;
+  description?: string;
+}
+
+function CompanyInfo() {
+  const { data: currentCompany } = useQuery<Company>({
+    queryKey: ['/api/user/current-company'],
+  });
+
+  if (!currentCompany) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ 
+          width: '48px', 
+          height: '48px', 
+          backgroundColor: '#3b82f6', 
+          borderRadius: '8px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'white',
+          fontSize: '16px',
+          fontWeight: 600
+        }}>
+          ?
+        </div>
+        <div>
+          <div style={{ fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>
+            Loading...
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+      {currentCompany.logo ? (
+        <img 
+          src={currentCompany.logo} 
+          alt={currentCompany.name}
+          style={{ 
+            width: '48px', 
+            height: '48px', 
+            objectFit: 'contain',
+            borderRadius: '8px',
+            border: '1px solid #e2e8f0'
+          }}
+        />
+      ) : (
+        <div style={{ 
+          width: '48px', 
+          height: '48px', 
+          backgroundColor: '#3b82f6', 
+          borderRadius: '8px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'white',
+          fontSize: '16px',
+          fontWeight: 600
+        }}>
+          {currentCompany.name.charAt(0).toUpperCase()}
+        </div>
+      )}
+      <div>
+        <div style={{ fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>
+          {currentCompany.name}
+        </div>
+        {currentCompany.description && (
+          <div style={{ fontSize: '12px', color: '#64748b' }}>
+            {currentCompany.description}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function Home() {
   const { toast } = useToast();
@@ -51,23 +130,23 @@ export default function Home() {
         <div style={{ 
           backgroundColor: 'white', 
           borderBottom: '1px solid #e2e8f0', 
-          padding: '12px 16px', 
+          padding: '8px 16px', 
           display: 'flex', 
           alignItems: 'center', 
           justifyContent: 'space-between',
           flexShrink: 0,
-          minHeight: '64px'
+          minHeight: '56px'
         }}>
           {/* Left side - Logo and Company */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setSidebarOpen(true)}
               style={{ 
-                padding: '8px',
-                minWidth: '40px',
-                height: '40px',
+                padding: '4px',
+                minWidth: '64px',
+                height: '48px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -79,39 +158,16 @@ export default function Home() {
                 src="/ai-sentinel-logo.png" 
                 alt="AI Sentinel" 
                 style={{ 
-                  width: '32px', 
-                  height: '32px', 
+                  width: '64px', 
+                  height: '64px', 
                   objectFit: 'contain',
                   flexShrink: 0
                 }}
               />
             </Button>
             
-            {/* Company Info */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{ 
-                width: '32px', 
-                height: '32px', 
-                backgroundColor: '#3b82f6', 
-                borderRadius: '6px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'white',
-                fontSize: '14px',
-                fontWeight: 600
-              }}>
-                HE
-              </div>
-              <div>
-                <div style={{ fontSize: '14px', fontWeight: 600, color: '#1e293b' }}>
-                  Horizon Edge Enterprises
-                </div>
-                <div style={{ fontSize: '12px', color: '#64748b' }}>
-                  Enterprise Solutions
-                </div>
-              </div>
-            </div>
+            {/* Company Info from Database */}
+            <CompanyInfo />
           </div>
           
           {/* Right side - Page Title */}

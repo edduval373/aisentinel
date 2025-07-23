@@ -165,7 +165,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                 }}
               />
             </div>
-            <h1 className="text-white font-semibold text-lg">AI Sentinel</h1>
+
           </div>
           <Button
             variant="ghost"
