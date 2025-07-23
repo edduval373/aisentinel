@@ -13,10 +13,34 @@ export default function Landing() {
 
   console.log("[LANDING DEBUG] About to return JSX");
   
-  // Add a simple test element to verify React is working
+  // Check for verification success and redirect authenticated users
   React.useEffect(() => {
     console.log("[LANDING DEBUG] Landing component mounted successfully");
     document.title = "AI Sentinel - Landing Page (React Working)";
+    
+    // Check if user just verified email and redirect to chat
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('verified') === 'true') {
+      console.log("[LANDING DEBUG] Email verification detected, checking authentication...");
+      
+      // Check authentication status after short delay to allow session to be set
+      setTimeout(async () => {
+        try {
+          const response = await fetch('/api/auth/me', { credentials: 'include' });
+          const authData = await response.json();
+          console.log("[LANDING DEBUG] Post-verification auth check:", authData);
+          
+          if (authData.authenticated) {
+            console.log("[LANDING DEBUG] User is authenticated, redirecting to chat...");
+            window.location.href = '/chat';
+          } else {
+            console.log("[LANDING DEBUG] User not authenticated yet, staying on landing page");
+          }
+        } catch (error) {
+          console.error("[LANDING DEBUG] Auth check failed:", error);
+        }
+      }, 1000);
+    }
   }, []);
   
   return (
