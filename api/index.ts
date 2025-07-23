@@ -98,7 +98,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     }
 
-    // Authentication verification endpoint
+    // Authentication verification endpoint with session creation
     if (path.includes('auth/verify') && req.method === 'GET') {
       try {
         console.log('Processing verification request...');
@@ -119,26 +119,88 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           `);
         }
 
-        console.log('Token received, attempting direct database verification...');
+        console.log('Token received, processing verification with session creation...');
         
-        // Simple verification without complex imports
+        // Import required services
+        const { storage } = await import('../server/storage');
+        const { authService } = await import('../server/services/authService');
+        
+        // Get and validate verification token
+        const verificationToken = await storage.getEmailVerificationToken(token);
+        
+        if (!verificationToken || verificationToken.isUsed) {
+          console.log('Token not found or already used');
+          return res.status(400).send(`
+            <!DOCTYPE html>
+            <html>
+            <head><title>Verification Error</title></head>
+            <body>
+              <h1>Verification Failed</h1>
+              <p>Invalid or expired verification token. Please request a new verification email.</p>
+              <a href="/">Return to AI Sentinel</a>
+            </body>
+            </html>
+          `);
+        }
+
+        // Check if token expired (1 hour)
+        const tokenAge = Date.now() - new Date(verificationToken.createdAt).getTime();
+        if (tokenAge > 60 * 60 * 1000) {
+          console.log('Token expired, age:', tokenAge);
+          return res.status(400).send(`
+            <!DOCTYPE html>
+            <html>
+            <head><title>Verification Error</title></head>
+            <body>
+              <h1>Verification Expired</h1>
+              <p>Verification token has expired. Please request a new verification email.</p>
+              <a href="/">Return to AI Sentinel</a>
+            </body>
+            </html>
+          `);
+        }
+
+        // Mark token as used
+        await storage.markEmailVerificationTokenUsed(token);
+        
+        // Update user as verified
+        await storage.updateUserEmailVerified(verificationToken.email, true);
+        
+        // Get user and create session
+        const user = await storage.getUserByEmail(verificationToken.email);
+        if (user) {
+          const session = await authService.createSession(user);
+          
+          // Set session cookie
+          res.setHeader('Set-Cookie', [
+            `sessionToken=${session.sessionToken}; HttpOnly; Path=/; Max-Age=${30 * 24 * 60 * 60}; SameSite=Lax; Secure`
+          ]);
+          
+          console.log('Session created and cookie set for verified user:', verificationToken.email);
+          
+          // Redirect to frontend with success parameter
+          const redirectUrl = `/?verified=true&email=${encodeURIComponent(verificationToken.email)}`;
+          res.setHeader('Location', redirectUrl);
+          return res.status(302).end();
+        }
+        
+        console.log('Email verified successfully for:', verificationToken.email);
         return res.status(200).send(`
           <!DOCTYPE html>
           <html>
-          <head><title>Email Verification</title></head>
+          <head><title>Email Verified</title></head>
           <body>
-            <h1>Verification Received</h1>
-            <p>Your verification token has been received: ${token}</p>
-            <p>Please wait while we process your verification...</p>
+            <h1>Verification Successful!</h1>
+            <p>Your email has been verified successfully. Redirecting to dashboard...</p>
             <script>
-              // Redirect to home after 3 seconds
               setTimeout(() => {
-                window.location.href = '/';
-              }, 3000);
+                window.location.href = '/?verified=true&email=${encodeURIComponent(verificationToken.email)}';
+              }, 2000);
             </script>
           </body>
           </html>
         `);
+        
       } catch (error: any) {
         console.error("Verification error details:", {
           message: error.message,
@@ -268,7 +330,54 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     }
 
-    // User current endpoint (authentication required)
+    // Auth me endpoint - matches frontend expectation
+    if (path.includes('auth/me') && req.method === 'GET') {
+      try {
+        const sessionToken = req.headers.cookie?.match(/sessionToken=([^;]+)/)?.[1];
+        
+        if (!sessionToken) {
+          return res.json({ authenticated: false });
+        }
+
+        const { storage } = await import('../server/storage');
+        const session = await storage.getUserSession(sessionToken);
+        
+        if (!session) {
+          return res.json({ authenticated: false });
+        }
+
+        const user = await storage.getUser(session.userId);
+        
+        if (!user) {
+          return res.json({ authenticated: false });
+        }
+
+        let companyName = null;
+        if (user.companyId) {
+          const company = await storage.getCompanyById(user.companyId);
+          companyName = company?.name;
+        }
+
+        return res.json({
+          authenticated: true,
+          user: {
+            id: user.id,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            companyId: user.companyId,
+            companyName,
+            role: user.role,
+            roleLevel: user.roleLevel
+          }
+        });
+      } catch (error) {
+        console.error("Auth me error:", error);
+        return res.json({ authenticated: false });
+      }
+    }
+
+    // User current endpoint (authentication required) - legacy support
     if (path.includes('user/current') && req.method === 'GET') {
       try {
         const sessionToken = req.headers.cookie?.match(/sessionToken=([^;]+)/)?.[1];
