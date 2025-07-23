@@ -87,6 +87,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (path.includes('user/current-company') && req.method === 'GET') {
       try {
         console.log('Fetching current company for production...');
+        console.log('Database URL available:', !!process.env.DATABASE_URL);
         
         const { storage } = await import('../server/storage');
         
@@ -114,7 +115,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(404).json({ message: "No company found" });
       } catch (error) {
         console.error("Error fetching current company:", error);
-        return res.status(500).json({ message: "Failed to fetch company" });
+        console.error("Full error details:", error.stack);
+        return res.status(500).json({ 
+          message: "Failed to fetch company",
+          error: error.message,
+          hasDatabase: !!process.env.DATABASE_URL
+        });
       }
     }
 
