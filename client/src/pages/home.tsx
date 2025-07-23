@@ -18,42 +18,52 @@ const CompanyInfo = () => {
     retry: false,
   });
 
-  if (!currentCompany) return null;
-
-  const company = currentCompany as any; // Type assertion for now
-
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-      {company.logo ? (
-        <img 
-          src={company.logo} 
-          alt={`${company.name} logo`}
-          style={{ 
-            width: '32px', 
-            height: '32px', 
-            borderRadius: '4px', 
-            objectFit: 'cover' 
-          }}
-        />
-      ) : (
+  if (!currentCompany) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         <div style={{ 
-          width: '32px', 
-          height: '32px', 
+          width: '24px', 
+          height: '24px', 
           borderRadius: '4px', 
           backgroundColor: '#cbd5e1', 
           display: 'flex', 
           alignItems: 'center', 
           justifyContent: 'center' 
         }}>
-          <Building2 style={{ width: '16px', height: '16px', color: '#64748b' }} />
+          <Building2 style={{ width: '12px', height: '12px', color: '#64748b' }} />
         </div>
-      )}
+        <span style={{ 
+          fontSize: '14px', 
+          fontWeight: 500, 
+          color: '#64748b' 
+        }}>
+          Demo Mode
+        </span>
+      </div>
+    );
+  }
+
+  const company = currentCompany as any; // Type assertion for now
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <div style={{ 
+        width: '24px', 
+        height: '24px', 
+        borderRadius: '4px', 
+        backgroundColor: '#cbd5e1', 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center' 
+      }}>
+        <Building2 style={{ width: '12px', height: '12px', color: '#64748b' }} />
+      </div>
       <span style={{ 
-        fontSize: '18px', 
-        fontWeight: 600, 
+        fontSize: '14px', 
+        fontWeight: 500, 
         color: '#1e293b' 
       }}>
-        {company.name} ({company.id})
+        {company.name}
       </span>
     </div>
   );
@@ -110,15 +120,18 @@ export default function Home() {
               onClick={() => setSidebarOpen(true)}
               style={{ 
                 color: '#64748b',
-                padding: '2px',
-                minWidth: '24px',
-                height: '24px'
+                padding: '4px',
+                minWidth: '28px',
+                height: '28px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
               }}
             >
               <img 
                 src="/ai-sentinel-logo-mini.svg" 
                 alt="AI Sentinel" 
-                style={{ width: '16px', height: '16px', objectFit: 'contain' }}
+                style={{ width: '20px', height: '20px', objectFit: 'contain' }}
               />
             </Button>
             <CompanyInfo />
