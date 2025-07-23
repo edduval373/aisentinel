@@ -591,8 +591,49 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
         </nav>
 
       {/* Bottom section */}
-      <div style={{ borderTop: '1px solid #3b82f6', padding: '8px' }}>
-        {/* Clean footer area */}
+      <div style={{ borderTop: '1px solid #3b82f6', padding: '12px' }}>
+        {/* User Info Display */}
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '8px',
+          color: '#e2e8f0',
+          fontSize: '12px'
+        }}>
+          <div style={{ 
+            width: '24px', 
+            height: '24px', 
+            backgroundColor: '#3b82f6', 
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0
+          }}>
+            <span style={{ color: 'white', fontSize: '10px', fontWeight: 'bold' }}>
+              U
+            </span>
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ 
+              fontWeight: '500', 
+              color: '#f1f5f9',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap'
+            }}>
+              {user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : user?.email || 'Unknown User'}
+            </div>
+            <div style={{ 
+              color: '#94a3b8', 
+              fontSize: '10px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em'
+            }}>
+              {user?.role || 'User'} (Level {user?.roleLevel || 0})
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     </>
