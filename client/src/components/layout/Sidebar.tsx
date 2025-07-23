@@ -140,12 +140,12 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       
       {/* Sidebar */}
       <div className={cn(
-        "fixed inset-y-0 left-0 z-50 bg-slate-800 flex flex-col transition-transform duration-300 ease-in-out",
+        "fixed inset-y-0 left-0 z-50 flex flex-col transition-transform duration-300 ease-in-out",
         isOpen ? "translate-x-0" : "-translate-x-full",
         "w-80"
-      )}>
+      )} style={{ backgroundColor: '#1e3a8a' }}>
         {/* Header */}
-        <div className="flex items-center justify-between h-16 bg-slate-900 border-b border-slate-700 px-4">
+        <div className="flex items-center justify-between h-16 px-4" style={{ backgroundColor: '#1e40af', borderBottom: '1px solid #3b82f6' }}>
           <div className="flex items-center space-x-3">
             <div style={{ 
               width: '40px', 
@@ -171,7 +171,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
             variant="ghost"
             size="sm"
             onClick={onToggle}
-            className="text-slate-400 hover:text-white hover:bg-slate-700 p-1"
+            style={{ color: 'white', padding: '4px' }}
           >
             <X className="w-5 h-5" />
           </Button>
@@ -187,17 +187,34 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                 navigate(item.href);
                 if (window.innerWidth < 1024) onToggle(); // Close on mobile
               }}
-              className={cn(
-                "w-full flex items-center space-x-3 text-left rounded-lg px-3 py-2 transition-colors",
-                item.current
-                  ? "text-white bg-slate-700"
-                  : "text-slate-300 hover:text-white hover:bg-slate-700"
-              )}
+              style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                textAlign: 'left',
+                borderRadius: '8px',
+                padding: '8px 12px',
+                transition: 'all 0.2s',
+                color: item.current ? 'white' : '#e2e8f0',
+                backgroundColor: item.current ? '#3b82f6' : 'transparent',
+                border: 'none',
+                cursor: 'pointer'
+              }}
+              onMouseEnter={(e) => {
+                if (!item.current) {
+                  e.currentTarget.style.backgroundColor = '#3b82f6';
+                  e.currentTarget.style.color = 'white';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!item.current) {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.color = '#e2e8f0';
+                }
+              }}
             >
-              <item.icon className={cn(
-                "w-5 h-5",
-                item.current ? "text-sentinel-blue" : "text-slate-400"
-              )} />
+              <item.icon style={{ width: '20px', height: '20px' }} />
               <span>{item.name}</span>
             </button>
           ))}
@@ -206,7 +223,13 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
           {isSuperUser && (
             <>
               <div className="pt-4 pb-2">
-                <h3 className="text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                <h3 style={{ 
+                  color: '#94a3b8', 
+                  fontSize: '12px', 
+                  fontWeight: 600, 
+                  textTransform: 'uppercase', 
+                  letterSpacing: '0.05em' 
+                }}>
                   SUPER-USER
                 </h3>
               </div>
@@ -216,17 +239,34 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                   navigate("/admin");
                   if (window.innerWidth < 1024) onToggle();
                 }}
-                className={cn(
-                  "w-full flex items-center space-x-3 text-left rounded-lg px-3 py-2 transition-colors",
-                  location === "/admin"
-                    ? "text-white bg-slate-700"
-                    : "text-slate-300 hover:text-white hover:bg-slate-700"
-                )}
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  textAlign: 'left',
+                  borderRadius: '8px',
+                  padding: '8px 12px',
+                  transition: 'all 0.2s',
+                  color: location === "/admin" ? 'white' : '#e2e8f0',
+                  backgroundColor: location === "/admin" ? '#3b82f6' : 'transparent',
+                  border: 'none',
+                  cursor: 'pointer'
+                }}
+                onMouseEnter={(e) => {
+                  if (location !== "/admin") {
+                    e.currentTarget.style.backgroundColor = '#3b82f6';
+                    e.currentTarget.style.color = 'white';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (location !== "/admin") {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = '#e2e8f0';
+                  }
+                }}
               >
-                <Building className={cn(
-                  "w-5 h-5",
-                  location === "/admin" ? "text-sentinel-blue" : "text-slate-400"
-                )} />
+                <Building style={{ width: '20px', height: '20px' }} />
                 <span>Company Management</span>
               </button>
               
@@ -373,8 +413,8 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
         </nav>
 
       {/* Bottom section */}
-      <div className="border-t border-slate-700 p-2">
-        {/* Removed demo mode text */}
+      <div style={{ borderTop: '1px solid #3b82f6', padding: '8px' }}>
+        {/* Clean footer area */}
       </div>
     </div>
     </>
