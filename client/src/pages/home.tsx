@@ -71,38 +71,48 @@ export default function Home() {
   // }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50">
+    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', backgroundColor: '#f8fafc' }}>
       <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
       
-      <div className="flex-1 flex flex-col min-h-0">
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
         {/* Top Header with Menu Button - Fixed Header */}
-        <div className="bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between flex-shrink-0">
-          <div className="flex items-center space-x-3">
+        <div style={{ 
+          backgroundColor: 'white', 
+          borderBottom: '1px solid #e2e8f0', 
+          padding: '12px 16px', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'space-between',
+          flexShrink: 0
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setSidebarOpen(true)}
-              className="text-slate-600 hover:text-slate-900 hover:bg-slate-100"
-              style={{ transform: 'translateY(10px)' }}
+              style={{ 
+                color: '#64748b',
+                padding: '8px'
+              }}
             >
               <img 
                 src="/ai-sentinel-logo.png" 
                 alt="AI Sentinel" 
-                className="w-14 h-14 object-contain"
+                style={{ width: '32px', height: '32px', objectFit: 'contain' }}
               />
             </Button>
             <CompanyInfo />
           </div>
           
-          <div className="flex items-center space-x-3">
-            <h1 className="text-lg font-semibold text-slate-800">AI Sentinel Chat</h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <h1 style={{ fontSize: '18px', fontWeight: 600, color: '#1e293b' }}>AI Sentinel Chat</h1>
           </div>
         </div>
         
         {/* Chat Interface Container */}
-        <div className="flex-1 flex flex-col min-h-0">
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
           {/* Trial Banner */}
-          <div className="px-4 pt-4">
+          <div style={{ padding: '16px 16px 0 16px' }}>
             <TrialBanner />
           </div>
           

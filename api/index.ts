@@ -37,9 +37,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const referrer = req.headers.referer || '';
         const isDemoMode = referrer.includes('/demo') || req.headers['x-demo-mode'] === 'true';
         
-        // Handle demo mode
-        if (isDemoMode || !sessionToken) {
-          console.log('Demo mode chat session creation');
+        // Handle demo mode - check both demo path and absence of session token
+        if (isDemoMode || !sessionToken || path.includes('/demo')) {
+          console.log('Demo mode chat session creation - referrer:', referrer, 'isDemoMode:', isDemoMode, 'sessionToken:', !!sessionToken);
           
           // Create a demo session with demo company ID
           const demoSession = {
@@ -522,9 +522,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const referrer = req.headers.referer || '';
         const isDemoMode = referrer.includes('/demo') || req.headers['x-demo-mode'] === 'true';
         
-        // Handle demo mode
-        if (isDemoMode || !sessionToken) {
-          console.log('Demo mode AI models request');
+        // Handle demo mode - improved detection
+        if (isDemoMode || !sessionToken || path.includes('/demo')) {
+          console.log('Demo mode AI models request - referrer:', referrer);
           
           // Return demo AI models
           const demoModels = [
@@ -592,9 +592,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const referrer = req.headers.referer || '';
         const isDemoMode = referrer.includes('/demo') || req.headers['x-demo-mode'] === 'true';
         
-        // Handle demo mode
-        if (isDemoMode || !sessionToken) {
-          console.log('Demo mode activity types request');
+        // Handle demo mode - improved detection
+        if (isDemoMode || !sessionToken || path.includes('/demo')) {
+          console.log('Demo mode activity types request - referrer:', referrer);
           
           // Return demo activity types
           const demoActivityTypes = [
