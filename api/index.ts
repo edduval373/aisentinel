@@ -107,8 +107,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           return res.json(optimizedCompany);
         }
 
-        console.log('No companies found in database');
-        return res.status(404).json({ message: "No company found" });
+        console.log('No companies found in database, creating default demo company');
+        
+        // Create a default demo company if none exists
+        const defaultCompany = {
+          name: "Horizon Edge Enterprises",
+          description: "Demo Company for AI Sentinel",
+          logo: null
+        };
+        
+        const createdCompany = await storage.createCompany(defaultCompany);
+        console.log('Created default demo company:', createdCompany.name, 'ID:', createdCompany.id);
+        
+        // Initialize default models and activity types for the new company
+        await storage.initializeCompanyDefaults(createdCompany.id);
+        console.log('Initialized defaults for demo company');
+        
+        return res.json(createdCompany);
       } catch (error) {
         console.error("Error fetching demo company:", error);
         console.error("Full error details:", error.stack);
@@ -124,14 +139,33 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (path.includes('ai-models') && req.method === 'GET') {
       try {
         console.log('Production demo mode: Returning AI models for company 1');
+        console.log('Request headers:', JSON.stringify(req.headers, null, 2));
         
         const { storage } = await import('../server/storage');
+        
+        // Always return demo models for company 1 in production
         const models = await storage.getEnabledAiModels(1);
+        console.log('Retrieved AI models from storage:', models.length, 'models');
+        
+        // If no models exist, create default demo models
+        if (models.length === 0) {
+          console.log('No models found, initializing demo models for company 1');
+          await storage.initializeCompanyDefaults(1);
+          const newModels = await storage.getEnabledAiModels(1);
+          console.log('Created demo models:', newModels.length, 'models');
+          return res.json(newModels);
+        }
+        
         console.log('Returning demo AI models for company 1:', models.length, 'models');
         return res.json(models);
       } catch (error) {
         console.error("Error fetching demo AI models:", error);
-        return res.status(500).json({ message: "Failed to fetch AI models" });
+        console.error("Full error stack:", error.stack);
+        return res.status(500).json({ 
+          message: "Failed to fetch AI models", 
+          error: error.message,
+          hasDatabase: !!process.env.DATABASE_URL
+        });
       }
     }
 
@@ -141,12 +175,30 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         console.log('Production demo mode: Returning activity types for company 1');
         
         const { storage } = await import('../server/storage');
+        
+        // Always return demo activity types for company 1
         const activityTypes = await storage.getActivityTypes(1);
+        console.log('Retrieved activity types from storage:', activityTypes.length, 'types');
+        
+        // If no activity types exist, create default demo types
+        if (activityTypes.length === 0) {
+          console.log('No activity types found, initializing demo types for company 1');
+          await storage.initializeCompanyDefaults(1);
+          const newActivityTypes = await storage.getActivityTypes(1);
+          console.log('Created demo activity types:', newActivityTypes.length, 'types');
+          return res.json(newActivityTypes);
+        }
+        
         console.log('Returning demo activity types for company 1:', activityTypes.length, 'types');
         return res.json(activityTypes);
       } catch (error) {
         console.error("Error fetching demo activity types:", error);
-        return res.status(500).json({ message: "Failed to fetch activity types" });
+        console.error("Full error stack:", error.stack);
+        return res.status(500).json({ 
+          message: "Failed to fetch activity types", 
+          error: error.message,
+          hasDatabase: !!process.env.DATABASE_URL
+        });
       }
     }
 

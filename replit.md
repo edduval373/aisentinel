@@ -141,6 +141,13 @@ The application is configured for deployment on Vercel with the following setup:
 
 ```
 Recent Updates:
+- July 23, 2025. Fixed Production Demo Mode API Endpoints and Data Loading:
+  * ENHANCED: api/index.ts with comprehensive demo mode support and auto-initialization
+  * ADDED: Fallback logic to create demo company if none exists in production database
+  * IMPROVED: AI models and activity types endpoints with automatic data creation for company 1
+  * IMPLEMENTED: Detailed error logging and database connectivity checks for production debugging
+  * RESOLVED: Production API redirection issues preventing demo mode from loading company data
+  * CREATED: PRODUCTION_DEBUG_PLAN.md with comprehensive testing and resolution strategy
 - July 23, 2025. Enhanced Chat Interface Logo and Demo Badge Styling:
   * UPDATED: Logo filters for crisp, vibrant appearance (brightness(1.1) saturate(1.3) contrast(1.2))
   * CHANGED: Demo badge color from yellow (#f59e0b) to medium blue (#3b82f6) 
