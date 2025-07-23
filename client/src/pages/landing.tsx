@@ -41,30 +41,30 @@ export default function Landing() {
           height: '64px' 
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
               <defs>
-                <linearGradient id="blueGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#87ceeb"/>
-                  <stop offset="50%" stopColor="#4682b4"/>
-                  <stop offset="100%" stopColor="#2f4f4f"/>
+                <linearGradient id="ring1" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#a8d8ea"/>
+                  <stop offset="50%" stopColor="#79c2d0"/>
+                  <stop offset="100%" stopColor="#4a90a4"/>
                 </linearGradient>
-                <linearGradient id="blueGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#4682b4"/>
-                  <stop offset="50%" stopColor="#2f4f4f"/>
-                  <stop offset="100%" stopColor="#87ceeb"/>
+                <linearGradient id="ring2" x1="100%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#4a90a4"/>
+                  <stop offset="50%" stopColor="#79c2d0"/>
+                  <stop offset="100%" stopColor="#a8d8ea"/>
                 </linearGradient>
-                <linearGradient id="blueGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#2f4f4f"/>
-                  <stop offset="50%" stopColor="#87ceeb"/>
-                  <stop offset="100%" stopColor="#4682b4"/>
+                <linearGradient id="ring3" x1="0%" y1="100%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#79c2d0"/>
+                  <stop offset="50%" stopColor="#4a90a4"/>
+                  <stop offset="100%" stopColor="#a8d8ea"/>
                 </linearGradient>
               </defs>
               
-              <path d="M 4 16 Q 16 4, 28 16 Q 16 28, 4 16" stroke="url(#blueGrad1)" strokeWidth="3.5" fill="none" opacity="0.8"/>
-              <path d="M 4 16 Q 16 4, 28 16 Q 16 28, 4 16" stroke="url(#blueGrad2)" strokeWidth="3.5" fill="none" opacity="0.8" transform="rotate(120 16 16)"/>
-              <path d="M 4 16 Q 16 4, 28 16 Q 16 28, 4 16" stroke="url(#blueGrad3)" strokeWidth="3.5" fill="none" opacity="0.8" transform="rotate(240 16 16)"/>
+              <circle cx="50" cy="50" r="6" fill="#2d5a87"/>
               
-              <circle cx="16" cy="16" r="2" fill="#2f4f4f"/>
+              <ellipse cx="50" cy="50" rx="35" ry="15" stroke="url(#ring1)" strokeWidth="8" fill="none" opacity="0.9" transform="rotate(0 50 50)"/>
+              <ellipse cx="50" cy="50" rx="35" ry="15" stroke="url(#ring2)" strokeWidth="8" fill="none" opacity="0.9" transform="rotate(60 50 50)"/>
+              <ellipse cx="50" cy="50" rx="35" ry="15" stroke="url(#ring3)" strokeWidth="8" fill="none" opacity="0.9" transform="rotate(120 50 50)"/>
             </svg>
             <h1 style={{ 
               fontSize: '20px', 
