@@ -133,7 +133,15 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       {/* Overlay - click outside to close */}
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 lg:bg-opacity-20 z-40"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 40
+          }}
           onClick={onToggle}
         />
       )}
@@ -189,12 +197,19 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
             onClick={onToggle}
             style={{ color: 'white', padding: '4px' }}
           >
-            <X className="w-5 h-5" />
+            <X style={{ width: '20px', height: '20px' }} />
           </Button>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-4 py-4 space-y-2 overflow-y-auto">
+        <nav style={{ 
+          flex: 1, 
+          padding: '16px', 
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px',
+          overflowY: 'auto' 
+        }}>
           {/* Main Navigation */}
           {navigation.map((item) => (
             <button
@@ -238,13 +253,14 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
           {/* SUPER-USER Section */}
           {isSuperUser && (
             <>
-              <div className="pt-4 pb-2">
+              <div style={{ paddingTop: '16px', paddingBottom: '8px' }}>
                 <h3 style={{ 
                   color: '#94a3b8', 
                   fontSize: '12px', 
                   fontWeight: 600, 
                   textTransform: 'uppercase', 
-                  letterSpacing: '0.05em' 
+                  letterSpacing: '0.05em',
+                  margin: 0
                 }}>
                   SUPER-USER
                 </h3>
@@ -291,17 +307,38 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                   navigate("/admin/setup-api-keys");
                   if (window.innerWidth < 1024) onToggle();
                 }}
-                className={cn(
-                  "w-full flex items-center space-x-3 text-left rounded-lg px-3 py-2 transition-colors",
-                  location === "/admin/setup-api-keys"
-                    ? "text-white bg-slate-700"
-                    : "text-slate-300 hover:text-white hover:bg-slate-700"
-                )}
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  textAlign: 'left',
+                  borderRadius: '8px',
+                  padding: '8px 12px',
+                  transition: 'all 0.2s',
+                  color: location === "/admin/setup-api-keys" ? 'white' : '#cbd5e1',
+                  backgroundColor: location === "/admin/setup-api-keys" ? '#374151' : 'transparent',
+                  border: 'none',
+                  cursor: 'pointer'
+                }}
+                onMouseEnter={(e) => {
+                  if (location !== "/admin/setup-api-keys") {
+                    e.currentTarget.style.backgroundColor = '#374151';
+                    e.currentTarget.style.color = 'white';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (location !== "/admin/setup-api-keys") {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = '#cbd5e1';
+                  }
+                }}
               >
-                <Key className={cn(
-                  "w-5 h-5",
-                  location === "/admin/setup-api-keys" ? "text-sentinel-blue" : "text-slate-400"
-                )} />
+                <Key style={{ 
+                  width: '20px', 
+                  height: '20px',
+                  color: location === "/admin/setup-api-keys" ? '#3b82f6' : '#94a3b8'
+                }} />
                 <span>Setup API Keys</span>
               </button>
             </>
@@ -310,8 +347,15 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
           {/* OWNERS Section - visible to super-user and owners */}
           {(isSuperUser || isOwner) && (
             <>
-              <div className="pt-4 pb-2">
-                <h3 className="text-slate-400 text-xs font-semibold uppercase tracking-wider">
+              <div style={{ paddingTop: '16px', paddingBottom: '8px' }}>
+                <h3 style={{ 
+                  color: '#94a3b8', 
+                  fontSize: '12px', 
+                  fontWeight: 600, 
+                  textTransform: 'uppercase', 
+                  letterSpacing: '0.05em',
+                  margin: 0
+                }}>
                   OWNERS
                 </h3>
               </div>
@@ -321,17 +365,38 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                   navigate("/admin/company-setup");
                   if (window.innerWidth < 1024) onToggle();
                 }}
-                className={cn(
-                  "w-full flex items-center space-x-3 text-left rounded-lg px-3 py-2 transition-colors",
-                  location === "/admin/company-setup"
-                    ? "text-white bg-slate-700"
-                    : "text-slate-300 hover:text-white hover:bg-slate-700"
-                )}
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  textAlign: 'left',
+                  borderRadius: '8px',
+                  padding: '8px 12px',
+                  transition: 'all 0.2s',
+                  color: location === "/admin/company-setup" ? 'white' : '#cbd5e1',
+                  backgroundColor: location === "/admin/company-setup" ? '#374151' : 'transparent',
+                  border: 'none',
+                  cursor: 'pointer'
+                }}
+                onMouseEnter={(e) => {
+                  if (location !== "/admin/company-setup") {
+                    e.currentTarget.style.backgroundColor = '#374151';
+                    e.currentTarget.style.color = 'white';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (location !== "/admin/company-setup") {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = '#cbd5e1';
+                  }
+                }}
               >
-                <Building className={cn(
-                  "w-5 h-5",
-                  location === "/admin/company-setup" ? "text-sentinel-blue" : "text-slate-400"
-                )} />
+                <Building style={{ 
+                  width: '20px', 
+                  height: '20px',
+                  color: location === "/admin/company-setup" ? '#3b82f6' : '#94a3b8'
+                }} />
                 <span>Setup Company</span>
               </button>
               
@@ -340,17 +405,38 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                   navigate("/admin/create-models");
                   if (window.innerWidth < 1024) onToggle();
                 }}
-                className={cn(
-                  "w-full flex items-center space-x-3 text-left rounded-lg px-3 py-2 transition-colors",
-                  location === "/admin/create-models"
-                    ? "text-white bg-slate-700"
-                    : "text-slate-300 hover:text-white hover:bg-slate-700"
-                )}
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  textAlign: 'left',
+                  borderRadius: '8px',
+                  padding: '8px 12px',
+                  transition: 'all 0.2s',
+                  color: location === "/admin/create-models" ? 'white' : '#cbd5e1',
+                  backgroundColor: location === "/admin/create-models" ? '#374151' : 'transparent',
+                  border: 'none',
+                  cursor: 'pointer'
+                }}
+                onMouseEnter={(e) => {
+                  if (location !== "/admin/create-models") {
+                    e.currentTarget.style.backgroundColor = '#374151';
+                    e.currentTarget.style.color = 'white';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (location !== "/admin/create-models") {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = '#cbd5e1';
+                  }
+                }}
               >
-                <Bot className={cn(
-                  "w-5 h-5",
-                  location === "/admin/create-models" ? "text-sentinel-blue" : "text-slate-400"
-                )} />
+                <Bot style={{ 
+                  width: '20px', 
+                  height: '20px',
+                  color: location === "/admin/create-models" ? '#3b82f6' : '#94a3b8'
+                }} />
                 <span>Setup AI Models</span>
               </button>
               
@@ -359,17 +445,38 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                   navigate("/admin/model-fusion");
                   if (window.innerWidth < 1024) onToggle();
                 }}
-                className={cn(
-                  "w-full flex items-center space-x-3 text-left rounded-lg px-3 py-2 transition-colors",
-                  location === "/admin/model-fusion"
-                    ? "text-white bg-slate-700"
-                    : "text-slate-300 hover:text-white hover:bg-slate-700"
-                )}
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  textAlign: 'left',
+                  borderRadius: '8px',
+                  padding: '8px 12px',
+                  transition: 'all 0.2s',
+                  color: location === "/admin/model-fusion" ? 'white' : '#cbd5e1',
+                  backgroundColor: location === "/admin/model-fusion" ? '#374151' : 'transparent',
+                  border: 'none',
+                  cursor: 'pointer'
+                }}
+                onMouseEnter={(e) => {
+                  if (location !== "/admin/model-fusion") {
+                    e.currentTarget.style.backgroundColor = '#374151';
+                    e.currentTarget.style.color = 'white';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (location !== "/admin/model-fusion") {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = '#cbd5e1';
+                  }
+                }}
               >
-                <Brain className={cn(
-                  "w-5 h-5",
-                  location === "/admin/model-fusion" ? "text-sentinel-blue" : "text-slate-400"
-                )} />
+                <Brain style={{ 
+                  width: '20px', 
+                  height: '20px',
+                  color: location === "/admin/model-fusion" ? '#3b82f6' : '#94a3b8'
+                }} />
                 <span>Setup Model Fusion</span>
               </button>
             </>
@@ -378,30 +485,61 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
           {/* ADMINISTRATION Section - visible to super-user, owners, and admins */}
           {(isSuperUser || isOwner || isAdmin) && (
             <>
-              <div className="pt-4 pb-2">
-                <h3 className="text-slate-400 text-xs font-semibold uppercase tracking-wider">
+              <div style={{ paddingTop: '16px', paddingBottom: '8px' }}>
+                <h3 style={{ 
+                  color: '#94a3b8', 
+                  fontSize: '12px', 
+                  fontWeight: 600, 
+                  textTransform: 'uppercase', 
+                  letterSpacing: '0.05em',
+                  margin: 0
+                }}>
                   ADMINISTRATION
                 </h3>
               </div>
               
               {adminSections.map((section) => (
-                <div key={section.id} className="space-y-1">
+                <div key={section.id} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                   <button
                     onClick={() => toggleSection(section.id)}
-                    className="w-full flex items-center justify-between text-left rounded-lg px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+                    style={{
+                      width: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      textAlign: 'left',
+                      borderRadius: '8px',
+                      padding: '8px 12px',
+                      transition: 'all 0.2s',
+                      color: '#cbd5e1',
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = '#374151';
+                      e.currentTarget.style.color = 'white';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                      e.currentTarget.style.color = '#cbd5e1';
+                    }}
                   >
-                    <div className="flex items-center space-x-3">
-                      <section.icon className="w-5 h-5 text-slate-400" />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <section.icon style={{ width: '20px', height: '20px', color: '#94a3b8' }} />
                       <span>{section.name}</span>
                     </div>
-                    <ChevronRight className={cn(
-                      "w-4 h-4 text-slate-400 transition-transform",
-                      expandedSection === section.id && "rotate-90"
-                    )} />
+                    <ChevronRight style={{
+                      width: '16px',
+                      height: '16px',
+                      color: '#94a3b8',
+                      transition: 'transform 0.2s',
+                      transform: expandedSection === section.id ? 'rotate(90deg)' : 'rotate(0deg)'
+                    }} />
                   </button>
                   
                   {expandedSection === section.id && (
-                    <div className="ml-8 space-y-1">
+                    <div style={{ marginLeft: '32px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
                       {section.items.map((item) => (
                         <button
                           key={item.href}
@@ -409,14 +547,35 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                             navigate(item.href);
                             if (window.innerWidth < 1024) onToggle();
                           }}
-                          className={cn(
-                            "w-full flex items-center space-x-3 text-left rounded-lg px-3 py-2 transition-colors text-sm",
-                            location === item.href
-                              ? "text-white bg-slate-700"
-                              : "text-slate-400 hover:text-white hover:bg-slate-700"
-                          )}
+                          style={{
+                            width: '100%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px',
+                            textAlign: 'left',
+                            borderRadius: '8px',
+                            padding: '8px 12px',
+                            transition: 'all 0.2s',
+                            fontSize: '14px',
+                            color: location === item.href ? 'white' : '#9ca3af',
+                            backgroundColor: location === item.href ? '#374151' : 'transparent',
+                            border: 'none',
+                            cursor: 'pointer'
+                          }}
+                          onMouseEnter={(e) => {
+                            if (location !== item.href) {
+                              e.currentTarget.style.backgroundColor = '#374151';
+                              e.currentTarget.style.color = 'white';
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (location !== item.href) {
+                              e.currentTarget.style.backgroundColor = 'transparent';
+                              e.currentTarget.style.color = '#9ca3af';
+                            }
+                          }}
                         >
-                          <item.icon className="w-4 h-4" />
+                          <item.icon style={{ width: '16px', height: '16px' }} />
                           <span>{item.name}</span>
                         </button>
                       ))}
