@@ -63,8 +63,8 @@ export function setupAuthRoutes(app: Express) {
         companyName = company?.name;
       }
 
-      // Redirect to frontend verification success page
-      res.redirect(`/verify?token=${token}&success=true`);
+      // Redirect to frontend with success parameter and force refresh
+      res.redirect(`/?verified=true&email=${encodeURIComponent(session.email)}`);
     } catch (error: any) {
       console.error("Verification error:", error);
       res.status(500).json({ success: false, message: "An error occurred during verification" });

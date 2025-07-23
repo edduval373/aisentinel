@@ -25,7 +25,7 @@ export function useAuth() {
   
   // Real authentication - with demo mode bypass
   const { data, isLoading, error } = useQuery<AuthData>({
-    queryKey: ['/api/user/current'],
+    queryKey: ['/api/auth/me'],
     queryFn: async () => {
       // If in demo mode, return demo user
       if (isDemoMode) {
@@ -46,12 +46,20 @@ export function useAuth() {
       }
       
       try {
-        const user = await apiRequest('/api/user/current');
-        console.log("Authentication successful:", user);
-        return { 
-          authenticated: true, 
-          user: user
-        };
+        const authResponse = await apiRequest('/api/auth/me');
+        console.log("Authentication response:", authResponse);
+        
+        if (authResponse.authenticated && authResponse.user) {
+          return { 
+            authenticated: true, 
+            user: authResponse.user
+          };
+        } else {
+          return { 
+            authenticated: false, 
+            user: undefined
+          };
+        }
       } catch (error) {
         console.log("Authentication failed:", error);
         // No fallback - user must be authenticated (unless demo mode)

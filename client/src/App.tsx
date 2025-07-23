@@ -97,6 +97,26 @@ function Router() {
       {/* Main routes - show landing page if not authenticated */}
       <Route path="/">
         {() => {
+          // Check for verification success
+          const params = new URLSearchParams(window.location.search);
+          const verifiedEmail = params.get('email');
+          const isVerified = params.get('verified') === 'true';
+          
+          if (isVerified && verifiedEmail) {
+            console.log("[APP DEBUG] Email verification successful for:", verifiedEmail);
+            // Clear URL parameters and force page refresh to update auth state
+            window.history.replaceState({}, document.title, '/');
+            setTimeout(() => window.location.reload(), 100);
+            return (
+              <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                  <p className="text-gray-600">Verification successful! Loading your dashboard...</p>
+                </div>
+              </div>
+            );
+          }
+          
           if (!isAuthenticated) {
             console.log("[APP DEBUG] Not authenticated, showing landing page");
             console.log("[APP DEBUG] About to render Landing component");

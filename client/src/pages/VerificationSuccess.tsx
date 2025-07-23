@@ -49,7 +49,7 @@ export default function VerificationSuccess() {
     };
 
     verifyToken();
-  }, [location, navigate]);
+  }, [location, setLocation]);
 
   if (isLoading) {
     return (
