@@ -95,7 +95,17 @@ export class AuthService {
           trialEndDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 14 days
         });
       } else {
-        // Existing user - check if they should be matched to a company
+        // Existing user - use existing information
+        companyId = user.companyId;
+        roleLevel = user.roleLevel || 0;
+        isTrialUser = user.isTrialUser !== false; // Default to true unless explicitly false
+
+        // Super-users and existing company users should not be trial users
+        if (roleLevel >= 99 || user.companyId) {
+          isTrialUser = false;
+        }
+
+        // For users without company association, try to match to a company
         if (!user.companyId) {
           const company = await storage.getCompanyByEmailDomain(email);
           if (company) {
@@ -119,10 +129,6 @@ export class AuthService {
               user.isTrialUser = isTrialUser;
             }
           }
-        } else {
-          companyId = user.companyId;
-          roleLevel = user.roleLevel || 0;
-          isTrialUser = user.isTrialUser || false;
         }
 
         // Update last login
@@ -265,22 +271,27 @@ export class AuthService {
   // Verify session token
   async verifySession(sessionToken: string): Promise<AuthSession | null> {
     try {
+      console.log('AuthService: verifying session token:', sessionToken.substring(0, 20) + '...');
       const session = await storage.getUserSession(sessionToken);
+      console.log('AuthService: found session:', !!session);
       
       if (!session || session.expiresAt < new Date()) {
+        console.log('AuthService: session invalid or expired');
         return null;
       }
 
       // Update last accessed time
       await storage.updateUserSessionLastAccessed(session.id);
 
-      return {
+      const result = {
         userId: session.userId,
         email: session.email,
         companyId: session.companyId,
         roleLevel: session.roleLevel || 0,
         sessionToken: session.sessionToken,
       };
+      console.log('AuthService: returning session for user:', result.email, 'role level:', result.roleLevel);
+      return result;
     } catch (error) {
       console.error('Error verifying session:', error);
       return null;

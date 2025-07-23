@@ -21,6 +21,11 @@ import multer from "multer";
 const upload = multer();
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Add cookie parser middleware first
+  const cookieParserModule = await import('cookie-parser');
+  const cookieParser = cookieParserModule.default;
+  app.use(cookieParser());
+  
   // Define authentication middleware
   const requireAuth = isAuthenticated;
   // Test API route first - highest priority

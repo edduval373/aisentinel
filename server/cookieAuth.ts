@@ -43,9 +43,12 @@ export const cookieAuth = async (req: AuthenticatedRequest, res: Response, next:
 export const optionalAuth = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const sessionToken = req.cookies?.sessionToken;
+    console.log('OptionalAuth: cookies =', req.cookies);
+    console.log('OptionalAuth: sessionToken =', sessionToken ? 'exists (' + sessionToken.substring(0, 10) + '...)' : 'missing');
     
     if (sessionToken) {
       const session = await authService.verifySession(sessionToken);
+      console.log('OptionalAuth: session verified =', !!session);
       
       if (session) {
         req.user = {
@@ -54,6 +57,7 @@ export const optionalAuth = async (req: AuthenticatedRequest, res: Response, nex
           companyId: session.companyId,
           roleLevel: session.roleLevel,
         };
+        console.log('OptionalAuth: user set =', req.user.email, 'role level:', req.user.roleLevel);
       }
     }
 
