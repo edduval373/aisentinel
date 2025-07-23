@@ -41,11 +41,18 @@ export default function Landing() {
           height: '64px' 
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <img 
-              src="/ai-sentinel-atomic-logo.svg" 
-              alt="AI Sentinel" 
-              style={{ width: '32px', height: '32px' }}
-            />
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="16" cy="16" r="2.5" fill="#3b82f6" />
+              <ellipse cx="16" cy="16" rx="12" ry="4" stroke="#3b82f6" strokeWidth="1.5" fill="none" opacity="0.7" transform="rotate(0 16 16)" />
+              <ellipse cx="16" cy="16" rx="12" ry="4" stroke="#3b82f6" strokeWidth="1.5" fill="none" opacity="0.7" transform="rotate(60 16 16)" />
+              <ellipse cx="16" cy="16" rx="12" ry="4" stroke="#3b82f6" strokeWidth="1.5" fill="none" opacity="0.7" transform="rotate(120 16 16)" />
+              <circle cx="28" cy="16" r="1.5" fill="#3b82f6" />
+              <circle cx="4" cy="16" r="1.5" fill="#3b82f6" />
+              <circle cx="22.4" cy="8.6" r="1.5" fill="#3b82f6" />
+              <circle cx="9.6" cy="23.4" r="1.5" fill="#3b82f6" />
+              <circle cx="22.4" cy="23.4" r="1.5" fill="#3b82f6" />
+              <circle cx="9.6" cy="8.6" r="1.5" fill="#3b82f6" />
+            </svg>
             <h1 style={{ 
               fontSize: '20px', 
               fontWeight: 600, 
@@ -64,7 +71,7 @@ export default function Landing() {
       </header>
 
       {/* Hero Section */}
-      <section className="ai-sentinel-hero" style={{ paddingTop: '2rem' }}>
+      <section className="ai-sentinel-hero" style={{ paddingTop: '0rem', marginTop: '64px' }}>
         <div className="ai-sentinel-hero-container">
           <h2 className="ai-sentinel-hero-title">
             Enterprise AI
