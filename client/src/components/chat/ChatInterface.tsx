@@ -326,29 +326,24 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   const selectedActivityTypeData = activityTypes?.find(t => t.id === selectedActivityType);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <div className="chat-container">
       {/* Chat Header - Fixed at top */}
-      <div style={{ 
-        backgroundColor: 'white', 
-        borderBottom: '1px solid #e2e8f0', 
-        padding: '16px', 
-        flexShrink: 0 
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#1e293b' }}>AI Assistant</h2>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <div className="chat-header">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <h2 className="text-lg font-semibold text-slate-700">AI Assistant</h2>
+            <div className="flex items-center gap-2">
               {isConnected ? (
                 <Wifi style={{ width: '16px', height: '16px', color: '#22c55e' }} />
               ) : (
                 <WifiOff style={{ width: '16px', height: '16px', color: '#94a3b8' }} />
               )}
-              <span style={{ fontSize: '14px', color: '#64748b' }}>
+              <span className="text-sm text-slate-600">
                 {isConnected ? 'Connected' : 'Disconnected'}
               </span>
             </div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <div className="flex items-center gap-4">
             {/* AI Model Dropdown */}
             <Select
               value={selectedModel?.toString()}
@@ -406,10 +401,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
             </Select>
 
             {/* Chat Management Buttons */}
-            <div style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '8px', 
+            <div className="flex items-center gap-2" style={{ 
               borderLeft: '1px solid #e2e8f0', 
               paddingLeft: '16px' 
             }}>
@@ -527,23 +519,9 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       )}
 
       {/* Chat Messages - Scrollable middle section */}
-      <div style={{ 
-        flex: 1, 
-        display: 'flex', 
-        flexDirection: 'column', 
-        minHeight: 0, 
-        backgroundColor: '#f8fafc' 
-      }}>
+      <div className="chat-main">
       {/* Chat Messages Area */}
-      <div style={{ 
-        flex: 1, 
-        overflowY: 'auto', 
-        padding: '16px', 
-        paddingTop: '24px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '16px'
-      }}>
+      <div className="chat-messages-container">
         {/* System Message */}
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <div style={{ 
@@ -562,15 +540,8 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
 
         {/* Chat Messages */}
         {messagesLoading ? (
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <div style={{ 
-              width: '32px', 
-              height: '32px', 
-              border: '2px solid #3b82f6', 
-              borderTopColor: 'transparent', 
-              borderRadius: '50%', 
-              animation: 'spin 1s linear infinite' 
-            }}></div>
+          <div className="flex justify-center">
+            <div className="loading-spinner" style={{ width: '32px', height: '32px' }}></div>
           </div>
         ) : messages.length === 0 ? (
           <div style={{ 
@@ -639,7 +610,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
 </div>
 
       {/* Chat Input - Fixed at bottom */}
-      <div style={{ flexShrink: 0, borderTop: '1px solid #e2e8f0' }}>
+      <div className="chat-input-container">
         <ChatInput
           onSendMessage={handleSendMessage}
           disabled={!selectedModel || !selectedActivityType || !currentSession || sendMessageMutation.isPending}
