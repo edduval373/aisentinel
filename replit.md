@@ -142,7 +142,7 @@ The application is configured for deployment on Vercel with the following setup:
 ```
 Recent Updates:
 - July 23, 2025. Enhanced AI Sentinel Logo Darkness in Chat Interface:
-  * APPLIED: 51% brightness reduction using CSS filter (brightness(0.49)) on chat screen logo
+  * APPLIED: 66% brightness reduction using CSS filter (brightness(0.34)) on chat screen logo
   * MAINTAINED: Logo size at 51px x 51px in top-left header position
   * ENHANCED: Visual prominence and readability of AI Sentinel branding
 - July 23, 2025. Implemented Role-Based Sidebar Access Control with Demo Mode Formalization:
