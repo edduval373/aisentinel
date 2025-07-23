@@ -473,6 +473,16 @@ table tbody tr:hover {
   overflow-y: auto;
 }
 
+/* Add spin animation for production */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* Enhanced table container with scroll */
 .table-container {
   @apply overflow-x-auto overflow-y-auto max-h-96 border border-slate-200 rounded-lg;

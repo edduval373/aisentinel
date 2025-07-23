@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Download, Wifi, WifiOff, Shield, Building2, RotateCcw, Trash2, History, Brain } from "lucide-react";
+import { Download, Wifi, WifiOff, Shield, Building2, RotateCcw, Trash2, History, Brain, MessageSquare } from "lucide-react";
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
 import type { AiModel, ActivityType, ChatMessage as ChatMessageType, Company, ChatSession } from "@shared/schema";
@@ -326,24 +326,29 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   const selectedActivityTypeData = activityTypes?.find(t => t.id === selectedActivityType);
 
   return (
-    <div className="flex flex-col h-full">
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       {/* Chat Header - Fixed at top */}
-      <div className="bg-white border-b border-slate-200 p-4 flex-shrink-0">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <h2 className="text-lg font-semibold text-slate-800">AI Assistant</h2>
-            <div className="flex items-center space-x-2">
+      <div style={{ 
+        backgroundColor: 'white', 
+        borderBottom: '1px solid #e2e8f0', 
+        padding: '16px', 
+        flexShrink: 0 
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#1e293b' }}>AI Assistant</h2>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               {isConnected ? (
-                <Wifi className="w-4 h-4 text-sentinel-green" />
+                <Wifi style={{ width: '16px', height: '16px', color: '#22c55e' }} />
               ) : (
-                <WifiOff className="w-4 h-4 text-slate-400" />
+                <WifiOff style={{ width: '16px', height: '16px', color: '#94a3b8' }} />
               )}
-              <span className="text-sm text-slate-600">
+              <span style={{ fontSize: '14px', color: '#64748b' }}>
                 {isConnected ? 'Connected' : 'Disconnected'}
               </span>
             </div>
           </div>
-          <div className="flex items-center space-x-4">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             {/* AI Model Dropdown */}
             <Select
               value={selectedModel?.toString()}
@@ -401,34 +406,40 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
             </Select>
 
             {/* Chat Management Buttons */}
-            <div className="flex items-center space-x-2 border-l border-slate-200 pl-4">
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '8px', 
+              borderLeft: '1px solid #e2e8f0', 
+              paddingLeft: '16px' 
+            }}>
               <Button
                 variant={showPreviousChats ? "default" : "outline"}
                 size="sm"
                 onClick={() => setShowPreviousChats(!showPreviousChats)}
-                className="flex items-center space-x-1"
+                style={{ display: 'flex', alignItems: 'center', gap: '4px' }}
               >
-                <History className="w-4 h-4" />
-                <span className="font-semibold">{showPreviousChats ? "Hide History" : "History"}</span>
+                <History style={{ width: '16px', height: '16px' }} />
+                <span style={{ fontWeight: 600 }}>{showPreviousChats ? "Hide History" : "History"}</span>
               </Button>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleRepeatLast}
                 disabled={!lastMessage}
-                className="flex items-center space-x-1"
+                style={{ display: 'flex', alignItems: 'center', gap: '4px' }}
               >
-                <RotateCcw className="w-4 h-4" />
-                <span className="font-semibold">Repeat</span>
+                <RotateCcw style={{ width: '16px', height: '16px' }} />
+                <span style={{ fontWeight: 600 }}>Repeat</span>
               </Button>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleClearChat}
-                className="flex items-center space-x-1"
+                style={{ display: 'flex', alignItems: 'center', gap: '4px' }}
               >
-                <Trash2 className="w-4 h-4" />
-                <span className="font-semibold">Clear</span>
+                <Trash2 style={{ width: '16px', height: '16px' }} />
+                <span style={{ fontWeight: 600 }}>Clear</span>
               </Button>
             </div>
 
@@ -438,38 +449,62 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
 
       {/* Previous Chat Sessions - Collapsible */}
       {showPreviousChats && (
-        <div className="bg-slate-50 border-b border-slate-200 p-4 flex-shrink-0">
-          <div className="max-h-48 overflow-y-auto">
-            <h3 className="text-sm font-semibold text-slate-700 mb-2">Previous Chat Sessions</h3>
+        <div style={{ 
+          backgroundColor: '#f8fafc', 
+          borderBottom: '1px solid #e2e8f0', 
+          padding: '16px', 
+          flexShrink: 0 
+        }}>
+          <div style={{ maxHeight: '192px', overflowY: 'auto' }}>
+            <h3 style={{ 
+              fontSize: '14px', 
+              fontWeight: 600, 
+              color: '#374151', 
+              marginBottom: '8px' 
+            }}>Previous Chat Sessions</h3>
             {sessionsLoading ? (
-              <div className="flex justify-center py-4">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-sentinel-blue"></div>
+              <div style={{ display: 'flex', justifyContent: 'center', padding: '16px 0' }}>
+                <div style={{ 
+                  width: '16px', 
+                  height: '16px', 
+                  border: '2px solid #3b82f6', 
+                  borderTopColor: 'transparent', 
+                  borderRadius: '50%', 
+                  animation: 'spin 1s linear infinite' 
+                }}></div>
               </div>
             ) : previousSessions && previousSessions.length > 0 ? (
-              <div className="space-y-2">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {previousSessions.map((session) => (
                   <div
                     key={session.id}
-                    className={`p-2 rounded-lg cursor-pointer transition-colors ${
-                      currentSession === session.id
-                        ? 'bg-sentinel-blue text-white'
-                        : 'bg-white hover:bg-slate-100'
-                    }`}
+                    style={{
+                      padding: '8px',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      backgroundColor: currentSession === session.id ? '#3b82f6' : 'white',
+                      color: currentSession === session.id ? 'white' : '#1e293b',
+                      transition: 'background-color 0.2s'
+                    }}
                     onClick={() => {
                       setCurrentSession(session.id);
                       setShowPreviousChats(false);
                     }}
                   >
-                    <div className="flex justify-between items-center">
-                      <div className="text-sm">
-                        <div className="font-medium">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div style={{ fontSize: '14px' }}>
+                        <div style={{ fontWeight: 500 }}>
                           {session.lastMessage || `Chat Session ${session.id}`}
                         </div>
-                        <div className="text-xs opacity-75">
+                        <div style={{ 
+                          fontSize: '12px', 
+                          opacity: 0.75,
+                          marginTop: '2px'
+                        }}>
                           {new Date(session.createdAt).toLocaleDateString()} at{' '}
                           {new Date(session.createdAt).toLocaleTimeString()}
                           {session.messageCount !== undefined && (
-                            <span className="ml-2">• {session.messageCount} message{session.messageCount !== 1 ? 's' : ''}</span>
+                            <span style={{ marginLeft: '8px' }}>• {session.messageCount} message{session.messageCount !== 1 ? 's' : ''}</span>
                           )}
                         </div>
                       </div>
@@ -478,7 +513,12 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                 ))}
               </div>
             ) : (
-              <div className="text-sm text-slate-500 py-4 text-center">
+              <div style={{ 
+                fontSize: '14px', 
+                color: '#64748b', 
+                padding: '16px 0', 
+                textAlign: 'center' 
+              }}>
                 No previous chat sessions found
               </div>
             )}
@@ -487,21 +527,72 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       )}
 
       {/* Chat Messages - Scrollable middle section */}
-      <div className="flex-1 flex flex-col min-h-0 bg-slate-50">
+      <div style={{ 
+        flex: 1, 
+        display: 'flex', 
+        flexDirection: 'column', 
+        minHeight: 0, 
+        backgroundColor: '#f8fafc' 
+      }}>
       {/* Chat Messages Area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4" style={{ paddingTop: '24px' }}>
+      <div style={{ 
+        flex: 1, 
+        overflowY: 'auto', 
+        padding: '16px', 
+        paddingTop: '24px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '16px'
+      }}>
         {/* System Message */}
-        <div className="flex justify-center">
-          <div className="bg-slate-100 rounded-lg px-4 py-2 text-sm text-slate-600">
-            <Shield className="w-4 h-4 text-sentinel-blue inline mr-2" />
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <div style={{ 
+            backgroundColor: '#f1f5f9', 
+            borderRadius: '8px', 
+            padding: '8px 16px', 
+            fontSize: '14px', 
+            color: '#64748b',
+            display: 'flex',
+            alignItems: 'center'
+          }}>
+            <Shield style={{ width: '16px', height: '16px', color: '#3b82f6', marginRight: '8px' }} />
             AI Sentinel is monitoring this conversation for compliance and security.
           </div>
         </div>
 
         {/* Chat Messages */}
         {messagesLoading ? (
-          <div className="flex justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sentinel-blue"></div>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <div style={{ 
+              width: '32px', 
+              height: '32px', 
+              border: '2px solid #3b82f6', 
+              borderTopColor: 'transparent', 
+              borderRadius: '50%', 
+              animation: 'spin 1s linear infinite' 
+            }}></div>
+          </div>
+        ) : messages.length === 0 ? (
+          <div style={{ 
+            flex: 1, 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center' 
+          }}>
+            <div style={{ textAlign: 'center', color: '#64748b' }}>
+              <MessageSquare style={{ 
+                width: '48px', 
+                height: '48px', 
+                margin: '0 auto 16px', 
+                opacity: 0.5 
+              }} />
+              <p style={{ 
+                fontSize: '18px', 
+                fontWeight: 500, 
+                marginBottom: '8px' 
+              }}>No messages yet</p>
+              <p style={{ fontSize: '14px' }}>Send a message to get started with AI assistance.</p>
+            </div>
           </div>
         ) : (
           messages.map((message) => {
@@ -520,11 +611,24 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
 
         {/* Loading indicator */}
         {sendMessageMutation.isPending && (
-          <div className="flex justify-start">
-            <div className="bg-white border border-slate-200 rounded-lg px-4 py-2 max-w-xs lg:max-w-md">
-              <div className="flex items-center space-x-2">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-sentinel-blue"></div>
-                <span className="text-sm text-slate-600">AI is thinking...</span>
+          <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+            <div style={{ 
+              backgroundColor: 'white', 
+              border: '1px solid #e2e8f0', 
+              borderRadius: '8px', 
+              padding: '8px 16px',
+              maxWidth: '320px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ 
+                  width: '16px', 
+                  height: '16px', 
+                  border: '2px solid #3b82f6', 
+                  borderTopColor: 'transparent', 
+                  borderRadius: '50%', 
+                  animation: 'spin 1s linear infinite' 
+                }}></div>
+                <span style={{ fontSize: '14px', color: '#64748b' }}>AI is thinking...</span>
               </div>
             </div>
           </div>
@@ -535,7 +639,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
 </div>
 
       {/* Chat Input - Fixed at bottom */}
-      <div className="flex-shrink-0 border-t border-slate-200">
+      <div style={{ flexShrink: 0, borderTop: '1px solid #e2e8f0' }}>
         <ChatInput
           onSendMessage={handleSendMessage}
           disabled={!selectedModel || !selectedActivityType || !currentSession || sendMessageMutation.isPending}
