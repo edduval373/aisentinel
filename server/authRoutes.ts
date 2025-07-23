@@ -180,6 +180,78 @@ export function setupAuthRoutes(app: Express) {
     }
   });
 
+  // Development manual authentication endpoint (since verification was successful)
+  app.post('/api/auth/dev-login', async (req, res) => {
+    try {
+      const { email } = req.body;
+      
+      if (!email || email !== 'ed.duval15@gmail.com') {
+        return res.status(400).json({ success: false, message: "Invalid email" });
+      }
+
+      console.log(`🔧 DEV LOGIN: Creating session for ${email}`);
+
+      // Find or create user
+      let user = await storage.getUserByEmail(email);
+      if (!user) {
+        // Create super user since verification was successful
+        user = await storage.createUser({
+          email,
+          firstName: 'Ed',
+          lastName: 'Duval',
+          role: 'super-user',
+          emailVerified: true
+        });
+        console.log(`👤 Created new super user: ${user.id}`);
+      }
+
+      // Find or create company
+      let company = await storage.getCompanyByDomain('gmail.com');
+      if (!company) {
+        company = await storage.createCompany({
+          name: 'Horizon Edge Enterprises',
+          domain: 'gmail.com',
+          adminFirstName: 'Ed',
+          adminLastName: 'Duval',
+          adminEmail: email,
+          adminTitle: 'Owner'
+        });
+        console.log(`🏢 Created company: ${company.name} (ID: ${company.id})`);
+      }
+
+      // Create session
+      const session = await authService.createSession(user.id, email, company.id, 100);
+      
+      // Set session cookie
+      res.cookie('sessionToken', session.sessionToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      });
+
+      console.log(`✅ DEV LOGIN: Session created successfully`);
+
+      res.json({
+        success: true,
+        message: "Development authentication successful",
+        user: {
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role,
+          roleLevel: 100,
+          companyId: company.id,
+          companyName: company.name
+        }
+      });
+    } catch (error: any) {
+      console.error("Dev login error:", error);
+      res.status(500).json({ success: false, message: "Development authentication failed" });
+    }
+  });
+
   // Development-only test session creation endpoint
   app.post('/api/auth/create-test-session', async (req, res) => {
     try {
