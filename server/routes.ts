@@ -1032,8 +1032,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (isDemoMode) {
         console.log("Demo mode chat session creation");
         
+        // Generate a simple incremental ID for demo sessions
+        const demoSessionId = Math.floor(Math.random() * 1000000) + 1;
         const demoSession = {
-          id: Date.now(), // Simple demo session ID
+          id: demoSessionId, // Random but reasonable integer ID
           companyId: 1, // Demo company ID
           userId: 'demo-user', // Demo user ID
           createdAt: new Date().toISOString(),
