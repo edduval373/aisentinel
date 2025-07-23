@@ -184,8 +184,8 @@ export default function Home() {
               disabled={!canAccessSidebar}
               style={{ 
                 padding: '4px',
-                minWidth: '51px',
-                height: '48px',
+                minWidth: '64px',
+                height: '72px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -199,11 +199,10 @@ export default function Home() {
                 src="/ai-sentinel-logo.png" 
                 alt="AI Sentinel" 
                 style={{ 
-                  width: '51px', 
-                  height: '51px', 
+                  width: '64px', 
+                  height: '64px', 
                   objectFit: 'contain',
-                  flexShrink: 0,
-                  filter: 'brightness(0.75) contrast(1.1)'
+                  flexShrink: 0
                 }}
               />
             </Button>
@@ -212,9 +211,23 @@ export default function Home() {
             <CompanyInfo />
           </div>
           
-          {/* Right side - Page Title */}
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          {/* Right side - Page Title and Sign Out */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
             <h1 style={{ fontSize: '18px', fontWeight: 600, color: '#1e293b' }}>AI Sentinel Chat</h1>
+            <button
+              onClick={() => window.location.href = '/login'}
+              style={{
+                fontSize: '12px',
+                color: '#64748b',
+                textDecoration: 'underline',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '0'
+              }}
+            >
+              Sign Out
+            </button>
           </div>
         </div>
         
