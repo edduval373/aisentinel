@@ -728,6 +728,50 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     }
 
+    // Current company endpoint (supports demo mode)
+    if (path.includes('user/current-company') && req.method === 'GET') {
+      try {
+        const sessionToken = req.headers.cookie?.match(/sessionToken=([^;]+)/)?.[1];
+        const referrer = req.headers.referer || '';
+        const isDemoMode = referrer.includes('/demo') || req.headers['x-demo-mode'] === 'true' || !sessionToken;
+        
+        if (isDemoMode) {
+          console.log('Demo mode current company request');
+          
+          // Return demo company data matching development version
+          const demoCompany = {
+            id: 1,
+            name: 'Horizon Edge Enterprises',
+            logo: null // Use default building icon
+          };
+          
+          return res.json(demoCompany);
+        }
+
+        // Handle authenticated mode
+        const { storage } = await import('../server/storage');
+        const userSession = await storage.getUserSession(sessionToken);
+        
+        if (!userSession) {
+          return res.status(401).json({ message: "Invalid session" });
+        }
+
+        const user = await storage.getUser(userSession.userId);
+        if (!user || !user.companyId) {
+          return res.status(401).json({ message: "User not found or no company assigned" });
+        }
+        
+        const company = await storage.getCompany(user.companyId);
+        return res.json(company);
+      } catch (error) {
+        console.error("Error fetching current company:", error);
+        return res.status(500).json({ 
+          message: "Failed to fetch company information", 
+          error: error.message
+        });
+      }
+    }
+
     // Default 404
     return res.status(404).json({ message: 'API endpoint not found' });
     

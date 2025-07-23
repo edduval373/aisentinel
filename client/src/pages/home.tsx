@@ -11,7 +11,7 @@ import { TrialBanner } from "@/components/TrialBanner";
 
 
 
-// Company Info Component
+// Company Info Component - Fixed for production with inline styles
 const CompanyInfo = () => {
   const { data: currentCompany } = useQuery({
     queryKey: ['/api/user/current-company'],
@@ -23,19 +23,36 @@ const CompanyInfo = () => {
   const company = currentCompany as any; // Type assertion for now
 
   return (
-    <div className="flex items-center space-x-2">
+    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
       {company.logo ? (
         <img 
           src={company.logo} 
           alt={`${company.name} logo`}
-          className="w-8 h-8 rounded object-cover"
+          style={{ 
+            width: '32px', 
+            height: '32px', 
+            borderRadius: '4px', 
+            objectFit: 'cover' 
+          }}
         />
       ) : (
-        <div className="w-8 h-8 rounded bg-slate-300 flex items-center justify-center">
-          <Building2 className="w-4 h-4 text-slate-600" />
+        <div style={{ 
+          width: '32px', 
+          height: '32px', 
+          borderRadius: '4px', 
+          backgroundColor: '#cbd5e1', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center' 
+        }}>
+          <Building2 style={{ width: '16px', height: '16px', color: '#64748b' }} />
         </div>
       )}
-      <span className="text-lg font-semibold text-slate-800">
+      <span style={{ 
+        fontSize: '18px', 
+        fontWeight: 600, 
+        color: '#1e293b' 
+      }}>
         {company.name} ({company.id})
       </span>
     </div>
