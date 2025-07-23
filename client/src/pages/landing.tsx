@@ -30,7 +30,9 @@ export default function Landing() {
         backgroundColor: 'white', 
         borderBottom: '1px solid #e2e8f0', 
         zIndex: 50,
-        padding: '0 1rem'
+        padding: '8px 1rem',
+        minHeight: '64px',
+        boxSizing: 'border-box'
       }}>
         <div style={{ 
           maxWidth: '80rem', 
@@ -38,7 +40,8 @@ export default function Landing() {
           display: 'flex', 
           alignItems: 'center', 
           justifyContent: 'space-between', 
-          height: '64px' 
+          height: '48px',
+          width: '100%'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <img 
@@ -64,7 +67,7 @@ export default function Landing() {
       </header>
 
       {/* Hero Section */}
-      <section className="ai-sentinel-hero" style={{ paddingTop: '0rem', marginTop: '64px' }}>
+      <section className="ai-sentinel-hero" style={{ paddingTop: '80px' }}>
         <div className="ai-sentinel-hero-container">
           <h2 className="ai-sentinel-hero-title">
             Enterprise AI
