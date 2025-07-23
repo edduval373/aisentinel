@@ -44,8 +44,12 @@
       "destination": "/api/user/current-company.json"
     },
     {
-      "source": "/api/(.*)",
-      "destination": "/api/index.js"
+      "source": "/api/chat/sessions",
+      "destination": "/api/chat/demo-session.json"
+    },
+    {
+      "source": "/api/chat/:id/messages",
+      "destination": "/api/chat/demo-messages.json"
     },
     {
       "source": "/((?!assets/).*)",

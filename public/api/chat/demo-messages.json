@@ -1,0 +1,9 @@
+[
+  {
+    "id": 1,
+    "role": "assistant",
+    "content": "Welcome to the AI Sentinel demo! This is a preview of our enterprise AI governance platform. I can help you explore how our system provides secure, monitored AI interactions for organizations.",
+    "createdAt": "2025-07-23T14:00:00.000Z",
+    "isSecurityFlagged": false
+  }
+]
