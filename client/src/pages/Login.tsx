@@ -98,10 +98,14 @@ export default function Login() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <img 
-                src="/ai-sentinel-logo-mini.svg" 
+                src="/ai-sentinel-logo.png" 
                 alt="AI Sentinel" 
-                className="w-10 h-10 object-contain"
-                style={{maxWidth: "40px", maxHeight: "40px"}}
+                style={{ 
+                  width: '40px', 
+                  height: '40px', 
+                  objectFit: 'contain',
+                  flexShrink: 0
+                }}
               />
               <h1 className="text-xl font-semibold text-slate-800">AI Sentinel</h1>
             </div>
@@ -208,9 +212,14 @@ export default function Login() {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <img 
-              src="/ai-sentinel-logo-mini.svg" 
+              src="/ai-sentinel-logo.png" 
               alt="AI Sentinel" 
-              style={{ width: '40px', height: '40px', objectFit: 'contain' }}
+              style={{ 
+                width: '40px', 
+                height: '40px', 
+                objectFit: 'contain',
+                flexShrink: 0
+              }}
             />
             <h1 style={{ 
               fontSize: '20px', 
