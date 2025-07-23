@@ -162,7 +162,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
               justifyContent: 'center' 
             }}>
               <img 
-                src="/ai-sentinel-final-logo.svg" 
+                src="/ai-sentinel-logo.png" 
                 alt="AI Sentinel" 
                 style={{ 
                   width: '32px', 

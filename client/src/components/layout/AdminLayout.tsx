@@ -28,7 +28,7 @@ export default function AdminLayout({ children, title, subtitle }: AdminLayoutPr
             className="text-slate-600 hover:text-slate-900 hover:bg-slate-100"
           >
             <img 
-              src="/ai-sentinel-final-logo.svg" 
+              src="/ai-sentinel-logo.png" 
               alt="AI Sentinel" 
               style={{ 
                 width: '32px', 

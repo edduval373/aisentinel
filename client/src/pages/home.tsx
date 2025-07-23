@@ -74,7 +74,7 @@ export default function Home() {
               }}
             >
               <img 
-                src="/ai-sentinel-final-logo.svg" 
+                src="/ai-sentinel-logo.png" 
                 alt="AI Sentinel" 
                 style={{ 
                   width: '24px', 
