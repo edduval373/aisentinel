@@ -176,7 +176,8 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
               height: '40px', 
               display: 'flex', 
               alignItems: 'center', 
-              justifyContent: 'center' 
+              justifyContent: 'center',
+              background: 'transparent'
             }}>
               <img 
                 src="/ai-sentinel-logo.png" 
@@ -187,7 +188,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                   objectFit: 'contain',
                   flexShrink: 0,
                   filter: 'brightness(0) invert(1)',
-                  backgroundColor: 'transparent'
+                  background: 'transparent'
                 }}
               />
             </div>
