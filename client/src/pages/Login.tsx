@@ -272,9 +272,14 @@ export default function Login() {
           }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <img 
-                src="/ai-sentinel-logo-mini.svg" 
+                src="/ai-sentinel-logo.png" 
                 alt="AI Sentinel" 
-                style={{ width: '64px', height: '64px', objectFit: 'contain' }}
+                style={{ 
+                  width: '64px', 
+                  height: '64px', 
+                  objectFit: 'contain',
+                  flexShrink: 0
+                }}
               />
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
