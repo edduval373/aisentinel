@@ -59,14 +59,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
     setExpandedSection(expandedSection === sectionId ? null : sectionId);
   };
 
-  const navigation = [
-    {
-      name: "AI Chat",
-      href: "/",
-      icon: MessageSquare,
-      current: location === "/",
-    },
-  ];
+  const navigation = [];
 
   const superUserSections = [
     {
@@ -379,15 +372,9 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
           )}
         </nav>
 
-      {/* Simplified bottom section - no user profile in demo mode */}
+      {/* Bottom section */}
       <div className="border-t border-slate-700 p-2">
-        <div style={{ 
-          textAlign: 'center', 
-          color: '#94a3b8', 
-          fontSize: '11px' 
-        }}>
-          Demo Mode
-        </div>
+        {/* Removed demo mode text */}
       </div>
     </div>
     </>
