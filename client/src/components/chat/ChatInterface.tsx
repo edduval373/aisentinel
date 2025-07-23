@@ -326,7 +326,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   const selectedActivityTypeData = activityTypes?.find(t => t.id === selectedActivityType);
 
   return (
-    <div className="chat-container">
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       {/* Chat Header - Fixed at top */}
       <div className="chat-header">
         <div className="flex items-center justify-between">

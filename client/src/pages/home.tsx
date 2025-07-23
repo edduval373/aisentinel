@@ -115,7 +115,7 @@ export default function Home() {
               <img 
                 src="/ai-sentinel-logo.png" 
                 alt="AI Sentinel" 
-                style={{ width: '32px', height: '32px', objectFit: 'contain' }}
+                style={{ width: '24px', height: '24px', objectFit: 'contain' }}
               />
             </Button>
             <CompanyInfo />

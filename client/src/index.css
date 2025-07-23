@@ -47,7 +47,7 @@
 .chat-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
   background-color: #f8fafc;
 }
 
@@ -390,8 +390,14 @@
 .mb-2 {
   margin-bottom: 8px;
 }
-  border-bottom: 1px solid #e2e8f0;
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+
+/* Additional utility classes */
+.text-lg {
+  font-size: 18px;
+}
+
+.justify-center {
+  justify-content: center;
 }
 
 .ai-sentinel-header-container {
