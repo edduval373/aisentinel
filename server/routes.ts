@@ -845,7 +845,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Chat routes with demo mode support
   app.post('/api/chat/session', async (req: any, res) => {
     try {
-      const isDemoMode = req.headers['x-demo-mode'] === 'true' || req.headers.referer?.includes('/demo');
+      // Always provide demo mode for users without authentication
+      const hasSessionCookie = req.headers.cookie?.includes('sessionToken=');
+      const isDemoMode = req.headers['x-demo-mode'] === 'true' || req.headers.referer?.includes('/demo') || !hasSessionCookie;
+      
+      console.log('Chat session creation - isDemoMode:', isDemoMode, 'hasSessionCookie:', hasSessionCookie);
       
       // Handle demo mode
       if (isDemoMode) {
@@ -865,9 +869,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.json(demoSession);
       }
       
-      // Require authentication for non-demo mode
+      // Require authentication for non-demo mode (only if not demo mode)
       if (!req.user || !req.user.claims) {
-        return res.status(401).json({ message: "Authentication required" });
+        return res.status(401).json({ message: "Authentication required for non-demo mode" });
       }
       
       const userId = req.user.claims.sub;

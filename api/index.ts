@@ -14,7 +14,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     const path = req.url || '';
-    console.log(`API Request: ${req.method} ${path}`);
+    const pathname = new URL(path, 'http://localhost').pathname;
+    console.log(`API Request: ${req.method} ${path} -> pathname: ${pathname}`);
 
     // Health check - no dependencies
     if (path.includes('health') && req.method === 'GET') {
@@ -30,8 +31,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     // Chat session creation (supports both authenticated and demo mode)
-    if (path.includes('chat/session') && req.method === 'POST') {
-      console.log('Creating chat session...');
+    if ((path.includes('chat/session') || pathname.includes('chat/session') || path.endsWith('/session')) && req.method === 'POST') {
+      console.log('Creating chat session...', 'path:', path, 'pathname:', pathname);
       try {
         const sessionToken = req.headers.cookie?.match(/sessionToken=([^;]+)/)?.[1];
         const referrer = req.headers.referer || '';
@@ -921,7 +922,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     // Chat message endpoint (supports demo mode)
-    if (path.includes('chat/message') && req.method === 'POST') {
+    if ((path.includes('chat/message') || pathname.includes('chat/message')) && req.method === 'POST') {
       try {
         console.log('Chat message request:', req.body);
         const { message, sessionId, aiModelId, activityTypeId } = req.body;
@@ -1050,7 +1051,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     // Chat messages history endpoint  
-    if (path.includes('chat/messages') && req.method === 'GET') {
+    if ((path.includes('chat/messages') || pathname.includes('chat/messages')) && req.method === 'GET') {
       try {
         const sessionId = req.query.sessionId as string;
         
@@ -1143,8 +1144,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     }
 
+    // Debug: Log unmatched requests for chat endpoints
+    if (path.includes('chat') || pathname.includes('chat')) {
+      console.log('Unmatched chat request:', req.method, path, pathname);
+      console.log('Available endpoints: chat/session (POST), chat/message (POST), chat/messages (GET)');
+    }
+    
     // Default 404
-    return res.status(404).json({ message: 'API endpoint not found' });
+    return res.status(404).json({ 
+      message: 'API endpoint not found',
+      path: path,
+      pathname: pathname,
+      method: req.method
+    });
     
   } catch (error) {
     console.error('API Error:', error);
