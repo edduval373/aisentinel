@@ -43,7 +43,7 @@ export default function CompanyManagement() {
   const queryClient = useQueryClient();
 
   // Fetch all companies (using authentication bypass route)
-  const { data: companies = [], isLoading: companiesLoading } = useQuery({
+  const { data: companies = [], isLoading: companiesLoading } = useQuery<Company[]>({
     queryKey: ["/api/companies"],
   });
 
@@ -166,10 +166,21 @@ export default function CompanyManagement() {
 
   return (
     <AdminLayout title="Company Management" subtitle="Manage all companies (Super-user only)">
-      <div className="space-y-6">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
         {/* Add Company Button */}
-        <div className="flex justify-between items-center">
-          <h2 className="text-lg font-semibold ml-9">All Companies</h2>
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center' 
+        }}>
+          <h2 style={{ 
+            fontSize: '18px', 
+            fontWeight: '600', 
+            color: '#374151',
+            margin: 0 
+          }}>
+            All Companies
+          </h2>
           <Dialog open={showAddCompany} onOpenChange={setShowAddCompany}>
             <DialogTrigger asChild>
               <Button>
@@ -177,12 +188,16 @@ export default function CompanyManagement() {
                 Add Company
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
+            <DialogContent style={{ 
+              maxWidth: '512px', 
+              maxHeight: '80vh', 
+              overflowY: 'auto' 
+            }}>
               <DialogHeader>
                 <DialogTitle>Add New Company</DialogTitle>
               </DialogHeader>
               <Form {...companyForm}>
-                <form onSubmit={companyForm.handleSubmit(onSubmitCompany)} className="space-y-4">
+                <form onSubmit={companyForm.handleSubmit(onSubmitCompany)} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <FormField
                     control={companyForm.control}
                     name="name"
@@ -285,7 +300,7 @@ export default function CompanyManagement() {
                       </FormItem>
                     )}
                   />
-                  <Button type="submit" className="w-full" disabled={createCompanyMutation.isPending || updateCompanyMutation.isPending}>
+                  <Button type="submit" style={{ width: '100%' }} disabled={createCompanyMutation.isPending || updateCompanyMutation.isPending}>
                     {editingCompany 
                       ? (updateCompanyMutation.isPending ? "Updating..." : "Update Company")
                       : (createCompanyMutation.isPending ? "Creating..." : "Create Company")

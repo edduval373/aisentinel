@@ -215,22 +215,22 @@ export function setupAuthRoutes(app: Express) {
 
       console.log(`🔧 DEV LOGIN: Creating session for ${email}`);
 
-      // Create simple development session without complex database operations
+      // Create development session AND store it in database
       const sessionToken = `dev-session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       
-      // Create a simple session object
-      const session = {
-        sessionToken,
+      // Store the session in database so authentication middleware can find it
+      const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+      
+      await storage.createUserSession({
         userId: 1,
+        sessionToken,
         email,
         companyId: 1,
-        roleLevel: 100
-      };
+        roleLevel: 100,
+        expiresAt,
+      });
       
-      console.log(`✅ DEV LOGIN: Created development session token`);
-      
-      // For development, we'll use a simpler approach and just set the cookie
-      // The application will treat this as authenticated
+      console.log(`✅ DEV LOGIN: Created and stored development session in database`);
       
       // Set session cookie
       res.cookie('sessionToken', session.sessionToken, {
