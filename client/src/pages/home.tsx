@@ -36,7 +36,7 @@ function CompanyInfo() {
         <div style={{ 
           width: '48px', 
           height: '48px', 
-          backgroundColor: '#f59e0b', 
+          backgroundColor: '#3b82f6', 
           borderRadius: '8px',
           display: 'flex',
           alignItems: 'center',
@@ -52,7 +52,7 @@ function CompanyInfo() {
             {isLimitedAccess ? 'Demo Company' : 'Loading...'}
           </div>
           {isLimitedAccess && (
-            <div style={{ fontSize: '12px', color: '#f59e0b', fontWeight: 500 }}>
+            <div style={{ fontSize: '12px', color: '#3b82f6', fontWeight: 500 }}>
               Using AI Sentinel API Keys
             </div>
           )}
@@ -67,7 +67,7 @@ function CompanyInfo() {
         <div style={{ 
           width: '48px', 
           height: '48px', 
-          backgroundColor: '#f59e0b', 
+          backgroundColor: '#3b82f6', 
           borderRadius: '8px',
           display: 'flex',
           alignItems: 'center',
@@ -111,7 +111,7 @@ function CompanyInfo() {
           {isLimitedAccess ? 'Demo Company' : currentCompany.name}
         </div>
         {isLimitedAccess ? (
-          <div style={{ fontSize: '12px', color: '#f59e0b', fontWeight: 500 }}>
+          <div style={{ fontSize: '12px', color: '#3b82f6', fontWeight: 500 }}>
             Using AI Sentinel API Keys
           </div>
         ) : currentCompany.description && (
@@ -202,7 +202,8 @@ export default function Home() {
                   width: '64px', 
                   height: '64px', 
                   objectFit: 'contain',
-                  flexShrink: 0
+                  flexShrink: 0,
+                  filter: 'brightness(1.1) saturate(1.3) contrast(1.2)'
                 }}
               />
             </Button>
