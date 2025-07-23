@@ -59,7 +59,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
     setExpandedSection(expandedSection === sectionId ? null : sectionId);
   };
 
-  const navigation = [];
+  const navigation: Array<{name: string, href: string, current: boolean}> = [];
 
   const superUserSections = [
     {
