@@ -1,5 +1,5 @@
 // Minimal Vercel serverless function for AI Sentinel (JavaScript)
-module.exports = function handler(req, res) {
+export default function handler(req, res) {
   // Set CORS headers for all requests
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -166,4 +166,4 @@ module.exports = function handler(req, res) {
       error: error.message || 'Unknown error'
     });
   }
-};
+}

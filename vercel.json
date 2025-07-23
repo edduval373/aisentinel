@@ -3,8 +3,9 @@
   "buildCommand": "rm -f public/index.html && npm run build",
   "outputDirectory": "dist/public",
   "functions": {
-    "api/index.js": {
-      "maxDuration": 30
+    "api/*.js": {
+      "maxDuration": 30,
+      "runtime": "nodejs18.x"
     }
   },
   "headers": [
@@ -29,7 +30,7 @@
   "rewrites": [
     {
       "source": "/api/health",
-      "destination": "/api/health.json"
+      "destination": "/api/health.js"
     },
     {
       "source": "/api/ai-models",
@@ -42,6 +43,10 @@
     {
       "source": "/api/user/current-company",
       "destination": "/api/user/current-company.json"
+    },
+    {
+      "source": "/api/auth/verify",
+      "destination": "/api/verify.js"
     },
     {
       "source": "/api/chat/sessions",
