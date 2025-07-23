@@ -74,9 +74,14 @@ export default function Home() {
               }}
             >
               <img 
-                src="/ai-sentinel-logo-mini.svg" 
+                src="/ai-sentinel-final-logo.svg" 
                 alt="AI Sentinel" 
-                style={{ width: '24px', height: '24px', objectFit: 'contain' }}
+                style={{ 
+                  width: '24px', 
+                  height: '24px', 
+                  objectFit: 'contain',
+                  flexShrink: 0
+                }}
               />
             </Button>
           </div>

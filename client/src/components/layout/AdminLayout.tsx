@@ -28,9 +28,14 @@ export default function AdminLayout({ children, title, subtitle }: AdminLayoutPr
             className="text-slate-600 hover:text-slate-900 hover:bg-slate-100"
           >
             <img 
-              src="/ai-sentinel-logo-mini.svg" 
+              src="/ai-sentinel-final-logo.svg" 
               alt="AI Sentinel" 
-              className="w-10 h-10 object-contain"
+              style={{ 
+                width: '32px', 
+                height: '32px', 
+                objectFit: 'contain',
+                flexShrink: 0
+              }}
             />
           </Button>
           <div>

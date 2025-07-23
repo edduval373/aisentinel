@@ -35,9 +35,9 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const [location, navigate] = useLocation();
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
-  const isSuperUser = user?.role === 'super-user' || user?.roleLevel >= 100;
-  const isOwner = user?.role === 'owner' || user?.roleLevel >= 99;
-  const isAdmin = user?.role === 'admin' || user?.roleLevel >= 2;
+  const isSuperUser = user?.role === 'super-user' || (user?.roleLevel ?? 0) >= 100;
+  const isOwner = user?.role === 'owner' || (user?.roleLevel ?? 0) >= 99;
+  const isAdmin = user?.role === 'admin' || (user?.roleLevel ?? 0) >= 2;
   const isRegularUser = user?.role === 'user' || user?.roleLevel === 1;
   
   // Always show sidebar - no authentication restrictions
@@ -154,11 +154,22 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
         {/* Header */}
         <div className="flex items-center justify-between h-16 bg-slate-900 border-b border-slate-700 px-4">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 flex items-center justify-center">
+            <div style={{ 
+              width: '40px', 
+              height: '40px', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center' 
+            }}>
               <img 
-                src="/ai-sentinel-logo-mini.svg" 
+                src="/ai-sentinel-final-logo.svg" 
                 alt="AI Sentinel" 
-                className="w-8 h-8 object-contain"
+                style={{ 
+                  width: '32px', 
+                  height: '32px', 
+                  objectFit: 'contain',
+                  flexShrink: 0
+                }}
               />
             </div>
             <h1 className="text-white font-semibold text-lg">AI Sentinel</h1>

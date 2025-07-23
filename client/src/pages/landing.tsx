@@ -42,9 +42,14 @@ export default function Landing() {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <img 
-              src="/ai-sentinel-logo.png" 
+              src="/ai-sentinel-final-logo.svg" 
               alt="AI Sentinel" 
-              style={{ width: '40px', height: '40px' }}
+              style={{ 
+                width: '40px', 
+                height: '40px', 
+                objectFit: 'contain',
+                flexShrink: 0
+              }}
             />
             <h1 style={{ 
               fontSize: '20px', 
