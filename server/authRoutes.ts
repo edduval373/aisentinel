@@ -23,7 +23,7 @@ export function setupAuthRoutes(app: Express) {
       }
     } catch (error: any) {
       console.error("Request verification error:", error);
-      if (error.errors) {
+      if (error?.errors) {
         res.status(400).json({ success: false, message: error.errors[0].message });
       } else {
         res.status(500).json({ success: false, message: "An error occurred" });
@@ -129,5 +129,54 @@ export function setupAuthRoutes(app: Express) {
       authenticated: !!req.user,
       requiresAuth: !req.user,
     });
+  });
+
+  // Debug route for SendGrid connectivity testing
+  app.get('/api/auth/debug/sendgrid', async (req, res) => {
+    try {
+      // Direct import from the existing service
+      const { emailService } = require('./services/emailService');
+      
+      const configInfo = emailService.getConfigInfo();
+      const connectionTest = await emailService.testSendGridConnection();
+      
+      res.json({
+        success: true,
+        config: configInfo,
+        connectionTest,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error: any) {
+      console.error('Debug SendGrid error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to test SendGrid connectivity',
+        error: error.message
+      });
+    }
+  });
+
+  // Debug route for environment variables
+  app.get('/api/auth/debug/environment', async (req, res) => {
+    try {
+      res.json({
+        success: true,
+        environment: {
+          NODE_ENV: process.env.NODE_ENV,
+          APP_URL: process.env.APP_URL,
+          SENDGRID_API_KEY_CONFIGURED: !!process.env.SENDGRID_API_KEY,
+          SENDGRID_API_KEY_LENGTH: process.env.SENDGRID_API_KEY?.length || 0,
+          DATABASE_URL_CONFIGURED: !!process.env.DATABASE_URL
+        },
+        timestamp: new Date().toISOString()
+      });
+    } catch (error: any) {
+      console.error('Debug environment error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to get environment info',
+        error: error.message
+      });
+    }
   });
 }

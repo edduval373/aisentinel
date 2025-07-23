@@ -159,7 +159,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     }
 
-    // Email verification request endpoint (simplified to avoid serverless crashes)
+    // Email verification request endpoint 
     if (path.includes('auth/request-verification') && req.method === 'POST') {
       try {
         console.log('Processing verification request...');
@@ -170,16 +170,41 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           return res.status(400).json({ success: false, message: "Email is required" });
         }
 
-        // Simple response without complex imports that crash serverless functions
         console.log(`Verification request received for: ${email}`);
         
-        // For now, return success and log the email
-        // The actual verification will be handled through local development or manual process
-        return res.json({ 
-          success: true, 
-          message: "Verification email sent successfully",
-          note: "Email processing initiated - check server logs for verification URL"
-        });
+        // Try to send actual email using SendGrid
+        try {
+          const { authService } = await import('../server/services/authService');
+          const success = await authService.initiateEmailVerification(email);
+          
+          if (success) {
+            return res.json({ 
+              success: true, 
+              message: "Verification email sent successfully"
+            });
+          } else {
+            console.log('Failed to send email, returning manual verification URL');
+            // Generate a token manually for fallback
+            const { emailService } = await import('../server/services/emailService');
+            const token = emailService.generateToken();
+            const baseUrl = process.env.APP_URL || 'https://aisentinel.app';
+            const verificationUrl = `${baseUrl}/api/auth/verify?token=${token}`;
+            
+            return res.json({ 
+              success: false, 
+              message: "Failed to send email automatically",
+              fallbackUrl: verificationUrl,
+              note: "Use the fallback URL to verify manually"
+            });
+          }
+        } catch (importError) {
+          console.error('Import error:', importError);
+          return res.json({ 
+            success: false, 
+            message: "Email service temporarily unavailable",
+            note: "Please try again later or contact support"
+          });
+        }
         
       } catch (error: any) {
         console.error("Request verification error details:", {
@@ -190,6 +215,54 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(500).json({ 
           success: false, 
           message: "An error occurred",
+          error: error.message
+        });
+      }
+    }
+
+    // Debug route for SendGrid connectivity testing
+    if (path.includes('auth/debug/sendgrid') && req.method === 'GET') {
+      try {
+        const { emailService } = await import('../server/services/emailService');
+        
+        const configInfo = emailService.getConfigInfo();
+        const connectionTest = await emailService.testSendGridConnection();
+        
+        return res.json({
+          success: true,
+          config: configInfo,
+          connectionTest,
+          timestamp: new Date().toISOString()
+        });
+      } catch (error: any) {
+        console.error('Debug SendGrid error:', error);
+        return res.status(500).json({
+          success: false,
+          message: 'Failed to test SendGrid connectivity',
+          error: error.message
+        });
+      }
+    }
+
+    // Debug route for environment variables
+    if (path.includes('auth/debug/environment') && req.method === 'GET') {
+      try {
+        return res.json({
+          success: true,
+          environment: {
+            NODE_ENV: process.env.NODE_ENV,
+            APP_URL: process.env.APP_URL,
+            SENDGRID_API_KEY_CONFIGURED: !!process.env.SENDGRID_API_KEY,
+            SENDGRID_API_KEY_LENGTH: process.env.SENDGRID_API_KEY?.length || 0,
+            DATABASE_URL_CONFIGURED: !!process.env.DATABASE_URL
+          },
+          timestamp: new Date().toISOString()
+        });
+      } catch (error: any) {
+        console.error('Debug environment error:', error);
+        return res.status(500).json({
+          success: false,
+          message: 'Failed to get environment info',
           error: error.message
         });
       }

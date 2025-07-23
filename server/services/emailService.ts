@@ -98,9 +98,9 @@ export class EmailService {
       console.log(`✓ Verification URL for manual access: ${verificationUrl}`);
       console.log(`📧 IMPORTANT: If email doesn't arrive, check spam/junk folder or use the verification URL above`);
       return true;
-    } catch (error) {
+    } catch (error: any) {
       console.error('SendGrid email error:', error);
-      if (error.response) {
+      if (error?.response) {
         console.error('SendGrid response status:', error.response.status);
         console.error('SendGrid response body:', error.response.body);
       }
@@ -111,6 +111,83 @@ export class EmailService {
 
   generateToken(): string {
     return nanoid(32);
+  }
+
+  // Debug method to test SendGrid connectivity and configuration
+  async testSendGridConnection(): Promise<{
+    isConfigured: boolean;
+    fromEmailVerified: boolean;
+    canConnect: boolean;
+    errors: string[];
+  }> {
+    const result = {
+      isConfigured: !!process.env.SENDGRID_API_KEY,
+      fromEmailVerified: false,
+      canConnect: false,
+      errors: [] as string[]
+    };
+
+    if (!result.isConfigured) {
+      result.errors.push('SENDGRID_API_KEY environment variable not set');
+      return result;
+    }
+
+    try {
+      // Test basic connectivity with a minimal email send to the from address
+      const testEmail = {
+        to: this.fromEmail,
+        from: this.fromEmail,
+        subject: 'SendGrid Connection Test - AI Sentinel',
+        text: 'This is a test email to verify SendGrid connectivity.',
+        html: '<p>This is a test email to verify SendGrid connectivity.</p>'
+      };
+
+      await mailService.send(testEmail);
+      result.canConnect = true;
+      result.fromEmailVerified = true;
+      console.log('✓ SendGrid connection test successful');
+    } catch (error: any) {
+      result.errors.push(`Connection test failed: ${error.message || error}`);
+      
+      if (error?.response) {
+        const status = error.response.status;
+        const body = error.response.body;
+        
+        if (status === 401) {
+          result.errors.push('Authentication failed - Invalid SendGrid API key');
+        } else if (status === 403) {
+          result.errors.push('Access forbidden - Check SendGrid API key permissions');
+        } else if (status === 400) {
+          const errorDetails = body?.errors?.[0];
+          if (errorDetails?.field === 'from' || errorDetails?.message?.includes('does not have a verified sender identity')) {
+            result.errors.push(`From email '${this.fromEmail}' is not verified in SendGrid`);
+          } else {
+            result.errors.push(`Request error: ${errorDetails?.message || 'Invalid request format'}`);
+          }
+        } else {
+          result.errors.push(`HTTP ${status}: ${JSON.stringify(body)}`);
+        }
+      }
+      
+      console.error('SendGrid connection test failed:', error);
+    }
+
+    return result;
+  }
+
+  // Get environment-specific configuration info
+  getConfigInfo(): {
+    environment: string;
+    apiKeyConfigured: boolean;
+    fromEmail: string;
+    appUrl: string;
+  } {
+    return {
+      environment: process.env.NODE_ENV || 'development',
+      apiKeyConfigured: !!process.env.SENDGRID_API_KEY,
+      fromEmail: this.fromEmail,
+      appUrl: process.env.APP_URL || 'https://aisentinel.app'
+    };
   }
 }
 
