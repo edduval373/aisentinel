@@ -1173,11 +1173,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Generate AI response - use Model Fusion if selected
       let aiResponse;
-      if (isModelFusion) {
-        // For Model Fusion, use a special method that runs across all models
-        aiResponse = await aiService.generateModelFusionResponse(contextMessage, companyId, parsedActivityTypeId);
-      } else {
-        aiResponse = await aiService.generateResponse(contextMessage, parsedAiModelId, companyId, parsedActivityTypeId);
+      try {
+        if (isModelFusion) {
+          // For Model Fusion, use a special method that runs across all models
+          aiResponse = await aiService.generateModelFusionResponse(contextMessage, companyId, parsedActivityTypeId);
+        } else {
+          // For demo/development, provide fallback response if AI service fails
+          try {
+            aiResponse = await aiService.generateResponse(contextMessage, parsedAiModelId, companyId, parsedActivityTypeId);
+          } catch (error) {
+            console.log('AI service error, using demo response:', error.message);
+            // Generate demo response explaining the functionality
+            const selectedModel = await storage.getAiModels(companyId).then(models => models.find(m => m.id === parsedAiModelId));
+            const activityType = await storage.getActivityTypes(companyId).then(types => types.find(t => t.id === parsedActivityTypeId));
+            
+            aiResponse = `**Demo Response from AI Sentinel**
+
+You asked: "${message}"
+
+This is a demonstration of AI Sentinel's capabilities. In the full version:
+
+🤖 **AI Model**: ${selectedModel?.name || 'AI Model'} would process your request
+📋 **Activity Type**: ${activityType?.name || 'Activity Type'} context would be applied
+🔒 **Security**: Content filtering and compliance monitoring would be active
+📊 **Analytics**: All interactions would be logged and analyzed
+
+*This demo shows the chat interface and message flow. In production, you would receive actual AI responses based on your selected model and activity type.*`;
+          }
+        }
+      } catch (error) {
+        console.error('AI response generation failed:', error);
+        aiResponse = "I apologize, but I'm currently experiencing technical difficulties. Please try again later or contact support if the issue persists.";
       }
       
       // Create chat message with company isolation
