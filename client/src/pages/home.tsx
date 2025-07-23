@@ -21,10 +21,10 @@ interface Company {
 function CompanyInfo() {
   const { user } = useAuth();
   
-  // Check if we're in demo mode (only when explicitly accessing /demo)
+  // Check if we're in demo mode (only when explicitly accessing /demo or role level 0)
   const isDemoMode = window.location.pathname === '/demo';
   const userRoleLevel = user?.roleLevel || 1;
-  const isLimitedAccess = userRoleLevel <= 1 || isDemoMode;
+  const isLimitedAccess = userRoleLevel === 0 || isDemoMode;
   
   const { data: currentCompany } = useQuery<Company>({
     queryKey: ['/api/user/current-company'],
