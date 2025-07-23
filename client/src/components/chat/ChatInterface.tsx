@@ -88,15 +88,9 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
     mutationFn: async () => {
       console.log('Creating new chat session...');
       
-      // Add demo mode header if in demo mode
-      const isDemoMode = window.location.pathname === '/demo';
       const headers: Record<string, string> = {
         'Content-Type': 'application/json'
       };
-      
-      if (isDemoMode) {
-        headers['x-demo-mode'] = 'true';
-      }
       
       const response = await fetch("/api/chat/session", {
         method: "POST",

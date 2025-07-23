@@ -108,7 +108,7 @@ export default function Home() {
                   Horizon Edge Enterprises
                 </div>
                 <div style={{ fontSize: '12px', color: '#64748b' }}>
-                  Demo Company
+                  Enterprise Solutions
                 </div>
               </div>
             </div>
@@ -122,10 +122,10 @@ export default function Home() {
         
         {/* Chat Interface Container */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
-          {/* Trial Banner */}
-          <div style={{ padding: '16px 16px 0 16px' }}>
+          {/* Trial Banner - Temporarily disabled */}
+          {/* <div style={{ padding: '16px 16px 0 16px' }}>
             <TrialBanner />
-          </div>
+          </div> */}
           
           <ChatInterface 
             currentSession={currentSession} 
