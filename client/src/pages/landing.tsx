@@ -18,28 +18,44 @@ export default function Landing() {
     console.log("[LANDING DEBUG] Landing component mounted successfully");
     document.title = "AI Sentinel - Landing Page (React Working)";
     
-    // Check if user just verified email and redirect to chat
+    // Check if user just verified email and show success message
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('verified') === 'true') {
-      console.log("[LANDING DEBUG] Email verification detected, checking authentication...");
+      const verifiedEmail = urlParams.get('email');
+      console.log("[LANDING DEBUG] Email verification detected for:", verifiedEmail);
       
-      // Check authentication status after short delay to allow session to be set
-      setTimeout(async () => {
-        try {
-          const response = await fetch('/api/auth/me', { credentials: 'include' });
-          const authData = await response.json();
-          console.log("[LANDING DEBUG] Post-verification auth check:", authData);
-          
-          if (authData.authenticated) {
-            console.log("[LANDING DEBUG] User is authenticated, redirecting to chat...");
-            window.location.href = '/chat';
-          } else {
-            console.log("[LANDING DEBUG] User not authenticated yet, staying on landing page");
-          }
-        } catch (error) {
-          console.error("[LANDING DEBUG] Auth check failed:", error);
+      // Show success message and clear URL parameters
+      setTimeout(() => {
+        // Clear URL parameters 
+        window.history.replaceState({}, document.title, '/');
+        // Force page refresh to check authentication
+        window.location.reload();
+      }, 2000);
+      
+      // Show verification success notification
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #10b981;
+        color: white;
+        padding: 16px 24px;
+        border-radius: 8px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        z-index: 1000;
+        font-family: system-ui, -apple-system, sans-serif;
+        font-weight: 500;
+      `;
+      notification.textContent = `✅ Email verified successfully! Welcome to AI Sentinel.`;
+      document.body.appendChild(notification);
+      
+      // Remove notification after 3 seconds
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.parentNode.removeChild(notification);
         }
-      }, 1000);
+      }, 3000);
     }
   }, []);
   

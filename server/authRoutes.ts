@@ -41,11 +41,16 @@ export function setupAuthRoutes(app: Express) {
         return res.status(400).json({ success: false, message: "No verification token provided" });
       }
 
+      console.log("🔐 Email verification attempt for token:", token.substring(0, 10) + "...");
+
       const session = await authService.verifyEmailToken(token);
       
       if (!session) {
+        console.log("❌ Invalid or expired verification token");
         return res.status(400).json({ success: false, message: "Invalid or expired verification token" });
       }
+
+      console.log("✅ Valid session found:", session.email, "- Setting cookie and redirecting");
 
       // Set session cookie
       res.cookie('sessionToken', session.sessionToken, {
@@ -64,8 +69,15 @@ export function setupAuthRoutes(app: Express) {
         companyName = company?.name;
       }
 
-      // Redirect to frontend with success parameter and force refresh
-      res.redirect(`/?verified=true&email=${encodeURIComponent(session.email)}`);
+      // For development, redirect to the development environment instead of production
+      if (process.env.NODE_ENV === 'development') {
+        const devUrl = `https://8b45f032-3543-41c9-9d7b-a06e3bbab484-00-2a5ekmx4eqmb5.worf.replit.dev/?verified=true&email=${encodeURIComponent(session.email)}`;
+        console.log("🔧 Development mode - redirecting to:", devUrl);
+        res.redirect(devUrl);
+      } else {
+        // Production redirect
+        res.redirect(`/?verified=true&email=${encodeURIComponent(session.email)}`);
+      }
     } catch (error: any) {
       console.error("Verification error:", error);
       res.status(500).json({ success: false, message: "An error occurred during verification" });
