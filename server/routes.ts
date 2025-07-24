@@ -244,12 +244,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Demo company route - always returns first company for demo mode
-  app.get('/api/user/current-company', async (req: any, res) => {
+  // Current company route - returns authenticated user's company or demo for unauthenticated
+  app.get('/api/user/current-company', optionalAuth, async (req: any, res) => {
     try {
-      console.log("Demo mode: Always returning first company as demo company");
+      // Check if user is authenticated with cookie session
+      if (req.user && req.user.userId) {
+        console.log("Authenticated user requesting current company:", req.user.userId);
+        
+        const user = await storage.getUser(req.user.userId);
+        if (user && user.companyId) {
+          const company = await storage.getCompany(user.companyId);
+          console.log("Returning user's company:", company.name, "ID:", company.id);
+          return res.json(company);
+        }
+      }
       
-      // Always return the first available company as the demo company
+      console.log("Demo mode: Returning first company as demo company");
+      
+      // Fallback to demo company for unauthenticated users
       const companies = await storage.getCompanies();
       if (companies.length > 0) {
         const demoCompany = companies[0];
@@ -268,7 +280,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("No companies found in database");
       res.status(404).json({ message: "No company found" });
     } catch (error) {
-      console.error("Error fetching demo company:", error);
+      console.error("Error fetching current company:", error);
       res.status(500).json({ message: "Failed to fetch company" });
     }
   });
