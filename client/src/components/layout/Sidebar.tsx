@@ -181,8 +181,9 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                 height: '32px', 
                 objectFit: 'contain',
                 flexShrink: 0,
-                filter: 'invert(1) hue-rotate(180deg) brightness(1.2)',
-                background: 'transparent'
+                filter: 'invert(1) brightness(2) contrast(1)',
+                background: 'transparent',
+                mixBlendMode: 'screen'
               }}
             />
             <span style={{ 
