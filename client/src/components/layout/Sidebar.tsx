@@ -173,27 +173,18 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
           borderBottom: '1px solid #3b82f6' 
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ 
-              width: '40px', 
-              height: '40px', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center',
-              background: 'transparent'
-            }}>
-              <img 
-                src="/ai-sentinel-logo.png" 
-                alt="AI Sentinel" 
-                style={{ 
-                  width: '32px', 
-                  height: '32px', 
-                  objectFit: 'contain',
-                  flexShrink: 0,
-                  filter: 'brightness(0) invert(1)',
-                  background: 'transparent'
-                }}
-              />
-            </div>
+            <img 
+              src="/ai-sentinel-logo.png" 
+              alt="AI Sentinel" 
+              style={{ 
+                width: '32px', 
+                height: '32px', 
+                objectFit: 'contain',
+                flexShrink: 0,
+                filter: 'brightness(0) invert(1)',
+                background: 'transparent'
+              }}
+            />
             <span style={{ 
               color: 'white', 
               fontSize: '18px', 
