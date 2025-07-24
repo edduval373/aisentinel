@@ -331,6 +331,12 @@ body {
   100% { transform: rotate(360deg); }
 }
 
+/* Additional utility animations */
+@keyframes fadeIn {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
 .loading-spinner {
   width: 16px;
   height: 16px;

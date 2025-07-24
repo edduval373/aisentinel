@@ -92,11 +92,29 @@ export default function Login() {
 
   if (emailSent) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-slate-200">
+      <div style={{ 
+        minHeight: '100vh', 
+        background: 'linear-gradient(135deg, #f1f5f9 0%, #dbeafe 50%, #e2e8f0 100%)',
+        position: 'relative'
+      }}>
         {/* Header */}
-        <div className="absolute top-0 left-0 right-0 p-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
+        <div style={{ 
+          position: 'absolute', 
+          top: 0, 
+          left: 0, 
+          right: 0, 
+          padding: '24px' 
+        }}>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'space-between' 
+          }}>
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '12px' 
+            }}>
               <img 
                 src="/ai-sentinel-logo.png" 
                 alt="AI Sentinel" 
@@ -107,86 +125,233 @@ export default function Login() {
                   flexShrink: 0
                 }}
               />
-              <h1 className="text-xl font-semibold text-slate-800">AI Sentinel</h1>
+              <h1 style={{ 
+                fontSize: '20px', 
+                fontWeight: '600', 
+                color: '#1e293b',
+                margin: 0
+              }}>
+                AI Sentinel
+              </h1>
             </div>
-            <Button 
-              variant="ghost" 
-              size="sm"
+            <button
               onClick={() => window.location.href = '/'}
-              className="text-slate-600 hover:text-slate-900"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '8px 16px',
+                background: 'transparent',
+                border: 'none',
+                borderRadius: '8px',
+                color: '#64748b',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: '500',
+                transition: 'all 0.2s'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = '#f8fafc';
+                e.currentTarget.style.color = '#1e293b';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.color = '#64748b';
+              }}
             >
-              <X className="w-4 h-4 mr-2" />
+              <X style={{ width: '16px', height: '16px' }} />
               Return to Home
-            </Button>
+            </button>
           </div>
         </div>
         
         {/* Content */}
-        <div className="flex items-center justify-center min-h-screen p-4">
-          <Card className="w-full max-w-md bg-white shadow-xl">
-            <CardHeader className="space-y-6 text-center pt-8 pb-6">
-              <div className="flex items-center justify-center">
-                <CheckCircle2 className="w-16 h-16 text-green-500" />
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          minHeight: '100vh', 
+          padding: '16px' 
+        }}>
+          <div style={{
+            width: '100%',
+            maxWidth: '448px',
+            background: 'white',
+            borderRadius: '12px',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+            overflow: 'hidden'
+          }}>
+            {/* Header Section */}
+            <div style={{ 
+              padding: '32px 32px 24px 32px', 
+              textAlign: 'center' 
+            }}>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                marginBottom: '24px'
+              }}>
+                <CheckCircle2 style={{ 
+                  width: '64px', 
+                  height: '64px', 
+                  color: '#10b981' 
+                }} />
               </div>
-              <div className="space-y-2">
-                <CardTitle className="text-2xl font-bold text-slate-900">Check Your Email</CardTitle>
-                <CardDescription className="text-slate-600">
+              <div style={{ marginBottom: '8px' }}>
+                <h2 style={{ 
+                  fontSize: '28px', 
+                  fontWeight: '700', 
+                  color: '#1e293b',
+                  margin: 0,
+                  marginBottom: '8px'
+                }}>
+                  Check Your Email
+                </h2>
+                <p style={{ 
+                  color: '#64748b',
+                  fontSize: '16px',
+                  margin: 0,
+                  lineHeight: '1.5'
+                }}>
                   We've sent a verification link to your email address
-                </CardDescription>
+                </p>
               </div>
-            </CardHeader>
-            <CardContent className="px-8 pb-8">
-              <div className="text-center space-y-4 mb-6">
-                <p className="text-slate-600">
+            </div>
+            
+            {/* Content Section */}
+            <div style={{ padding: '0 32px 32px 32px' }}>
+              <div style={{ 
+                textAlign: 'center', 
+                marginBottom: '24px' 
+              }}>
+                <p style={{ 
+                  color: '#64748b',
+                  fontSize: '15px',
+                  margin: '0 0 16px 0',
+                  lineHeight: '1.5'
+                }}>
                   A verification email has been sent to:
                 </p>
-                <p className="font-semibold text-slate-900 bg-slate-50 px-4 py-2 rounded-md">{email}</p>
-                <p className="text-sm text-slate-500">
+                <div style={{ 
+                  fontWeight: '600', 
+                  color: '#1e293b', 
+                  background: '#f8fafc', 
+                  padding: '12px 16px', 
+                  borderRadius: '8px',
+                  fontSize: '15px',
+                  border: '1px solid #e2e8f0',
+                  wordBreak: 'break-all'
+                }}>
+                  {email}
+                </div>
+                <p style={{ 
+                  fontSize: '14px', 
+                  color: '#64748b',
+                  margin: '16px 0 0 0',
+                  lineHeight: '1.4'
+                }}>
                   Click the link in the email to complete your login. The link will expire in 1 hour.
                 </p>
               </div>
 
               {error && (
-                <Alert variant="destructive" className="mb-6 text-sm">
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
+                <div style={{ 
+                  background: '#fef2f2', 
+                  border: '1px solid #fecaca',
+                  borderRadius: '8px',
+                  padding: '12px 16px',
+                  marginBottom: '24px',
+                  color: '#dc2626',
+                  fontSize: '14px'
+                }}>
+                  {error}
+                </div>
               )}
 
-              <div className="space-y-3">
-                <Button
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <button
                   onClick={handleResendEmail}
                   disabled={isLoading}
-                  variant="outline"
-                  className="w-full h-12 border-slate-300 text-slate-700 hover:bg-slate-50 font-medium rounded-md"
+                  style={{
+                    width: '100%',
+                    height: '48px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    background: isLoading ? '#f8fafc' : 'white',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '8px',
+                    color: isLoading ? '#9ca3af' : '#374151',
+                    cursor: isLoading ? 'not-allowed' : 'pointer',
+                    fontSize: '15px',
+                    fontWeight: '500',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseOver={(e) => {
+                    if (!isLoading) {
+                      e.currentTarget.style.backgroundColor = '#f8fafc';
+                      e.currentTarget.style.borderColor = '#9ca3af';
+                    }
+                  }}
+                  onMouseOut={(e) => {
+                    if (!isLoading) {
+                      e.currentTarget.style.backgroundColor = 'white';
+                      e.currentTarget.style.borderColor = '#d1d5db';
+                    }
+                  }}
                 >
                   {isLoading ? (
                     <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      <Loader2 style={{ width: '16px', height: '16px', animation: 'spin 1s linear infinite' }} />
                       Resending...
                     </>
                   ) : (
                     <>
-                      <Mail className="w-4 h-4 mr-2" />
+                      <Mail style={{ width: '16px', height: '16px' }} />
                       Resend Verification Email
                     </>
                   )}
-                </Button>
+                </button>
                 
-                <Button
+                <button
                   onClick={() => {
                     setEmailSent(false);
                     setEmail("");
                     setError("");
                   }}
-                  variant="ghost"
-                  className="w-full h-12 text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-medium rounded-md"
+                  style={{
+                    width: '100%',
+                    height: '48px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    background: 'transparent',
+                    border: 'none',
+                    borderRadius: '8px',
+                    color: '#64748b',
+                    cursor: 'pointer',
+                    fontSize: '15px',
+                    fontWeight: '500',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.backgroundColor = '#f8fafc';
+                    e.currentTarget.style.color = '#1e293b';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = '#64748b';
+                  }}
                 >
-                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  <ArrowLeft style={{ width: '16px', height: '16px' }} />
                   Use Different Email
-                </Button>
+                </button>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       </div>
     );
