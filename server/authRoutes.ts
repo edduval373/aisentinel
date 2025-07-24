@@ -216,6 +216,59 @@ export function setupAuthRoutes(app: Express) {
     }
   });
 
+  // Development verification endpoint (handles email verification tokens in dev environment)
+  app.get('/api/dev/auth/verify', async (req, res) => {
+    try {
+      const token = req.query.token as string;
+      
+      if (!token) {
+        return res.status(400).json({ success: false, message: "No verification token provided" });
+      }
+
+      console.log("🔧 Development email verification attempt for token:", token.substring(0, 10) + "...");
+
+      const session = await authService.verifyEmailToken(token);
+      
+      if (!session) {
+        console.log("❌ Invalid or expired verification token");
+        return res.status(400).json({ success: false, message: "Invalid or expired verification token" });
+      }
+
+      console.log("✅ Valid session found:", session.email, "- Creating development session");
+
+      // Create development session token
+      const devSessionToken = `dev-session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      
+      // Store the session in database
+      const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+      
+      await storage.createUserSession({
+        userId: session.userId.toString(),
+        sessionToken: devSessionToken,
+        email: session.email,
+        companyId: session.companyId,
+        roleLevel: session.roleLevel,
+        expiresAt,
+      });
+
+      // Set session cookie for development
+      res.cookie('sessionToken', devSessionToken, {
+        httpOnly: true,
+        secure: false, // Development doesn't use HTTPS
+        sameSite: 'strict',
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      });
+
+      console.log("✅ Development verification successful, redirecting to chat");
+
+      // Redirect to chat interface
+      res.redirect('/chat');
+    } catch (error: any) {
+      console.error("Development verification error:", error);
+      res.status(500).json({ success: false, message: "An error occurred during verification" });
+    }
+  });
+
   // Development manual authentication endpoint (since verification was successful)
   app.post('/api/auth/dev-login', async (req, res) => {
     try {
