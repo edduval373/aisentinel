@@ -194,7 +194,13 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                 }}
               />
             </div>
-
+            <span style={{ 
+              color: 'white', 
+              fontSize: '18px', 
+              fontWeight: 600 
+            }}>
+              AI Sentinel
+            </span>
           </div>
           <Button
             variant="ghost"

@@ -87,9 +87,7 @@ function CompanyInfo() {
             height: '48px', 
             objectFit: 'contain',
             borderRadius: '8px',
-            border: '1px solid #e2e8f0',
-            filter: 'brightness(0) invert(1)',
-            backgroundColor: 'transparent'
+            border: '1px solid #e2e8f0'
           }}
         />
       ) : (
@@ -178,7 +176,7 @@ export default function Home() {
           minHeight: '56px'
         }}>
           {/* Left side - Logo and Company */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '96px' }}> {/* 1 inch = ~96px */}
             <Button
               variant="ghost"
               size="sm"
