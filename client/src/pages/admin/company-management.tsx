@@ -157,8 +157,20 @@ export default function CompanyManagement() {
   if (companiesLoading) {
     return (
       <AdminLayout title="Company Management" subtitle="Manage all companies (Super-user only)">
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          height: '256px' 
+        }}>
+          <div style={{ 
+            width: '128px', 
+            height: '128px', 
+            border: '2px solid #111827', 
+            borderTop: '2px solid transparent',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite'
+          }}></div>
         </div>
       </AdminLayout>
     );
@@ -184,7 +196,7 @@ export default function CompanyManagement() {
           <Dialog open={showAddCompany} onOpenChange={setShowAddCompany}>
             <DialogTrigger asChild>
               <Button>
-                <Plus className="w-4 h-4 mr-2" />
+                <Plus style={{ width: '16px', height: '16px', marginRight: '8px' }} />
                 Add Company
               </Button>
             </DialogTrigger>
@@ -314,53 +326,77 @@ export default function CompanyManagement() {
 
         {/* Companies List */}
         <Card>
-          <CardContent className="p-6">
+          <CardContent style={{ padding: '24px' }}>
             {companies.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
-                <Building className="w-12 h-12 mx-auto mb-2 text-gray-300" />
+              <div style={{ 
+                textAlign: 'center', 
+                padding: '32px 0', 
+                color: '#6b7280' 
+              }}>
+                <Building style={{ 
+                  width: '48px', 
+                  height: '48px', 
+                  margin: '0 auto 8px', 
+                  color: '#d1d5db' 
+                }} />
                 <p>No companies found</p>
-                <p className="text-sm">Add companies to manage your organization</p>
+                <p style={{ fontSize: '14px' }}>Add companies to manage your organization</p>
               </div>
             ) : (
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <div style={{ 
+                display: 'grid', 
+                gap: '16px', 
+                gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' 
+              }}>
                 {companies.map((company: Company) => (
-                  <Card key={company.id} className="border">
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center gap-3">
+                  <Card key={company.id} style={{ border: '1px solid #e5e7eb' }}>
+                    <CardContent style={{ padding: '16px' }}>
+                      <div style={{ 
+                        display: 'flex', 
+                        alignItems: 'flex-start', 
+                        justifyContent: 'space-between', 
+                        marginBottom: '16px' 
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                           {company.logo && (
                             <img 
                               src={company.logo} 
                               alt={company.name} 
-                              className="w-12 h-12 object-cover rounded-lg border"
+                              style={{
+                                width: '48px',
+                                height: '48px',
+                                objectFit: 'cover',
+                                borderRadius: '8px',
+                                border: '1px solid #e5e7eb'
+                              }}
                             />
                           )}
                           <div>
-                            <h3 className="font-semibold">{company.name}</h3>
-                            <p className="text-sm text-gray-600">{company.domain}</p>
-                            <p className="text-xs text-gray-500">Admin: {company.primaryAdminName}</p>
+                            <h3 style={{ fontWeight: '600', marginBottom: '4px' }}>{company.name}</h3>
+                            <p style={{ fontSize: '14px', color: '#4b5563', marginBottom: '2px' }}>{company.domain}</p>
+                            <p style={{ fontSize: '12px', color: '#6b7280' }}>Admin: {company.primaryAdminName}</p>
                           </div>
                         </div>
                         <Badge variant={company.isActive ? "default" : "secondary"}>
                           {company.isActive ? "Active" : "Inactive"}
                         </Badge>
                       </div>
-                      <div className="flex gap-2">
+                      <div style={{ display: 'flex', gap: '8px' }}>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => handleEditCompany(company)}
                         >
-                          <Edit2 className="w-4 h-4 mr-1" />
+                          <Edit2 style={{ width: '16px', height: '16px', marginRight: '4px' }} />
                           Edit
                         </Button>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => handleDeleteCompany(company.id)}
-                          className="text-red-500 hover:text-red-700"
+                          style={{ color: '#ef4444' }}
                         >
-                          <Trash2 className="w-4 h-4 mr-1" />
+                          <Trash2 style={{ width: '16px', height: '16px', marginRight: '4px' }} />
                           Delete
                         </Button>
                       </div>
@@ -380,12 +416,16 @@ export default function CompanyManagement() {
             companyForm.reset();
           }
         }}>
-          <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
+          <DialogContent style={{ 
+            maxWidth: '512px', 
+            maxHeight: '80vh', 
+            overflowY: 'auto' 
+          }}>
             <DialogHeader>
               <DialogTitle>Edit Company</DialogTitle>
             </DialogHeader>
             <Form {...companyForm}>
-              <form onSubmit={companyForm.handleSubmit(onSubmitCompany)} className="space-y-4">
+              <form onSubmit={companyForm.handleSubmit(onSubmitCompany)} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <FormField
                   control={companyForm.control}
                   name="name"
@@ -488,7 +528,7 @@ export default function CompanyManagement() {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="w-full" disabled={updateCompanyMutation.isPending}>
+                <Button type="submit" style={{ width: '100%' }} disabled={updateCompanyMutation.isPending}>
                   {updateCompanyMutation.isPending ? "Updating..." : "Update Company"}
                 </Button>
               </form>
