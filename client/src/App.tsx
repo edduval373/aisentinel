@@ -95,6 +95,18 @@ function Router() {
         }}
       </Route>
       
+      {/* Chat route - authenticated users only */}
+      <Route path="/chat">
+        {() => {
+          if (!isAuthenticated) {
+            console.log("[APP DEBUG] Chat access denied - not authenticated, redirecting to landing");
+            return <Landing />;
+          }
+          console.log("[APP DEBUG] Chat access granted - showing Home component");
+          return <CompanyProvider><Home /></CompanyProvider>;
+        }}
+      </Route>
+      
       {/* Main routes - show landing page if not authenticated */}
       <Route path="/">
         {() => {
@@ -124,7 +136,7 @@ function Router() {
             return <Landing />;
           }
           console.log("[APP DEBUG] Authenticated, showing home");
-          return <Home />;
+          return <CompanyProvider><Home /></CompanyProvider>;
         }}
       </Route>
       
