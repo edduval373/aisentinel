@@ -173,18 +173,23 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
           borderBottom: '1px solid #3b82f6' 
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <img 
-              src="/ai-sentinel-logo.png" 
-              alt="AI Sentinel" 
-              style={{ 
-                width: '32px', 
-                height: '32px', 
-                objectFit: 'contain',
-                flexShrink: 0,
-                filter: 'brightness(0) invert(1)',
-                background: 'transparent'
-              }}
-            />
+            <div style={{
+              width: '32px',
+              height: '32px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: 'transparent'
+            }}>
+              <svg width="24" height="24" viewBox="0 0 1024 1024" style={{ background: 'transparent' }}>
+                <g fill="white" fillOpacity="1">
+                  <path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"/>
+                  <path d="M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.4-111.6 40.7C369.2 344 352 382.7 352 424c0 6.5 0.3 13.1 0.9 19.5L390 492c5.1 6.2 10.9 11.6 17.4 16.1 27.4 19.4 61.2 30.9 97.6 30.9 36.4 0 70.2-11.5 97.6-30.9 6.5-4.5 12.3-9.9 17.4-16.1l37.1-48.5c0.6-6.4 0.9-13 0.9-19.5 0-41.3-17.2-80-48.4-107.3z"/>
+                  <circle cx="512" cy="424" r="88"/>
+                  <path d="M512 576c-88.4 0-160 71.6-160 160s71.6 160 160 160 160-71.6 160-160-71.6-160-160-160zm0 256c-53 0-96-43-96-96s43-96 96-96 96 43 96 96-43 96-96 96z"/>
+                </g>
+              </svg>
+            </div>
             <span style={{ 
               color: 'white', 
               fontSize: '18px', 
