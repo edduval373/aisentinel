@@ -89,8 +89,6 @@ function CompanyInfo() {
             borderRadius: '8px',
             border: '1px solid #e2e8f0',
             filter: 'brightness(0) invert(1)',
-            backgroundColor: 'transparent',
-            filter: 'brightness(0) invert(1)',
             backgroundColor: 'transparent'
           }}
         />

@@ -220,8 +220,14 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
             <button
               key={item.name}
               onClick={() => {
-                navigate(item.href);
-                if (window.innerWidth < 1024) onToggle(); // Close on mobile
+                if (item.current) {
+                  // If already on this page, just close the sidebar
+                  onToggle();
+                } else {
+                  // Navigate to the page
+                  navigate(item.href);
+                  if (window.innerWidth < 1024) onToggle(); // Close on mobile
+                }
               }}
               style={{
                 width: '100%',
