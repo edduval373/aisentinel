@@ -110,10 +110,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       console.log('Setting current session to:', session.id);
       setCurrentSession(session.id);
       queryClient.invalidateQueries({ queryKey: ['/api/chat/session'] });
-      toast({
-        title: "Success",
-        description: "New chat session created",
-      });
+      // Removed toast notification to prevent screen jumping
     },
     onError: (error) => {
       console.error('Session creation error:', error);
@@ -337,10 +334,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   const handleClearChat = () => {
     createSessionMutation.mutate();
     setMessages([]);
-    toast({
-      title: "Chat Cleared",
-      description: "Started a new chat session",
-    });
+    // Removed toast notification to prevent screen jumping
   };
 
   // Repeat last request - fill input field instead of submitting
