@@ -59,7 +59,9 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
     setExpandedSection(expandedSection === sectionId ? null : sectionId);
   };
 
-  const navigation: Array<{name: string, href: string, current: boolean}> = [];
+  const navigation: Array<{name: string, href: string, current: boolean}> = [
+    { name: "AI Chat", href: "/chat", current: location === "/chat" || location === "/" }
+  ];
 
   const superUserSections = [
     {
@@ -248,7 +250,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                 }
               }}
             >
-              <item.icon style={{ width: '20px', height: '20px' }} />
+              <MessageSquare style={{ width: '20px', height: '20px' }} />
               <span>{item.name}</span>
             </button>
           ))}

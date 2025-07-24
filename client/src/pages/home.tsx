@@ -87,7 +87,11 @@ function CompanyInfo() {
             height: '48px', 
             objectFit: 'contain',
             borderRadius: '8px',
-            border: '1px solid #e2e8f0'
+            border: '1px solid #e2e8f0',
+            filter: 'brightness(0) invert(1)',
+            backgroundColor: 'transparent',
+            filter: 'brightness(0) invert(1)',
+            backgroundColor: 'transparent'
           }}
         />
       ) : (
