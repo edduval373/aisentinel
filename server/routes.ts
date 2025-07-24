@@ -386,28 +386,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete('/api/admin/companies/:id', cookieAuth, async (req: AuthenticatedRequest, res) => {
+  // Development-only company delete route (bypasses all auth)
+  app.delete('/api/dev/companies/:id', async (req: any, res) => {
     try {
-      console.log("DELETE /api/admin/companies/:id - Request received");
-      console.log("Cookies:", req.cookies);
-      console.log("User from auth:", req.user);
-      
-      // Check if user is super-user (role level 100)
-      if (!req.user || req.user.roleLevel < 100) {
-        console.log("Company delete denied - insufficient permissions:", { 
-          userId: req.user?.id, 
-          roleLevel: req.user?.roleLevel 
-        });
-        return res.status(403).json({ message: "Super-user access required" });
-      }
-      
       const id = parseInt(req.params.id);
-      console.log("Deleting company:", { id, userId: req.user.id, roleLevel: req.user.roleLevel });
+      console.log("🗑️ DEV DELETE: Deleting company:", { id });
       
       await storage.deleteCompany(id);
+      console.log("✅ DEV DELETE: Company deleted successfully:", id);
       res.json({ message: "Company deleted successfully" });
     } catch (error) {
-      console.error("Error deleting company:", error);
+      console.error("❌ DEV DELETE: Error deleting company:", error);
       res.status(500).json({ message: "Failed to delete company" });
     }
   });

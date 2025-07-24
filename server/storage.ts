@@ -313,7 +313,37 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteCompany(id: number): Promise<void> {
+    // Delete all dependent records first to avoid foreign key constraint violations
+    console.log("🗑️ Deleting company dependencies for company ID:", id);
+    
+    // Delete AI models
+    await db.delete(aiModels).where(eq(aiModels.companyId, id));
+    console.log("✅ Deleted AI models for company:", id);
+    
+    // Delete activity types
+    await db.delete(activityTypes).where(eq(activityTypes.companyId, id));
+    console.log("✅ Deleted activity types for company:", id);
+    
+    // Delete chat sessions and messages
+    await db.delete(chatMessages).where(
+      inArray(chatMessages.sessionId, 
+        db.select({ id: chatSessions.id }).from(chatSessions).where(eq(chatSessions.companyId, id))
+      )
+    );
+    await db.delete(chatSessions).where(eq(chatSessions.companyId, id));
+    console.log("✅ Deleted chat sessions and messages for company:", id);
+    
+    // Delete user activities
+    await db.delete(userActivities).where(eq(userActivities.companyId, id));
+    console.log("✅ Deleted user activities for company:", id);
+    
+    // Delete model fusion configs
+    await db.delete(modelFusionConfigs).where(eq(modelFusionConfigs.companyId, id));
+    console.log("✅ Deleted model fusion configs for company:", id);
+    
+    // Finally delete the company
     await db.delete(companies).where(eq(companies.id, id));
+    console.log("✅ Company deleted successfully:", id);
   }
 
   async getCompanyById(id: number): Promise<Company | undefined> {
