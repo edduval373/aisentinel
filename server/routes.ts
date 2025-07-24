@@ -388,6 +388,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete('/api/admin/companies/:id', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
+      console.log("DELETE /api/admin/companies/:id - Request received");
+      console.log("Cookies:", req.cookies);
+      console.log("User from auth:", req.user);
+      
       // Check if user is super-user (role level 100)
       if (!req.user || req.user.roleLevel < 100) {
         console.log("Company delete denied - insufficient permissions:", { 

@@ -13,16 +13,20 @@ export interface AuthenticatedRequest extends Request {
 export const cookieAuth = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const sessionToken = req.cookies?.sessionToken;
+    console.log('CookieAuth: sessionToken =', sessionToken ? sessionToken.substring(0, 30) + '...' : 'missing');
     
     if (!sessionToken) {
-      return res.status(401).json({ message: 'No session token provided', requiresAuth: true });
+      console.log('CookieAuth: No session token - returning 401');
+      return res.status(401).json({ message: 'Unauthorized' });
     }
 
     const session = await authService.verifySession(sessionToken);
+    console.log('CookieAuth: session verification result =', !!session, session ? `roleLevel: ${session.roleLevel}` : 'null');
     
     if (!session) {
+      console.log('CookieAuth: Invalid/expired session - clearing cookie and returning 401');
       res.clearCookie('sessionToken');
-      return res.status(401).json({ message: 'Invalid or expired session', requiresAuth: true });
+      return res.status(401).json({ message: 'Unauthorized' });
     }
 
     req.user = {
@@ -32,11 +36,12 @@ export const cookieAuth = async (req: AuthenticatedRequest, res: Response, next:
       roleLevel: session.roleLevel,
     };
 
+    console.log('CookieAuth: Authentication successful -', req.user.email, 'roleLevel:', req.user.roleLevel);
     next();
   } catch (error) {
-    console.error('Authentication error:', error);
+    console.error('CookieAuth: Authentication error:', error);
     res.clearCookie('sessionToken');
-    return res.status(401).json({ message: 'Authentication failed', requiresAuth: true });
+    return res.status(401).json({ message: 'Unauthorized' });
   }
 };
 

@@ -28,6 +28,7 @@ import CreateModels from "@/pages/admin/create-models.tsx";
 import ModelFusion from "@/pages/admin/model-fusion.tsx";
 import SetupApiKeys from "@/pages/admin/setup-api-keys.tsx";
 import CompanySetup from "@/pages/company-setup.tsx";
+import RefreshAuth from "@/pages/refresh-auth.tsx";
 import NotFound from "@/pages/not-found.tsx";
 
 
@@ -287,6 +288,9 @@ function Router() {
           </RoleGuard>
         )}
       </Route>
+      
+      {/* Refresh authentication route */}
+      <Route path="/refresh-auth" component={RefreshAuth} />
       
       {/* Fallback route */}
       <Route path="*" component={NotFound} />
