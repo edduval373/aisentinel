@@ -169,7 +169,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
           justifyContent: 'space-between', 
           height: '64px', 
           padding: '0 16px',
-          backgroundColor: '#1e40af', 
+          backgroundColor: '#1e3a8a', 
           borderBottom: '1px solid #3b82f6' 
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
