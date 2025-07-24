@@ -15,17 +15,36 @@ export default function AdminLayout({ children, title, subtitle }: AdminLayoutPr
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50">
+    <div style={{ 
+      display: 'flex', 
+      height: '100vh', 
+      overflow: 'hidden', 
+      backgroundColor: '#f8fafc' 
+    }}>
       <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
       
-      <div className="flex-1 flex flex-col">
+      <div style={{ 
+        flex: 1, 
+        display: 'flex', 
+        flexDirection: 'column' 
+      }}>
         {/* Top Header with Menu Button */}
-        <div className="bg-white border-b border-slate-200 px-4 py-3 flex items-center">
+        <div style={{ 
+          backgroundColor: 'white', 
+          borderBottom: '1px solid #e2e8f0', 
+          padding: '12px 16px', 
+          display: 'flex', 
+          alignItems: 'center',
+          gap: '12px'
+        }}>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setSidebarOpen(true)}
-            className="text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+            style={{ 
+              color: '#64748b',
+              padding: '8px'
+            }}
           >
             <img 
               src="/ai-sentinel-logo.png" 
@@ -39,13 +58,26 @@ export default function AdminLayout({ children, title, subtitle }: AdminLayoutPr
             />
           </Button>
           <div>
-            <h1 className="text-lg font-semibold text-slate-800">{title}</h1>
-            {subtitle && <p className="text-sm text-slate-600">{subtitle}</p>}
+            <h1 style={{ 
+              fontSize: '18px', 
+              fontWeight: '600', 
+              color: '#1e293b',
+              margin: 0 
+            }}>{title}</h1>
+            {subtitle && <p style={{ 
+              fontSize: '14px', 
+              color: '#64748b',
+              margin: 0 
+            }}>{subtitle}</p>}
           </div>
         </div>
         
         {/* Main Content */}
-        <div className="flex-1 overflow-y-auto">
+        <div style={{ 
+          flex: 1, 
+          overflowY: 'auto',
+          padding: '24px'
+        }}>
           {children}
         </div>
       </div>

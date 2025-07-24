@@ -328,20 +328,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Company Management routes (Super-user only)
-  app.post('/api/admin/companies', isAuthenticated, async (req: any, res) => {
+  app.post('/api/admin/companies', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
-      const user = await storage.getUser(req.user.claims.sub);
-      console.log("User attempting to create company:", { 
-        userId: req.user?.claims?.sub, 
-        userRole: user?.role,
-        requestBody: req.body 
-      });
-
-      const userRoleLevel = user?.roleLevel || 1;
-      if (userRoleLevel < 100) { // Must be super-user (100)
+      // Check if user is super-user (role level 100)
+      if (!req.user || req.user.roleLevel < 100) {
+        console.log("Company create denied - insufficient permissions:", { 
+          userId: req.user?.id, 
+          roleLevel: req.user?.roleLevel 
+        });
         return res.status(403).json({ message: "Super-user access required" });
       }
 
+      console.log("Creating company:", { userId: req.user.id, roleLevel: req.user.roleLevel });
       const company = await storage.createCompany(req.body);
       console.log("Company created successfully:", company);
       res.json(company);
@@ -366,14 +364,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch('/api/admin/companies/:id', isAuthenticated, async (req: any, res) => {
+  app.patch('/api/admin/companies/:id', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
-      const user = await storage.getUser(req.user.claims.sub);
-      const userRoleLevel = user?.roleLevel || 1;
-      if (userRoleLevel < 100) { // Must be super-user (100)
+      // Check if user is super-user (role level 100)
+      if (!req.user || req.user.roleLevel < 100) {
+        console.log("Company update denied - insufficient permissions:", { 
+          userId: req.user?.id, 
+          roleLevel: req.user?.roleLevel 
+        });
         return res.status(403).json({ message: "Super-user access required" });
       }
+      
       const id = parseInt(req.params.id);
+      console.log("Updating company:", { id, userId: req.user.id, roleLevel: req.user.roleLevel });
+      
       const company = await storage.updateCompany(id, req.body);
       res.json(company);
     } catch (error) {
@@ -382,14 +386,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete('/api/admin/companies/:id', isAuthenticated, async (req: any, res) => {
+  app.delete('/api/admin/companies/:id', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
-      const user = await storage.getUser(req.user.claims.sub);
-      const userRoleLevel = user?.roleLevel || 1;
-      if (userRoleLevel < 100) { // Must be super-user (100)
+      // Check if user is super-user (role level 100)
+      if (!req.user || req.user.roleLevel < 100) {
+        console.log("Company delete denied - insufficient permissions:", { 
+          userId: req.user?.id, 
+          roleLevel: req.user?.roleLevel 
+        });
         return res.status(403).json({ message: "Super-user access required" });
       }
+      
       const id = parseInt(req.params.id);
+      console.log("Deleting company:", { id, userId: req.user.id, roleLevel: req.user.roleLevel });
+      
       await storage.deleteCompany(id);
       res.json({ message: "Company deleted successfully" });
     } catch (error) {
