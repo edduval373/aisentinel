@@ -18,6 +18,14 @@ import { Bot, Plus, Edit2, Trash2, Key, Settings, Eye, EyeOff, TestTube } from "
 import AdminLayout from "@/components/layout/AdminLayout";
 import { apiRequest } from "@/lib/queryClient";
 
+// Add spinning AI Sentinel logo keyframes
+const spinKeyframes = `
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+`;
+
 const modelSchema = z.object({
   name: z.string().min(1, "Model name is required"),
   provider: z.string().min(1, "Provider is required"),
@@ -305,15 +313,18 @@ export default function CreateModels() {
   if (modelsLoading) {
     return (
       <AdminLayout title="Create AI Models" subtitle="Create and manage custom AI models from scratch">
+        <style>{spinKeyframes}</style>
         <div style={{ 
           display: 'flex', 
+          flexDirection: 'column',
           alignItems: 'center', 
           justifyContent: 'center', 
-          height: '320px' 
+          height: '400px',
+          gap: '24px'
         }}>
           <div style={{
-            width: '64px',
-            height: '64px',
+            width: '80px',
+            height: '80px',
             animation: 'spin 2s linear infinite'
           }}>
             <img 
@@ -323,9 +334,28 @@ export default function CreateModels() {
                 width: '100%', 
                 height: '100%', 
                 objectFit: 'contain',
-                filter: 'brightness(1.1) saturate(1.3)'
+                filter: 'brightness(1.2) saturate(1.4) contrast(1.1)'
               }} 
             />
+          </div>
+          <div style={{
+            textAlign: 'center'
+          }}>
+            <h3 style={{
+              fontSize: '20px',
+              fontWeight: '600',
+              color: '#1e293b',
+              margin: '0 0 8px 0'
+            }}>
+              Loading AI Models
+            </h3>
+            <p style={{
+              fontSize: '16px',
+              color: '#64748b',
+              margin: 0
+            }}>
+              Preparing your custom model configuration...
+            </p>
           </div>
         </div>
       </AdminLayout>
@@ -688,11 +718,39 @@ export default function CreateModels() {
                       </div>
                     </TabsContent>
                   </Tabs>
-                  <div className="flex justify-end space-x-2 pt-4">
-                    <Button type="button" variant="outline" onClick={() => setShowCreateDialog(false)}>
+                  <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'flex-end', 
+                    gap: '12px', 
+                    paddingTop: '24px',
+                    borderTop: '1px solid #e2e8f0'
+                  }}>
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      onClick={() => setShowCreateDialog(false)}
+                      style={{
+                        padding: '10px 20px',
+                        borderRadius: '8px',
+                        border: '1px solid #d1d5db',
+                        background: 'white',
+                        color: '#374151'
+                      }}
+                    >
                       Cancel
                     </Button>
-                    <Button type="submit" disabled={createModelMutation.isPending}>
+                    <Button 
+                      type="submit" 
+                      disabled={createModelMutation.isPending}
+                      style={{
+                        padding: '10px 20px',
+                        borderRadius: '8px',
+                        background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+                        color: 'white',
+                        border: 'none',
+                        fontWeight: '600'
+                      }}
+                    >
                       {createModelMutation.isPending ? "Creating..." : "Create Model"}
                     </Button>
                   </div>
@@ -835,30 +893,23 @@ export default function CreateModels() {
                           {showApiKeys[model.id] ? model.apiKey : maskApiKey(model.apiKey || '')}
                         </span>
                         <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => toggleApiKeyVisibility(model.id)}
-                        className="p-0 h-auto"
-                      >
-                        {showApiKeys[model.id] ? (
-                          <EyeOff className="w-3 h-3" />
-                        ) : (
-                          <Eye className="w-3 h-3" />
-                        )}
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          padding: '4px',
-                          cursor: 'pointer',
-                          borderRadius: '4px'
-                        }}
-                      >
-                        {showApiKeys[model.id] ? (
-                          <EyeOff style={{ width: '14px', height: '14px', color: '#64748b' }} />
-                        ) : (
-                          <Eye style={{ width: '14px', height: '14px', color: '#64748b' }} />
-                        )}
-                      </Button>
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => toggleApiKeyVisibility(model.id)}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            padding: '4px',
+                            cursor: 'pointer',
+                            borderRadius: '4px'
+                          }}
+                        >
+                          {showApiKeys[model.id] ? (
+                            <EyeOff style={{ width: '14px', height: '14px', color: '#64748b' }} />
+                          ) : (
+                            <Eye style={{ width: '14px', height: '14px', color: '#64748b' }} />
+                          )}
+                        </Button>
                       </div>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -895,51 +946,133 @@ export default function CreateModels() {
                   </div>
                 </div>
                 {model.description && (
-                  <p className="text-sm text-gray-600 line-clamp-2">{model.description}</p>
+                  <div style={{
+                    background: '#f0f9ff',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    border: '1px solid #bae6fd'
+                  }}>
+                    <p style={{ 
+                      fontSize: '14px', 
+                      color: '#0f172a', 
+                      margin: 0,
+                      lineHeight: '1.5'
+                    }}>
+                      {model.description}
+                    </p>
+                  </div>
                 )}
                 {model.capabilities && model.capabilities.length > 0 && (
-                  <div className="flex flex-wrap gap-1">
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                     {model.capabilities.slice(0, 3).map((capability) => (
-                      <Badge key={capability} variant="outline" className="text-xs">
+                      <Badge 
+                        key={capability} 
+                        variant="outline" 
+                        style={{
+                          fontSize: '11px',
+                          padding: '4px 8px',
+                          background: '#ffffff',
+                          border: '1px solid #d1d5db',
+                          color: '#374151',
+                          borderRadius: '6px'
+                        }}
+                      >
                         {capability}
                       </Badge>
                     ))}
                     {model.capabilities.length > 3 && (
-                      <Badge variant="outline" className="text-xs">
+                      <Badge 
+                        variant="outline" 
+                        style={{
+                          fontSize: '11px',
+                          padding: '4px 8px',
+                          background: '#ffffff',
+                          border: '1px solid #d1d5db',
+                          color: '#374151',
+                          borderRadius: '6px'
+                        }}
+                      >
                         +{model.capabilities.length - 3} more
                       </Badge>
                     )}
                   </div>
                 )}
-                <div className="flex justify-between pt-2 border-t">
+                <div style={{ 
+                  display: 'flex', 
+                  gap: '8px', 
+                  paddingTop: '16px',
+                  borderTop: '1px solid #e2e8f0'
+                }}>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => handleTestConfig(model.id)}
                     disabled={testConfigMutation.isPending}
+                    style={{
+                      flex: 1,
+                      background: '#f0f9ff',
+                      border: '1px solid #0ea5e9',
+                      color: '#0369a1',
+                      padding: '8px 12px',
+                      borderRadius: '8px',
+                      fontSize: '13px',
+                      fontWeight: '500',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px',
+                      transition: 'all 0.2s ease'
+                    }}
                   >
-                    <TestTube className="w-3 h-3 mr-1" />
+                    <TestTube style={{ width: '14px', height: '14px' }} />
                     Test
                   </Button>
-                  <div className="flex space-x-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleEditModel(model)}
-                    >
-                      <Edit2 className="w-3 h-3 mr-1" />
-                      Edit
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDeleteModel(model.id)}
-                      className="text-red-600 hover:text-red-700"
-                    >
-                      <Trash2 className="w-3 h-3 mr-1" />
-                      Delete
-                    </Button>
-                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleEditModel(model)}
+                    style={{
+                      flex: 1,
+                      background: '#f0fdf4',
+                      border: '1px solid #22c55e',
+                      color: '#15803d',
+                      padding: '8px 12px',
+                      borderRadius: '8px',
+                      fontSize: '13px',
+                      fontWeight: '500',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    <Edit2 style={{ width: '14px', height: '14px' }} />
+                    Edit
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleDeleteModel(model.id)}
+                    style={{
+                      flex: 1,
+                      background: '#fef2f2',
+                      border: '1px solid #ef4444',
+                      color: '#dc2626',
+                      padding: '8px 12px',
+                      borderRadius: '8px',
+                      fontSize: '13px',
+                      fontWeight: '500',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    <Trash2 style={{ width: '14px', height: '14px' }} />
+                    Delete
+                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -948,22 +1081,76 @@ export default function CreateModels() {
 
         {/* Edit Dialog */}
         <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogContent style={{
+            maxWidth: '900px',
+            maxHeight: '90vh',
+            overflowY: 'auto',
+            background: 'white',
+            borderRadius: '16px',
+            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.15)'
+          }}>
             <DialogHeader>
-              <DialogTitle>Edit AI Model</DialogTitle>
+              <DialogTitle style={{ 
+                fontSize: '24px', 
+                fontWeight: '700', 
+                color: '#1e293b',
+                marginBottom: '8px'
+              }}>
+                Edit AI Model
+              </DialogTitle>
             </DialogHeader>
             <Form {...modelForm}>
-              <form onSubmit={modelForm.handleSubmit(onSubmitModel)} className="space-y-4">
-                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                  <TabsList className="grid w-full grid-cols-4">
-                    <TabsTrigger value="basic">Basic Info</TabsTrigger>
-                    <TabsTrigger value="api">API Config</TabsTrigger>
-                    <TabsTrigger value="settings">Settings</TabsTrigger>
-                    <TabsTrigger value="advanced">Advanced</TabsTrigger>
+              <form onSubmit={modelForm.handleSubmit(onSubmitModel)} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                <Tabs value={activeTab} onValueChange={setActiveTab} style={{ width: '100%' }}>
+                  <TabsList style={{
+                    display: 'grid',
+                    width: '100%',
+                    gridTemplateColumns: 'repeat(4, 1fr)',
+                    background: '#f8fafc',
+                    padding: '4px',
+                    borderRadius: '12px',
+                    border: '1px solid #e2e8f0'
+                  }}>
+                    <TabsTrigger value="basic" style={{
+                      padding: '12px 16px',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      transition: 'all 0.2s ease'
+                    }}>
+                      Basic Info
+                    </TabsTrigger>
+                    <TabsTrigger value="api" style={{
+                      padding: '12px 16px',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      transition: 'all 0.2s ease'
+                    }}>
+                      API Config
+                    </TabsTrigger>
+                    <TabsTrigger value="settings" style={{
+                      padding: '12px 16px',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      transition: 'all 0.2s ease'
+                    }}>
+                      Settings
+                    </TabsTrigger>
+                    <TabsTrigger value="advanced" style={{
+                      padding: '12px 16px',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      transition: 'all 0.2s ease'
+                    }}>
+                      Advanced
+                    </TabsTrigger>
                   </TabsList>
 
-                  <TabsContent value="basic" className="space-y-4 mt-4">
-                    <div className="grid grid-cols-2 gap-4">
+                  <TabsContent value="basic" style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '20px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
                       <FormField
                         control={modelForm.control}
                         name="name"
@@ -1050,7 +1237,7 @@ export default function CreateModels() {
                       control={modelForm.control}
                       name="isEnabled"
                       render={({ field }) => (
-                        <FormItem className="flex items-center space-x-2">
+                        <FormItem style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                           <FormControl>
                             <Switch
                               checked={field.value}
@@ -1063,10 +1250,24 @@ export default function CreateModels() {
                     />
                   </TabsContent>
 
-                  <TabsContent value="api" className="space-y-4 mt-4">
-                    <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                      <h3 className="font-semibold text-blue-900 mb-2">API Authentication & Communication</h3>
-                      <p className="text-sm text-blue-700">Configure how your application communicates with the AI model API.</p>
+                  <TabsContent value="api" style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '20px' }}>
+                    <div style={{
+                      background: '#eff6ff',
+                      padding: '16px',
+                      borderRadius: '12px',
+                      border: '1px solid #bfdbfe'
+                    }}>
+                      <h3 style={{ 
+                        fontWeight: '600', 
+                        color: '#1e3a8a', 
+                        marginBottom: '8px',
+                        fontSize: '16px'
+                      }}>
+                        API Authentication & Communication
+                      </h3>
+                      <p style={{ fontSize: '14px', color: '#1d4ed8', margin: 0 }}>
+                        Configure how your application communicates with the AI model API.
+                      </p>
                     </div>
                     <FormField
                       control={modelForm.control}
@@ -1095,8 +1296,13 @@ export default function CreateModels() {
                       )}
                     />
                     {/* Authentication and headers are now handled automatically */}
-                    <div className="bg-green-50 p-3 rounded-lg border border-green-200">
-                      <p className="text-sm text-green-700">
+                    <div style={{
+                      background: '#f0fdf4',
+                      padding: '12px',
+                      borderRadius: '8px', 
+                      border: '1px solid #bbf7d0'
+                    }}>
+                      <p style={{ fontSize: '14px', color: '#15803d', margin: 0 }}>
                         ✓ Authentication method, request headers, and organization ID are configured automatically
                       </p>
                     </div>
