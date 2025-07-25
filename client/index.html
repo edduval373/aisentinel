@@ -14,7 +14,7 @@
       <!-- Loading state while React loads -->
       <div style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); padding-bottom: 10vh;">
         <div style="text-align: center;">
-          <div style="width: 64px; height: 64px; animation: spin 2s linear infinite; margin: 0 auto 1.5rem;">
+          <div class="loading-spinner" style="width: 64px; height: 64px; animation: spin 2s linear infinite; margin: 0 auto 1.5rem;">
             <img src="/ai-sentinel-logo.png" alt="AI Sentinel" style="width: 100%; height: 100%; object-fit: contain; filter: brightness(1.1) saturate(1.3) contrast(1.2);">
           </div>
           <h1 style="font-size: 2rem; font-weight: bold; color: #1e293b; margin-bottom: 0.5rem;">AI Sentinel</h1>
@@ -22,9 +22,42 @@
         </div>
       </div>
       <style>
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+        body {
+          margin: 0;
+          padding: 0;
+          overflow: hidden;
+        }
         @keyframes spin {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
+        }
+        /* Prevent any layout shifts during React mounting */
+        #root {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+        }
+        /* Prevent image resizing during React mounting */
+        img {
+          max-width: none !important;
+          max-height: none !important;
+        }
+        /* Prevent any transitions during initial load */
+        *, *::before, *::after {
+          transition: none !important;
+          animation-duration: 0.01ms !important;
+          animation-delay: -0.01ms !important;
+        }
+        /* Exception: Keep our loading spinner animation */
+        .loading-spinner {
+          animation-duration: 2s !important;
         }
       </style>
     </div>
