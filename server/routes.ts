@@ -361,13 +361,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/admin/companies', isAuthenticated, async (req: any, res) => {
+  app.get('/api/admin/companies', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
-      const user = await storage.getUser(req.user.claims.sub);
-      const userRoleLevel = user?.roleLevel || 1;
-      if (userRoleLevel < 100) { // Must be super-user (100)
+      // Check if user is super-user (role level 100)
+      if (!req.user || req.user.roleLevel < 100) {
+        console.log("Company fetch denied - insufficient permissions:", { 
+          userId: req.user?.id, 
+          roleLevel: req.user?.roleLevel 
+        });
         return res.status(403).json({ message: "Super-user access required" });
       }
+      
+      console.log("Fetching companies for super-user:", { userId: req.user.id, roleLevel: req.user.roleLevel });
       const companies = await storage.getCompanies();
       res.json(companies);
     } catch (error) {
