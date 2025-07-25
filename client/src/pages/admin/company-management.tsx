@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Building, Plus, Edit2, Trash2, UserPlus, Mail } from "lucide-react";
@@ -144,6 +144,9 @@ export default function CompanyManagement() {
   };
 
   const handleEditCompany = (company: Company) => {
+    console.log("🔧 handleEditCompany called for:", company.name);
+    console.log("Current showEditCompany state:", showEditCompany);
+    
     setEditingCompany(company);
     companyForm.reset({
       name: company.name,
@@ -155,9 +158,13 @@ export default function CompanyManagement() {
       isActive: company.isActive,
     });
     setShowEditCompany(true);
+    
+    console.log("After setShowEditCompany(true), editingCompany:", company.name);
   };
 
   const handleDeleteClick = (company: Company) => {
+    console.log("🗑️ handleDeleteClick called for:", company.name);
+    console.log("Setting delete dialog for company:", company.id);
     setDeleteConfirmDialog({ isOpen: true, company });
   };
 
@@ -238,6 +245,9 @@ export default function CompanyManagement() {
             }}>
               <DialogHeader>
                 <DialogTitle>Add New Company</DialogTitle>
+                <DialogDescription>
+                  Create a new company with administrator details and configuration.
+                </DialogDescription>
               </DialogHeader>
               <Form {...companyForm}>
                 <form onSubmit={companyForm.handleSubmit(onSubmitCompany)} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -416,7 +426,10 @@ export default function CompanyManagement() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => handleEditCompany(company)}
+                          onClick={() => {
+                            console.log("Edit button clicked for company:", company.id, company.name);
+                            handleEditCompany(company);
+                          }}
                         >
                           <Edit2 style={{ width: '16px', height: '16px', marginRight: '4px' }} />
                           Edit
@@ -424,7 +437,10 @@ export default function CompanyManagement() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => handleDeleteClick(company)}
+                          onClick={() => {
+                            console.log("Delete button clicked for company:", company.id, company.name);
+                            handleDeleteClick(company);
+                          }}
                           style={{ color: '#ef4444' }}
                         >
                           <Trash2 style={{ width: '16px', height: '16px', marginRight: '4px' }} />
@@ -454,6 +470,9 @@ export default function CompanyManagement() {
           }}>
             <DialogHeader>
               <DialogTitle>Edit Company</DialogTitle>
+              <DialogDescription>
+                Update company information and administrator details.
+              </DialogDescription>
             </DialogHeader>
             <Form {...companyForm}>
               <form onSubmit={companyForm.handleSubmit(onSubmitCompany)} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -576,6 +595,9 @@ export default function CompanyManagement() {
           <DialogContent style={{ maxWidth: '400px' }}>
             <DialogHeader>
               <DialogTitle style={{ color: '#dc2626' }}>Delete Company</DialogTitle>
+              <DialogDescription>
+                This action cannot be undone. All company data will be permanently removed.
+              </DialogDescription>
             </DialogHeader>
             <div style={{ padding: '16px 0' }}>
               <p style={{ margin: 0, lineHeight: '1.5' }}>
