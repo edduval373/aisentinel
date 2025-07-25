@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Key, Shield, Zap, Globe, Save, TestTube, AlertCircle } from "lucide-react";
+import { Key, Shield, Zap, Globe, Save, TestTube, AlertCircle, Check, X } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
 import type { AiModel } from "@shared/schema";
 
@@ -15,6 +15,7 @@ export default function SetupApiKeys() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isTestingConnection, setIsTestingConnection] = useState<string | null>(null);
+  const [testResults, setTestResults] = useState<Record<string, 'success' | 'error' | null>>({});
   const [apiKeys, setApiKeys] = useState<Record<string, string>>({});
 
   // Fetch AI models to get current API keys
@@ -125,6 +126,8 @@ export default function SetupApiKeys() {
 
   const handleApiKeyChange = (provider: string, value: string) => {
     setApiKeys(prev => ({ ...prev, [provider]: value }));
+    // Reset test result when API key changes
+    setTestResults(prev => ({ ...prev, [provider]: null }));
   };
 
   const handleSaveApiKey = (provider: string) => {
@@ -146,6 +149,7 @@ export default function SetupApiKeys() {
     
     if (!apiKey || apiKey.startsWith('placeholder-') || apiKey.includes('$')) {
       console.log('Invalid API key detected');
+      setTestResults(prev => ({ ...prev, [provider]: 'error' }));
       toast({
         title: "Invalid API Key",
         description: "Please enter a real API key (not placeholder or environment variable)",
@@ -162,12 +166,14 @@ export default function SetupApiKeys() {
       const response = await apiRequest(`/api/admin/test-api-key`, "POST", { provider, apiKey });
       console.log('Test connection response:', response);
       
+      setTestResults(prev => ({ ...prev, [provider]: 'success' }));
       toast({
         title: "Test Successful",
         description: `${provider.charAt(0).toUpperCase() + provider.slice(1)} API key format is valid`,
       });
     } catch (error: any) {
       console.error('Test connection error:', error);
+      setTestResults(prev => ({ ...prev, [provider]: 'error' }));
       
       // More detailed error handling
       let errorMessage = "Connection test failed";
@@ -373,8 +379,8 @@ export default function SetupApiKeys() {
                       disabled={isTestingConnection === provider.id || isPlaceholder}
                       style={{
                         backgroundColor: 'transparent',
-                        color: '#1e3a8a',
-                        border: '1px solid #1e3a8a',
+                        color: testResults[provider.id] === 'success' ? '#16a34a' : testResults[provider.id] === 'error' ? '#dc2626' : '#1e3a8a',
+                        border: `1px solid ${testResults[provider.id] === 'success' ? '#16a34a' : testResults[provider.id] === 'error' ? '#dc2626' : '#1e3a8a'}`,
                         borderRadius: '6px',
                         padding: '6px 12px',
                         display: 'flex',
@@ -387,7 +393,15 @@ export default function SetupApiKeys() {
                         marginTop: '24px'
                       }}
                     >
-                      <TestTube style={{ width: '14px', height: '14px' }} />
+                      {isTestingConnection === provider.id ? (
+                        <TestTube style={{ width: '14px', height: '14px' }} />
+                      ) : testResults[provider.id] === 'success' ? (
+                        <Check style={{ width: '14px', height: '14px' }} />
+                      ) : testResults[provider.id] === 'error' ? (
+                        <X style={{ width: '14px', height: '14px' }} />
+                      ) : (
+                        <TestTube style={{ width: '14px', height: '14px' }} />
+                      )}
                       {isTestingConnection === provider.id ? "Testing..." : "Test Connection"}
                     </button>
                   </div>
