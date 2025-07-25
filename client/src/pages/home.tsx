@@ -18,6 +18,112 @@ interface Company {
   description?: string;
 }
 
+function CompanyInfoLarge() {
+  const { user } = useAuth();
+  
+  // Check if we're in demo mode (only when explicitly accessing /demo or role level 0)
+  const isDemoMode = window.location.pathname === '/demo';
+  const userRoleLevel = user?.roleLevel || 1;
+  const isLimitedAccess = userRoleLevel === 0;
+  
+  const { data: currentCompany } = useQuery<Company>({
+    queryKey: ['/api/user/current-company'],
+  });
+
+  if (!currentCompany) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
+        <div style={{ 
+          width: '80px', 
+          height: '80px', 
+          backgroundColor: '#3b82f6', 
+          borderRadius: '12px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'white',
+          fontSize: '24px',
+          fontWeight: 700
+        }}>
+          DEMO
+        </div>
+        <div>
+          <div style={{ fontSize: '36px', fontWeight: 700, color: '#1e293b', textAlign: 'center' }}>
+            {isLimitedAccess ? 'Demo Company' : 'Loading...'}
+          </div>
+          {isLimitedAccess && (
+            <div style={{ fontSize: '16px', color: '#3b82f6', fontWeight: 500, textAlign: 'center', marginTop: '8px' }}>
+              Using AI Sentinel API Keys
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
+      {isLimitedAccess ? (
+        <div style={{ 
+          width: '80px', 
+          height: '80px', 
+          backgroundColor: '#3b82f6', 
+          borderRadius: '12px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'white',
+          fontSize: '24px',
+          fontWeight: 700
+        }}>
+          DEMO
+        </div>
+      ) : currentCompany.logo ? (
+        <img 
+          src={currentCompany.logo} 
+          alt={currentCompany.name}
+          style={{ 
+            width: '80px', 
+            height: '80px', 
+            objectFit: 'contain',
+            borderRadius: '12px',
+            border: '2px solid #e2e8f0'
+          }}
+        />
+      ) : (
+        <div style={{ 
+          width: '80px', 
+          height: '80px', 
+          backgroundColor: '#3b82f6', 
+          borderRadius: '12px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'white',
+          fontSize: '32px',
+          fontWeight: 700
+        }}>
+          {currentCompany.name.charAt(0).toUpperCase()}
+        </div>
+      )}
+      <div>
+        <div style={{ fontSize: '36px', fontWeight: 700, color: '#1e293b', textAlign: 'center' }}>
+          {isLimitedAccess ? 'Demo Company' : currentCompany.name}
+        </div>
+        {isLimitedAccess ? (
+          <div style={{ fontSize: '16px', color: '#3b82f6', fontWeight: 500, textAlign: 'center', marginTop: '8px' }}>
+            Using AI Sentinel API Keys
+          </div>
+        ) : currentCompany.description && (
+          <div style={{ fontSize: '16px', color: '#64748b', textAlign: 'center', marginTop: '8px' }}>
+            {currentCompany.description}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function CompanyInfo() {
   const { user } = useAuth();
   
@@ -168,67 +274,77 @@ export default function Home() {
         <div style={{ 
           backgroundColor: 'white', 
           borderBottom: '1px solid #e2e8f0', 
-          padding: '8px 16px', 
+          padding: '16px 16px', 
           display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'space-between',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
           flexShrink: 0,
-          minHeight: '56px'
+          minHeight: '120px',
+          position: 'relative'
         }}>
-          {/* Left side - Logo and Company */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '96px' }}> {/* 1 inch = ~96px */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={canAccessSidebar ? () => setSidebarOpen(!sidebarOpen) : undefined}
-              disabled={!canAccessSidebar}
+          {/* Menu Button - Positioned absolutely in top left */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={canAccessSidebar ? () => setSidebarOpen(!sidebarOpen) : undefined}
+            disabled={!canAccessSidebar}
+            style={{ 
+              position: 'absolute',
+              top: '16px',
+              left: '16px',
+              padding: '4px',
+              minWidth: '48px',
+              height: '48px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: 'none',
+              background: 'transparent',
+              cursor: canAccessSidebar ? 'pointer' : 'default',
+              opacity: canAccessSidebar ? 1 : 0.6
+            }}
+          >
+            <img
+              src="/ai-sentinel-logo.png" 
+              alt="AI Sentinel" 
               style={{ 
-                padding: '4px',
-                minWidth: '64px',
-                height: '72px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                border: 'none',
-                background: 'transparent',
-                cursor: canAccessSidebar ? 'pointer' : 'default',
-                opacity: canAccessSidebar ? 1 : 0.6
+                width: '40px', 
+                height: '40px', 
+                objectFit: 'contain',
+                flexShrink: 0,
+                filter: 'brightness(1.1) saturate(1.3) contrast(1.2)'
               }}
-            >
-              <img 
-                src="/ai-sentinel-logo.png" 
-                alt="AI Sentinel" 
-                style={{ 
-                  width: '64px', 
-                  height: '64px', 
-                  objectFit: 'contain',
-                  flexShrink: 0,
-                  filter: 'brightness(1.1) saturate(1.3) contrast(1.2)'
-                }}
-              />
-            </Button>
-            
-            {/* Company Info from Database */}
-            <CompanyInfo />
-          </div>
+            />
+          </Button>
+
+          {/* Sign Out Button - Positioned absolutely in top right */}
+          <button
+            onClick={() => window.location.href = '/login'}
+            style={{
+              position: 'absolute',
+              top: '20px',
+              right: '16px',
+              fontSize: '14px',
+              color: '#64748b',
+              textDecoration: 'underline',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: '8px 12px'
+            }}
+          >
+            Sign Out
+          </button>
           
-          {/* Right side - Page Title and Sign Out */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
-            <h1 style={{ fontSize: '18px', fontWeight: 600, color: '#1e293b' }}>AI Sentinel Chat</h1>
-            <button
-              onClick={() => window.location.href = '/login'}
-              style={{
-                fontSize: '12px',
-                color: '#64748b',
-                textDecoration: 'underline',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                padding: '0'
-              }}
-            >
-              Sign Out
-            </button>
+          {/* Centered Company Info - Large Screen Title */}
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '24px',
+            justifyContent: 'center'
+          }}>
+            <CompanyInfoLarge />
           </div>
         </div>
         
