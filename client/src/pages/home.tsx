@@ -20,6 +20,7 @@ interface Company {
 
 function CompanyInfoLarge() {
   const { user } = useAuth();
+  const [isZoomed, setIsZoomed] = useState(false);
   
   // Check if we're in demo mode (only when explicitly accessing /demo or role level 0)
   const isDemoMode = window.location.pathname === '/demo';
@@ -29,6 +30,11 @@ function CompanyInfoLarge() {
   const { data: currentCompany } = useQuery<Company>({
     queryKey: ['/api/user/current-company'],
   });
+
+  const toggleZoom = () => {
+    setIsZoomed(!isZoomed);
+    console.log("🔍 Company logo zoom toggled:", !isZoomed ? "zoomed in" : "zoomed out");
+  };
 
   if (!currentCompany) {
     return (
@@ -79,35 +85,92 @@ function CompanyInfoLarge() {
           DEMO
         </div>
       ) : currentCompany.logo ? (
-        <img 
-          src={currentCompany.logo} 
-          alt={currentCompany.name}
-          style={{ 
-            width: '80px', 
-            height: '80px', 
-            objectFit: 'contain',
-            borderRadius: '12px',
-            border: '2px solid #e2e8f0'
-          }}
-        />
+        <div style={{ position: 'relative', display: 'inline-block' }}>
+          <img 
+            src={currentCompany.logo} 
+            alt={currentCompany.name}
+            onClick={toggleZoom}
+            style={{ 
+              width: isZoomed ? '160px' : '100px', 
+              height: isZoomed ? '160px' : '100px', 
+              objectFit: 'contain',
+              borderRadius: '16px',
+              border: `3px solid ${isZoomed ? '#3b82f6' : '#e2e8f0'}`,
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              transform: isZoomed ? 'scale(1.05)' : 'scale(1)',
+              boxShadow: isZoomed ? '0 8px 25px rgba(59, 130, 246, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)',
+              filter: isZoomed ? 'brightness(1.1) contrast(1.1)' : 'brightness(1) contrast(1)'
+            }}
+            onMouseEnter={(e) => {
+              if (!isZoomed) {
+                e.currentTarget.style.transform = 'scale(1.05)';
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(59, 130, 246, 0.2)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!isZoomed) {
+                e.currentTarget.style.transform = 'scale(1)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
+              }
+            }}
+          />
+          {/* Zoom indicator */}
+          <div style={{
+            position: 'absolute',
+            bottom: '-8px',
+            right: '-8px',
+            width: '24px',
+            height: '24px',
+            backgroundColor: isZoomed ? '#ef4444' : '#3b82f6',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'white',
+            fontSize: '12px',
+            fontWeight: 700,
+            cursor: 'pointer',
+            border: '2px solid white',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
+            transition: 'all 0.2s ease'
+          }}>
+            {isZoomed ? '−' : '+'}
+          </div>
+        </div>
       ) : (
-        <div style={{ 
-          width: '80px', 
-          height: '80px', 
-          backgroundColor: '#3b82f6', 
-          borderRadius: '12px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'white',
-          fontSize: '32px',
-          fontWeight: 700
-        }}>
+        <div 
+          onClick={toggleZoom}
+          style={{ 
+            width: isZoomed ? '160px' : '100px', 
+            height: isZoomed ? '160px' : '100px', 
+            backgroundColor: '#3b82f6', 
+            borderRadius: '16px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'white',
+            fontSize: isZoomed ? '48px' : '36px',
+            fontWeight: 700,
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+            transform: isZoomed ? 'scale(1.05)' : 'scale(1)',
+            boxShadow: isZoomed ? '0 8px 25px rgba(59, 130, 246, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)',
+            border: `3px solid ${isZoomed ? '#1e40af' : 'transparent'}`
+          }}
+        >
           {currentCompany.name.charAt(0).toUpperCase()}
         </div>
       )}
       <div>
-        <div style={{ fontSize: '36px', fontWeight: 700, color: '#1e293b', textAlign: 'center' }}>
+        <div style={{ 
+          fontSize: isZoomed ? '42px' : '36px', 
+          fontWeight: 700, 
+          color: '#1e293b', 
+          textAlign: 'center',
+          transition: 'all 0.3s ease',
+          textShadow: isZoomed ? '0 2px 4px rgba(0, 0, 0, 0.1)' : 'none'
+        }}>
           {isLimitedAccess ? 'Demo Company' : currentCompany.name}
         </div>
         {isLimitedAccess ? (
@@ -117,6 +180,18 @@ function CompanyInfoLarge() {
         ) : currentCompany.description && (
           <div style={{ fontSize: '16px', color: '#64748b', textAlign: 'center', marginTop: '8px' }}>
             {currentCompany.description}
+          </div>
+        )}
+        {/* Zoom instruction */}
+        {!isLimitedAccess && (
+          <div style={{ 
+            fontSize: '12px', 
+            color: '#94a3b8', 
+            textAlign: 'center', 
+            marginTop: '4px',
+            fontStyle: 'italic'
+          }}>
+            Click logo to {isZoomed ? 'zoom out' : 'zoom in'}
           </div>
         )}
       </div>
