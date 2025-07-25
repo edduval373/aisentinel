@@ -53,16 +53,30 @@ function Router() {
       }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ 
-            width: '48px', 
-            height: '48px', 
-            border: '2px solid #e2e8f0', 
-            borderTop: '2px solid #1e3a8a', 
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite',
+            width: '64px', 
+            height: '64px', 
+            animation: 'spin 2s linear infinite',
             margin: '0 auto 16px auto'
-          }}></div>
+          }}>
+            <img 
+              src="/ai-sentinel-logo.png" 
+              alt="AI Sentinel" 
+              style={{ 
+                width: '100%', 
+                height: '100%', 
+                objectFit: 'contain',
+                filter: 'brightness(1.1) saturate(1.3) contrast(1.2)'
+              }} 
+            />
+          </div>
           <p style={{ color: '#64748b', margin: '0' }}>Loading...</p>
         </div>
+        <style>{`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
       </div>
     );
   }
@@ -135,11 +149,39 @@ function Router() {
             window.history.replaceState({}, document.title, '/');
             setTimeout(() => window.location.reload(), 100);
             return (
-              <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                  <p className="text-gray-600">Verification successful! Loading your dashboard...</p>
+              <div style={{ 
+                minHeight: '100vh', 
+                backgroundColor: '#f9fafb', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center' 
+              }}>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ 
+                    width: '80px', 
+                    height: '80px', 
+                    animation: 'spin 2s linear infinite',
+                    margin: '0 auto 16px auto'
+                  }}>
+                    <img 
+                      src="/ai-sentinel-logo.png" 
+                      alt="AI Sentinel" 
+                      style={{ 
+                        width: '100%', 
+                        height: '100%', 
+                        objectFit: 'contain',
+                        filter: 'brightness(1.1) saturate(1.3) contrast(1.2)'
+                      }} 
+                    />
+                  </div>
+                  <p style={{ color: '#6b7280' }}>Verification successful! Loading your dashboard...</p>
                 </div>
+                <style>{`
+                  @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                  }
+                `}</style>
               </div>
             );
           }
