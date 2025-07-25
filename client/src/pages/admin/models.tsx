@@ -31,20 +31,16 @@ export default function AdminModels() {
   // Fetch AI models from database
   const { data: aiModels, isLoading: modelsLoading } = useQuery<AiModel[]>({
     queryKey: ['/api/admin/ai-models'],
-    enabled: isAuthenticated && !isLoading,
-    onError: (error) => {
-      if (isUnauthorizedError(error)) {
-        toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
-      }
-    },
+    enabled: isAuthenticated && !isLoading
   });
+
+  // Handle query errors separately
+  useEffect(() => {
+    if (aiModels === undefined && !modelsLoading && isAuthenticated) {
+      console.error("Failed to fetch AI models");
+      toast({ title: "Error", description: "Failed to fetch AI models", variant: "destructive" });
+    }
+  }, [aiModels, modelsLoading, isAuthenticated, toast]);
 
   // Update AI model mutation
   const updateAiModelMutation = useMutation({
@@ -177,8 +173,39 @@ export default function AdminModels() {
   if (isLoading || modelsLoading) {
     return (
       <AdminLayout title="AI Models" subtitle="Manage AI model configurations and availability">
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sentinel-blue"></div>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          height: '256px',
+          flexDirection: 'column',
+          gap: '16px'
+        }}>
+          <div style={{
+            width: '64px',
+            height: '64px',
+            animation: 'spin 2s linear infinite'
+          }}>
+            <img 
+              src="/ai-sentinel-logo.png" 
+              alt="Loading..." 
+              style={{ 
+                width: '100%', 
+                height: '100%', 
+                objectFit: 'contain',
+                filter: 'brightness(1.2) saturate(1.4) contrast(1.1)'
+              }} 
+            />
+          </div>
+          <p style={{ fontSize: '16px', color: '#64748b' }}>
+            Loading AI models...
+          </p>
+          <style>{`
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+          `}</style>
         </div>
       </AdminLayout>
     );
@@ -253,7 +280,7 @@ export default function AdminModels() {
 
       <div className="grid gap-6">
         {/* Dynamic AI Models */}
-        {aiModels?.map((model) => (
+        {aiModels?.map((model: AiModel) => (
           <Card key={model.id}>
             <CardHeader>
               <div className="flex items-center justify-between">

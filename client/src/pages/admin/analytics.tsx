@@ -35,16 +35,35 @@ export default function AdminAnalytics() {
           display: 'flex', 
           alignItems: 'center', 
           justifyContent: 'center', 
-          height: '256px' 
+          height: '256px',
+          flexDirection: 'column',
+          gap: '16px'
         }}>
           <div style={{
-            width: '48px',
-            height: '48px',
-            border: '2px solid #3b82f6',
-            borderTop: '2px solid transparent',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite'
-          }}></div>
+            width: '64px',
+            height: '64px',
+            animation: 'spin 2s linear infinite'
+          }}>
+            <img 
+              src="/ai-sentinel-logo.png" 
+              alt="Loading..." 
+              style={{ 
+                width: '100%', 
+                height: '100%', 
+                objectFit: 'contain',
+                filter: 'brightness(1.2) saturate(1.4) contrast(1.1)'
+              }} 
+            />
+          </div>
+          <p style={{ fontSize: '16px', color: '#64748b' }}>
+            Loading analytics...
+          </p>
+          <style>{`
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+          `}</style>
         </div>
       </AdminLayout>
     );

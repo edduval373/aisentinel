@@ -42,17 +42,25 @@ export default function RefreshAuth() {
       alignItems: 'center',
       height: '100vh',
       flexDirection: 'column',
-      gap: '16px'
+      gap: '24px'
     }}>
       <div style={{
-        width: '50px',
-        height: '50px',
-        border: '5px solid #f3f3f3',
-        borderTop: '5px solid #3498db',
-        borderRadius: '50%',
+        width: '80px',
+        height: '80px',
         animation: 'spin 2s linear infinite'
-      }}></div>
-      <p style={{ fontSize: '18px', color: '#333' }}>
+      }}>
+        <img 
+          src="/ai-sentinel-logo.png" 
+          alt="Loading..." 
+          style={{ 
+            width: '100%', 
+            height: '100%', 
+            objectFit: 'contain',
+            filter: 'brightness(1.2) saturate(1.4) contrast(1.1)'
+          }} 
+        />
+      </div>
+      <p style={{ fontSize: '18px', color: '#1e293b', fontWeight: '600' }}>
         Refreshing authentication...
       </p>
       <style>{`

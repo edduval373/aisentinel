@@ -172,15 +172,39 @@ export default function CompanySetup() {
   if (companyLoading) {
     return (
       <AdminLayout title="Company Setup" subtitle="Configure your company settings">
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '200px' }}>
-          <div style={{ 
-            width: '40px', 
-            height: '40px', 
-            border: '4px solid #f3f4f6', 
-            borderTop: '4px solid #3b82f6', 
-            borderRadius: '50%', 
-            animation: 'spin 1s linear infinite' 
-          }}></div>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          height: '200px',
+          flexDirection: 'column',
+          gap: '16px'
+        }}>
+          <div style={{
+            width: '56px',
+            height: '56px',
+            animation: 'spin 2s linear infinite'
+          }}>
+            <img 
+              src="/ai-sentinel-logo.png" 
+              alt="Loading..." 
+              style={{ 
+                width: '100%', 
+                height: '100%', 
+                objectFit: 'contain',
+                filter: 'brightness(1.2) saturate(1.4) contrast(1.1)'
+              }} 
+            />
+          </div>
+          <p style={{ fontSize: '16px', color: '#64748b' }}>
+            Loading company settings...
+          </p>
+          <style>{`
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+          `}</style>
         </div>
       </AdminLayout>
     );

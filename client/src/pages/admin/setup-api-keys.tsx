@@ -233,16 +233,35 @@ export default function SetupApiKeys() {
           display: 'flex', 
           alignItems: 'center', 
           justifyContent: 'center', 
-          height: '256px' 
+          height: '256px',
+          flexDirection: 'column',
+          gap: '16px'
         }}>
-          <div style={{ 
-            width: '32px', 
-            height: '32px', 
-            border: '2px solid #e5e7eb', 
-            borderTop: '2px solid #1e3a8a', 
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite'
-          }}></div>
+          <div style={{
+            width: '64px',
+            height: '64px',
+            animation: 'spin 2s linear infinite'
+          }}>
+            <img 
+              src="/ai-sentinel-logo.png" 
+              alt="Loading..." 
+              style={{ 
+                width: '100%', 
+                height: '100%', 
+                objectFit: 'contain',
+                filter: 'brightness(1.2) saturate(1.4) contrast(1.1)'
+              }} 
+            />
+          </div>
+          <p style={{ fontSize: '16px', color: '#64748b' }}>
+            Loading API configuration...
+          </p>
+          <style>{`
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+          `}</style>
         </div>
       </AdminLayout>
     );

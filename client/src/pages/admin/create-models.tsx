@@ -833,7 +833,8 @@ export default function CreateModels() {
                       padding: '6px 12px',
                       borderRadius: '8px',
                       fontSize: '12px',
-                      fontWeight: '600'
+                      fontWeight: '600',
+                      marginRight: '144px' // 2 inches = 144px (72px per inch)
                     }}
                   >
                     {model.isEnabled ? "Enabled" : "Disabled"}
