@@ -1,11 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button-standard";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card-standard";
-import { Badge } from "@/components/ui/badge-standard";
-import { Input } from "@/components/ui/input-standard";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select-standard";
 import { hasAccessLevel, ACCESS_REQUIREMENTS } from "@/utils/roleBasedAccess";
 import { BarChart3, Download, Filter, Search, AlertTriangle, Shield, User } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
@@ -38,18 +33,23 @@ export default function AdminLogs() {
       <AdminLayout title="Activity Logs" subtitle="Monitor system activity and security events">
         <div style={{ 
           display: 'flex', 
+          flexDirection: 'column',
           alignItems: 'center', 
           justifyContent: 'center', 
-          height: '256px' 
+          height: '256px',
+          gap: '16px'
         }}>
-          <div style={{
-            width: '48px',
-            height: '48px',
-            border: '2px solid #3b82f6',
-            borderTop: '2px solid transparent',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite'
-          }}></div>
+          <img 
+            src="/ai-sentinel-logo.png" 
+            alt="AI Sentinel" 
+            style={{ 
+              width: '64px', 
+              height: '64px',
+              animation: 'spin 2s linear infinite',
+              filter: 'brightness(1.1) saturate(1.3) contrast(1.2)'
+            }} 
+          />
+          <p style={{ color: '#6b7280', fontSize: '14px' }}>Loading activity logs...</p>
         </div>
       </AdminLayout>
     );
@@ -129,22 +129,14 @@ export default function AdminLogs() {
     }
   ];
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "approved": return "bg-green-100 text-green-800";
-      case "blocked": return "bg-red-100 text-red-800";
-      case "success": return "bg-blue-100 text-blue-800";
-      case "warning": return "bg-yellow-100 text-yellow-800";
-      default: return "bg-gray-100 text-gray-800";
-    }
-  };
+
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case "chat": return <BarChart3 className="w-4 h-4" />;
-      case "security": return <Shield className="w-4 h-4" />;
-      case "auth": return <User className="w-4 h-4" />;
-      default: return <AlertTriangle className="w-4 h-4" />;
+      case "chat": return <BarChart3 size={16} style={{ color: '#3b82f6' }} />;
+      case "security": return <Shield size={16} style={{ color: '#ef4444' }} />;
+      case "auth": return <User size={16} style={{ color: '#10b981' }} />;
+      default: return <AlertTriangle size={16} style={{ color: '#f59e0b' }} />;
     }
   };
 
@@ -158,117 +150,287 @@ export default function AdminLogs() {
 
   return (
     <AdminLayout title="Activity Logs" subtitle="Monitor system activity and security events">
-      <div className="p-6 space-y-6">
+      <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '1200px', margin: '0 auto' }}>
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center space-x-2">
-                <BarChart3 className="w-5 h-5 text-blue-600" />
-                <div>
-                  <p className="text-2xl font-bold text-slate-900">1,247</p>
-                  <p className="text-sm text-slate-600">Total Events Today</p>
-                </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px' }}>
+          <div style={{
+            backgroundColor: 'white',
+            border: '1px solid #e5e7eb',
+            borderRadius: '12px',
+            padding: '20px',
+            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+            transition: 'transform 0.2s, box-shadow 0.2s'
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = '0 4px 12px 0 rgba(0, 0, 0, 0.15)';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.1)';
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <BarChart3 size={20} style={{ color: '#3b82f6' }} />
+              <div>
+                <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#1f2937', margin: 0 }}>1,247</p>
+                <p style={{ fontSize: '14px', color: '#6b7280', margin: '4px 0 0 0' }}>Total Events Today</p>
               </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center space-x-2">
-                <Shield className="w-5 h-5 text-red-600" />
-                <div>
-                  <p className="text-2xl font-bold text-slate-900">23</p>
-                  <p className="text-sm text-slate-600">Security Blocks</p>
-                </div>
+            </div>
+          </div>
+          
+          <div style={{
+            backgroundColor: 'white',
+            border: '1px solid #e5e7eb',
+            borderRadius: '12px',
+            padding: '20px',
+            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+            transition: 'transform 0.2s, box-shadow 0.2s'
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = '0 4px 12px 0 rgba(0, 0, 0, 0.15)';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.1)';
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <Shield size={20} style={{ color: '#ef4444' }} />
+              <div>
+                <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#1f2937', margin: 0 }}>23</p>
+                <p style={{ fontSize: '14px', color: '#6b7280', margin: '4px 0 0 0' }}>Security Blocks</p>
               </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center space-x-2">
-                <User className="w-5 h-5 text-green-600" />
-                <div>
-                  <p className="text-2xl font-bold text-slate-900">89</p>
-                  <p className="text-sm text-slate-600">Active Users</p>
-                </div>
+            </div>
+          </div>
+          
+          <div style={{
+            backgroundColor: 'white',
+            border: '1px solid #e5e7eb',
+            borderRadius: '12px',
+            padding: '20px',
+            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+            transition: 'transform 0.2s, box-shadow 0.2s'
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = '0 4px 12px 0 rgba(0, 0, 0, 0.15)';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.1)';
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <User size={20} style={{ color: '#10b981' }} />
+              <div>
+                <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#1f2937', margin: 0 }}>89</p>
+                <p style={{ fontSize: '14px', color: '#6b7280', margin: '4px 0 0 0' }}>Active Users</p>
               </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center space-x-2">
-                <AlertTriangle className="w-5 h-5 text-yellow-600" />
-                <div>
-                  <p className="text-2xl font-bold text-slate-900">7</p>
-                  <p className="text-sm text-slate-600">Warnings</p>
-                </div>
+            </div>
+          </div>
+          
+          <div style={{
+            backgroundColor: 'white',
+            border: '1px solid #e5e7eb',
+            borderRadius: '12px',
+            padding: '20px',
+            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+            transition: 'transform 0.2s, box-shadow 0.2s'
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = '0 4px 12px 0 rgba(0, 0, 0, 0.15)';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.1)';
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <AlertTriangle size={20} style={{ color: '#f59e0b' }} />
+              <div>
+                <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#1f2937', margin: 0 }}>7</p>
+                <p style={{ fontSize: '14px', color: '#6b7280', margin: '4px 0 0 0' }}>Warnings</p>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
 
-        {/* Filters */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Activity Logs</CardTitle>
-            <CardDescription>Search and filter system activity</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col md:flex-row gap-4 mb-6">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-                <Input
-                  placeholder="Search logs..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              <Select value={filterType} onValueChange={setFilterType}>
-                <SelectTrigger className="w-full md:w-48">
-                  <SelectValue placeholder="Filter by type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Types</SelectItem>
-                  <SelectItem value="chat">Chat</SelectItem>
-                  <SelectItem value="security">Security</SelectItem>
-                  <SelectItem value="auth">Authentication</SelectItem>
-                </SelectContent>
-              </Select>
-              <Button variant="outline">
-                <Download className="w-4 h-4 mr-2" />
-                Export
-              </Button>
+        {/* Activity Logs */}
+        <div style={{
+          backgroundColor: 'white',
+          border: '1px solid #e5e7eb',
+          borderRadius: '12px',
+          overflow: 'hidden',
+          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
+        }}>
+          <div style={{ padding: '20px', borderBottom: '1px solid #e5e7eb' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+              <BarChart3 size={20} style={{ color: '#3b82f6' }} />
+              <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#1f2937', margin: 0 }}>Activity Logs</h3>
             </div>
+            <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>Search and filter system activity</p>
+          </div>
+          
+          <div style={{ padding: '20px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div style={{ position: 'relative', flex: '1' }}>
+                  <Search size={16} style={{ 
+                    position: 'absolute', 
+                    left: '12px', 
+                    top: '12px', 
+                    color: '#9ca3af' 
+                  }} />
+                  <input
+                    type="text"
+                    placeholder="Search logs..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px 12px 40px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      outline: 'none',
+                      transition: 'border-color 0.2s, box-shadow 0.2s'
+                    }}
+                    onFocus={(e) => {
+                      e.currentTarget.style.borderColor = '#3b82f6';
+                      e.currentTarget.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.style.borderColor = '#d1d5db';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
+                  />
+                </div>
+                
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                  <select
+                    value={filterType}
+                    onChange={(e) => setFilterType(e.target.value)}
+                    style={{
+                      padding: '12px 16px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      backgroundColor: 'white',
+                      outline: 'none',
+                      cursor: 'pointer',
+                      minWidth: '200px',
+                      transition: 'border-color 0.2s, box-shadow 0.2s'
+                    }}
+                    onFocus={(e) => {
+                      e.currentTarget.style.borderColor = '#3b82f6';
+                      e.currentTarget.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.1)';
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.style.borderColor = '#d1d5db';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
+                  >
+                    <option value="all">All Types</option>
+                    <option value="chat">Chat</option>
+                    <option value="security">Security</option>
+                    <option value="auth">Authentication</option>
+                  </select>
+                  
+                  <button
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      backgroundColor: 'white',
+                      color: '#374151',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '8px',
+                      padding: '12px 20px',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      cursor: 'pointer',
+                      transition: 'background-color 0.2s, border-color 0.2s'
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.backgroundColor = '#f9fafb';
+                      e.currentTarget.style.borderColor = '#9ca3af';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.backgroundColor = 'white';
+                      e.currentTarget.style.borderColor = '#d1d5db';
+                    }}
+                  >
+                    <Download size={16} />
+                    Export
+                  </button>
+                </div>
+              </div>
 
-            {/* Logs Table */}
-            <div className="space-y-3">
-              {filteredLogs.map((log) => (
-                <div key={log.id} className="flex items-center justify-between p-4 border border-slate-200 rounded-lg">
-                  <div className="flex items-center space-x-4">
-                    <div className="flex items-center justify-center w-8 h-8 bg-slate-100 rounded-full">
-                      {getTypeIcon(log.type)}
+              {/* Logs List */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {filteredLogs.map((log) => (
+                  <div key={log.id} style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '16px',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '8px',
+                    backgroundColor: '#fafafa',
+                    transition: 'background-color 0.2s, border-color 0.2s'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.backgroundColor = '#f3f4f6';
+                    e.currentTarget.style.borderColor = '#d1d5db';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.backgroundColor = '#fafafa';
+                    e.currentTarget.style.borderColor = '#e5e7eb';
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '32px',
+                        height: '32px',
+                        backgroundColor: '#f1f5f9',
+                        borderRadius: '50%'
+                      }}>
+                        {getTypeIcon(log.type)}
+                      </div>
+                      <div>
+                        <p style={{ fontSize: '15px', fontWeight: '500', color: '#1f2937', margin: 0 }}>{log.action}</p>
+                        <p style={{ fontSize: '14px', color: '#6b7280', margin: '2px 0 0 0' }}>{log.details}</p>
+                        <p style={{ fontSize: '12px', color: '#9ca3af', margin: '4px 0 0 0' }}>{log.user} • {log.timestamp}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-medium text-slate-900">{log.action}</p>
-                      <p className="text-sm text-slate-600">{log.details}</p>
-                      <p className="text-xs text-slate-500">{log.user} • {log.timestamp}</p>
+                    <div style={{
+                      padding: '4px 12px',
+                      borderRadius: '20px',
+                      fontSize: '12px',
+                      fontWeight: '500',
+                      textTransform: 'capitalize',
+                      backgroundColor: log.status === 'approved' ? '#dcfce7' : 
+                                     log.status === 'blocked' ? '#fecaca' :
+                                     log.status === 'success' ? '#dbeafe' : '#fef3c7',
+                      color: log.status === 'approved' ? '#166534' :
+                             log.status === 'blocked' ? '#dc2626' :
+                             log.status === 'success' ? '#1d4ed8' : '#d97706'
+                    }}>
+                      {log.status}
                     </div>
                   </div>
-                  <Badge className={getStatusColor(log.status)}>
-                    {log.status}
-                  </Badge>
-                </div>
-              ))}
-            </div>
-
-            {filteredLogs.length === 0 && (
-              <div className="text-center py-8">
-                <p className="text-slate-500">No logs found matching your search criteria.</p>
+                ))}
               </div>
-            )}
-          </CardContent>
-        </Card>
+
+              {filteredLogs.length === 0 && (
+                <div style={{ textAlign: 'center', padding: '32px' }}>
+                  <p style={{ fontSize: '14px', color: '#9ca3af', margin: 0 }}>No logs found matching your search criteria.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </AdminLayout>
   );
