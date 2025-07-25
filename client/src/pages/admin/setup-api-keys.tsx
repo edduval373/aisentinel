@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label-standard";
 import { Badge } from "@/components/ui/badge-standard";
 import { Key, Shield, Zap, Globe, Save, TestTube, AlertCircle, Check, X } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
-import { hasAccessLevel, ACCESS_REQUIREMENTS } from "@/utils/roleBasedAccess";
+import { hasAccessLevel, canViewAdminPage, ACCESS_REQUIREMENTS } from "@/utils/roleBasedAccess";
 import { useAuth } from "@/hooks/useAuth";
 import type { AiModel } from "@shared/schema";
 
@@ -19,7 +19,7 @@ export default function SetupApiKeys() {
   const { user } = useAuth();
   
   // Check if user has owner level access (99 or above)
-  const hasOwnerAccess = hasAccessLevel(user?.roleLevel, ACCESS_REQUIREMENTS.SETUP_API_KEYS);
+  const hasOwnerAccess = canViewAdminPage(user?.roleLevel, ACCESS_REQUIREMENTS.SETUP_API_KEYS);
   const [isTestingConnection, setIsTestingConnection] = useState<string | null>(null);
   const [testResults, setTestResults] = useState<Record<string, 'success' | 'error' | null>>({});
   const [errorMessages, setErrorMessages] = useState<Record<string, string>>({});

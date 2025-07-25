@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth"; 
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { hasAccessLevel, ACCESS_REQUIREMENTS } from "@/utils/roleBasedAccess";
+import { hasAccessLevel, canViewAdminPage, ACCESS_REQUIREMENTS } from "@/utils/roleBasedAccess";
 import { isDemoModeActive, isReadOnlyMode, getDemoModeMessage } from "@/utils/demoMode";
 import { Users, Plus, Shield, Edit, Trash2, Mail, UserPlus, AlertTriangle, Eye } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
@@ -48,7 +48,7 @@ export default function AdminUsers() {
   });
 
   // Check if user has administrator level access (98 or above) OR is in demo mode
-  const hasAdminAccess = hasAccessLevel(user?.roleLevel, ACCESS_REQUIREMENTS.USER_MANAGEMENT) || isDemoModeActive(user);
+  const hasAdminAccess = canViewAdminPage(user?.roleLevel, ACCESS_REQUIREMENTS.USER_MANAGEMENT);
 
   // Check if we're in demo mode
   const isDemoMode = isDemoModeActive(user);

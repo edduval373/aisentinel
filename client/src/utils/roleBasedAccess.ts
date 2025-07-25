@@ -26,6 +26,15 @@ export function hasAccessLevel(userRoleLevel: number | undefined, requiredLevel:
   return (userRoleLevel ?? 0) >= requiredLevel;
 }
 
+// Check if user can view admin page (includes demo users for read-only access)
+export function canViewAdminPage(userRoleLevel: number | undefined, requiredLevel: number): boolean {
+  const roleLevel = userRoleLevel ?? 0;
+  // Demo users (level 0) can view all admin pages in read-only mode
+  if (roleLevel === ROLE_LEVELS.DEMO) return true;
+  // Other users need proper access level
+  return roleLevel >= requiredLevel;
+}
+
 // Check specific role types
 export function isSuperUser(userRoleLevel: number | undefined): boolean {
   return hasAccessLevel(userRoleLevel, ROLE_LEVELS.SUPER_USER);

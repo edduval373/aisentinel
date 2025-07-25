@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card-standard";
 import { Badge } from "@/components/ui/badge-standard";
-import { hasAccessLevel, ACCESS_REQUIREMENTS } from "@/utils/roleBasedAccess";
+import { hasAccessLevel, canViewAdminPage, ACCESS_REQUIREMENTS } from "@/utils/roleBasedAccess";
 import { isDemoModeActive, isReadOnlyMode, getDemoModeMessage } from "@/utils/demoMode";
 import { BarChart3, TrendingUp, Users, MessageSquare, Clock, Shield, Eye } from "lucide-react";
 
@@ -13,7 +13,7 @@ export default function AdminAnalytics() {
   const { user, isAuthenticated, isLoading } = useAuth();
   
   // Check if user has administrator level access (98 or above) OR is in demo mode
-  const hasAdminAccess = hasAccessLevel(user?.roleLevel, ACCESS_REQUIREMENTS.MONITORING_REPORTS) || isDemoModeActive(user);
+  const hasAdminAccess = canViewAdminPage(user?.roleLevel, ACCESS_REQUIREMENTS.MONITORING_REPORTS);
   
   // Check if we're in demo mode
   const isDemoMode = isDemoModeActive(user);

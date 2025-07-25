@@ -6,7 +6,7 @@ import { toast } from "@/hooks/use-toast";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { Brain, Zap, AlertCircle, CheckCircle2 } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
-import { hasAccessLevel } from "@/utils/roleBasedAccess";
+import { hasAccessLevel, canViewAdminPage } from "@/utils/roleBasedAccess";
 import { useAuth } from "@/hooks/useAuth";
 
 interface AiModel {
@@ -29,7 +29,7 @@ export default function ModelFusion() {
   const queryClient = useQueryClient();
 
   // Check access level - require Owner level (99+)
-  if (!hasAccessLevel(user?.roleLevel, 99)) {
+  if (!canViewAdminPage(user?.roleLevel, 99)) {
     return (
       <AdminLayout title="Model Fusion" subtitle="Set up advanced multi-model AI processing for comprehensive research and analysis">
         <div style={{

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { hasAccessLevel, ACCESS_REQUIREMENTS } from "@/utils/roleBasedAccess";
+import { hasAccessLevel, canViewAdminPage, ACCESS_REQUIREMENTS } from "@/utils/roleBasedAccess";
 import { Shield, AlertTriangle, CheckCircle, XCircle, RefreshCw } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
 
@@ -10,7 +10,7 @@ export default function AdminSecurity() {
   const { user, isAuthenticated, isLoading } = useAuth();
   
   // Check if user has admin level access (2 or above)
-  const hasAdminAccess = hasAccessLevel(user?.roleLevel, ACCESS_REQUIREMENTS.SECURITY_REPORTS);
+  const hasAdminAccess = canViewAdminPage(user?.roleLevel, ACCESS_REQUIREMENTS.SECURITY_REPORTS);
 
   useEffect(() => {
     if (!isLoading && (!isAuthenticated || !hasAdminAccess)) {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { hasAccessLevel, ACCESS_REQUIREMENTS } from "@/utils/roleBasedAccess";
+import { hasAccessLevel, canViewAdminPage, ACCESS_REQUIREMENTS } from "@/utils/roleBasedAccess";
 import { isDemoModeActive, isReadOnlyMode, getDemoModeMessage } from "@/utils/demoMode";
 import { BarChart3, Download, Filter, Search, AlertTriangle, Shield, User, Eye } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
@@ -13,7 +13,7 @@ export default function AdminLogs() {
   const [filterType, setFilterType] = useState("all");
   
   // Check if user has admin level access (2 or above) OR is in demo mode
-  const hasAdminAccess = hasAccessLevel(user?.roleLevel, ACCESS_REQUIREMENTS.ACTIVITY_LOGS) || isDemoModeActive(user);
+  const hasAdminAccess = canViewAdminPage(user?.roleLevel, ACCESS_REQUIREMENTS.ACTIVITY_LOGS);
   
   // Check if we're in demo mode
   const isDemoMode = isDemoModeActive(user);

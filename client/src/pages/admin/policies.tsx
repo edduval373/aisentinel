@@ -4,7 +4,7 @@ import { useCompanyContext } from "@/hooks/useCompanyContext";
 import { useToast } from "@/hooks/use-toast";
 import { Shield, AlertTriangle, Save, Plus, Edit, Eye, Settings } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
-import { hasAccessLevel, ACCESS_REQUIREMENTS } from "@/utils/roleBasedAccess";
+import { hasAccessLevel, canViewAdminPage, ACCESS_REQUIREMENTS } from "@/utils/roleBasedAccess";
 
 export default function AdminPolicies() {
   const { toast } = useToast();
@@ -14,7 +14,7 @@ export default function AdminPolicies() {
 
   // Check access level
   useEffect(() => {
-    if (!isLoading && (!isAuthenticated || !hasAccessLevel(user?.roleLevel, ACCESS_REQUIREMENTS.CONTENT_POLICIES))) {
+    if (!isLoading && (!isAuthenticated || !canViewAdminPage(user?.roleLevel, ACCESS_REQUIREMENTS.CONTENT_POLICIES))) {
       toast({
         title: "Access Denied",
         description: `Content Policies requires Admin level (2+) access. Your current level: ${user?.roleLevel || 0}`,
