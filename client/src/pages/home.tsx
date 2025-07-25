@@ -342,23 +342,19 @@ export default function Home() {
           borderBottom: '1px solid #e2e8f0', 
           padding: '8px 16px', 
           display: 'flex', 
-          flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'center',
+          justifyContent: 'space-between',
           flexShrink: 0,
           minHeight: '60px',
-          position: 'relative'
+          gap: '16px'
         }}>
-          {/* Menu Button - Positioned absolutely in top left */}
+          {/* Left side - Menu Button */}
           <Button
             variant="ghost"
             size="sm"
             onClick={canAccessSidebar ? () => setSidebarOpen(!sidebarOpen) : undefined}
             disabled={!canAccessSidebar}
             style={{ 
-              position: 'absolute',
-              top: '8px',
-              left: '12px',
               padding: '4px',
               minWidth: '48px',
               height: '48px',
@@ -368,7 +364,8 @@ export default function Home() {
               border: 'none',
               background: 'transparent',
               cursor: canAccessSidebar ? 'pointer' : 'default',
-              opacity: canAccessSidebar ? 1 : 0.6
+              opacity: canAccessSidebar ? 1 : 0.6,
+              flexShrink: 0
             }}
           >
             <img
@@ -384,36 +381,36 @@ export default function Home() {
             />
           </Button>
 
-          {/* Sign Out Button - Positioned absolutely in top right */}
+          {/* Center - Company Info */}
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '16px',
+            justifyContent: 'flex-start',
+            margin: '0',
+            padding: '0',
+            flex: 1,
+            marginLeft: '24px'
+          }}>
+            <CompanyInfoLarge />
+          </div>
+
+          {/* Right side - Sign Out Button */}
           <button
             onClick={() => window.location.href = '/login'}
             style={{
-              position: 'absolute',
-              top: '12px',
-              right: '16px',
               fontSize: '14px',
               color: '#64748b',
               textDecoration: 'underline',
               background: 'none',
               border: 'none',
               cursor: 'pointer',
-              padding: '6px 8px'
+              padding: '6px 8px',
+              flexShrink: 0
             }}
           >
             Sign Out
           </button>
-          
-          {/* Centered Company Info - Large Screen Title */}
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '16px',
-            justifyContent: 'center',
-            margin: '0',
-            padding: '0'
-          }}>
-            <CompanyInfoLarge />
-          </div>
         </div>
         
         {/* Chat Interface Container */}
