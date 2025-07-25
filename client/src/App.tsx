@@ -49,9 +49,10 @@ function Router() {
         alignItems: 'center', 
         justifyContent: 'center', 
         minHeight: '100vh', 
-        background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)' 
+        background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+        paddingBottom: '10vh'
       }}>
-        <div style={{ textAlign: 'center', padding: '2rem' }}>
+        <div style={{ textAlign: 'center' }}>
           <div style={{ 
             width: '64px', 
             height: '64px', 
