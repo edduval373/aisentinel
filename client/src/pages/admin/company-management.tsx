@@ -245,13 +245,51 @@ export default function CompanyManagement() {
           }}>
             All Companies
           </h2>
+          
+          {/* Debug Test Button */}
+          <button 
+            onClick={() => {
+              console.log("🧪 DIRECT BUTTON TEST CLICKED!");
+              alert("Direct button works!");
+            }}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: '#22c55e',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              marginRight: '8px'
+            }}
+          >
+            TEST
+          </button>
+          
+          {/* Replace with direct button for testing */}
+          <button
+            onClick={() => {
+              console.log("🚀 ADD COMPANY DIRECT BUTTON CLICKED!");
+              setShowAddCompany(true);
+            }}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '8px 16px',
+              backgroundColor: '#3b82f6',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '500'
+            }}
+          >
+            <Plus style={{ width: '16px', height: '16px' }} />
+            Add Company (Direct)
+          </button>
+          
           <Dialog open={showAddCompany} onOpenChange={setShowAddCompany}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus style={{ width: '16px', height: '16px', marginRight: '8px' }} />
-                Add Company
-              </Button>
-            </DialogTrigger>
             <DialogContent style={{ 
               maxWidth: '512px', 
               maxHeight: '80vh', 
