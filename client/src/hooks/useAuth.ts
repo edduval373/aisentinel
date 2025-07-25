@@ -28,20 +28,20 @@ export function useAuth() {
   const { data, isLoading, error } = useQuery<AuthData>({
     queryKey: ['/api/auth/me'],
     queryFn: async () => {
-      // If in demo mode, return demo user
+      // If in demo mode, return demo user with owner privileges
       if (isDemoMode) {
-        console.log("Demo mode activated - bypassing authentication");
+        console.log("Demo mode activated - bypassing authentication with owner role");
         return { 
           authenticated: true, 
           user: {
-            id: 'demo-user',
-            email: 'demo@aisentinel.app',
+            id: 'demo@aisentinel.com',
+            email: 'demo@aisentinel.com',
             firstName: 'Demo',
             lastName: 'User',
             companyId: 1,
             companyName: 'Demo Company',
-            role: 'user',
-            roleLevel: 0 // Demo mode users have role level 0
+            role: 'owner',
+            roleLevel: 99 // Owner level for full admin access except super-user
           }
         };
       }

@@ -1199,11 +1199,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log('Replit authentication successful:', { userId, companyId, roleLevel });
       }
       
-      // For demo users (role level 0) or unauthenticated users, use company ID 1
+      // For demo users or unauthenticated users, use company ID 1 with owner role
       if (!userId) {
-        userId = 'demo-user-' + Date.now();
+        userId = 'demo@aisentinel.com';
         companyId = 1;
-        roleLevel = 0;
+        roleLevel = 99; // Owner level for full admin access
         console.log('Demo user session creation:', { userId, companyId, roleLevel });
       }
 
@@ -1272,7 +1272,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!userId || !companyId) {
         // For demo users, use company ID 1 and demo user
         companyId = 1;
-        userId = 'demo-user';
+        userId = 'demo@aisentinel.com';
         console.log('Using demo user for messages:', { userId, companyId });
       }
 
@@ -1328,7 +1328,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!userId || !companyId) {
         // For demo users, use company ID 1 and demo user
         companyId = 1;
-        userId = 'demo-user';
+        userId = 'demo@aisentinel.com';
         console.log('Using demo user for chat message:', { userId, companyId });
       }
 
