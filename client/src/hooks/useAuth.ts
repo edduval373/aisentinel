@@ -20,17 +20,17 @@ interface AuthData {
 export function useAuth() {
   const queryClient = useQueryClient();
   
-  // Check if we're in demo mode (only when explicitly accessing /demo)
+  // Check if we're in demo mode (accessing /demo path or no auth cookie)
   const hasAuthCookie = document.cookie.includes('sessionToken=');
-  const isDemoMode = window.location.pathname === '/demo';
+  const isDemoMode = window.location.pathname === '/demo' || !hasAuthCookie;
   
   // Real authentication - with demo mode bypass
   const { data, isLoading, error } = useQuery<AuthData>({
     queryKey: ['/api/auth/me'],
     queryFn: async () => {
-      // If in demo mode, return demo user with owner privileges
+      // If in demo mode, return demo user with role level 0 (limited access)
       if (isDemoMode) {
-        console.log("Demo mode activated - bypassing authentication with owner role");
+        console.log("Demo mode activated - returning demo user with role level 0");
         return { 
           authenticated: true, 
           user: {
@@ -40,8 +40,8 @@ export function useAuth() {
             lastName: 'User',
             companyId: 1,
             companyName: 'Demo Company',
-            role: 'owner',
-            roleLevel: 99 // Owner level for full admin access except super-user
+            role: 'demo',
+            roleLevel: 0 // Demo level - limited access, no super-user features
           }
         };
       }

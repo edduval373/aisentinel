@@ -26,16 +26,17 @@ interface Company {
 function CompanyInfoLarge() {
   const { user } = useAuth();
   
-  // Check if we're in demo mode (only when explicitly accessing /demo or role level 0)
-  const isDemoMode = window.location.pathname === '/demo';
-  const userRoleLevel = user?.roleLevel || 1;
-  const isLimitedAccess = userRoleLevel === 0;
+  // Check if we're in demo mode (role level 0 or no authentication)
+  const userRoleLevel = user?.roleLevel || 0;
+  const isLimitedAccess = userRoleLevel === 0 || !user;
+  const isDemoMode = isLimitedAccess;
   
   const { data: currentCompany } = useQuery<Company>({
     queryKey: ['/api/user/current-company'],
+    enabled: !isDemoMode, // Don't fetch for demo mode
   });
 
-  if (!currentCompany) {
+  if (!currentCompany || isDemoMode) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
         <div style={{ 
@@ -176,16 +177,17 @@ function CompanyInfoLarge() {
 function CompanyInfo() {
   const { user } = useAuth();
   
-  // Check if we're in demo mode (only when explicitly accessing /demo or role level 0)
-  const isDemoMode = window.location.pathname === '/demo';
-  const userRoleLevel = user?.roleLevel || 1;
-  const isLimitedAccess = userRoleLevel === 0;
+  // Check if we're in demo mode (role level 0 or no authentication)
+  const userRoleLevel = user?.roleLevel || 0;
+  const isLimitedAccess = userRoleLevel === 0 || !user;
+  const isDemoMode = isLimitedAccess;
   
   const { data: currentCompany } = useQuery<Company>({
     queryKey: ['/api/user/current-company'],
+    enabled: !isDemoMode, // Don't fetch for demo mode
   });
 
-  if (!currentCompany) {
+  if (!currentCompany || isDemoMode) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
         <div style={{ 
@@ -308,40 +310,58 @@ export default function Home() {
   // Check if user is super-user (role level 100+)
   const isSuperUserLevel = (user?.roleLevel ?? 0) >= 100;
   
-  // Check if we're in demo mode or if user is regular user (role level 1)
-  const isDemoMode = window.location.pathname.includes('/demo') || window.location.search.includes('demo');
+  // Check if we're in demo mode (role level 0 or no authentication)
   const userRoleLevel = user?.roleLevel || 0;
+  const isDemoMode = userRoleLevel === 0 || !user;
   
   // Determine if sidebar access is allowed (super users, owners, admins only - role level 2+)
   const canAccessSidebar = isAuthenticated && (isSuperUser || isOwner || isAdmin || userRoleLevel >= 2);
 
   // Fetch all companies for super-user company switching
-  const { data: allCompanies = [] } = useQuery({
+  const { data: allCompanies = [] } = useQuery<Array<{ id: number; name: string; description?: string }>>({
     queryKey: ['/api/admin/companies'],
     enabled: isSuperUserLevel,
   });
 
   // Clear cookies function for super-users
   const handleClearCookies = () => {
-    // Clear all cookies
-    document.cookie.split(";").forEach((c) => {
-      const eqPos = c.indexOf("=");
-      const name = eqPos > -1 ? c.substr(0, eqPos) : c;
-      document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
-    });
+    console.log("Super-user clearing all cookies and session data");
     
-    // Clear localStorage
+    // Get current user email for tracking
+    const currentEmail = user?.email || 'unknown';
+    console.log(`Clearing session for user: ${currentEmail}`);
+    
+    // Clear all cookies more thoroughly
+    const cookies = document.cookie.split(";");
+    for (let cookie of cookies) {
+      const eqPos = cookie.indexOf("=");
+      const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+      // Clear for multiple paths and domains
+      document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+      document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=.replit.dev`;
+      document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=.aisentinel.app`;
+      document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=${window.location.hostname}`;
+      console.log(`Cleared cookie: ${name}`);
+    }
+    
+    // Clear all storage with email tracking
+    const storageKeys = Object.keys(localStorage);
+    console.log(`Clearing ${storageKeys.length} localStorage items`);
     localStorage.clear();
     sessionStorage.clear();
     
+    // Store the email for future reference
+    localStorage.setItem('lastClearedUser', currentEmail);
+    localStorage.setItem('lastClearedTime', new Date().toISOString());
+    
     toast({
-      title: "Cookies Cleared",
-      description: "All cookies and session data have been cleared. Redirecting to landing page...",
+      title: "Session Reset Complete",
+      description: `All data cleared for ${currentEmail}. Returning to landing page...`,
     });
     
-    // Redirect to landing page
+    // Force complete page replacement to ensure clean state
     setTimeout(() => {
-      window.location.href = '/';
+      window.location.replace('/');
     }, 1500);
   };
 
@@ -350,7 +370,7 @@ export default function Home() {
     setCurrentCompanyId(companyId);
     setShowCompanySwitcher(false);
     
-    const selectedCompany = allCompanies.find((c: any) => c.id === companyId);
+    const selectedCompany = allCompanies.find((c) => c.id === companyId);
     toast({
       title: "Company Switched",
       description: `Now viewing ${selectedCompany?.name || `Company ${companyId}`}`,
@@ -448,7 +468,7 @@ export default function Home() {
 
           {/* Right side - Super User Controls or Sign Out Button */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-            {isSuperUserLevel && (
+            {isSuperUserLevel && !isDemoMode && userRoleLevel !== 0 && (
               <>
                 {/* Company Switcher */}
                 <div style={{ position: 'relative' }}>
@@ -491,7 +511,7 @@ export default function Home() {
                           Select Company (Current: {currentCompanyId})
                         </div>
                       </div>
-                      {allCompanies.map((company: any) => (
+                      {allCompanies.map((company) => (
                         <button
                           key={company.id}
                           onClick={() => handleCompanySwitch(company.id)}
