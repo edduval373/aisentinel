@@ -1,18 +1,13 @@
 
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { Brain, Zap, AlertCircle, CheckCircle2 } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
+import { hasAccessLevel } from "@/utils/roleBasedAccess";
+import { useAuth } from "@/hooks/useAuth";
 
 interface AiModel {
   id: number;
@@ -30,7 +25,53 @@ interface ModelFusionConfig {
 }
 
 export default function ModelFusion() {
+  const { user } = useAuth();
   const queryClient = useQueryClient();
+
+  // Check access level - require Owner level (99+)
+  if (!hasAccessLevel(user, 99)) {
+    return (
+      <AdminLayout title="Model Fusion" subtitle="Set up advanced multi-model AI processing for comprehensive research and analysis">
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '400px',
+          textAlign: 'center',
+          padding: '40px'
+        }}>
+          <AlertCircle style={{
+            width: '64px',
+            height: '64px',
+            color: '#ef4444',
+            marginBottom: '24px'
+          }} />
+          <h2 style={{
+            fontSize: '24px',
+            fontWeight: 'bold',
+            color: '#1f2937',
+            marginBottom: '12px'
+          }}>
+            Access Denied
+          </h2>
+          <p style={{
+            fontSize: '16px',
+            color: '#6b7280',
+            marginBottom: '8px'
+          }}>
+            Owner level access required (99+)
+          </p>
+          <p style={{
+            fontSize: '14px',
+            color: '#9ca3af'
+          }}>
+            Contact your system administrator for access
+          </p>
+        </div>
+      </AdminLayout>
+    );
+  }
   const [localConfig, setLocalConfig] = useState<Partial<ModelFusionConfig>>({
     isEnabled: false,
     summaryModelId: null,
@@ -123,9 +164,43 @@ export default function ModelFusion() {
 
   if (modelsLoading || configLoading) {
     return (
-      <AdminLayout>
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <AdminLayout title="Model Fusion" subtitle="Set up advanced multi-model AI processing for comprehensive research and analysis">
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '400px',
+          gap: '20px'
+        }}>
+          <img 
+            src="/ai-sentinel-logo.png" 
+            alt="AI Sentinel" 
+            style={{ 
+              width: '64px', 
+              height: '64px', 
+              animation: 'spin 2s linear infinite',
+              filter: 'brightness(1.1) saturate(1.3) contrast(1.2)'
+            }}
+          />
+          <div style={{
+            textAlign: 'center'
+          }}>
+            <h3 style={{
+              fontSize: '18px',
+              fontWeight: '600',
+              color: '#1f2937',
+              marginBottom: '8px'
+            }}>
+              Loading Model Fusion Configuration
+            </h3>
+            <p style={{
+              fontSize: '14px',
+              color: '#6b7280'
+            }}>
+              Fetching your multi-model AI processing settings...
+            </p>
+          </div>
         </div>
       </AdminLayout>
     );
@@ -133,19 +208,50 @@ export default function ModelFusion() {
 
   return (
     <AdminLayout title="Model Fusion" subtitle="Set up advanced multi-model AI processing for comprehensive research and analysis">
-      <div className="px-6 pt-2 pb-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div style={{ padding: '24px' }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+          gap: '24px'
+        }}>
           {/* Left Column - Configuration */}
-          <div className="space-y-6">
-            <Card>
-              <CardContent className="space-y-6 pt-6">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div style={{
+              backgroundColor: 'white',
+              borderRadius: '12px',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+              border: '1px solid #e5e7eb',
+              overflow: 'hidden'
+            }}>
+              <div style={{ padding: '24px' }}>
                 {/* Enable/Disable Toggle */}
-                <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                  <div className="space-y-1 flex-1">
-                    <Label htmlFor="model-fusion-enabled" className="text-base font-medium">
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '16px',
+                  backgroundColor: '#f8fafc',
+                  borderRadius: '8px',
+                  marginBottom: '24px'
+                }}>
+                  <div style={{ flex: 1 }}>
+                    <label 
+                      htmlFor="model-fusion-enabled" 
+                      style={{
+                        display: 'block',
+                        fontSize: '16px',
+                        fontWeight: '500',
+                        color: '#1f2937',
+                        marginBottom: '4px'
+                      }}
+                    >
                       Enable Model Fusion
-                    </Label>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                    </label>
+                    <p style={{
+                      fontSize: '14px',
+                      color: '#6b7280',
+                      margin: 0
+                    }}>
                       When enabled, users can submit prompts to multiple AI models simultaneously
                     </p>
                   </div>
@@ -156,68 +262,158 @@ export default function ModelFusion() {
                   />
                 </div>
 
-                <Separator />
+                {/* Separator */}
+                <div style={{
+                  height: '1px',
+                  backgroundColor: '#e5e7eb',
+                  margin: '24px 0'
+                }} />
                 
                 {/* Summary Model Selection */}
-                <div className="space-y-3" style={{ marginTop: '-36px', paddingTop: '20px' }}>
-                  <Label className="text-base font-medium flex items-center gap-2">
-                    <Zap className="h-4 w-4" />
+                <div style={{ marginBottom: '24px' }}>
+                  <label style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    fontSize: '16px',
+                    fontWeight: '500',
+                    color: '#1f2937',
+                    marginBottom: '8px'
+                  }}>
+                    <Zap style={{ width: '16px', height: '16px' }} />
                     Choose Summary Model
-                  </Label>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  </label>
+                  <p style={{
+                    fontSize: '14px',
+                    color: '#6b7280',
+                    marginBottom: '12px'
+                  }}>
                     Select the AI model that will create the final comprehensive summary of all model responses
                   </p>
-                  <Select
+                  <select
                     value={localConfig.summaryModelId?.toString() || ""}
-                    onValueChange={handleSummaryModelChange}
+                    onChange={(e) => handleSummaryModelChange(e.target.value)}
                     disabled={!localConfig.isEnabled}
+                    style={{
+                      width: '100%',
+                      padding: '8px 12px',
+                      borderRadius: '6px',
+                      border: '1px solid #d1d5db',
+                      fontSize: '14px',
+                      color: '#374151',
+                      backgroundColor: localConfig.isEnabled ? 'white' : '#f9fafb',
+                      cursor: localConfig.isEnabled ? 'pointer' : 'not-allowed'
+                    }}
                   >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select a model for summarization" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {enabledModels.map((model) => (
-                        <SelectItem key={model.id} value={model.id.toString()}>
-                          <div className="flex items-center gap-2">
-                            <Badge variant="secondary">{model.provider}</Badge>
-                            {model.name}
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    <option value="">Select a model for summarization</option>
+                    {enabledModels.map((model) => (
+                      <option key={model.id} value={model.id.toString()}>
+                        {model.provider} - {model.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
-                <Separator />
+                {/* Separator */}
+                <div style={{
+                  height: '1px',
+                  backgroundColor: '#e5e7eb',
+                  margin: '24px 0'
+                }} />
 
                 {/* Model Selection */}
-                <div className="space-y-3" style={{ marginTop: '-18px', paddingTop: '6px' }}>
-                  <Label className="text-base font-medium">Active Models</Label>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                <div>
+                  <label style={{
+                    display: 'block',
+                    fontSize: '16px',
+                    fontWeight: '500',
+                    color: '#1f2937',
+                    marginBottom: '8px'
+                  }}>
+                    Active Models
+                  </label>
+                  <p style={{
+                    fontSize: '14px',
+                    color: '#6b7280',
+                    marginBottom: '16px'
+                  }}>
                     Select which models to include in the model fusion analysis
                   </p>
-                  <div className="border rounded-lg overflow-hidden">
-                    <table className="w-full">
+                  <div style={{
+                    border: '1px solid #d1d5db',
+                    borderRadius: '8px',
+                    overflow: 'hidden'
+                  }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                       <thead>
-                        <tr className="border-b" style={{ backgroundColor: 'hsl(221, 83%, 53%)' }}>
-                          <th className="text-left p-3 font-medium text-sm text-white" style={{ backgroundColor: 'hsl(221, 83%, 53%)' }}>Provider</th>
-                          <th className="text-left p-3 font-medium text-sm text-white" style={{ backgroundColor: 'hsl(221, 83%, 53%)' }}>Model Name</th>
-                          <th className="text-center p-3 font-medium text-sm text-white" style={{ backgroundColor: 'hsl(221, 83%, 53%)' }}>Include in Research</th>
+                        <tr style={{ backgroundColor: '#3b82f6' }}>
+                          <th style={{
+                            textAlign: 'left',
+                            padding: '12px',
+                            fontWeight: '500',
+                            fontSize: '14px',
+                            color: 'white'
+                          }}>
+                            Provider
+                          </th>
+                          <th style={{
+                            textAlign: 'left',
+                            padding: '12px',
+                            fontWeight: '500',
+                            fontSize: '14px',
+                            color: 'white'
+                          }}>
+                            Model Name
+                          </th>
+                          <th style={{
+                            textAlign: 'center',
+                            padding: '12px',
+                            fontWeight: '500',
+                            fontSize: '14px',
+                            color: 'white'
+                          }}>
+                            Include in Research
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
                         {enabledModels.map((model, index) => (
-                          <tr key={model.id} className={`border-b ${index % 2 === 0 ? 'bg-white dark:bg-gray-900' : 'bg-gray-50 dark:bg-gray-800'}`}>
-                            <td className="p-3">
-                              <Badge variant="secondary">{model.provider}</Badge>
+                          <tr key={model.id} style={{
+                            backgroundColor: index % 2 === 0 ? 'white' : '#f8fafc',
+                            borderTop: index > 0 ? '1px solid #e5e7eb' : 'none'
+                          }}>
+                            <td style={{ padding: '12px' }}>
+                              <span style={{
+                                display: 'inline-block',
+                                padding: '2px 8px',
+                                fontSize: '12px',
+                                fontWeight: '500',
+                                color: '#374151',
+                                backgroundColor: '#f3f4f6',
+                                borderRadius: '9999px'
+                              }}>
+                                {model.provider}
+                              </span>
                             </td>
-                            <td className="p-3 text-sm">{model.name}</td>
-                            <td className="p-3 text-center">
-                              <Checkbox
+                            <td style={{
+                              padding: '12px',
+                              fontSize: '14px',
+                              color: '#374151'
+                            }}>
+                              {model.name}
+                            </td>
+                            <td style={{ padding: '12px', textAlign: 'center' }}>
+                              <input
+                                type="checkbox"
                                 id={`model-${model.id}`}
                                 checked={selectedModels.has(model.id)}
-                                onCheckedChange={(checked) => handleModelToggle(model.id, checked as boolean)}
+                                onChange={(e) => handleModelToggle(model.id, e.target.checked)}
                                 disabled={!localConfig.isEnabled}
+                                style={{
+                                  width: '16px',
+                                  height: '16px',
+                                  cursor: localConfig.isEnabled ? 'pointer' : 'not-allowed'
+                                }}
                               />
                             </td>
                           </tr>
@@ -226,53 +422,117 @@ export default function ModelFusion() {
                     </table>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
 
           {/* Right Column - Save Button and Information */}
-          <div className="space-y-6">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             {/* Save Configuration Button */}
-            <Card>
-              <CardContent className="pt-6">
-                <Button
-                  onClick={handleSaveConfiguration}
-                  disabled={saveConfigMutation.isPending}
-                  className="w-full flex items-center justify-center gap-2"
-                  size="lg"
-                >
-                  {saveConfigMutation.isPending ? (
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  ) : (
-                    <CheckCircle2 className="h-4 w-4" />
-                  )}
-                  Save Configuration
-                </Button>
-              </CardContent>
-            </Card>
+            <div style={{
+              backgroundColor: 'white',
+              borderRadius: '12px',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+              border: '1px solid #e5e7eb',
+              padding: '24px'
+            }}>
+              <button
+                onClick={handleSaveConfiguration}
+                disabled={saveConfigMutation.isPending}
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  padding: '12px 24px',
+                  fontSize: '16px',
+                  fontWeight: '500',
+                  color: 'white',
+                  backgroundColor: saveConfigMutation.isPending ? '#9ca3af' : '#3b82f6',
+                  border: 'none',
+                  borderRadius: '8px',
+                  cursor: saveConfigMutation.isPending ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.2s'
+                }}
+                onMouseEnter={(e) => {
+                  if (!saveConfigMutation.isPending) {
+                    e.currentTarget.style.backgroundColor = '#2563eb';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!saveConfigMutation.isPending) {
+                    e.currentTarget.style.backgroundColor = '#3b82f6';
+                  }
+                }}
+              >
+                {saveConfigMutation.isPending ? (
+                  <img 
+                    src="/ai-sentinel-logo.png" 
+                    alt="AI Sentinel" 
+                    style={{ 
+                      width: '16px', 
+                      height: '16px', 
+                      animation: 'spin 2s linear infinite',
+                      filter: 'brightness(0) invert(1)'
+                    }}
+                  />
+                ) : (
+                  <CheckCircle2 style={{ width: '16px', height: '16px' }} />
+                )}
+                Save Configuration
+              </button>
+            </div>
 
             {/* Information Panel */}
-            <Card>
-              <CardContent className="pt-6">
-                <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                  <div className="flex items-start gap-3">
-                    <AlertCircle className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
-                        How Model Fusion Works
-                      </p>
-                      <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
-                        <li>• Users will see "Model Fusion" as an option in the AI model selector</li>
-                        <li>• The prompt is sent to all selected AI models simultaneously</li>
-                        <li>• Individual responses are collected and combined</li>
-                        <li>• The selected summary model creates a comprehensive analysis</li>
-                        <li>• Processing may take several minutes depending on model count</li>
-                      </ul>
-                    </div>
+            <div style={{
+              backgroundColor: 'white',
+              borderRadius: '12px',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+              border: '1px solid #e5e7eb',
+              padding: '24px'
+            }}>
+              <div style={{
+                padding: '16px',
+                backgroundColor: '#eff6ff',
+                borderRadius: '8px',
+                border: '1px solid #bfdbfe'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                  <AlertCircle style={{
+                    width: '20px',
+                    height: '20px',
+                    color: '#2563eb',
+                    marginTop: '2px',
+                    flexShrink: 0
+                  }} />
+                  <div>
+                    <p style={{
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      color: '#1e40af',
+                      marginBottom: '8px',
+                      margin: '0 0 8px 0'
+                    }}>
+                      How Model Fusion Works
+                    </p>
+                    <ul style={{
+                      fontSize: '14px',
+                      color: '#1e40af',
+                      margin: 0,
+                      paddingLeft: '0',
+                      listStyle: 'none'
+                    }}>
+                      <li style={{ marginBottom: '4px' }}>• Users will see "Model Fusion" as an option in the AI model selector</li>
+                      <li style={{ marginBottom: '4px' }}>• The prompt is sent to all selected AI models simultaneously</li>
+                      <li style={{ marginBottom: '4px' }}>• Individual responses are collected and combined</li>
+                      <li style={{ marginBottom: '4px' }}>• The selected summary model creates a comprehensive analysis</li>
+                      <li style={{ marginBottom: '4px' }}>• Processing may take several minutes depending on model count</li>
+                    </ul>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
         </div>
       </div>
