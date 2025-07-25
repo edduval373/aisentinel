@@ -39,6 +39,10 @@ export default function CompanyManagement() {
   const [showAddCompany, setShowAddCompany] = useState(false);
   const [showEditCompany, setShowEditCompany] = useState(false);
   const [editingCompany, setEditingCompany] = useState<Company | null>(null);
+  const [deleteConfirmDialog, setDeleteConfirmDialog] = useState<{ isOpen: boolean; company: Company | null }>({
+    isOpen: false,
+    company: null
+  });
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -153,8 +157,19 @@ export default function CompanyManagement() {
     setShowEditCompany(true);
   };
 
-  const handleDeleteCompany = (id: number) => {
-    deleteCompanyMutation.mutate(id);
+  const handleDeleteClick = (company: Company) => {
+    setDeleteConfirmDialog({ isOpen: true, company });
+  };
+
+  const handleDeleteConfirm = () => {
+    if (deleteConfirmDialog.company) {
+      deleteCompanyMutation.mutate(deleteConfirmDialog.company.id);
+      setDeleteConfirmDialog({ isOpen: false, company: null });
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteConfirmDialog({ isOpen: false, company: null });
   };
 
   if (companiesLoading) {
@@ -409,7 +424,7 @@ export default function CompanyManagement() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => handleDeleteCompany(company.id)}
+                          onClick={() => handleDeleteClick(company)}
                           style={{ color: '#ef4444' }}
                         >
                           <Trash2 style={{ width: '16px', height: '16px', marginRight: '4px' }} />
@@ -549,6 +564,55 @@ export default function CompanyManagement() {
                 </Button>
               </form>
             </Form>
+          </DialogContent>
+        </Dialog>
+
+        {/* Delete Confirmation Modal */}
+        <Dialog open={deleteConfirmDialog.isOpen} onOpenChange={(open) => {
+          if (!open) {
+            handleDeleteCancel();
+          }
+        }}>
+          <DialogContent style={{ maxWidth: '400px' }}>
+            <DialogHeader>
+              <DialogTitle style={{ color: '#dc2626' }}>Delete Company</DialogTitle>
+            </DialogHeader>
+            <div style={{ padding: '16px 0' }}>
+              <p style={{ margin: 0, lineHeight: '1.5' }}>
+                Are you sure you want to delete <strong>{deleteConfirmDialog.company?.name}</strong>? 
+                This action cannot be undone and will permanently remove all company data, including:
+              </p>
+              <ul style={{ margin: '12px 0 0 20px', padding: 0 }}>
+                <li>All AI models and configurations</li>
+                <li>All activity types and settings</li>
+                <li>All chat sessions and messages</li>
+                <li>All user activities and logs</li>
+              </ul>
+            </div>
+            <div style={{ 
+              display: 'flex', 
+              gap: '12px', 
+              justifyContent: 'flex-end' 
+            }}>
+              <Button
+                variant="outline"
+                onClick={handleDeleteCancel}
+                disabled={deleteCompanyMutation.isPending}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleDeleteConfirm}
+                disabled={deleteCompanyMutation.isPending}
+                style={{
+                  backgroundColor: '#dc2626',
+                  color: 'white',
+                  border: 'none'
+                }}
+              >
+                {deleteCompanyMutation.isPending ? "Deleting..." : "Delete Company"}
+              </Button>
+            </div>
           </DialogContent>
         </Dialog>
       </div>
