@@ -28,6 +28,10 @@
   ],
   "rewrites": [
     {
+      "source": "/verify/(.*)",
+      "destination": "/api/index.js"
+    },
+    {
       "source": "/api/auth/request-verification",
       "destination": "/api/index.js"
     },

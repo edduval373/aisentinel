@@ -228,10 +228,10 @@ export default async function handler(req, res) {
           return;
         }
 
-        // Generate verification token
-        const verificationToken = 'verify-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+        // Generate verification token (cleaner format)
+        const verificationToken = Buffer.from(`${email}:${Date.now()}`).toString('base64url');
         const appUrl = process.env.APP_URL || 'https://aisentinel.app';
-        const verificationUrl = `${appUrl}/api/auth/verify?token=${verificationToken}&email=${encodeURIComponent(email)}`;
+        const verificationUrl = `${appUrl}/verify/${verificationToken}`;
 
         // SendGrid email sending
         sgMail.setApiKey(sendgridApiKey);
@@ -294,14 +294,29 @@ export default async function handler(req, res) {
       }
     }
 
-    // Email verification endpoint
-    if (url.includes('auth/verify') && method === 'GET') {
+    // Email verification endpoint (clean URL format)
+    if ((url.includes('auth/verify') || url.includes('/verify/')) && method === 'GET') {
       console.log('🔐 [SERVERLESS] Email verification attempt');
       
       try {
-        const urlObj = new URL(url, 'https://aisentinel.app');
-        const token = urlObj.searchParams.get('token');
-        const email = urlObj.searchParams.get('email');
+        let token, email;
+        
+        if (url.includes('/verify/')) {
+          // New clean format: /verify/token
+          const tokenPart = url.split('/verify/')[1];
+          if (tokenPart) {
+            const decoded = Buffer.from(tokenPart, 'base64url').toString();
+            const parts = decoded.split(':');
+            email = parts[0];
+            const timestamp = parts[1];
+          }
+          token = tokenPart;
+        } else {
+          // Legacy format with query parameters
+          const urlObj = new URL(url, 'https://aisentinel.app');
+          token = urlObj.searchParams.get('token');
+          email = urlObj.searchParams.get('email');
+        }
         
         if (!token || !email) {
           res.status(400).json({ message: 'Invalid verification link' });
