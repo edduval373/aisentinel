@@ -57,12 +57,18 @@ export default function CompanySetup() {
   // Cropping tool state
   const [isCroppingModalOpen, setIsCroppingModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [imageNaturalSize, setImageNaturalSize] = useState({ width: 0, height: 0 });
+  const [imageDisplaySize, setImageDisplaySize] = useState({ width: 0, height: 0 });
   const [cropData, setCropData] = useState({
-    x: 0,
-    y: 0,
+    x: 50,
+    y: 50,
     width: 200,
     height: 200
   });
+  const [isDragging, setIsDragging] = useState(false);
+  const [isResizing, setIsResizing] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [resizeHandle, setResizeHandle] = useState<string | null>(null);
 
   // Load settings from current company data
   useEffect(() => {
@@ -138,6 +144,30 @@ export default function CompanySetup() {
       reader.onload = (e) => {
         const result = e.target?.result as string;
         setSelectedImage(result);
+        
+        // Load image to get natural dimensions
+        const img = new Image();
+        img.onload = () => {
+          setImageNaturalSize({ width: img.naturalWidth, height: img.naturalHeight });
+          
+          // Calculate display size (max 400px width/height)
+          const maxSize = 400;
+          const ratio = Math.min(maxSize / img.naturalWidth, maxSize / img.naturalHeight);
+          const displayWidth = img.naturalWidth * ratio;
+          const displayHeight = img.naturalHeight * ratio;
+          
+          setImageDisplaySize({ width: displayWidth, height: displayHeight });
+          
+          // Set initial crop area in center
+          const cropSize = Math.min(displayWidth, displayHeight) * 0.6;
+          setCropData({
+            x: (displayWidth - cropSize) / 2,
+            y: (displayHeight - cropSize) / 2,
+            width: cropSize,
+            height: cropSize
+          });
+        };
+        img.src = result;
         setIsCroppingModalOpen(true);
       };
       reader.readAsDataURL(file);
@@ -152,13 +182,23 @@ export default function CompanySetup() {
     const img = new Image();
     
     img.onload = () => {
-      canvas.width = cropData.width;
-      canvas.height = cropData.height;
+      // Calculate scale factor from display size to natural size
+      const scaleX = imageNaturalSize.width / imageDisplaySize.width;
+      const scaleY = imageNaturalSize.height / imageDisplaySize.height;
+      
+      // Apply scale to crop coordinates
+      const naturalCropX = cropData.x * scaleX;
+      const naturalCropY = cropData.y * scaleY;
+      const naturalCropWidth = cropData.width * scaleX;
+      const naturalCropHeight = cropData.height * scaleY;
+      
+      canvas.width = naturalCropWidth;
+      canvas.height = naturalCropHeight;
       
       ctx?.drawImage(
         img,
-        cropData.x, cropData.y, cropData.width, cropData.height,
-        0, 0, cropData.width, cropData.height
+        naturalCropX, naturalCropY, naturalCropWidth, naturalCropHeight,
+        0, 0, naturalCropWidth, naturalCropHeight
       );
       
       const croppedDataUrl = canvas.toDataURL('image/png');
@@ -173,6 +213,81 @@ export default function CompanySetup() {
     };
     
     img.src = selectedImage;
+  };
+
+  const handleMouseDown = (e: React.MouseEvent, action: 'drag' | 'resize', handle?: string) => {
+    e.preventDefault();
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    setDragStart({ x, y });
+    
+    if (action === 'drag') {
+      setIsDragging(true);
+    } else if (action === 'resize') {
+      setIsResizing(true);
+      setResizeHandle(handle || null);
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging && !isResizing) return;
+    
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    if (isDragging) {
+      const deltaX = x - dragStart.x;
+      const deltaY = y - dragStart.y;
+      
+      setCropData(prev => ({
+        ...prev,
+        x: Math.max(0, Math.min(imageDisplaySize.width - prev.width, prev.x + deltaX)),
+        y: Math.max(0, Math.min(imageDisplaySize.height - prev.height, prev.y + deltaY))
+      }));
+      
+      setDragStart({ x, y });
+    } else if (isResizing && resizeHandle) {
+      const deltaX = x - dragStart.x;
+      const deltaY = y - dragStart.y;
+      
+      setCropData(prev => {
+        let newCrop = { ...prev };
+        
+        if (resizeHandle.includes('right')) {
+          newCrop.width = Math.max(50, Math.min(imageDisplaySize.width - prev.x, prev.width + deltaX));
+        }
+        if (resizeHandle.includes('left')) {
+          const newWidth = Math.max(50, prev.width - deltaX);
+          if (newWidth !== prev.width) {
+            newCrop.x = Math.max(0, prev.x + (prev.width - newWidth));
+            newCrop.width = newWidth;
+          }
+        }
+        if (resizeHandle.includes('bottom')) {
+          newCrop.height = Math.max(50, Math.min(imageDisplaySize.height - prev.y, prev.height + deltaY));
+        }
+        if (resizeHandle.includes('top')) {
+          const newHeight = Math.max(50, prev.height - deltaY);
+          if (newHeight !== prev.height) {
+            newCrop.y = Math.max(0, prev.y + (prev.height - newHeight));
+            newCrop.height = newHeight;
+          }
+        }
+        
+        return newCrop;
+      });
+      
+      setDragStart({ x, y });
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    setIsResizing(false);
+    setResizeHandle(null);
   };
 
   const handleEditOwner = (owner: Owner) => {
@@ -989,20 +1104,196 @@ export default function CompanySetup() {
                 borderRadius: '8px', 
                 padding: '20px',
                 marginBottom: '20px',
-                textAlign: 'center'
+                textAlign: 'center',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center'
               }}>
-                <img 
-                  src={selectedImage} 
-                  alt="Selected logo"
-                  style={{ 
-                    maxWidth: '100%', 
-                    maxHeight: '400px', 
-                    border: '2px dashed #cbd5e1',
+                <div style={{ 
+                  position: 'relative', 
+                  display: 'inline-block',
+                  userSelect: 'none'
+                }}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
+                >
+                  <img 
+                    src={selectedImage} 
+                    alt="Selected logo"
+                    style={{ 
+                      width: `${imageDisplaySize.width}px`,
+                      height: `${imageDisplaySize.height}px`,
+                      display: 'block',
+                      borderRadius: '8px'
+                    }}
+                    draggable={false}
+                  />
+                  
+                  {/* Crop Overlay */}
+                  <div style={{
+                    position: 'absolute',
+                    top: '0',
+                    left: '0',
+                    right: '0',
+                    bottom: '0',
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
                     borderRadius: '8px'
-                  }}
-                />
+                  }}>
+                    {/* Crop Selection Area */}
+                    <div
+                      style={{
+                        position: 'absolute',
+                        left: `${cropData.x}px`,
+                        top: `${cropData.y}px`,
+                        width: `${cropData.width}px`,
+                        height: `${cropData.height}px`,
+                        backgroundColor: 'transparent',
+                        border: '2px solid #3b82f6',
+                        borderRadius: '4px',
+                        cursor: isDragging ? 'grabbing' : 'grab'
+                      }}
+                      onMouseDown={(e) => handleMouseDown(e, 'drag')}
+                    >
+                      {/* Resize Handles */}
+                      {/* Top-left */}
+                      <div
+                        style={{
+                          position: 'absolute',
+                          top: '-6px',
+                          left: '-6px',
+                          width: '12px',
+                          height: '12px',
+                          backgroundColor: '#3b82f6',
+                          border: '2px solid white',
+                          borderRadius: '50%',
+                          cursor: 'nw-resize'
+                        }}
+                        onMouseDown={(e) => handleMouseDown(e, 'resize', 'top-left')}
+                      />
+                      
+                      {/* Top-right */}
+                      <div
+                        style={{
+                          position: 'absolute',
+                          top: '-6px',
+                          right: '-6px',
+                          width: '12px',
+                          height: '12px',
+                          backgroundColor: '#3b82f6',
+                          border: '2px solid white',
+                          borderRadius: '50%',
+                          cursor: 'ne-resize'
+                        }}
+                        onMouseDown={(e) => handleMouseDown(e, 'resize', 'top-right')}
+                      />
+                      
+                      {/* Bottom-left */}
+                      <div
+                        style={{
+                          position: 'absolute',
+                          bottom: '-6px',
+                          left: '-6px',
+                          width: '12px',
+                          height: '12px',
+                          backgroundColor: '#3b82f6',
+                          border: '2px solid white',
+                          borderRadius: '50%',
+                          cursor: 'sw-resize'
+                        }}
+                        onMouseDown={(e) => handleMouseDown(e, 'resize', 'bottom-left')}
+                      />
+                      
+                      {/* Bottom-right */}
+                      <div
+                        style={{
+                          position: 'absolute',
+                          bottom: '-6px',
+                          right: '-6px',
+                          width: '12px',
+                          height: '12px',
+                          backgroundColor: '#3b82f6',
+                          border: '2px solid white',
+                          borderRadius: '50%',
+                          cursor: 'se-resize'
+                        }}
+                        onMouseDown={(e) => handleMouseDown(e, 'resize', 'bottom-right')}
+                      />
+                      
+                      {/* Edge handles */}
+                      {/* Top */}
+                      <div
+                        style={{
+                          position: 'absolute',
+                          top: '-4px',
+                          left: '50%',
+                          transform: 'translateX(-50%)',
+                          width: '16px',
+                          height: '8px',
+                          backgroundColor: '#3b82f6',
+                          border: '1px solid white',
+                          borderRadius: '4px',
+                          cursor: 'n-resize'
+                        }}
+                        onMouseDown={(e) => handleMouseDown(e, 'resize', 'top')}
+                      />
+                      
+                      {/* Bottom */}
+                      <div
+                        style={{
+                          position: 'absolute',
+                          bottom: '-4px',
+                          left: '50%',
+                          transform: 'translateX(-50%)',
+                          width: '16px',
+                          height: '8px',
+                          backgroundColor: '#3b82f6',
+                          border: '1px solid white',
+                          borderRadius: '4px',
+                          cursor: 's-resize'
+                        }}
+                        onMouseDown={(e) => handleMouseDown(e, 'resize', 'bottom')}
+                      />
+                      
+                      {/* Left */}
+                      <div
+                        style={{
+                          position: 'absolute',
+                          left: '-4px',
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          width: '8px',
+                          height: '16px',
+                          backgroundColor: '#3b82f6',
+                          border: '1px solid white',
+                          borderRadius: '4px',
+                          cursor: 'w-resize'
+                        }}
+                        onMouseDown={(e) => handleMouseDown(e, 'resize', 'left')}
+                      />
+                      
+                      {/* Right */}
+                      <div
+                        style={{
+                          position: 'absolute',
+                          right: '-4px',
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          width: '8px',
+                          height: '16px',
+                          backgroundColor: '#3b82f6',
+                          border: '1px solid white',
+                          borderRadius: '4px',
+                          cursor: 'e-resize'
+                        }}
+                        onMouseDown={(e) => handleMouseDown(e, 'resize', 'right')}
+                      />
+                    </div>
+                  </div>
+                </div>
+                
                 <p style={{ fontSize: '14px', color: '#64748b', marginTop: '12px', margin: '12px 0 0 0' }}>
-                  Drag and resize the selection area to crop your logo
+                  Drag the selection area or use the handles to resize
                 </p>
               </div>
 
