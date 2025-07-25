@@ -1,38 +1,83 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button-standard";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card-standard";
+import { Badge } from "@/components/ui/badge-standard";
+import { Input } from "@/components/ui/input-standard";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select-standard";
+import { hasAccessLevel, ACCESS_REQUIREMENTS } from "@/utils/roleBasedAccess";
 import { BarChart3, Download, Filter, Search, AlertTriangle, Shield, User } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
 
 export default function AdminLogs() {
   const { toast } = useToast();
-  const { isAuthenticated, isLoading, user } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
+  
+  // Check if user has admin level access (2 or above)
+  const hasAdminAccess = hasAccessLevel(user?.roleLevel, ACCESS_REQUIREMENTS.ACTIVITY_LOGS);
 
-  // Redirect if not admin
   useEffect(() => {
-    if (!isLoading && (!isAuthenticated || (!user?.role?.includes('admin') && !user?.email?.includes('admin') && !user?.email?.includes('ed.duval15@gmail.com')))) {
+    if (!isLoading && (!isAuthenticated || !hasAdminAccess)) {
       toast({
-        title: "Unauthorized",
-        description: "You need admin privileges to access this page.",
+        title: "Access Denied",
+        description: "Admin access required (level 2+)",
         variant: "destructive",
       });
-      window.location.href = "/";
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 1000);
       return;
     }
-  }, [isAuthenticated, isLoading, user, toast]);
+  }, [isAuthenticated, isLoading, hasAdminAccess, toast]);
 
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sentinel-blue"></div>
-      </div>
+      <AdminLayout title="Activity Logs" subtitle="Monitor system activity and security events">
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          height: '256px' 
+        }}>
+          <div style={{
+            width: '48px',
+            height: '48px',
+            border: '2px solid #3b82f6',
+            borderTop: '2px solid transparent',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite'
+          }}></div>
+        </div>
+      </AdminLayout>
+    );
+  }
+  
+  // Return access denied if not authenticated or lacks access
+  if (!isAuthenticated || !hasAdminAccess) {
+    return (
+      <AdminLayout title="Activity Logs" subtitle="Monitor system activity and security events">
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column',
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          height: '256px',
+          gap: '16px'
+        }}>
+          <BarChart3 style={{ width: '48px', height: '48px', color: '#ef4444' }} />
+          <div style={{ textAlign: 'center' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#374151', margin: '0 0 8px 0' }}>
+              Access Denied
+            </h3>
+            <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>
+              Admin access required (level 2+)
+            </p>
+          </div>
+        </div>
+      </AdminLayout>
     );
   }
 

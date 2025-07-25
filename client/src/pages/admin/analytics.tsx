@@ -2,40 +2,78 @@ import { useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import AdminLayout from "@/components/layout/AdminLayout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card-standard";
+import { Badge } from "@/components/ui/badge-standard";
+import { hasAccessLevel, ACCESS_REQUIREMENTS } from "@/utils/roleBasedAccess";
 import { BarChart3, TrendingUp, Users, MessageSquare, Clock, Shield } from "lucide-react";
 
 export default function AdminAnalytics() {
   const { toast } = useToast();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
+  
+  // Check if user has administrator level access (98 or above)
+  const hasAdminAccess = hasAccessLevel(user?.roleLevel, ACCESS_REQUIREMENTS.MONITORING_REPORTS);
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
+    if (!isLoading && (!isAuthenticated || !hasAdminAccess)) {
       toast({
-        title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
+        title: "Access Denied",
+        description: "Administrator access required (level 98+)",
         variant: "destructive",
       });
       setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
+        window.location.href = "/";
+      }, 1000);
       return;
     }
-  }, [isAuthenticated, isLoading, toast]);
+  }, [isAuthenticated, isLoading, hasAdminAccess, toast]);
 
   if (isLoading) {
     return (
       <AdminLayout title="Usage Analytics" subtitle="Monitor system usage and performance metrics">
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sentinel-blue"></div>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          height: '256px' 
+        }}>
+          <div style={{
+            width: '48px',
+            height: '48px',
+            border: '2px solid #3b82f6',
+            borderTop: '2px solid transparent',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite'
+          }}></div>
         </div>
       </AdminLayout>
     );
   }
 
-  if (!isAuthenticated) {
-    return null;
+  // Return access denied if not authenticated or lacks access
+  if (!isAuthenticated || !hasAdminAccess) {
+    return (
+      <AdminLayout title="Usage Analytics" subtitle="Monitor system usage and performance metrics">
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column',
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          height: '256px',
+          gap: '16px'
+        }}>
+          <BarChart3 style={{ width: '48px', height: '48px', color: '#ef4444' }} />
+          <div style={{ textAlign: 'center' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#374151', margin: '0 0 8px 0' }}>
+              Access Denied
+            </h3>
+            <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>
+              Administrator access required (level 98+)
+            </p>
+          </div>
+        </div>
+      </AdminLayout>
+    );
   }
 
   const metrics = [
@@ -88,59 +126,99 @@ export default function AdminAnalytics() {
 
   return (
     <AdminLayout title="Usage Analytics" subtitle="Monitor system usage and performance metrics">
-      <div className="p-6 space-y-6">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
         {/* Key Metrics */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div style={{ 
+          display: 'grid', 
+          gap: '24px', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' 
+        }}>
           {metrics.map((metric) => (
             <Card key={metric.title}>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-slate-600">
+              <CardHeader style={{ 
+                display: 'flex', 
+                flexDirection: 'row', 
+                alignItems: 'center', 
+                justifyContent: 'space-between',
+                paddingBottom: '8px'
+              }}>
+                <CardTitle style={{ fontSize: '14px', fontWeight: '500', color: '#64748b' }}>
                   {metric.title}
                 </CardTitle>
-                <metric.icon className={`w-4 h-4 ${metric.color}`} />
+                <metric.icon style={{ 
+                  width: '16px', 
+                  height: '16px', 
+                  color: metric.color === 'text-blue-600' ? '#2563eb' :
+                         metric.color === 'text-green-600' ? '#059669' :
+                         metric.color === 'text-red-600' ? '#dc2626' :
+                         metric.color === 'text-purple-600' ? '#9333ea' : '#64748b'
+                }} />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-slate-800">{metric.value}</div>
-                <div className="flex items-center text-xs text-slate-500">
-                  <TrendingUp className={`w-3 h-3 mr-1 ${
-                    metric.trend === 'up' ? 'text-green-500' : 'text-red-500'
-                  }`} />
-                  <span className={
-                    metric.trend === 'up' ? 'text-green-600' : 'text-red-600'
-                  }>
+                <div style={{ fontSize: '24px', fontWeight: '700', color: '#1e293b' }}>{metric.value}</div>
+                <div style={{ display: 'flex', alignItems: 'center', fontSize: '12px', color: '#64748b' }}>
+                  <TrendingUp style={{ 
+                    width: '12px', 
+                    height: '12px', 
+                    marginRight: '4px',
+                    color: metric.trend === 'up' ? '#10b981' : '#ef4444'
+                  }} />
+                  <span style={{ 
+                    color: metric.trend === 'up' ? '#059669' : '#dc2626' 
+                  }}>
                     {metric.change}
                   </span>
-                  <span className="ml-1">from last month</span>
+                  <span style={{ marginLeft: '4px' }}>from last month</span>
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
+        <div style={{ 
+          display: 'grid', 
+          gap: '24px', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))' 
+        }}>
           {/* AI Model Usage */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center">
-                <BarChart3 className="w-5 h-5 mr-2" />
+              <CardTitle style={{ display: 'flex', alignItems: 'center' }}>
+                <BarChart3 style={{ width: '20px', height: '20px', marginRight: '8px' }} />
                 AI Model Usage
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {topModels.map((model) => (
-                <div key={model.name} className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className={`w-3 h-3 rounded-full ${model.color}`} />
-                    <span className="text-sm font-medium text-slate-700">{model.name}</span>
+                <div key={model.name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{ 
+                      width: '12px', 
+                      height: '12px', 
+                      borderRadius: '50%',
+                      backgroundColor: model.color === 'bg-blue-500' ? '#3b82f6' :
+                                       model.color === 'bg-green-500' ? '#10b981' :
+                                       model.color === 'bg-purple-500' ? '#8b5cf6' : '#64748b'
+                    }} />
+                    <span style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>{model.name}</span>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-24 bg-slate-200 rounded-full h-2">
-                      <div 
-                        className={`h-2 rounded-full ${model.color}`} 
-                        style={{ width: `${model.usage}%` }}
-                      />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ 
+                      width: '96px', 
+                      height: '8px', 
+                      backgroundColor: '#e2e8f0', 
+                      borderRadius: '4px' 
+                    }}>
+                      <div style={{ 
+                        height: '8px', 
+                        borderRadius: '4px',
+                        width: `${model.usage}%`,
+                        backgroundColor: model.color === 'bg-blue-500' ? '#3b82f6' :
+                                        model.color === 'bg-green-500' ? '#10b981' :
+                                        model.color === 'bg-purple-500' ? '#8b5cf6' : '#64748b'
+                      }} />
                     </div>
-                    <span className="text-sm text-slate-600">{model.usage}%</span>
+                    <span style={{ fontSize: '14px', color: '#64748b' }}>{model.usage}%</span>
                   </div>
                 </div>
               ))}
@@ -150,28 +228,35 @@ export default function AdminAnalytics() {
           {/* Top Activity Types */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center">
-                <Users className="w-5 h-5 mr-2" />
+              <CardTitle style={{ display: 'flex', alignItems: 'center' }}>
+                <Users style={{ width: '20px', height: '20px', marginRight: '8px' }} />
                 Top Activity Types
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {topActivities.map((activity) => (
-                <div key={activity.name} className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <span className="text-sm font-medium text-slate-700">{activity.name}</span>
-                    <Badge variant="secondary" className="text-xs">
+                <div key={activity.name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <span style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>{activity.name}</span>
+                    <Badge variant="secondary" style={{ fontSize: '12px' }}>
                       {activity.count} uses
                     </Badge>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-20 bg-slate-200 rounded-full h-2">
-                      <div 
-                        className="h-2 rounded-full bg-sentinel-blue" 
-                        style={{ width: `${activity.percentage}%` }}
-                      />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ 
+                      width: '80px', 
+                      height: '8px', 
+                      backgroundColor: '#e2e8f0', 
+                      borderRadius: '4px' 
+                    }}>
+                      <div style={{ 
+                        height: '8px', 
+                        borderRadius: '4px',
+                        width: `${activity.percentage}%`,
+                        backgroundColor: '#3b82f6'
+                      }} />
                     </div>
-                    <span className="text-sm text-slate-600">{activity.percentage}%</span>
+                    <span style={{ fontSize: '14px', color: '#64748b' }}>{activity.percentage}%</span>
                   </div>
                 </div>
               ))}
@@ -182,17 +267,28 @@ export default function AdminAnalytics() {
         {/* Usage Trends */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center">
-              <TrendingUp className="w-5 h-5 mr-2" />
+            <CardTitle style={{ display: 'flex', alignItems: 'center' }}>
+              <TrendingUp style={{ width: '20px', height: '20px', marginRight: '8px' }} />
               Usage Trends (Last 30 Days)
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-64 flex items-center justify-center text-slate-500">
-              <div className="text-center">
-                <BarChart3 className="w-12 h-12 mx-auto mb-2 text-slate-400" />
-                <p>Analytics chart would be displayed here</p>
-                <p className="text-sm">Integration with charting library required</p>
+            <div style={{ 
+              height: '256px',
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              color: '#64748b' 
+            }}>
+              <div style={{ textAlign: 'center' }}>
+                <BarChart3 style={{ 
+                  width: '48px', 
+                  height: '48px', 
+                  margin: '0 auto 8px', 
+                  color: '#94a3b8' 
+                }} />
+                <p style={{ margin: '0 0 4px 0' }}>Analytics chart would be displayed here</p>
+                <p style={{ fontSize: '14px', margin: 0 }}>Integration with charting library required</p>
               </div>
             </div>
           </CardContent>
@@ -204,18 +300,22 @@ export default function AdminAnalytics() {
             <CardTitle>System Performance</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-4 md:grid-cols-3">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-green-600">99.9%</div>
-                <div className="text-sm text-slate-600">Uptime</div>
+            <div style={{ 
+              display: 'grid', 
+              gap: '16px', 
+              gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))' 
+            }}>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '24px', fontWeight: '700', color: '#059669' }}>99.9%</div>
+                <div style={{ fontSize: '14px', color: '#64748b' }}>Uptime</div>
               </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-blue-600">2.1s</div>
-                <div className="text-sm text-slate-600">Avg Response Time</div>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '24px', fontWeight: '700', color: '#2563eb' }}>2.1s</div>
+                <div style={{ fontSize: '14px', color: '#64748b' }}>Avg Response Time</div>
               </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-purple-600">94%</div>
-                <div className="text-sm text-slate-600">Success Rate</div>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '24px', fontWeight: '700', color: '#9333ea' }}>94%</div>
+                <div style={{ fontSize: '14px', color: '#64748b' }}>Success Rate</div>
               </div>
             </div>
           </CardContent>

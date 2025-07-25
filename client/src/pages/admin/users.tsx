@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/useAuth"; 
 import { useToast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button-standard";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card-standard";
+import { Badge } from "@/components/ui/badge-standard";
+import { hasAccessLevel, ACCESS_REQUIREMENTS } from "@/utils/roleBasedAccess";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -15,7 +16,7 @@ import AdminLayout from "@/components/layout/AdminLayout";
 
 export default function AdminUsers() {
   const { toast } = useToast();
-  const { isAuthenticated, isLoading, user } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>(null);
@@ -32,24 +33,68 @@ export default function AdminUsers() {
     status: ''
   });
 
-  // Redirect if not admin
+  // Check if user has administrator level access (98 or above)
+  const hasAdminAccess = hasAccessLevel(user?.roleLevel, ACCESS_REQUIREMENTS.USER_MANAGEMENT);
+
   useEffect(() => {
-    if (!isLoading && (!isAuthenticated || (!user?.role?.includes('admin') && !user?.email?.includes('admin') && !user?.email?.includes('ed.duval15@gmail.com')))) {
+    if (!isLoading && (!isAuthenticated || !hasAdminAccess)) {
       toast({
-        title: "Unauthorized",
-        description: "You need admin privileges to access this page.",
+        title: "Access Denied",
+        description: "Administrator access required (level 98+)",
         variant: "destructive",
       });
-      window.location.href = "/";
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 1000);
       return;
     }
-  }, [isAuthenticated, isLoading, user, toast]);
+  }, [isAuthenticated, isLoading, hasAdminAccess, toast]);
 
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sentinel-blue"></div>
-      </div>
+      <AdminLayout title="User Management" subtitle="Manage users, roles, and permissions">
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          height: '256px' 
+        }}>
+          <div style={{
+            width: '48px',
+            height: '48px',
+            border: '2px solid #3b82f6',
+            borderTop: '2px solid transparent',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite'
+          }}></div>
+        </div>
+      </AdminLayout>
+    );
+  }
+  
+  // Return access denied if not authenticated or lacks access
+  if (!isAuthenticated || !hasAdminAccess) {
+    return (
+      <AdminLayout title="User Management" subtitle="Manage users, roles, and permissions">
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column',
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          height: '256px',
+          gap: '16px'
+        }}>
+          <Users style={{ width: '48px', height: '48px', color: '#ef4444' }} />
+          <div style={{ textAlign: 'center' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#374151', margin: '0 0 8px 0' }}>
+              Access Denied
+            </h3>
+            <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>
+              Administrator access required (level 98+)
+            </p>
+          </div>
+        </div>
+      </AdminLayout>
     );
   }
 
