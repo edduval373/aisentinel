@@ -345,7 +345,7 @@ export default function Home() {
           alignItems: 'center',
           justifyContent: 'space-between',
           flexShrink: 0,
-          minHeight: '64px'
+          minHeight: '54px'
         }}>
           {/* Left side - Menu Button */}
           <Button
