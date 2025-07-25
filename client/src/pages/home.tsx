@@ -38,6 +38,10 @@ function CompanyInfoLarge() {
       try {
         const parsed = JSON.parse(savedSettings);
         setDisplaySettings(parsed);
+        // Also load zoom state if it exists
+        if (parsed.isZoomed !== undefined) {
+          setIsZoomed(parsed.isZoomed);
+        }
         console.log("📺 Loaded chat display settings:", parsed);
       } catch (error) {
         console.error("Error parsing chat display settings:", error);
@@ -50,8 +54,25 @@ function CompanyInfoLarge() {
   });
 
   const toggleZoom = () => {
-    setIsZoomed(!isZoomed);
-    console.log("🔍 Company logo zoom toggled:", !isZoomed ? "zoomed in" : "zoomed out");
+    const newZoomState = !isZoomed;
+    setIsZoomed(newZoomState);
+    
+    // Save zoom state to localStorage
+    const currentSettings = localStorage.getItem('chatDisplaySettings');
+    let settings = { showCompanyName: true, showCompanyLogo: true };
+    
+    if (currentSettings) {
+      try {
+        settings = JSON.parse(currentSettings);
+      } catch (error) {
+        console.error("Error parsing existing settings:", error);
+      }
+    }
+    
+    settings.isZoomed = newZoomState;
+    localStorage.setItem('chatDisplaySettings', JSON.stringify(settings));
+    
+    console.log("🔍 Company logo zoom toggled:", newZoomState ? "zoomed in" : "zoomed out", "- saved to localStorage");
   };
 
   if (!currentCompany) {

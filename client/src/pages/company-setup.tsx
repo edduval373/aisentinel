@@ -51,6 +51,10 @@ export default function CompanySetup() {
         const parsed = JSON.parse(savedSettings);
         setShowCompanyName(parsed.showCompanyName);
         setShowCompanyLogo(parsed.showCompanyLogo);
+        // Also load preview zoom state
+        if (parsed.isZoomed !== undefined) {
+          setPreviewZoomed(parsed.isZoomed);
+        }
       } catch (error) {
         console.error("Error loading saved chat display settings:", error);
       }
@@ -80,7 +84,8 @@ export default function CompanySetup() {
     try {
       const settings = {
         showCompanyName,
-        showCompanyLogo
+        showCompanyLogo,
+        isZoomed: previewZoomed
       };
       
       // Save to localStorage for immediate use
@@ -386,7 +391,7 @@ export default function CompanySetup() {
                           marginTop: '4px',
                           fontStyle: 'italic'
                         }}>
-                          Click logo to {previewZoomed ? 'zoom out' : 'zoom in'}
+                          Click logo to {previewZoomed ? 'zoom out' : 'zoom in'} - state will be saved
                         </div>
                       </div>
                     )}
