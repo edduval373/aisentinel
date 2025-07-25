@@ -29,7 +29,7 @@ export default function ModelFusion() {
   const queryClient = useQueryClient();
 
   // Check access level - require Owner level (99+)
-  if (!hasAccessLevel(user, 99)) {
+  if (!hasAccessLevel(user?.roleLevel, 99)) {
     return (
       <AdminLayout title="Model Fusion" subtitle="Set up advanced multi-model AI processing for comprehensive research and analysis">
         <div style={{
