@@ -305,8 +305,28 @@ export default function CreateModels() {
   if (modelsLoading) {
     return (
       <AdminLayout title="Create AI Models" subtitle="Create and manage custom AI models from scratch">
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          height: '320px' 
+        }}>
+          <div style={{
+            width: '64px',
+            height: '64px',
+            animation: 'spin 2s linear infinite'
+          }}>
+            <img 
+              src="/ai-sentinel-logo.png" 
+              alt="Loading..." 
+              style={{ 
+                width: '100%', 
+                height: '100%', 
+                objectFit: 'contain',
+                filter: 'brightness(1.1) saturate(1.3)'
+              }} 
+            />
+          </div>
         </div>
       </AdminLayout>
     );
@@ -314,13 +334,60 @@ export default function CreateModels() {
 
   return (
     <AdminLayout title="Create AI Models" subtitle="Create and manage custom AI models from scratch">
-      <div className="p-6 space-y-6">
-        <div className="flex justify-between items-center">
-          <h2 className="text-lg font-semibold ml-9">Custom AI Models</h2>
+      <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
+        {/* Header Section */}
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          marginBottom: '8px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <Bot style={{ width: '32px', height: '32px', color: '#3b82f6' }} />
+            <div>
+              <h2 style={{ 
+                fontSize: '28px', 
+                fontWeight: '700', 
+                color: '#1e293b', 
+                margin: '0 0 4px 0' 
+              }}>
+                Custom AI Models
+              </h2>
+              <p style={{ 
+                fontSize: '16px', 
+                color: '#64748b', 
+                margin: 0 
+              }}>
+                Build and configure AI models tailored to your organization's needs
+              </p>
+            </div>
+          </div>
           <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
             <DialogTrigger asChild>
-              <Button onClick={resetForm}>
-                <Plus className="w-4 h-4 mr-2" />
+              <Button 
+                onClick={resetForm}
+                style={{
+                  background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+                  border: 'none',
+                  color: 'white',
+                  padding: '12px 24px',
+                  borderRadius: '12px',
+                  fontWeight: '600',
+                  fontSize: '16px',
+                  boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
+                  transition: 'all 0.2s ease',
+                  cursor: 'pointer'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(59, 130, 246, 0.4)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0px)';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.3)';
+                }}
+              >
+                <Plus style={{ width: '20px', height: '20px', marginRight: '8px' }} />
                 Create Model
               </Button>
             </DialogTrigger>
@@ -636,41 +703,138 @@ export default function CreateModels() {
         </div>
 
         {/* Models Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', 
+          gap: '24px' 
+        }}>
           {models.map((model: AiModel) => (
-            <Card key={model.id} className="hover:shadow-lg transition-shadow">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center space-x-2">
-                    <Bot className="w-5 h-5 text-blue-600" />
-                    <CardTitle className="text-base">{model.name}</CardTitle>
+            <Card 
+              key={model.id} 
+              style={{
+                background: 'linear-gradient(145deg, #ffffff 0%, #f8fafc 100%)',
+                border: '1px solid #e2e8f0',
+                borderRadius: '16px',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+                transition: 'all 0.3s ease',
+                cursor: 'pointer'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 12px 28px rgba(0, 0, 0, 0.12)';
+                e.currentTarget.style.borderColor = '#3b82f6';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0px)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.05)';
+                e.currentTarget.style.borderColor = '#e2e8f0';
+              }}
+            >
+              <CardHeader style={{ paddingBottom: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{
+                      width: '48px',
+                      height: '48px',
+                      background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+                      borderRadius: '12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)'
+                    }}>
+                      <Bot style={{ width: '24px', height: '24px', color: 'white' }} />
+                    </div>
+                    <div>
+                      <CardTitle style={{ 
+                        fontSize: '20px', 
+                        fontWeight: '700', 
+                        color: '#1e293b',
+                        marginBottom: '4px'
+                      }}>
+                        {model.name}
+                      </CardTitle>
+                      <p style={{ 
+                        fontSize: '14px', 
+                        color: '#64748b', 
+                        textTransform: 'capitalize',
+                        fontWeight: '500'
+                      }}>
+                        {model.provider}
+                      </p>
+                    </div>
                   </div>
-                  <Badge variant={model.isEnabled ? "default" : "secondary"}>
+                  <Badge 
+                    variant={model.isEnabled ? "default" : "secondary"}
+                    style={{
+                      background: model.isEnabled 
+                        ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' 
+                        : '#6b7280',
+                      color: 'white',
+                      border: 'none',
+                      padding: '6px 12px',
+                      borderRadius: '8px',
+                      fontSize: '12px',
+                      fontWeight: '600'
+                    }}
+                  >
                     {model.isEnabled ? "Enabled" : "Disabled"}
                   </Badge>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="text-sm text-gray-600 space-y-2">
-                  <div className="flex justify-between">
-                    <span>Provider:</span>
-                    <span className="font-medium capitalize">{model.provider}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Model ID:</span>
-                    <span className="font-medium">{model.modelId}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Context:</span>
-                    <span className="font-medium">{model.contextWindow ? model.contextWindow.toLocaleString() : 'N/A'}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>API Key:</span>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-xs font-mono">
-                        {showApiKeys[model.id] ? model.apiKey : maskApiKey(model.apiKey || '')}
+              <CardContent style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                {/* Model Details */}
+                <div style={{ 
+                  background: '#f8fafc', 
+                  padding: '16px', 
+                  borderRadius: '12px',
+                  border: '1px solid #e2e8f0'
+                }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '14px', color: '#64748b', fontWeight: '500' }}>Model ID:</span>
+                      <span style={{ 
+                        fontSize: '14px', 
+                        color: '#1e293b', 
+                        fontWeight: '600',
+                        fontFamily: 'monospace',
+                        background: '#ffffff',
+                        padding: '4px 8px',
+                        borderRadius: '6px',
+                        border: '1px solid #e2e8f0'
+                      }}>
+                        {model.modelId}
                       </span>
-                      <Button
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '14px', color: '#64748b', fontWeight: '500' }}>Context Window:</span>
+                      <span style={{ 
+                        fontSize: '14px', 
+                        color: '#1e293b', 
+                        fontWeight: '600',
+                        background: '#ffffff',
+                        padding: '4px 8px',
+                        borderRadius: '6px',
+                        border: '1px solid #e2e8f0'
+                      }}>
+                        {model.contextWindow ? model.contextWindow.toLocaleString() : 'N/A'}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '14px', color: '#64748b', fontWeight: '500' }}>API Key:</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ 
+                          fontSize: '12px', 
+                          fontFamily: 'monospace',
+                          color: '#374151',
+                          background: '#ffffff',
+                          padding: '4px 8px',
+                          borderRadius: '6px',
+                          border: '1px solid #e2e8f0'
+                        }}>
+                          {showApiKeys[model.id] ? model.apiKey : maskApiKey(model.apiKey || '')}
+                        </span>
+                        <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => toggleApiKeyVisibility(model.id)}
@@ -681,29 +845,54 @@ export default function CreateModels() {
                         ) : (
                           <Eye className="w-3 h-3" />
                         )}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          padding: '4px',
+                          cursor: 'pointer',
+                          borderRadius: '4px'
+                        }}
+                      >
+                        {showApiKeys[model.id] ? (
+                          <EyeOff style={{ width: '14px', height: '14px', color: '#64748b' }} />
+                        ) : (
+                          <Eye style={{ width: '14px', height: '14px', color: '#64748b' }} />
+                        )}
                       </Button>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '14px', color: '#64748b', fontWeight: '500' }}>Endpoint:</span>
+                      <span style={{ 
+                        fontSize: '12px', 
+                        color: '#374151',
+                        fontFamily: 'monospace',
+                        background: '#ffffff',
+                        padding: '4px 8px',
+                        borderRadius: '6px',
+                        border: '1px solid #e2e8f0',
+                        maxWidth: '200px',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap'
+                      }} title={model.apiEndpoint}>
+                        {model.apiEndpoint}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '14px', color: '#64748b', fontWeight: '500' }}>Rate Limit:</span>
+                      <span style={{ 
+                        fontSize: '12px', 
+                        color: '#374151',
+                        background: '#ffffff',
+                        padding: '4px 8px',
+                        borderRadius: '6px',
+                        border: '1px solid #e2e8f0'
+                      }}>
+                        {model.rateLimit || 100}/min
+                      </span>
                     </div>
                   </div>
-                  <div className="flex justify-between">
-                    <span>Endpoint:</span>
-                    <span className="text-xs truncate max-w-32" title={model.apiEndpoint}>
-                      {model.apiEndpoint}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Auth:</span>
-                    <span className="text-xs">{model.authMethod || 'bearer'}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Rate Limit:</span>
-                    <span className="text-xs">{model.rateLimit || 100}/min</span>
-                  </div>
-                  {model.lastTested && (
-                    <div className="flex justify-between">
-                      <span>Last Tested:</span>
-                      <span className="text-xs">{new Date(model.lastTested).toLocaleDateString()}</span>
-                    </div>
-                  )}
                 </div>
                 {model.description && (
                   <p className="text-sm text-gray-600 line-clamp-2">{model.description}</p>
