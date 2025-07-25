@@ -3,15 +3,16 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import AdminLayout from "@/components/layout/AdminLayout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card-standard";
+import { Button } from "@/components/ui/button-standard";
+import { Badge } from "@/components/ui/badge-standard";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input-standard";
+import { Label } from "@/components/ui/label-standard";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select-standard";
 import { Checkbox } from "@/components/ui/checkbox";
+import { hasAccessLevel, ACCESS_REQUIREMENTS } from "@/utils/roleBasedAccess";
 import { Shield, Users, Settings, Edit, Plus, Trash2 } from "lucide-react";
 
 interface CompanyRole {
@@ -27,7 +28,10 @@ interface CompanyRole {
 
 export default function AdminRoles() {
   const { toast } = useToast();
-  const { isAuthenticated, isLoading, user } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
+  
+  // Check if user has administrator level access (98 or above)
+  const hasAdminAccess = hasAccessLevel(user?.roleLevel, ACCESS_REQUIREMENTS.ROLES_PERMISSIONS);
   const [roles, setRoles] = useState<CompanyRole[]>([]);
   const [loading, setLoading] = useState(true);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -66,22 +70,22 @@ export default function AdminRoles() {
   ];
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
+    if (!isLoading && (!isAuthenticated || !hasAdminAccess)) {
       toast({
-        title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
+        title: "Access Denied",
+        description: "Administrator access required (level 98+)",
         variant: "destructive",
       });
       setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
+        window.location.href = "/";
+      }, 1000);
       return;
     }
 
-    if (isAuthenticated && user?.companyId) {
+    if (isAuthenticated && hasAdminAccess && user?.companyId) {
       fetchRoles();
     }
-  }, [isAuthenticated, isLoading, user, toast]);
+  }, [isAuthenticated, isLoading, hasAdminAccess, user, toast]);
 
   const fetchRoles = async () => {
     try {
@@ -286,30 +290,66 @@ export default function AdminRoles() {
   if (isLoading || loading) {
     return (
       <AdminLayout title="Roles & Permissions" subtitle="Manage user roles and access permissions">
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sentinel-blue"></div>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          height: '256px' 
+        }}>
+          <div style={{
+            width: '48px',
+            height: '48px',
+            border: '2px solid #3b82f6',
+            borderTop: '2px solid transparent',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite'
+          }}></div>
         </div>
       </AdminLayout>
     );
   }
 
-  if (!isAuthenticated) {
-    return null;
+  // Return access denied if not authenticated or lacks access
+  if (!isAuthenticated || !hasAdminAccess) {
+    return (
+      <AdminLayout title="Roles & Permissions" subtitle="Manage user roles and access permissions">
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column',
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          height: '256px',
+          gap: '16px'
+        }}>
+          <Shield style={{ width: '48px', height: '48px', color: '#ef4444' }} />
+          <div style={{ textAlign: 'center' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#374151', margin: '0 0 8px 0' }}>
+              Access Denied
+            </h3>
+            <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>
+              Administrator access required (level 98+)
+            </p>
+          </div>
+        </div>
+      </AdminLayout>
+    );
   }
 
   return (
     <AdminLayout title="Roles & Permissions" subtitle="Manage user roles and access permissions">
-      <div className="p-6 space-y-6">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
         {/* Header with Add Role Button */}
-        <div className="flex justify-between items-center">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <h2 className="text-2xl font-semibold text-slate-800">Role Management</h2>
-            <p className="text-slate-600 mt-1">Configure user roles and their permissions</p>
+            <h2 style={{ fontSize: '24px', fontWeight: '600', color: '#1e293b', margin: '0 0 4px 0' }}>
+              Role Management
+            </h2>
+            <p style={{ color: '#64748b', margin: 0 }}>Configure user roles and their permissions</p>
           </div>
           <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
             <DialogTrigger asChild>
               <Button>
-                <Plus className="w-4 h-4 mr-2" />
+                <Plus style={{ width: '16px', height: '16px', marginRight: '8px' }} />
                 Add Role
               </Button>
             </DialogTrigger>
@@ -339,7 +379,7 @@ export default function AdminRoles() {
                     min="1"
                     max="999"
                   />
-                  <p className="text-xs text-slate-500 mt-1">
+                  <p style={{ fontSize: '12px', color: '#64748b', marginTop: '4px' }}>
                     1000: Super User, 999: Owner, 998: Admin, 1: User. Use values between for custom roles.
                   </p>
                 </div>
@@ -356,15 +396,22 @@ export default function AdminRoles() {
                 
                 <div>
                   <Label>Permissions</Label>
-                  <div className="grid grid-cols-2 gap-2 mt-2 max-h-48 overflow-y-auto">
+                  <div style={{ 
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(2, 1fr)',
+                    gap: '8px',
+                    marginTop: '8px',
+                    maxHeight: '192px',
+                    overflowY: 'auto'
+                  }}>
                     {availablePermissions.map((permission) => (
-                      <div key={permission} className="flex items-center space-x-2">
+                      <div key={permission} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <Checkbox
                           id={permission}
                           checked={newRole.permissions.includes(permission)}
                           onCheckedChange={(checked) => handlePermissionChange(permission, checked as boolean)}
                         />
-                        <Label htmlFor={permission} className="text-sm">
+                        <Label htmlFor={permission} style={{ fontSize: '14px' }}>
                           {permission.replace(/_/g, ' ')}
                         </Label>
                       </div>
@@ -372,7 +419,7 @@ export default function AdminRoles() {
                   </div>
                 </div>
                 
-                <div className="flex justify-end space-x-2">
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
                   <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
                     Cancel
                   </Button>
