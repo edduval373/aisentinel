@@ -398,7 +398,7 @@ export default function SetupApiKeys() {
                   </div>
 
                   {errorMessages[provider.id] && (
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', marginTop: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '8px' }}>
                       <div style={{ 
                         fontSize: '12px', 
                         color: testResults[provider.id] === 'success' ? '#16a34a' : '#dc2626', 
