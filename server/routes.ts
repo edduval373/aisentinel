@@ -570,39 +570,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
 
 
-  app.get('/api/admin/activity-types', isAuthenticated, async (req: any, res) => {
+  app.get('/api/admin/activity-types', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
-      const user = await storage.getUser(req.user.claims.sub);
-      const userRoleLevel = user?.roleLevel || 1;
-      if (userRoleLevel < 2) { // Must be admin (2) or higher
-        return res.status(403).json({ message: "Admin access required" });
+      const userRoleLevel = req.user?.roleLevel || 1;
+      if (userRoleLevel < 98) { // Must be administrator (98) or higher
+        return res.status(403).json({ message: "Administrator access required" });
       }
-      if (!user?.companyId) {
+      if (!req.user?.companyId) {
         return res.status(400).json({ message: "No company associated with user" });
       }
-      const types = await storage.getActivityTypes(user.companyId);
+      
+      console.log("Fetching activity types for admin:", { userId: req.user.id, companyId: req.user.companyId, roleLevel: userRoleLevel });
+      const types = await storage.getActivityTypes(req.user.companyId);
+      console.log("Retrieved activity types:", types.length, "types");
       res.json(types);
     } catch (error) {
-      console.error("Error fetching activity types:", error);
+      console.error("Error fetching admin activity types:", error);
       res.status(500).json({ message: "Failed to fetch activity types" });
     }
   });
 
-  app.post('/api/admin/activity-types', isAuthenticated, async (req: any, res) => {
+  app.post('/api/admin/activity-types', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
-      const user = await storage.getUser(req.user.claims.sub);
-      const userRoleLevel = user?.roleLevel || 1;
-      if (userRoleLevel < 2) { // Must be admin (2) or higher
-        return res.status(403).json({ message: "Admin access required" });
+      const userRoleLevel = req.user?.roleLevel || 1;
+      if (userRoleLevel < 98) { // Must be administrator (98) or higher
+        return res.status(403).json({ message: "Administrator access required" });
       }
-      if (!user?.companyId) {
+      if (!req.user?.companyId) {
         return res.status(400).json({ message: "No company associated with user" });
       }
 
       // Ensure permissions is properly formatted as an array
       const activityTypeData = {
         ...req.body,
-        companyId: user.companyId,
+        companyId: req.user.companyId,
         permissions: Array.isArray(req.body.permissions) ? req.body.permissions : []
       };
 
@@ -615,19 +616,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch('/api/admin/activity-types/:id', isAuthenticated, async (req: any, res) => {
+  app.patch('/api/admin/activity-types/:id', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
-      const user = await storage.getUser(req.user.claims.sub);
-      const userRoleLevel = user?.roleLevel || 1;
-      if (userRoleLevel < 2) { // Must be admin (2) or higher
-        return res.status(403).json({ message: "Admin access required" });
+      const userRoleLevel = req.user?.roleLevel || 1;
+      if (userRoleLevel < 98) { // Must be administrator (98) or higher
+        return res.status(403).json({ message: "Administrator access required" });
       }
       const id = parseInt(req.params.id);
+      console.log("Updating activity type:", { id, userId: req.user.id, roleLevel: userRoleLevel });
       const type = await storage.updateActivityType(id, req.body);
       res.json(type);
     } catch (error) {
       console.error("Error updating activity type:", error);
       res.status(500).json({ message: "Failed to update activity type" });
+    }
+  });
+
+  app.delete('/api/admin/activity-types/:id', cookieAuth, async (req: AuthenticatedRequest, res) => {
+    try {
+      const userRoleLevel = req.user?.roleLevel || 1;
+      if (userRoleLevel < 98) { // Must be administrator (98) or higher
+        return res.status(403).json({ message: "Administrator access required" });
+      }
+      const id = parseInt(req.params.id);
+      console.log("Deleting activity type:", { id, userId: req.user.id, roleLevel: userRoleLevel });
+      await storage.deleteActivityType(id);
+      res.json({ message: "Activity type deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting activity type:", error);
+      res.status(500).json({ message: "Failed to delete activity type" });
     }
   });
 

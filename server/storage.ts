@@ -112,6 +112,7 @@ export interface IStorage {
   getEnabledActivityTypes(companyId: number): Promise<ActivityType[]>;
   createActivityType(activityType: InsertActivityType): Promise<ActivityType>;
   updateActivityType(id: number, activityType: Partial<InsertActivityType>): Promise<ActivityType>;
+  deleteActivityType(id: number): Promise<void>;
   
   // User Activities operations
   createUserActivity(activity: InsertUserActivity): Promise<UserActivity>;
@@ -518,6 +519,12 @@ export class DatabaseStorage implements IStorage {
       .where(eq(activityTypes.id, id))
       .returning();
     return updated;
+  }
+
+  async deleteActivityType(id: number): Promise<void> {
+    await db
+      .delete(activityTypes)
+      .where(eq(activityTypes.id, id));
   }
 
   // User Activities operations
