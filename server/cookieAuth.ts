@@ -13,7 +13,9 @@ export interface AuthenticatedRequest extends Request {
 export const cookieAuth = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
     const sessionToken = req.cookies?.sessionToken;
+    console.log('CookieAuth: cookies =', req.cookies);
     console.log('CookieAuth: sessionToken =', sessionToken ? sessionToken.substring(0, 30) + '...' : 'missing');
+    console.log('CookieAuth: request path =', req.path);
     
     if (!sessionToken) {
       console.log('CookieAuth: No session token - returning 401');

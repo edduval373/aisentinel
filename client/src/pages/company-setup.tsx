@@ -506,7 +506,11 @@ export default function CompanySetup() {
               
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '24px' }}>
                 <button
-                  onClick={() => setIsEditModalOpen(false)}
+                  onClick={() => {
+                    setIsEditModalOpen(false);
+                    setEditingOwner(null);
+                    setEditForm({ firstName: "", lastName: "", email: "", department: "" });
+                  }}
                   style={{
                     backgroundColor: 'transparent',
                     border: '1px solid #d1d5db',
@@ -572,7 +576,10 @@ export default function CompanySetup() {
               
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
                 <button
-                  onClick={() => setIsDeleteConfirmOpen(false)}
+                  onClick={() => {
+                    setIsDeleteConfirmOpen(false);
+                    setOwnerToDelete(null);
+                  }}
                   style={{
                     backgroundColor: 'transparent',
                     border: '1px solid #d1d5db',

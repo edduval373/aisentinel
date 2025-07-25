@@ -447,17 +447,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Owner Management routes (Owner/Super-user only)
-  app.get('/api/company/owners/:companyId', isAuthenticated, async (req: any, res) => {
+  app.get('/api/company/owners/:companyId', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
-      const user = await storage.getUser(req.user.claims.sub);
-      const userRoleLevel = user?.roleLevel || 1;
+      const userRoleLevel = req.user?.roleLevel || 1;
       if (userRoleLevel < 99) { // Must be owner (99) or higher
         return res.status(403).json({ message: "Owner or super-user access required" });
       }
       const companyId = parseInt(req.params.companyId);
 
       // Ensure user can only access their own company (unless super-user)
-      if (userRoleLevel < 100 && user?.companyId !== companyId) {
+      if (userRoleLevel < 100 && req.user?.companyId !== companyId) {
         return res.status(403).json({ message: "Access denied" });
       }
 
@@ -469,17 +468,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/company/owners/:companyId', isAuthenticated, async (req: any, res) => {
+  app.post('/api/company/owners/:companyId', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
-      const user = await storage.getUser(req.user.claims.sub);
-      const userRoleLevel = user?.roleLevel || 1;
+      const userRoleLevel = req.user?.roleLevel || 1;
       if (userRoleLevel < 99) { // Must be owner (99) or higher
         return res.status(403).json({ message: "Owner or super-user access required" });
       }
       const companyId = parseInt(req.params.companyId);
 
       // Ensure user can only modify their own company (unless super-user)
-      if (userRoleLevel < 100 && user?.companyId !== companyId) {
+      if (userRoleLevel < 100 && req.user?.companyId !== companyId) {
         return res.status(403).json({ message: "Access denied" });
       }
 
@@ -491,10 +489,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch('/api/company/owners/:userId', isAuthenticated, async (req: any, res) => {
+  app.patch('/api/company/owners/:userId', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
-      const user = await storage.getUser(req.user.claims.sub);
-      const userRoleLevel = user?.roleLevel || 1;
+      const userRoleLevel = req.user?.roleLevel || 1;
       if (userRoleLevel < 99) { // Must be owner (99) or higher
         return res.status(403).json({ message: "Owner or super-user access required" });
       }
@@ -508,10 +505,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete('/api/company/owners/:userId/:companyId', isAuthenticated, async (req: any, res) => {
+  app.delete('/api/company/owners/:userId/:companyId', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
-      const user = await storage.getUser(req.user.claims.sub);
-      const userRoleLevel = user?.roleLevel || 1;
+      const userRoleLevel = req.user?.roleLevel || 1;
       if (userRoleLevel < 99) { // Must be owner (99) or higher
         return res.status(403).json({ message: "Owner or super-user access required" });
       }
@@ -519,7 +515,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const companyId = parseInt(req.params.companyId);
 
       // Ensure user can only modify their own company (unless super-user)
-      if (userRoleLevel < 100 && user?.companyId !== companyId) {
+      if (userRoleLevel < 100 && req.user?.companyId !== companyId) {
         return res.status(403).json({ message: "Access denied" });
       }
 
