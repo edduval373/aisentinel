@@ -141,6 +141,12 @@ The application is configured for deployment on Vercel with the following setup:
 
 ```
 Recent Updates:
+- July 25, 2025. Demo Mode Sidebar Access Fixed - AI Sentinel Logo Now Available:
+  * FIXED: Demo users can now access the AI Sentinel logo/menu button to open sidebar
+  * RESOLVED: canAccessSidebar logic updated to include demo mode users (role level 0)
+  * ENHANCED: Demo users now have full sidebar access to view all admin pages in read-only mode
+  * MAINTAINED: All admin pages still properly show READ-ONLY MODE banners for demo users
+  * VERIFIED: Complete demo mode functionality with sidebar navigation and read-only admin access
 - July 25, 2025. Demo Mode Company Authentication Fixed - Users Now Show Under Real Company:
   * FIXED: Demo mode now shows users authenticated under company 1 (Duval AI Solutions)
   * REMOVED: "Demo Company" placeholder - demo users see real company data
