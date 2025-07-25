@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { Building, Users, Settings, Save, Edit, UserPlus, X, Monitor } from "lucide-react";
+import { Building, Users, Settings, Save, Edit, UserPlus, X, Monitor, Crop, Upload } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
 
 interface Company {
@@ -53,6 +53,16 @@ export default function CompanySetup() {
   const [showCompanyLogo, setShowCompanyLogo] = useState(true);
   const [logoSize, setLogoSize] = useState(100);
   const [companyNameSize, setCompanyNameSize] = useState(28);
+  
+  // Cropping tool state
+  const [isCroppingModalOpen, setIsCroppingModalOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [cropData, setCropData] = useState({
+    x: 0,
+    y: 0,
+    width: 200,
+    height: 200
+  });
 
   // Load settings from current company data
   useEffect(() => {
@@ -119,6 +129,50 @@ export default function CompanySetup() {
         variant: "destructive" 
       });
     }
+  };
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        setSelectedImage(result);
+        setIsCroppingModalOpen(true);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const applyCrop = () => {
+    if (!selectedImage) return;
+    
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    
+    img.onload = () => {
+      canvas.width = cropData.width;
+      canvas.height = cropData.height;
+      
+      ctx?.drawImage(
+        img,
+        cropData.x, cropData.y, cropData.width, cropData.height,
+        0, 0, cropData.width, cropData.height
+      );
+      
+      const croppedDataUrl = canvas.toDataURL('image/png');
+      
+      // Update company logo with cropped image
+      if (currentCompany) {
+        handleEditCompany({ ...currentCompany, logo: croppedDataUrl });
+      }
+      
+      setIsCroppingModalOpen(false);
+      setSelectedImage(null);
+    };
+    
+    img.src = selectedImage;
   };
 
   const handleEditOwner = (owner: Owner) => {
@@ -295,8 +349,18 @@ export default function CompanySetup() {
               </h2>
             </div>
             
-            {/* Display Options */}
-            <div style={{ display: 'flex', gap: '24px', marginBottom: '20px' }}>
+            {/* Format Options - Single Line */}
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '24px', 
+              marginBottom: '20px',
+              padding: '16px',
+              backgroundColor: '#f8fafc',
+              borderRadius: '8px',
+              border: '1px solid #e2e8f0',
+              flexWrap: 'wrap'
+            }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
                 <input 
                   type="checkbox" 
@@ -304,7 +368,7 @@ export default function CompanySetup() {
                   onChange={(e) => setShowCompanyLogo(e.target.checked)}
                   style={{ width: '16px', height: '16px' }}
                 />
-                <span style={{ fontSize: '14px', color: '#374151' }}>Show Company Logo</span>
+                <span style={{ fontSize: '14px', color: '#374151', fontWeight: '500' }}>Show Company Logo</span>
               </label>
               <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
                 <input 
@@ -313,8 +377,62 @@ export default function CompanySetup() {
                   onChange={(e) => setShowCompanyName(e.target.checked)}
                   style={{ width: '16px', height: '16px' }}
                 />
-                <span style={{ fontSize: '14px', color: '#374151' }}>Show Company Name</span>
+                <span style={{ fontSize: '14px', color: '#374151', fontWeight: '500' }}>Show Company Name</span>
               </label>
+              <button
+                onClick={() => {
+                  setShowCompanyName(true);
+                  setShowCompanyLogo(true);
+                  setLogoSize(100);
+                  setCompanyNameSize(28);
+                }}
+                style={{
+                  backgroundColor: '#6b7280',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  padding: '8px 16px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s ease'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#4b5563'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#6b7280'}
+              >
+                Reset to Defaults
+              </button>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  style={{ display: 'none' }}
+                  id="logo-upload"
+                />
+                <label
+                  htmlFor="logo-upload"
+                  style={{
+                    backgroundColor: '#16a34a',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    padding: '8px 16px',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.2s ease',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#15803d'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#16a34a'}
+                >
+                  <Upload style={{ width: '14px', height: '14px' }} />
+                  Upload & Crop Logo
+                </label>
+              </div>
             </div>
 
             {/* Logo Size Control */}
@@ -832,6 +950,107 @@ export default function CompanySetup() {
                 ))}
               </div>
             )}
+          </div>
+        )}
+
+        {/* Logo Cropping Modal */}
+        {isCroppingModalOpen && selectedImage && (
+          <div style={{
+            position: 'fixed',
+            top: '0',
+            left: '0',
+            right: '0',
+            bottom: '0',
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: '1000'
+          }}>
+            <div style={{
+              backgroundColor: '#fff',
+              borderRadius: '12px',
+              padding: '24px',
+              width: '90%',
+              maxWidth: '600px',
+              maxHeight: '80vh',
+              overflow: 'auto'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+                <Crop style={{ width: '24px', height: '24px', color: '#3b82f6' }} />
+                <h3 style={{ fontSize: '20px', fontWeight: '600', color: '#111827', margin: '0' }}>
+                  Crop Company Logo
+                </h3>
+              </div>
+              
+              <div style={{ 
+                position: 'relative', 
+                backgroundColor: '#f8fafc', 
+                borderRadius: '8px', 
+                padding: '20px',
+                marginBottom: '20px',
+                textAlign: 'center'
+              }}>
+                <img 
+                  src={selectedImage} 
+                  alt="Selected logo"
+                  style={{ 
+                    maxWidth: '100%', 
+                    maxHeight: '400px', 
+                    border: '2px dashed #cbd5e1',
+                    borderRadius: '8px'
+                  }}
+                />
+                <p style={{ fontSize: '14px', color: '#64748b', marginTop: '12px', margin: '12px 0 0 0' }}>
+                  Drag and resize the selection area to crop your logo
+                </p>
+              </div>
+
+              <div style={{ 
+                display: 'flex', 
+                gap: '12px', 
+                justifyContent: 'center',
+                marginTop: '20px'
+              }}>
+                <button
+                  onClick={() => {
+                    setIsCroppingModalOpen(false);
+                    setSelectedImage(null);
+                  }}
+                  style={{
+                    backgroundColor: '#6b7280',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '12px 20px',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={applyCrop}
+                  style={{
+                    backgroundColor: '#3b82f6',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '12px 20px',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                >
+                  <Crop style={{ width: '16px', height: '16px' }} />
+                  Apply Crop
+                </button>
+              </div>
+            </div>
           </div>
         )}
 
