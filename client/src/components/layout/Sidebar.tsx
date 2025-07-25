@@ -157,7 +157,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
         display: 'flex',
         flexDirection: 'column',
         width: '320px',
-        backgroundColor: '#1e3a8a',
+        backgroundColor: '#1e2851',
         transform: isOpen ? 'translateX(0)' : 'translateX(-100%)',
         transition: 'transform 300ms ease-in-out'
       }}>
@@ -168,7 +168,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
           justifyContent: 'space-between', 
           height: '64px', 
           padding: '0 16px',
-          backgroundColor: '#1e3a8a', 
+          backgroundColor: '#1e2851', 
           borderBottom: '1px solid #3b82f6' 
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
