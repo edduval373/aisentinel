@@ -1199,11 +1199,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log('Replit authentication successful:', { userId, companyId, roleLevel });
       }
       
-      // For demo users or unauthenticated users, use company ID 1 with owner role
+      // For demo users or unauthenticated users, use company ID 1 with demo role
       if (!userId) {
         userId = 'demo@aisentinel.com';
         companyId = 1;
-        roleLevel = 99; // Owner level for full admin access
+        roleLevel = 0; // Demo level for read-only access
         console.log('Demo user session creation:', { userId, companyId, roleLevel });
       }
 

@@ -169,8 +169,8 @@ Recent Updates:
   * INTEGRATED: Company context switching with page refresh for complete data reload
   * CONFIGURED: Super-user level 100+ access requirement for advanced controls
   * VERIFIED: Cookie clearing removes all cookies, localStorage, and sessionStorage
-- July 25, 2025. Demo Mode Enhanced with Owner Role and User Filtering Complete:
-  * ENHANCED: Demo users now have owner role level 99 for full admin access (except super-user features)
+- July 25, 2025. Demo Mode Fixed with Proper Role Level 0:
+  * FIXED: Demo users now have proper role level 0 as intended for demo access
   * IMPLEMENTED: Demo user filtering in User Management - only shows demo@aisentinel.com profile
   * UPDATED: User Management page title changes to "Demo User Profile" in demo mode
   * REMOVED: Invite User button hidden in demo mode - users only manage their own profile

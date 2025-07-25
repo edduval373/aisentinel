@@ -30,11 +30,13 @@ export function hasAccessLevel(userRoleLevel: number | undefined, requiredLevel:
 export function canViewAdminPage(user: any, requiredLevel: number): boolean {
   const roleLevel = user?.roleLevel ?? 0;
   
-  // Check if this is a demo user using multiple methods
+  // Demo users (roleLevel 0) can view all admin pages in read-only mode
+  if (roleLevel === ROLE_LEVELS.DEMO) return true;
+  
+  // Check if this is a demo user using other methods
   const isDemoUser = window.location.pathname === '/demo' || 
                      user?.email === 'demo@aisentinel.com' ||
                      user?.role === 'demo' ||
-                     roleLevel === ROLE_LEVELS.DEMO ||
                      !document.cookie.includes('sessionToken=');
   
   // Demo users can view all admin pages in read-only mode
