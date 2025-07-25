@@ -39,6 +39,7 @@ export default function CompanyManagement() {
   const [showAddCompany, setShowAddCompany] = useState(false);
   const [showEditCompany, setShowEditCompany] = useState(false);
   const [editingCompany, setEditingCompany] = useState<Company | null>(null);
+  const [dialogJustOpened, setDialogJustOpened] = useState(false);
   
   // Debug effect to track state changes
   React.useEffect(() => {
@@ -164,7 +165,11 @@ export default function CompanyManagement() {
         logo: company.logo || "",
         isActive: company.isActive,
       });
+      setDialogJustOpened(true);
       setShowEditCompany(true);
+      
+      // Reset the flag after a short delay
+      setTimeout(() => setDialogJustOpened(false), 100);
       
       console.log("After setShowEditCompany(true), editingCompany:", company.name);
       console.log("Updated showEditCompany state:", true);
@@ -468,19 +473,36 @@ export default function CompanyManagement() {
         <Dialog 
           open={showEditCompany} 
           onOpenChange={(open) => {
-            console.log("Edit Dialog onOpenChange called with:", open);
+            console.log("Edit Dialog onOpenChange called with:", open, "current state:", showEditCompany, "justOpened:", dialogJustOpened);
+            // Prevent immediate closure after opening
+            if (open === false && dialogJustOpened) {
+              console.log("Preventing immediate dialog closure - just opened");
+              return;
+            }
             setShowEditCompany(open);
             if (!open) {
               setEditingCompany(null);
               companyForm.reset();
+              setDialogJustOpened(false);
             }
           }}
         >
-          <DialogContent style={{ 
-            maxWidth: '512px', 
-            maxHeight: '80vh', 
-            overflowY: 'auto' 
-          }}>
+          <DialogContent 
+            style={{ 
+              maxWidth: '512px', 
+              maxHeight: '80vh', 
+              overflowY: 'auto',
+              zIndex: 9999,
+              position: 'fixed'
+            }}
+            onPointerDownOutside={(e) => {
+              console.log("Dialog outside click prevented");
+              e.preventDefault();
+            }}
+            onEscapeKeyDown={(e) => {
+              console.log("Dialog escape key pressed");
+            }}
+          >
             <DialogHeader>
               <DialogTitle>Edit Company</DialogTitle>
               <DialogDescription>
@@ -601,11 +623,21 @@ export default function CompanyManagement() {
 
         {/* Delete Confirmation Modal */}
         <Dialog open={deleteConfirmDialog.isOpen} onOpenChange={(open) => {
+          console.log("Delete Dialog onOpenChange called with:", open);
           if (!open) {
             handleDeleteCancel();
           }
         }}>
-          <DialogContent style={{ maxWidth: '400px' }}>
+          <DialogContent 
+            style={{ 
+              maxWidth: '400px',
+              zIndex: 9999,
+              position: 'fixed'
+            }}
+            onPointerDownOutside={(e) => {
+              console.log("Delete dialog outside click");
+            }}
+          >
             <DialogHeader>
               <DialogTitle style={{ color: '#dc2626' }}>Delete Company</DialogTitle>
               <DialogDescription>
