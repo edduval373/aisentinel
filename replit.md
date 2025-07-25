@@ -141,6 +141,12 @@ The application is configured for deployment on Vercel with the following setup:
 
 ```
 Recent Updates:
+- July 25, 2025. Demo Mode Company Authentication Fixed - Users Now Show Under Real Company:
+  * FIXED: Demo mode now shows users authenticated under company 1 (Duval AI Solutions)
+  * REMOVED: "Demo Company" placeholder - demo users see real company data
+  * ENHANCED: Demo users show "Demo Mode - Using AI Sentinel API Keys" subtitle
+  * MAINTAINED: Demo users have role level 0 (limited access, no super-user features)
+  * VERIFIED: Company logo and branding displays properly for demo mode users
 - July 25, 2025. Super-User Cookie Management and Company Switching Complete:
   * ADDED: "Clear Cookies" button for super-users to reset session and return to landing page
   * IMPLEMENTED: Company switching functionality for super-users to view different company contexts

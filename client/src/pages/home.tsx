@@ -26,17 +26,16 @@ interface Company {
 function CompanyInfoLarge() {
   const { user } = useAuth();
   
-  // Check if we're in demo mode (role level 0 or no authentication)
+  // Check if we're in demo mode (role level 0)
   const userRoleLevel = user?.roleLevel || 0;
-  const isLimitedAccess = userRoleLevel === 0 || !user;
-  const isDemoMode = isLimitedAccess;
+  const isDemoMode = userRoleLevel === 0;
   
   const { data: currentCompany } = useQuery<Company>({
     queryKey: ['/api/user/current-company'],
-    enabled: !isDemoMode, // Don't fetch for demo mode
+    // Always fetch company data, even for demo mode
   });
 
-  if (!currentCompany || isDemoMode) {
+  if (!currentCompany) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
         <div style={{ 
@@ -51,17 +50,12 @@ function CompanyInfoLarge() {
           fontSize: '24px',
           fontWeight: 700
         }}>
-          DEMO
+          {isDemoMode ? 'DEMO' : 'L'}
         </div>
         <div>
           <div style={{ fontSize: '36px', fontWeight: 700, color: '#1e293b', textAlign: 'center' }}>
-            {isLimitedAccess ? 'Demo Company' : 'Loading...'}
+            Loading...
           </div>
-          {isLimitedAccess && (
-            <div style={{ fontSize: '16px', color: '#3b82f6', fontWeight: 500, textAlign: 'center', marginTop: '8px' }}>
-              Using AI Sentinel API Keys
-            </div>
-          )}
         </div>
       </div>
     );
@@ -93,22 +87,7 @@ function CompanyInfoLarge() {
     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: '0', padding: '0' }}>
       {showCompanyLogo && (
         <>
-          {isLimitedAccess ? (
-            <div style={{ 
-              width: '36px', 
-              height: '36px', 
-              backgroundColor: '#3b82f6', 
-              borderRadius: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-              fontSize: '14px',
-              fontWeight: 700
-            }}>
-              DEMO
-            </div>
-          ) : currentCompany.logo ? (
+          {currentCompany.logo ? (
             <div style={{ position: 'relative', display: 'inline-block', margin: '0', padding: '0' }}>
               <img 
                 src={currentCompany.logo} 
@@ -157,11 +136,11 @@ function CompanyInfoLarge() {
             margin: '0',
             padding: '0'
           }}>
-            {isLimitedAccess ? 'Demo Company' : currentCompany.name}
+            {currentCompany.name}
           </div>
-          {isLimitedAccess ? (
+          {isDemoMode ? (
             <div style={{ fontSize: '12px', color: '#3b82f6', fontWeight: 500, textAlign: 'left', marginTop: '2px', margin: '2px 0 0 0' }}>
-              Using AI Sentinel API Keys
+              Demo Mode - Using AI Sentinel API Keys
             </div>
           ) : currentCompany.description && (
             <div style={{ fontSize: '12px', color: '#64748b', textAlign: 'left', marginTop: '2px', margin: '2px 0 0 0' }}>
@@ -177,17 +156,16 @@ function CompanyInfoLarge() {
 function CompanyInfo() {
   const { user } = useAuth();
   
-  // Check if we're in demo mode (role level 0 or no authentication)
+  // Check if we're in demo mode (role level 0)
   const userRoleLevel = user?.roleLevel || 0;
-  const isLimitedAccess = userRoleLevel === 0 || !user;
-  const isDemoMode = isLimitedAccess;
+  const isDemoMode = userRoleLevel === 0;
   
   const { data: currentCompany } = useQuery<Company>({
     queryKey: ['/api/user/current-company'],
-    enabled: !isDemoMode, // Don't fetch for demo mode
+    // Always fetch company data, even for demo mode
   });
 
-  if (!currentCompany || isDemoMode) {
+  if (!currentCompany) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
         <div style={{ 
@@ -206,13 +184,8 @@ function CompanyInfo() {
         </div>
         <div>
           <div style={{ fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>
-            {isLimitedAccess ? 'Demo Company' : 'Loading...'}
+            Loading...
           </div>
-          {isLimitedAccess && (
-            <div style={{ fontSize: '12px', color: '#3b82f6', fontWeight: 500 }}>
-              Using AI Sentinel API Keys
-            </div>
-          )}
         </div>
       </div>
     );
@@ -233,22 +206,7 @@ function CompanyInfo() {
     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
       {showCompanyLogo && (
         <>
-          {isLimitedAccess ? (
-            <div style={{ 
-              width: '48px', 
-              height: '48px', 
-              backgroundColor: '#3b82f6', 
-              borderRadius: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-              fontSize: '14px',
-              fontWeight: 600
-            }}>
-              DEMO
-            </div>
-          ) : currentCompany.logo ? (
+          {currentCompany.logo ? (
             <img 
               src={currentCompany.logo} 
               alt={currentCompany.name}
@@ -282,11 +240,11 @@ function CompanyInfo() {
       {showCompanyName && (
         <div>
           <div style={{ fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>
-            {isLimitedAccess ? 'Demo Company' : currentCompany.name}
+            {currentCompany.name}
           </div>
-          {isLimitedAccess ? (
+          {isDemoMode ? (
             <div style={{ fontSize: '12px', color: '#3b82f6', fontWeight: 500 }}>
-              Using AI Sentinel API Keys
+              Demo Mode - Using AI Sentinel API Keys
             </div>
           ) : currentCompany.description && (
             <div style={{ fontSize: '12px', color: '#64748b' }}>

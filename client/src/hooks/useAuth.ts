@@ -28,9 +28,9 @@ export function useAuth() {
   const { data, isLoading, error } = useQuery<AuthData>({
     queryKey: ['/api/auth/me'],
     queryFn: async () => {
-      // If in demo mode, return demo user with role level 0 (limited access)
+      // If in demo mode, return demo user authenticated under company 1
       if (isDemoMode) {
-        console.log("Demo mode activated - returning demo user with role level 0");
+        console.log("Demo mode activated - returning demo user under company 1");
         return { 
           authenticated: true, 
           user: {
@@ -39,7 +39,7 @@ export function useAuth() {
             firstName: 'Demo',
             lastName: 'User',
             companyId: 1,
-            companyName: 'Demo Company',
+            companyName: 'Duval AI Solutions', // Use real company name
             role: 'demo',
             roleLevel: 0 // Demo level - limited access, no super-user features
           }
