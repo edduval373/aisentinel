@@ -61,6 +61,40 @@ export default function CompanySetup() {
     setIsEditModalOpen(true);
   };
 
+  // Save chat display settings
+  const saveChatDisplaySettings = async () => {
+    try {
+      const settings = {
+        showCompanyName,
+        showCompanyLogo
+      };
+      
+      // Save to localStorage for immediate use
+      localStorage.setItem('chatDisplaySettings', JSON.stringify(settings));
+      
+      // Save to database (you can add API endpoint later)
+      console.log("💾 Saving chat display settings:", settings);
+      
+      toast({ 
+        title: "Success", 
+        description: "Chat display settings saved successfully" 
+      });
+      
+      // Trigger a page refresh to update the chat header
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+      
+    } catch (error) {
+      console.error("Error saving chat display settings:", error);
+      toast({ 
+        title: "Error", 
+        description: "Failed to save chat display settings", 
+        variant: "destructive" 
+      });
+    }
+  };
+
   const handleEditOwner = (owner: Owner) => {
     setEditingOwner(owner);
     setEditForm({
@@ -349,6 +383,38 @@ export default function CompanySetup() {
                   </div>
                 )}
               </div>
+            </div>
+            
+            {/* Save Settings Button */}
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'center', 
+              marginTop: '20px', 
+              paddingTop: '20px', 
+              borderTop: '1px solid #e5e7eb' 
+            }}>
+              <button
+                onClick={saveChatDisplaySettings}
+                style={{
+                  backgroundColor: '#3b82f6',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  transition: 'background-color 0.2s ease'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#3b82f6'}
+              >
+                <Save style={{ width: '16px', height: '16px' }} />
+                Save Chat Display Settings
+              </button>
             </div>
           </div>
         )}
