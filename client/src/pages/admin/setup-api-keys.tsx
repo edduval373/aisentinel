@@ -165,11 +165,7 @@ export default function SetupApiKeys() {
       console.log('Test connection response:', response);
       
       setTestResults(prev => ({ ...prev, [provider]: 'success' }));
-      setErrorMessages(prev => ({ ...prev, [provider]: '' }));
-      toast({
-        title: "Test Successful",
-        description: `${provider.charAt(0).toUpperCase() + provider.slice(1)} API key format is valid`,
-      });
+      setErrorMessages(prev => ({ ...prev, [provider]: `${provider.charAt(0).toUpperCase() + provider.slice(1)} API key format is valid` }));
     } catch (error: any) {
       console.error('Test connection error:', error);
       setTestResults(prev => ({ ...prev, [provider]: 'error' }));
@@ -187,11 +183,6 @@ export default function SetupApiKeys() {
       }
       
       setErrorMessages(prev => ({ ...prev, [provider]: errorMessage }));
-      toast({
-        title: "Test Failed",
-        description: errorMessage,
-        variant: "destructive",
-      });
     } finally {
       console.log('Clearing testing state for provider:', provider);
       setIsTestingConnection(null);
@@ -407,8 +398,12 @@ export default function SetupApiKeys() {
                   </div>
 
                   {errorMessages[provider.id] && (
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginTop: '8px' }}>
-                      <div style={{ fontSize: '12px', color: '#dc2626', fontStyle: 'italic' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', marginTop: '8px' }}>
+                      <div style={{ 
+                        fontSize: '12px', 
+                        color: testResults[provider.id] === 'success' ? '#16a34a' : '#dc2626', 
+                        fontStyle: 'italic' 
+                      }}>
                         {errorMessages[provider.id]}
                       </div>
                     </div>
