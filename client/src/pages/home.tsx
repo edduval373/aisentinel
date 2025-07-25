@@ -7,7 +7,7 @@ import Sidebar from "@/components/layout/Sidebar";
 import ChatInterface from "@/components/chat/ChatInterface";
 import { useQuery } from "@tanstack/react-query";
 import { Building2, LogOut, RotateCcw, Trash2 } from "lucide-react";
-import { TrialBanner } from "@/components/TrialBanner";
+
 import { useCompanyContext } from "@/hooks/useCompanyContext";
 
 
@@ -563,7 +563,7 @@ export default function Home() {
               </button>
               {isDemoMode && (
                 <div style={{
-                  fontSize: '12px',
+                  fontSize: '18px',
                   color: '#1e3a8a',
                   fontWeight: '600',
                   marginTop: '2px',
