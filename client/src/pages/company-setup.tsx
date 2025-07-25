@@ -128,6 +128,9 @@ export default function CompanySetup() {
       // Refresh company data to get updated settings
       refetchCompany();
       
+      // Also invalidate the query cache to update all components using company data
+      queryClient.invalidateQueries({ queryKey: ['/api/user/current-company'] });
+      
     } catch (error) {
       console.error("Error saving display settings:", error);
       toast({ 
