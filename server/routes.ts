@@ -1657,10 +1657,10 @@ This is a demonstration of AI Sentinel's capabilities. In the full version:
   // Company Role Management routes (Owner/Super-user only)
   app.get('/api/company/roles/:companyId', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
-      console.log("Fetching company roles - userId:", req.userId, "companyId param:", req.params.companyId);
+      console.log("Fetching company roles - userId:", req.user?.userId, "companyId param:", req.params.companyId);
       
       // Get user from cookie authentication
-      const user = await storage.getUser(req.userId!);
+      const user = await storage.getUser(req.user!.userId);
       const userRoleLevel = user?.roleLevel || 1;
       
       console.log("User role level:", userRoleLevel, "Required: 98+");
@@ -1690,7 +1690,7 @@ This is a demonstration of AI Sentinel's capabilities. In the full version:
 
   app.post('/api/company/roles/:companyId', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
-      const user = await storage.getUser(req.userId!);
+      const user = await storage.getUser(req.user!.userId);
       const userRoleLevel = user?.roleLevel || 1;
       if (userRoleLevel < 98) { // Must be administrator (98) or higher
         return res.status(403).json({ message: "Administrator access required" });
@@ -1717,7 +1717,7 @@ This is a demonstration of AI Sentinel's capabilities. In the full version:
 
   app.patch('/api/company/roles/:roleId', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
-      const user = await storage.getUser(req.userId!);
+      const user = await storage.getUser(req.user!.userId);
       const userRoleLevel = user?.roleLevel || 1;
       if (userRoleLevel < 98) { // Must be administrator (98) or higher
         return res.status(403).json({ message: "Administrator access required" });
@@ -1734,7 +1734,7 @@ This is a demonstration of AI Sentinel's capabilities. In the full version:
 
   app.delete('/api/company/roles/:roleId', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
-      const user = await storage.getUser(req.userId!);
+      const user = await storage.getUser(req.user!.userId);
       const userRoleLevel = user?.roleLevel || 1;
       if (userRoleLevel < 98) { // Must be administrator (98) or higher
         return res.status(403).json({ message: "Administrator access required" });
