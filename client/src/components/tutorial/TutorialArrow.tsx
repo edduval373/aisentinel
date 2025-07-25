@@ -17,8 +17,8 @@ export default function TutorialArrow({ targetId, message, onComplete }: Tutoria
       if (targetElement) {
         const rect = targetElement.getBoundingClientRect();
         setPosition({
-          top: rect.bottom + 10,
-          left: rect.left + rect.width / 2 - 100
+          top: rect.top + rect.height / 2 - 20,
+          left: rect.right + 15
         });
         setIsVisible(true);
       }
@@ -46,18 +46,20 @@ export default function TutorialArrow({ targetId, message, onComplete }: Tutoria
         left: `${position.left}px`,
         zIndex: 1000,
         pointerEvents: 'none',
-        transition: 'all 0.3s ease'
+        transition: 'all 0.3s ease',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px'
       }}
     >
-      {/* Arrow pointing up */}
+      {/* Arrow pointing left */}
       <div
         style={{
           width: 0,
           height: 0,
-          borderLeft: '15px solid transparent',
-          borderRight: '15px solid transparent',
-          borderBottom: '20px solid #3b82f6',
-          margin: '0 auto 5px',
+          borderTop: '12px solid transparent',
+          borderBottom: '12px solid transparent',
+          borderRight: '20px solid #3b82f6',
           animation: 'bounce 2s infinite'
         }}
       />
