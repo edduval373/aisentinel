@@ -33,6 +33,12 @@ export default function SetupApiKeys() {
           keys.anthropic = model.apiKey || '';
         } else if (model.provider === 'perplexity' && !keys.perplexity) {
           keys.perplexity = model.apiKey || '';
+        } else if (model.provider === 'google' && !keys.google) {
+          keys.google = model.apiKey || '';
+        } else if (model.provider === 'cohere' && !keys.cohere) {
+          keys.cohere = model.apiKey || '';
+        } else if (model.provider === 'mistral' && !keys.mistral) {
+          keys.mistral = model.apiKey || '';
         }
       });
       setApiKeys(keys);
@@ -180,15 +186,15 @@ export default function SetupApiKeys() {
 
   return (
     <AdminLayout title="Setup API Keys" subtitle="Configure AI provider API keys">
-      <div className="space-y-6">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
         {/* Instructions */}
-        <Card className="border-blue-200 bg-blue-50">
-          <CardContent className="pt-6">
-            <div className="flex items-start space-x-3">
-              <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5" />
+        <Card style={{ border: '1px solid #bfdbfe', backgroundColor: '#eff6ff' }}>
+          <CardContent style={{ paddingTop: '24px' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+              <AlertCircle style={{ width: '20px', height: '20px', color: '#2563eb', marginTop: '2px' }} />
               <div>
-                <h3 className="font-medium text-blue-900">Super-User API Key Management</h3>
-                <p className="text-sm text-blue-700 mt-1">
+                <h3 style={{ fontWeight: '500', color: '#1e3a8a', margin: '0 0 4px 0' }}>Super-User API Key Management</h3>
+                <p style={{ fontSize: '14px', color: '#1d4ed8', margin: '0', lineHeight: '1.5' }}>
                   As a super-user, you can configure API keys for all AI providers. These keys will be used by all companies in the system.
                   Make sure to use valid, working API keys to enable AI model functionality.
                 </p>
@@ -356,13 +362,13 @@ export default function SetupApiKeys() {
         </div>
 
         {/* Security Notice */}
-        <Card className="border-yellow-200 bg-yellow-50">
-          <CardContent className="pt-6">
-            <div className="flex items-start space-x-3">
-              <Key className="h-5 w-5 text-yellow-600 mt-0.5" />
+        <Card style={{ border: '1px solid #fde68a', backgroundColor: '#fffbeb' }}>
+          <CardContent style={{ paddingTop: '24px' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+              <Key style={{ width: '20px', height: '20px', color: '#d97706', marginTop: '2px' }} />
               <div>
-                <h3 className="font-medium text-yellow-900">Security Notice</h3>
-                <p className="text-sm text-yellow-700 mt-1">
+                <h3 style={{ fontWeight: '500', color: '#92400e', margin: '0 0 4px 0' }}>Security Notice</h3>
+                <p style={{ fontSize: '14px', color: '#b45309', margin: '0', lineHeight: '1.5' }}>
                   API keys are stored securely in the database and are only accessible to super-users. 
                   Make sure to use API keys from accounts you control and monitor usage regularly.
                 </p>
