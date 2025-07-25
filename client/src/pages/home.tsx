@@ -272,7 +272,7 @@ export default function Home() {
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
         {/* Top Header with Menu Button - Fixed Header */}
         <div style={{ 
-          backgroundColor: 'white', 
+          backgroundColor: '#f1f5f9', 
           borderBottom: '1px solid #e2e8f0', 
           padding: '16px 16px', 
           display: 'flex', 
