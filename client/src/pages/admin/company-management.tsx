@@ -290,11 +290,7 @@ export default function CompanyManagement() {
           </button>
           
           <Dialog open={showAddCompany} onOpenChange={setShowAddCompany}>
-            <DialogContent style={{ 
-              maxWidth: '512px', 
-              maxHeight: '80vh', 
-              overflowY: 'auto' 
-            }}>
+            <DialogContent>
               <DialogHeader>
                 <DialogTitle>Add New Company</DialogTitle>
                 <DialogDescription>
@@ -525,22 +521,7 @@ export default function CompanyManagement() {
             }
           }}
         >
-          <DialogContent 
-            style={{ 
-              maxWidth: '512px', 
-              maxHeight: '80vh', 
-              overflowY: 'auto',
-              zIndex: 9999,
-              position: 'fixed'
-            }}
-            onPointerDownOutside={(e) => {
-              console.log("Dialog outside click prevented");
-              e.preventDefault();
-            }}
-            onEscapeKeyDown={(e) => {
-              console.log("Dialog escape key pressed");
-            }}
-          >
+          <DialogContent>
             <DialogHeader>
               <DialogTitle>Edit Company</DialogTitle>
               <DialogDescription>
@@ -666,16 +647,7 @@ export default function CompanyManagement() {
             handleDeleteCancel();
           }
         }}>
-          <DialogContent 
-            style={{ 
-              maxWidth: '400px',
-              zIndex: 9999,
-              position: 'fixed'
-            }}
-            onPointerDownOutside={(e) => {
-              console.log("Delete dialog outside click");
-            }}
-          >
+          <DialogContent>
             <DialogHeader>
               <DialogTitle style={{ color: '#dc2626' }}>Delete Company</DialogTitle>
               <DialogDescription>
