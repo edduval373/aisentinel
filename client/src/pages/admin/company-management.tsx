@@ -162,18 +162,31 @@ export default function CompanyManagement() {
       <AdminLayout title="Company Management" subtitle="Manage all companies (Super-user only)">
         <div style={{ 
           display: 'flex', 
+          flexDirection: 'column',
           alignItems: 'center', 
           justifyContent: 'center', 
-          height: '256px' 
+          height: '256px',
+          gap: '16px'
         }}>
-          <div style={{ 
-            width: '128px', 
-            height: '128px', 
-            border: '2px solid #111827', 
-            borderTop: '2px solid transparent',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite'
-          }}></div>
+          <img 
+            src="/ai-sentinel-logo.png" 
+            alt="AI Sentinel" 
+            style={{
+              width: '80px',
+              height: '80px',
+              objectFit: 'contain',
+              animation: 'spin 2s linear infinite',
+              filter: 'brightness(1.1) saturate(1.3) contrast(1.2)'
+            }}
+          />
+          <p style={{
+            fontSize: '16px',
+            color: '#6b7280',
+            fontWeight: '500',
+            margin: 0
+          }}>
+            Loading companies...
+          </p>
         </div>
       </AdminLayout>
     );
