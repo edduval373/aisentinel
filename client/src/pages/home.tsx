@@ -81,20 +81,20 @@ function CompanyInfoLarge() {
   }
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
       {showCompanyLogo && (
         <>
           {isLimitedAccess ? (
             <div style={{ 
-              width: '80px', 
-              height: '80px', 
+              width: '60px', 
+              height: '60px', 
               backgroundColor: '#3b82f6', 
               borderRadius: '12px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               color: 'white',
-              fontSize: '24px',
+              fontSize: '20px',
               fontWeight: 700
             }}>
               DEMO
@@ -108,10 +108,10 @@ function CompanyInfoLarge() {
                   width: `${logoSize}px`, 
                   height: `${logoSize}px`, 
                   objectFit: 'contain',
-                  borderRadius: '16px',
-                  border: '3px solid #e2e8f0',
+                  borderRadius: '12px',
+                  border: '2px solid #e2e8f0',
                   transition: 'all 0.3s ease',
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
                 }}
               />
             </div>
@@ -121,7 +121,7 @@ function CompanyInfoLarge() {
                 width: `${logoSize}px`, 
                 height: `${logoSize}px`, 
                 backgroundColor: '#3b82f6', 
-                borderRadius: '16px',
+                borderRadius: '12px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -129,8 +129,8 @@ function CompanyInfoLarge() {
                 fontSize: `${Math.floor(logoSize * 0.36)}px`,
                 fontWeight: 700,
                 transition: 'all 0.3s ease',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-                border: '3px solid transparent'
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                border: '2px solid transparent'
               }}
             >
               {currentCompany.name.charAt(0).toUpperCase()}
@@ -146,16 +146,18 @@ function CompanyInfoLarge() {
             fontWeight: 700, 
             color: '#1e293b', 
             textAlign: 'center',
-            transition: 'all 0.3s ease'
+            transition: 'all 0.3s ease',
+            lineHeight: '1.2',
+            margin: '0'
           }}>
             {isLimitedAccess ? 'Demo Company' : currentCompany.name}
           </div>
           {isLimitedAccess ? (
-            <div style={{ fontSize: '16px', color: '#3b82f6', fontWeight: 500, textAlign: 'center', marginTop: '8px' }}>
+            <div style={{ fontSize: '14px', color: '#3b82f6', fontWeight: 500, textAlign: 'center', marginTop: '4px' }}>
               Using AI Sentinel API Keys
             </div>
           ) : currentCompany.description && (
-            <div style={{ fontSize: '16px', color: '#64748b', textAlign: 'center', marginTop: '8px' }}>
+            <div style={{ fontSize: '14px', color: '#64748b', textAlign: 'center', marginTop: '4px' }}>
               {currentCompany.description}
             </div>
           )}
@@ -315,13 +317,13 @@ export default function Home() {
         <div style={{ 
           backgroundColor: '#f1f5f9', 
           borderBottom: '1px solid #e2e8f0', 
-          padding: '16px 16px', 
+          padding: '12px 16px', 
           display: 'flex', 
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
           flexShrink: 0,
-          minHeight: '120px',
+          minHeight: '80px',
           position: 'relative'
         }}>
           {/* Menu Button - Positioned absolutely in top left */}
@@ -332,11 +334,11 @@ export default function Home() {
             disabled={!canAccessSidebar}
             style={{ 
               position: 'absolute',
-              top: '16px',
-              left: '16px',
+              top: '8px',
+              left: '12px',
               padding: '4px',
-              minWidth: '64px',
-              height: '64px',
+              minWidth: '48px',
+              height: '48px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -350,8 +352,8 @@ export default function Home() {
               src="/ai-sentinel-logo.png" 
               alt="AI Sentinel" 
               style={{ 
-                width: '56px', 
-                height: '56px', 
+                width: '40px', 
+                height: '40px', 
                 objectFit: 'contain',
                 flexShrink: 0,
                 filter: 'brightness(1.1) saturate(1.3) contrast(1.2)'
@@ -364,7 +366,7 @@ export default function Home() {
             onClick={() => window.location.href = '/login'}
             style={{
               position: 'absolute',
-              top: '20px',
+              top: '12px',
               right: '16px',
               fontSize: '14px',
               color: '#64748b',
@@ -372,7 +374,7 @@ export default function Home() {
               background: 'none',
               border: 'none',
               cursor: 'pointer',
-              padding: '8px 12px'
+              padding: '6px 8px'
             }}
           >
             Sign Out
