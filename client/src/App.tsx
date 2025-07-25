@@ -44,10 +44,24 @@ function Router() {
   if (isLoading) {
     console.log("[APP DEBUG] Showing loading state");
     return (
-      <div className="flex h-screen items-center justify-center bg-slate-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sentinel-blue mx-auto mb-4"></div>
-          <p className="text-slate-600">Loading...</p>
+      <div style={{ 
+        display: 'flex', 
+        height: '100vh', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        backgroundColor: '#f8fafc' 
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ 
+            width: '48px', 
+            height: '48px', 
+            border: '2px solid #e2e8f0', 
+            borderTop: '2px solid #1e3a8a', 
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+            margin: '0 auto 16px auto'
+          }}></div>
+          <p style={{ color: '#64748b', margin: '0' }}>Loading...</p>
         </div>
       </div>
     );
