@@ -418,6 +418,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update company display settings (owner+ only)
+  app.patch('/api/company/:id/display-settings', cookieAuth, async (req: AuthenticatedRequest, res) => {
+    try {
+      const companyId = parseInt(req.params.id);
+      const { logoSize, showCompanyName, showCompanyLogo } = req.body;
+      
+      // Verify user has owner or super-user permissions for this company
+      if (!req.user || (req.user.roleLevel < 99 && req.user.companyId !== companyId)) {
+        return res.status(403).json({ error: "Owner permissions required" });
+      }
+      
+      // Validate logoSize is within acceptable range
+      if (logoSize && (logoSize < 60 || logoSize > 200)) {
+        return res.status(400).json({ error: "Logo size must be between 60 and 200 pixels" });
+      }
+      
+      const updateData: any = {};
+      if (logoSize !== undefined) updateData.logoSize = logoSize;
+      if (showCompanyName !== undefined) updateData.showCompanyName = showCompanyName;
+      if (showCompanyLogo !== undefined) updateData.showCompanyLogo = showCompanyLogo;
+      
+      console.log("Updating company display settings:", { companyId, updateData, user: req.user.id });
+      const updatedCompany = await storage.updateCompany(companyId, updateData);
+      res.json(updatedCompany);
+    } catch (error) {
+      console.error("Error updating company display settings:", error);
+      res.status(500).json({ error: "Failed to update display settings" });
+    }
+  });
+
   // Duplicate route removed - moved to top priority section
 
   app.post('/api/admin/company-employees', isAuthenticated, async (req: any, res) => {

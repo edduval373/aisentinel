@@ -14,6 +14,9 @@ interface Company {
   primaryAdminEmail: string;
   primaryAdminTitle: string;
   logo?: string;
+  logoSize?: number;
+  showCompanyName?: boolean;
+  showCompanyLogo?: boolean;
   isActive: boolean;
 }
 
@@ -41,28 +44,19 @@ export default function CompanySetup() {
   // Chat display preview settings
   const [showCompanyName, setShowCompanyName] = useState(true);
   const [showCompanyLogo, setShowCompanyLogo] = useState(true);
-  const [previewZoomed, setPreviewZoomed] = useState(false);
+  const [logoSize, setLogoSize] = useState(100);
 
-  // Load saved settings on component mount
+  // Load settings from current company data
   useEffect(() => {
-    const savedSettings = localStorage.getItem('chatDisplaySettings');
-    if (savedSettings) {
-      try {
-        const parsed = JSON.parse(savedSettings);
-        setShowCompanyName(parsed.showCompanyName);
-        setShowCompanyLogo(parsed.showCompanyLogo);
-        // Also load preview zoom state
-        if (parsed.isZoomed !== undefined) {
-          setPreviewZoomed(parsed.isZoomed);
-        }
-      } catch (error) {
-        console.error("Error loading saved chat display settings:", error);
-      }
+    if (currentCompany) {
+      setShowCompanyName(currentCompany.showCompanyName !== false);
+      setShowCompanyLogo(currentCompany.showCompanyLogo !== false);
+      setLogoSize(currentCompany.logoSize || 100);
     }
-  }, []);
+  }, [currentCompany]);
 
   // Fetch current user's company information
-  const { data: currentCompany, isLoading: companyLoading } = useQuery<Company>({
+  const { data: currentCompany, isLoading: companyLoading, refetch: refetchCompany } = useQuery<Company>({
     queryKey: ["/api/user/current-company"],
     enabled: !!user?.companyId,
   });
@@ -79,36 +73,45 @@ export default function CompanySetup() {
     setIsEditModalOpen(true);
   };
 
-  // Save chat display settings
+  // Save chat display settings to database
   const saveChatDisplaySettings = async () => {
+    if (!currentCompany) return;
+    
     try {
       const settings = {
+        logoSize,
         showCompanyName,
-        showCompanyLogo,
-        isZoomed: previewZoomed
+        showCompanyLogo
       };
       
-      // Save to localStorage for immediate use
-      localStorage.setItem('chatDisplaySettings', JSON.stringify(settings));
+      console.log("💾 Saving chat display settings to database:", settings);
       
-      // Save to database (you can add API endpoint later)
-      console.log("💾 Saving chat display settings:", settings);
+      const response = await fetch(`/api/company/${currentCompany.id}/display-settings`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(settings),
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to save settings');
+      }
       
       toast({ 
         title: "Success", 
-        description: "Chat display settings saved successfully" 
+        description: "Display settings saved to company profile" 
       });
       
-      // Trigger a page refresh to update the chat header
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      // Refresh company data to get updated settings
+      refetchCompany();
       
     } catch (error) {
-      console.error("Error saving chat display settings:", error);
+      console.error("Error saving display settings:", error);
       toast({ 
         title: "Error", 
-        description: "Failed to save chat display settings", 
+        description: error.message || "Failed to save display settings", 
         variant: "destructive" 
       });
     }
@@ -309,6 +312,100 @@ export default function CompanySetup() {
                 <span style={{ fontSize: '14px', color: '#374151' }}>Show Company Name</span>
               </label>
             </div>
+
+            {/* Logo Size Control */}
+            {showCompanyLogo && (
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '16px',
+                marginBottom: '20px',
+                padding: '16px',
+                backgroundColor: '#f8fafc',
+                borderRadius: '8px',
+                border: '1px solid #e2e8f0'
+              }}>
+                <label style={{ fontSize: '14px', color: '#374151', minWidth: '80px', fontWeight: '500' }}>
+                  Logo Size:
+                </label>
+                <button
+                  onClick={() => setLogoSize(Math.max(60, logoSize - 10))}
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '6px',
+                    border: '1px solid #cbd5e1',
+                    backgroundColor: '#ffffff',
+                    color: '#374151',
+                    fontSize: '18px',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#f1f5f9';
+                    e.currentTarget.style.borderColor = '#94a3b8';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = '#ffffff';
+                    e.currentTarget.style.borderColor = '#cbd5e1';
+                  }}
+                >
+                  -
+                </button>
+                <span style={{
+                  minWidth: '80px',
+                  textAlign: 'center',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  color: '#1e293b',
+                  padding: '6px 12px',
+                  backgroundColor: '#ffffff',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '6px'
+                }}>
+                  {logoSize}px
+                </span>
+                <button
+                  onClick={() => setLogoSize(Math.min(200, logoSize + 10))}
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '6px',
+                    border: '1px solid #cbd5e1',
+                    backgroundColor: '#ffffff',
+                    color: '#374151',
+                    fontSize: '18px',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#f1f5f9';
+                    e.currentTarget.style.borderColor = '#94a3b8';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = '#ffffff';
+                    e.currentTarget.style.borderColor = '#cbd5e1';
+                  }}
+                >
+                  +
+                </button>
+                <span style={{ 
+                  fontSize: '12px', 
+                  color: '#64748b', 
+                  marginLeft: '8px' 
+                }}>
+                  (60-200px)
+                </span>
+              </div>
+            )}
             
             {/* Preview Display */}
             <div style={{ 
@@ -337,36 +434,31 @@ export default function CompanySetup() {
                           <img 
                             src={currentCompany.logo} 
                             alt={currentCompany.name}
-                            onClick={() => setPreviewZoomed(!previewZoomed)}
                             style={{ 
-                              width: previewZoomed ? '120px' : '80px', 
-                              height: previewZoomed ? '120px' : '80px', 
+                              width: `${logoSize}px`, 
+                              height: `${logoSize}px`, 
                               objectFit: 'contain',
                               borderRadius: '12px',
-                              border: `2px solid ${previewZoomed ? '#3b82f6' : '#e2e8f0'}`,
-                              cursor: 'pointer',
+                              border: '2px solid #e2e8f0',
                               transition: 'all 0.3s ease',
-                              transform: previewZoomed ? 'scale(1.05)' : 'scale(1)',
-                              boxShadow: previewZoomed ? '0 8px 25px rgba(59, 130, 246, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)'
+                              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
                             }}
                           />
                         ) : (
                           <div 
-                            onClick={() => setPreviewZoomed(!previewZoomed)}
                             style={{ 
-                              width: previewZoomed ? '120px' : '80px', 
-                              height: previewZoomed ? '120px' : '80px', 
+                              width: `${logoSize}px`, 
+                              height: `${logoSize}px`, 
                               backgroundColor: '#3b82f6', 
                               borderRadius: '12px',
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
                               color: 'white',
-                              fontSize: previewZoomed ? '36px' : '28px',
+                              fontSize: `${Math.floor(logoSize * 0.35)}px`,
                               fontWeight: 700,
-                              cursor: 'pointer',
                               transition: 'all 0.3s ease',
-                              boxShadow: previewZoomed ? '0 8px 25px rgba(59, 130, 246, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)'
+                              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
                             }}
                           >
                             {currentCompany.name.charAt(0).toUpperCase()}

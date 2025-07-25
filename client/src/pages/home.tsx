@@ -20,103 +20,54 @@ interface Company {
 
 function CompanyInfoLarge() {
   const { user } = useAuth();
-  const [isZoomed, setIsZoomed] = useState(false);
-  const [displaySettings, setDisplaySettings] = useState({
-    showCompanyName: true,
-    showCompanyLogo: true
-  });
   
   // Check if we're in demo mode (only when explicitly accessing /demo or role level 0)
   const isDemoMode = window.location.pathname === '/demo';
   const userRoleLevel = user?.roleLevel || 1;
   const isLimitedAccess = userRoleLevel === 0;
-
-  // Load display settings from localStorage
-  useEffect(() => {
-    const savedSettings = localStorage.getItem('chatDisplaySettings');
-    if (savedSettings) {
-      try {
-        const parsed = JSON.parse(savedSettings);
-        setDisplaySettings(parsed);
-        // Also load zoom state if it exists
-        if (parsed.isZoomed !== undefined) {
-          setIsZoomed(parsed.isZoomed);
-        }
-        console.log("📺 Loaded chat display settings:", parsed);
-      } catch (error) {
-        console.error("Error parsing chat display settings:", error);
-      }
-    }
-  }, []);
   
   const { data: currentCompany } = useQuery<Company>({
     queryKey: ['/api/user/current-company'],
   });
 
-  const toggleZoom = () => {
-    const newZoomState = !isZoomed;
-    setIsZoomed(newZoomState);
-    
-    // Save zoom state to localStorage
-    const currentSettings = localStorage.getItem('chatDisplaySettings');
-    let settings = { showCompanyName: true, showCompanyLogo: true };
-    
-    if (currentSettings) {
-      try {
-        settings = JSON.parse(currentSettings);
-      } catch (error) {
-        console.error("Error parsing existing settings:", error);
-      }
-    }
-    
-    settings.isZoomed = newZoomState;
-    localStorage.setItem('chatDisplaySettings', JSON.stringify(settings));
-    
-    console.log("🔍 Company logo zoom toggled:", newZoomState ? "zoomed in" : "zoomed out", "- saved to localStorage");
-  };
-
   if (!currentCompany) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
-        {displaySettings.showCompanyLogo && (
-          <div style={{ 
-            width: '80px', 
-            height: '80px', 
-            backgroundColor: '#3b82f6', 
-            borderRadius: '12px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'white',
-            fontSize: '24px',
-            fontWeight: 700
-          }}>
-            DEMO
+        <div style={{ 
+          width: '80px', 
+          height: '80px', 
+          backgroundColor: '#3b82f6', 
+          borderRadius: '12px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'white',
+          fontSize: '24px',
+          fontWeight: 700
+        }}>
+          DEMO
+        </div>
+        <div>
+          <div style={{ fontSize: '36px', fontWeight: 700, color: '#1e293b', textAlign: 'center' }}>
+            {isLimitedAccess ? 'Demo Company' : 'Loading...'}
           </div>
-        )}
-        {displaySettings.showCompanyName && (
-          <div>
-            <div style={{ fontSize: '36px', fontWeight: 700, color: '#1e293b', textAlign: 'center' }}>
-              {isLimitedAccess ? 'Demo Company' : 'Loading...'}
+          {isLimitedAccess && (
+            <div style={{ fontSize: '16px', color: '#3b82f6', fontWeight: 500, textAlign: 'center', marginTop: '8px' }}>
+              Using AI Sentinel API Keys
             </div>
-            {isLimitedAccess && (
-              <div style={{ fontSize: '16px', color: '#3b82f6', fontWeight: 500, textAlign: 'center', marginTop: '8px' }}>
-                Using AI Sentinel API Keys
-              </div>
-            )}
-          </div>
-        )}
-        {!displaySettings.showCompanyLogo && !displaySettings.showCompanyName && (
-          <div style={{ color: '#9ca3af', fontSize: '16px', fontStyle: 'italic' }}>
-            Company branding hidden
-          </div>
-        )}
+          )}
+        </div>
       </div>
     );
   }
 
+  // Use company settings from database
+  const logoSize = currentCompany.logoSize || 100;
+  const showCompanyName = currentCompany.showCompanyName !== false; // Default to true
+  const showCompanyLogo = currentCompany.showCompanyLogo !== false; // Default to true
+
   // Don't show anything if both logo and name are disabled
-  if (!displaySettings.showCompanyLogo && !displaySettings.showCompanyName) {
+  if (!showCompanyLogo && !showCompanyName) {
     return (
       <div style={{ color: '#9ca3af', fontSize: '16px', fontStyle: 'italic', textAlign: 'center' }}>
         Company branding hidden
@@ -126,7 +77,7 @@ function CompanyInfoLarge() {
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
-      {displaySettings.showCompanyLogo && (
+      {showCompanyLogo && (
         <>
           {isLimitedAccess ? (
             <div style={{ 
@@ -148,52 +99,33 @@ function CompanyInfoLarge() {
               <img 
                 src={currentCompany.logo} 
                 alt={currentCompany.name}
-                onClick={toggleZoom}
                 style={{ 
-                  width: isZoomed ? '160px' : '100px', 
-                  height: isZoomed ? '160px' : '100px', 
+                  width: `${logoSize}px`, 
+                  height: `${logoSize}px`, 
                   objectFit: 'contain',
                   borderRadius: '16px',
-                  border: `3px solid ${isZoomed ? '#3b82f6' : '#e2e8f0'}`,
-                  cursor: 'pointer',
+                  border: '3px solid #e2e8f0',
                   transition: 'all 0.3s ease',
-                  transform: isZoomed ? 'scale(1.05)' : 'scale(1)',
-                  boxShadow: isZoomed ? '0 8px 25px rgba(59, 130, 246, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)',
-                  filter: isZoomed ? 'brightness(1.1) contrast(1.1)' : 'brightness(1) contrast(1)'
-                }}
-                onMouseEnter={(e) => {
-                  if (!isZoomed) {
-                    e.currentTarget.style.transform = 'scale(1.05)';
-                    e.currentTarget.style.boxShadow = '0 6px 20px rgba(59, 130, 246, 0.2)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!isZoomed) {
-                    e.currentTarget.style.transform = 'scale(1)';
-                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
-                  }
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
                 }}
               />
             </div>
           ) : (
             <div 
-              onClick={toggleZoom}
               style={{ 
-                width: isZoomed ? '160px' : '100px', 
-                height: isZoomed ? '160px' : '100px', 
+                width: `${logoSize}px`, 
+                height: `${logoSize}px`, 
                 backgroundColor: '#3b82f6', 
                 borderRadius: '16px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: 'white',
-                fontSize: isZoomed ? '48px' : '36px',
+                fontSize: `${Math.floor(logoSize * 0.36)}px`,
                 fontWeight: 700,
-                cursor: 'pointer',
                 transition: 'all 0.3s ease',
-                transform: isZoomed ? 'scale(1.05)' : 'scale(1)',
-                boxShadow: isZoomed ? '0 8px 25px rgba(59, 130, 246, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)',
-                border: `3px solid ${isZoomed ? '#1e40af' : 'transparent'}`
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                border: '3px solid transparent'
               }}
             >
               {currentCompany.name.charAt(0).toUpperCase()}
@@ -202,15 +134,14 @@ function CompanyInfoLarge() {
         </>
       )}
       
-      {displaySettings.showCompanyName && (
+      {showCompanyName && (
         <div>
           <div style={{ 
-            fontSize: isZoomed ? '42px' : '36px', 
+            fontSize: `${Math.floor(logoSize * 0.36)}px`, 
             fontWeight: 700, 
             color: '#1e293b', 
             textAlign: 'center',
-            transition: 'all 0.3s ease',
-            textShadow: isZoomed ? '0 2px 4px rgba(0, 0, 0, 0.1)' : 'none'
+            transition: 'all 0.3s ease'
           }}>
             {isLimitedAccess ? 'Demo Company' : currentCompany.name}
           </div>
