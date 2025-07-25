@@ -430,8 +430,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Validate logoSize is within acceptable range
-      if (logoSize && (logoSize < 60 || logoSize > 120)) {
-        return res.status(400).json({ error: "Logo size must be between 60 and 120 pixels" });
+      if (logoSize && (logoSize < 60 || logoSize > 200)) {
+        return res.status(400).json({ error: "Logo size must be between 60 and 200 pixels" });
       }
       
       // Validate companyNameSize is within acceptable range
