@@ -692,13 +692,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // API Key Testing endpoint
-  app.post('/api/admin/test-api-key', isAuthenticated, async (req: any, res) => {
+  // API Key Testing endpoint  
+  app.post('/api/admin/test-api-key', optionalAuth, async (req: any, res) => {
     try {
-      const user = await storage.getUser(req.user.claims.sub);
+      console.log('Test API key request from user:', req.user?.userId);
+      
+      // Check authentication first
+      if (!req.user?.userId) {
+        console.log('No authenticated user found');
+        return res.status(401).json({ message: "Authentication required" });
+      }
+      
+      const user = await storage.getUser(req.user.userId);
+      console.log('User found:', user?.email, 'Role level:', user?.roleLevel);
       const userRoleLevel = user?.roleLevel || 1;
       
       if (userRoleLevel < 99) { // Must be owner (99) or super-user (100)
+        console.log('Access denied - insufficient role level:', userRoleLevel);
         return res.status(403).json({ message: "Owner access required to test API keys" });
       }
 

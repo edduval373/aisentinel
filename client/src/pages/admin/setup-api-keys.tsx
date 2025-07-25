@@ -142,10 +142,10 @@ export default function SetupApiKeys() {
 
   const testConnection = async (provider: string) => {
     const apiKey = apiKeys[provider];
-    if (!apiKey || apiKey.startsWith('placeholder-')) {
+    if (!apiKey || apiKey.startsWith('placeholder-') || apiKey.includes('$')) {
       toast({
-        title: "No API Key",
-        description: "Please save a valid API key first",
+        title: "Invalid API Key",
+        description: "Please enter a real API key (not placeholder or environment variable)",
         variant: "destructive",
       });
       return;
@@ -153,15 +153,32 @@ export default function SetupApiKeys() {
 
     setIsTestingConnection(provider);
     try {
-      await apiRequest(`/api/admin/test-api-key`, "POST", { provider, apiKey });
+      console.log(`Testing ${provider} API key connection...`);
+      const response = await apiRequest(`/api/admin/test-api-key`, "POST", { provider, apiKey });
+      console.log('Test connection response:', response);
+      
       toast({
-        title: "Connection Test Successful",
-        description: `${provider} API is working correctly`,
+        title: "✅ Test Successful",
+        description: `${provider.charAt(0).toUpperCase() + provider.slice(1)} API key format is valid`,
       });
     } catch (error: any) {
+      console.error('Test connection error:', error);
+      
+      // More detailed error handling
+      let errorMessage = "Connection test failed";
+      if (error.message) {
+        errorMessage = error.message;
+      } else if (error.status === 401) {
+        errorMessage = "Authentication failed - insufficient permissions";
+      } else if (error.status === 400) {
+        errorMessage = "Invalid API key format";
+      } else if (error.status === 403) {
+        errorMessage = "Owner access required to test API keys";
+      }
+      
       toast({
-        title: "Connection Test Failed",
-        description: error.message || `Unable to connect to ${provider} API`,
+        title: "❌ Test Failed",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -177,8 +194,20 @@ export default function SetupApiKeys() {
   if (modelsLoading) {
     return (
       <AdminLayout title="Setup API Keys" subtitle="Configure AI provider API keys">
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sentinel-blue"></div>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          height: '256px' 
+        }}>
+          <div style={{ 
+            width: '32px', 
+            height: '32px', 
+            border: '2px solid #e5e7eb', 
+            borderTop: '2px solid #1e3a8a', 
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite'
+          }}></div>
         </div>
       </AdminLayout>
     );
