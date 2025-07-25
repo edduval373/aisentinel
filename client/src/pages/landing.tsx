@@ -136,55 +136,7 @@ export default function Landing() {
             </button>
           </div>
           
-          {/* Development authentication shortcut */}
-          <div style={{ 
-            marginTop: '20px', 
-            padding: '16px', 
-            backgroundColor: '#fef3c7', 
-            border: '1px solid #f59e0b', 
-            borderRadius: '8px',
-            maxWidth: '500px',
-            margin: '20px auto 0'
-          }}>
-            <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#92400e', marginBottom: '8px' }}>
-              Development Environment
-            </h3>
-            <p style={{ fontSize: '14px', color: '#92400e', marginBottom: '12px' }}>
-              Since email verification was successful on production, click below to authenticate in this development environment:
-            </p>
-            <button
-              onClick={async () => {
-                try {
-                  const response = await fetch('/api/auth/dev-login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({ email: 'ed.duval15@gmail.com' })
-                  });
-                  const data = await response.json();
-                  if (data.success) {
-                    window.location.href = '/chat';
-                  } else {
-                    alert('Authentication failed: ' + data.message);
-                  }
-                } catch (error) {
-                  alert('Authentication error: ' + error.message);
-                }
-              }}
-              style={{
-                backgroundColor: '#059669',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                padding: '8px 16px',
-                fontSize: '14px',
-                fontWeight: 500,
-                cursor: 'pointer'
-              }}
-            >
-              Authenticate for Development
-            </button>
-          </div>
+
           
           <div className="ai-sentinel-credit-notice">
             <div className="ai-sentinel-credit-header">

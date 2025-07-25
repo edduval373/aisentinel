@@ -28,32 +28,20 @@
   ],
   "rewrites": [
     {
-      "source": "/api/health",
-      "destination": "/api/health.js"
-    },
-    {
-      "source": "/api/ai-models",
-      "destination": "/api/ai-models.json"
-    },
-    {
-      "source": "/api/activity-types",
-      "destination": "/api/activity-types.json"
-    },
-    {
-      "source": "/api/user/current-company",
-      "destination": "/api/user/current-company.json"
+      "source": "/api/auth/request-verification",
+      "destination": "/api/index.js"
     },
     {
       "source": "/api/auth/verify",
-      "destination": "/api/verify.js"
+      "destination": "/api/index.js"
     },
     {
-      "source": "/api/chat/sessions",
-      "destination": "/api/chat/demo-session.json"
+      "source": "/api/auth/me",
+      "destination": "/api/index.js"
     },
     {
-      "source": "/api/chat/:id/messages",
-      "destination": "/api/chat/demo-messages.json"
+      "source": "/api/(.*)",
+      "destination": "/api/index.js"
     },
     {
       "source": "/((?!assets/).*)",
