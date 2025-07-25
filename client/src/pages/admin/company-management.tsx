@@ -110,11 +110,20 @@ export default function CompanyManagement() {
     },
     onSuccess: (response) => {
       console.log("✅ Company update successful:", response);
+      // Invalidate both company list and current company data
       queryClient.invalidateQueries({ queryKey: ["/api/admin/companies"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/user/current-company"] });
+      
       setShowEditCompany(false);
       setEditingCompany(null);
       companyForm.reset();
+      
       toast({ title: "Success", description: "Company updated successfully" });
+      
+      // Force page refresh to update chat header
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     },
     onError: (error: any) => {
       console.error("❌ Company update error:", error);
@@ -252,50 +261,13 @@ export default function CompanyManagement() {
             All Companies
           </h2>
           
-          {/* Debug Test Button */}
-          <button 
-            onClick={() => {
-              console.log("🧪 DIRECT BUTTON TEST CLICKED!");
-              alert("Direct button works!");
-            }}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: '#22c55e',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              marginRight: '8px'
-            }}
-          >
-            TEST
-          </button>
-          
-          {/* Replace with direct button for testing */}
-          <button
-            onClick={() => {
-              console.log("🚀 ADD COMPANY DIRECT BUTTON CLICKED!");
-              setShowAddCompany(true);
-            }}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '8px 16px',
-              backgroundColor: '#3b82f6',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: '500'
-            }}
-          >
-            <Plus style={{ width: '16px', height: '16px' }} />
-            Add Company (Direct)
-          </button>
-          
           <Dialog open={showAddCompany} onOpenChange={setShowAddCompany}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus style={{ width: '16px', height: '16px', marginRight: '8px' }} />
+                Add Company
+              </Button>
+            </DialogTrigger>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Add New Company</DialogTitle>
@@ -638,9 +610,28 @@ export default function CompanyManagement() {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" style={{ width: '100%' }} disabled={updateCompanyMutation.isPending}>
-                  {updateCompanyMutation.isPending ? "Updating..." : "Update Company"}
-                </Button>
+                <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={() => {
+                      console.log("❌ Edit dialog cancelled");
+                      setShowEditCompany(false);
+                      setEditingCompany(null);
+                      companyForm.reset();
+                    }}
+                    style={{ flex: 1 }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    type="submit" 
+                    style={{ flex: 1 }} 
+                    disabled={updateCompanyMutation.isPending}
+                  >
+                    {updateCompanyMutation.isPending ? "Updating..." : "Update Company"}
+                  </Button>
+                </div>
               </form>
             </Form>
           </DialogContent>
