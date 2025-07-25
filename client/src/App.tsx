@@ -83,7 +83,7 @@ function Router() {
       <Route path="/demo">
         {() => {
           console.log("[APP DEBUG] Demo mode accessed");
-          return <Home />;
+          return <CompanyProvider><Home /></CompanyProvider>;
         }}
       </Route>
       
