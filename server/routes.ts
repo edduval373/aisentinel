@@ -692,6 +692,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // API Key Testing endpoint
+  app.post('/api/admin/test-api-key', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = await storage.getUser(req.user.claims.sub);
+      const userRoleLevel = user?.roleLevel || 1;
+      
+      if (userRoleLevel < 99) { // Must be owner (99) or super-user (100)
+        return res.status(403).json({ message: "Owner access required to test API keys" });
+      }
+
+      const { provider, apiKey } = req.body;
+      
+      if (!provider || !apiKey) {
+        return res.status(400).json({ message: "Provider and API key are required" });
+      }
+
+      // Simple validation for now
+      if (apiKey.startsWith('placeholder-') || apiKey.includes('$')) {
+        return res.status(400).json({ message: 'Please enter a real API key (not placeholder or environment variable)' });
+      }
+
+      // Basic format validation
+      if (provider === 'openai' && !apiKey.startsWith('sk-')) {
+        return res.status(400).json({ message: 'OpenAI API keys should start with sk-' });
+      }
+      if (provider === 'anthropic' && !apiKey.startsWith('sk-ant-')) {
+        return res.status(400).json({ message: 'Anthropic API keys should start with sk-ant-' });
+      }
+      if (provider === 'perplexity' && !apiKey.startsWith('pplx-')) {
+        return res.status(400).json({ message: 'Perplexity API keys should start with pplx-' });
+      }
+
+      console.log(`Testing ${provider} API key format validation`);
+      
+      // For now, just validate format - actual API testing can be added later
+      return res.json({ 
+        success: true, 
+        message: `${provider} API key format is valid`,
+        provider: provider.charAt(0).toUpperCase() + provider.slice(1)
+      });
+    } catch (error) {
+      console.error('Error testing API key:', error);
+      return res.status(500).json({ message: 'Failed to test API key' });
+    }
+  });
+
   // Context Document API routes
   app.get("/api/context-documents", isAuthenticated, async (req: any, res) => {
     try {
