@@ -7,6 +7,8 @@ import Sidebar from "@/components/layout/Sidebar";
 import ChatInterface from "@/components/chat/ChatInterface";
 import { useQuery } from "@tanstack/react-query";
 import { Building2, LogOut, RotateCcw, Trash2 } from "lucide-react";
+import TutorialArrow from "@/components/tutorial/TutorialArrow";
+import { useTutorial } from "@/hooks/useTutorial";
 
 import { useCompanyContext } from "@/hooks/useCompanyContext";
 
@@ -263,6 +265,7 @@ export default function Home() {
   const { currentCompanyId, setCurrentCompanyId } = useCompanyContext();
   const [currentSession, setCurrentSession] = useState<number | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { showTutorial, completeTutorial } = useTutorial();
   const [showCompanySwitcher, setShowCompanySwitcher] = useState(false);
   
   // Check if user is super-user (role level 100+)
@@ -380,9 +383,15 @@ export default function Home() {
         }}>
           {/* Left side - Menu Button */}
           <Button
+            id="ai-sentinel-menu-button"
             variant="ghost"
             size="sm"
-            onClick={canAccessSidebar ? () => setSidebarOpen(!sidebarOpen) : undefined}
+            onClick={canAccessSidebar ? () => {
+              setSidebarOpen(!sidebarOpen);
+              if (showTutorial) {
+                completeTutorial();
+              }
+            } : undefined}
             disabled={!canAccessSidebar}
             style={{ 
               padding: '4px',
@@ -584,6 +593,15 @@ export default function Home() {
           />
         </div>
       </div>
+
+      {/* Tutorial Arrow for Demo Users */}
+      {showTutorial && (
+        <TutorialArrow
+          targetId="ai-sentinel-menu-button"
+          message="Admin Menu"
+          onComplete={completeTutorial}
+        />
+      )}
     </div>
   );
 }

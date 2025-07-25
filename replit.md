@@ -141,15 +141,20 @@ The application is configured for deployment on Vercel with the following setup:
 
 ```
 Recent Updates:
-- July 25, 2025. Demo Mode Complete with Owner Options and Email Display:
+- July 25, 2025. Demo Mode Tutorial System Implementation Complete:
   * FIXED: Demo users can now access the AI Sentinel logo/menu button to open sidebar
   * RESOLVED: canAccessSidebar logic updated to include demo mode users (role level 0)  
   * ENHANCED: Demo users now have full sidebar access to view all admin pages in read-only mode
   * ADDED: Owner sections now visible for demo users (Company Setup, Create AI Models, Model Fusion, Setup API Keys)
   * IMPLEMENTED: Dynamic owner sections using ownersSections array for consistent navigation
   * DISPLAYED: User email address shown at bottom of sidebar for demo users
+  * CREATED: Tutorial arrow system pointing to AI Sentinel logo for first-time demo users
+  * ADDED: "Admin Menu" tutorial message with animated bouncing arrow
+  * INTEGRATED: localStorage persistence - tutorial only shows once and disappears permanently after click
+  * BUILT: TutorialArrow component with responsive positioning and smooth animations
+  * DEVELOPED: useTutorial hook for managing tutorial state and completion
   * MAINTAINED: All admin pages still properly show READ-ONLY MODE banners for demo users
-  * VERIFIED: Complete demo mode functionality with sidebar navigation and read-only admin access
+  * VERIFIED: Complete demo mode functionality with onboarding tutorial and sidebar navigation
 - July 25, 2025. Demo Mode Company Authentication Fixed - Users Now Show Under Real Company:
   * FIXED: Demo mode now shows users authenticated under company 1 (Duval AI Solutions)
   * REMOVED: "Demo Company" placeholder - demo users see real company data
