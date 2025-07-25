@@ -46,17 +46,17 @@ function Router() {
     return (
       <div style={{ 
         display: 'flex', 
-        height: '100vh', 
         alignItems: 'center', 
         justifyContent: 'center', 
-        backgroundColor: '#f8fafc' 
+        minHeight: '100vh', 
+        background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)' 
       }}>
-        <div style={{ textAlign: 'center' }}>
+        <div style={{ textAlign: 'center', padding: '2rem' }}>
           <div style={{ 
             width: '64px', 
             height: '64px', 
             animation: 'spin 2s linear infinite',
-            margin: '0 auto 16px auto'
+            margin: '0 auto 1.5rem'
           }}>
             <img 
               src="/ai-sentinel-logo.png" 
@@ -69,7 +69,13 @@ function Router() {
               }} 
             />
           </div>
-          <p style={{ color: '#64748b', margin: '0' }}>Loading...</p>
+          <h1 style={{ 
+            fontSize: '2rem', 
+            fontWeight: 'bold', 
+            color: '#1e293b', 
+            marginBottom: '0.5rem' 
+          }}>AI Sentinel</h1>
+          <p style={{ color: '#64748b' }}>Loading Enterprise AI Governance Platform...</p>
         </div>
         <style>{`
           @keyframes spin {
