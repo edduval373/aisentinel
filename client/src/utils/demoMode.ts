@@ -1,7 +1,9 @@
 export function isDemoModeActive(user?: any): boolean {
   return window.location.pathname === '/demo' || 
          user?.email === 'demo@aisentinel.com' || 
-         user?.roleLevel === 0;
+         user?.role === 'demo' ||
+         user?.roleLevel === 0 ||
+         !document.cookie.includes('sessionToken=');
 }
 
 export function isReadOnlyMode(user?: any): boolean {

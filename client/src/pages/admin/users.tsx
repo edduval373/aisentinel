@@ -48,7 +48,7 @@ export default function AdminUsers() {
   });
 
   // Check if user has administrator level access (98 or above) OR is in demo mode
-  const hasAdminAccess = canViewAdminPage(user?.roleLevel, ACCESS_REQUIREMENTS.USER_MANAGEMENT);
+  const hasAdminAccess = canViewAdminPage(user, ACCESS_REQUIREMENTS.USER_MANAGEMENT);
 
   // Check if we're in demo mode
   const isDemoMode = isDemoModeActive(user);
