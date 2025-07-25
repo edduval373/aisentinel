@@ -9,11 +9,17 @@ import { Label } from "@/components/ui/label-standard";
 import { Badge } from "@/components/ui/badge-standard";
 import { Key, Shield, Zap, Globe, Save, TestTube, AlertCircle, Check, X } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
+import { hasAccessLevel, ACCESS_REQUIREMENTS } from "@/utils/roleBasedAccess";
+import { useAuth } from "@/hooks/useAuth";
 import type { AiModel } from "@shared/schema";
 
 export default function SetupApiKeys() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { user } = useAuth();
+  
+  // Check if user has owner level access (99 or above)
+  const hasOwnerAccess = hasAccessLevel(user?.roleLevel, ACCESS_REQUIREMENTS.SETUP_API_KEYS);
   const [isTestingConnection, setIsTestingConnection] = useState<string | null>(null);
   const [testResults, setTestResults] = useState<Record<string, 'success' | 'error' | null>>({});
   const [errorMessages, setErrorMessages] = useState<Record<string, string>>({});
@@ -193,6 +199,32 @@ export default function SetupApiKeys() {
     const hasValidKey = apiKeys[provider.id] && !apiKeys[provider.id].startsWith('placeholder-');
     return hasValidKey ? "connected" : "needs-key";
   };
+
+  // Check access control first
+  if (!hasOwnerAccess) {
+    return (
+      <AdminLayout title="Setup API Keys" subtitle="Configure AI provider API keys">
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column',
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          height: '256px',
+          gap: '16px'
+        }}>
+          <Shield style={{ width: '48px', height: '48px', color: '#ef4444' }} />
+          <div style={{ textAlign: 'center' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#374151', margin: '0 0 8px 0' }}>
+              Access Denied
+            </h3>
+            <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>
+              Owner access required (level 99+)
+            </p>
+          </div>
+        </div>
+      </AdminLayout>
+    );
+  }
 
   if (modelsLoading) {
     return (

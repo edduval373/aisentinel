@@ -14,21 +14,24 @@ import { Shield, Lock, AlertTriangle, Eye, FileText, Users } from "lucide-react"
 
 export default function AdminSecuritySettings() {
   const { toast } = useToast();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
+  
+  // Check if user has administrator level access (98 or above)
+  const hasAdminAccess = user && (user.roleLevel ?? 0) >= 98;
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
+    if (!isLoading && (!isAuthenticated || !hasAdminAccess)) {
       toast({
-        title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
+        title: "Access Denied",
+        description: "Administrator access required (level 98+)",
         variant: "destructive",
       });
       setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
+        window.location.href = "/";
+      }, 1000);
       return;
     }
-  }, [isAuthenticated, isLoading, toast]);
+  }, [isAuthenticated, isLoading, hasAdminAccess, toast]);
 
   if (isLoading) {
     return (
@@ -52,27 +55,23 @@ export default function AdminSecuritySettings() {
     );
   }
 
-  if (!isAuthenticated) {
-    return null;
-  }
-
   return (
     <AdminLayout title="Security Settings" subtitle="Configure system security and monitoring">
-      <div className="p-6 space-y-6">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
         {/* Content Filtering */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center">
-              <Shield className="w-5 h-5 mr-2" />
+            <CardTitle style={{ display: 'flex', alignItems: 'center' }}>
+              <Shield style={{ width: '20px', height: '20px', marginRight: '8px' }} />
               Content Filtering
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2">
+          <CardContent style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ display: 'grid', gap: '16px', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
               <div>
-                <Label htmlFor="pii-detection">PII Detection Level</Label>
+                <Label htmlFor="filter-level">Filter Level</Label>
                 <Select defaultValue="strict">
-                  <SelectTrigger className="mt-1">
+                  <SelectTrigger style={{ marginTop: '4px' }}>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -85,7 +84,7 @@ export default function AdminSecuritySettings() {
               <div>
                 <Label htmlFor="content-sensitivity">Content Sensitivity</Label>
                 <Select defaultValue="high">
-                  <SelectTrigger className="mt-1">
+                  <SelectTrigger style={{ marginTop: '4px' }}>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -99,25 +98,31 @@ export default function AdminSecuritySettings() {
             
             <Separator />
             
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div>
                   <Label htmlFor="enable-pii-filter">Enable PII filtering</Label>
-                  <p className="text-sm text-slate-600">Automatically detect and block personally identifiable information</p>
+                  <p style={{ fontSize: '14px', color: '#64748b', margin: '4px 0 0 0' }}>
+                    Automatically detect and block personally identifiable information
+                  </p>
                 </div>
                 <Switch id="enable-pii-filter" defaultChecked />
               </div>
-              <div className="flex items-center justify-between">
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div>
                   <Label htmlFor="enable-financial-filter">Enable financial data filtering</Label>
-                  <p className="text-sm text-slate-600">Block credit card numbers, bank accounts, and financial information</p>
+                  <p style={{ fontSize: '14px', color: '#64748b', margin: '4px 0 0 0' }}>
+                    Block credit card numbers, bank accounts, and financial information
+                  </p>
                 </div>
                 <Switch id="enable-financial-filter" defaultChecked />
               </div>
-              <div className="flex items-center justify-between">
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div>
                   <Label htmlFor="enable-code-filter">Enable code filtering</Label>
-                  <p className="text-sm text-slate-600">Prevent sharing of sensitive code patterns and credentials</p>
+                  <p style={{ fontSize: '14px', color: '#64748b', margin: '4px 0 0 0' }}>
+                    Prevent sharing of sensitive code patterns and credentials
+                  </p>
                 </div>
                 <Switch id="enable-code-filter" defaultChecked />
               </div>
@@ -128,20 +133,20 @@ export default function AdminSecuritySettings() {
         {/* Access Control */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center">
-              <Lock className="w-5 h-5 mr-2" />
+            <CardTitle style={{ display: 'flex', alignItems: 'center' }}>
+              <Lock style={{ width: '20px', height: '20px', marginRight: '8px' }} />
               Access Control
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2">
+          <CardContent style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ display: 'grid', gap: '16px', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
               <div>
                 <Label htmlFor="session-timeout">Session timeout (minutes)</Label>
                 <Input
                   id="session-timeout"
                   type="number"
-                  value="60"
-                  className="mt-1"
+                  defaultValue="60"
+                  style={{ marginTop: '4px' }}
                 />
               </div>
               <div>
@@ -149,191 +154,171 @@ export default function AdminSecuritySettings() {
                 <Input
                   id="max-sessions"
                   type="number"
-                  value="3"
-                  className="mt-1"
+                  defaultValue="3"
+                  style={{ marginTop: '4px' }}
                 />
               </div>
             </div>
             
             <Separator />
             
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div>
-                  <Label htmlFor="require-mfa">Require multi-factor authentication</Label>
-                  <p className="text-sm text-slate-600">Enforce MFA for all admin users</p>
+                  <Label htmlFor="require-2fa">Require two-factor authentication</Label>
+                  <p style={{ fontSize: '14px', color: '#64748b', margin: '4px 0 0 0' }}>
+                    Enforce 2FA for all user accounts
+                  </p>
                 </div>
-                <Switch id="require-mfa" />
+                <Switch id="require-2fa" />
               </div>
-              <div className="flex items-center justify-between">
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div>
-                  <Label htmlFor="ip-whitelist">Enable IP whitelist</Label>
-                  <p className="text-sm text-slate-600">Restrict access to approved IP addresses</p>
+                  <Label htmlFor="ip-whitelist">Enable IP address whitelist</Label>
+                  <p style={{ fontSize: '14px', color: '#64748b', margin: '4px 0 0 0' }}>
+                    Restrict access to specific IP addresses
+                  </p>
                 </div>
                 <Switch id="ip-whitelist" />
               </div>
-              <div className="flex items-center justify-between">
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div>
-                  <Label htmlFor="geo-blocking">Enable geo-blocking</Label>
-                  <p className="text-sm text-slate-600">Block access from specific countries or regions</p>
+                  <Label htmlFor="device-tracking">Enable device tracking</Label>
+                  <p style={{ fontSize: '14px', color: '#64748b', margin: '4px 0 0 0' }}>
+                    Track and manage user devices
+                  </p>
                 </div>
-                <Switch id="geo-blocking" />
+                <Switch id="device-tracking" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Monitoring & Alerts */}
+        {/* Monitoring & Alerts */} 
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center">
-              <Eye className="w-5 h-5 mr-2" />
+            <CardTitle style={{ display: 'flex', alignItems: 'center' }}>
+              <Eye style={{ width: '20px', height: '20px', marginRight: '8px' }} />
               Monitoring & Alerts
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2">
-              <div>
-                <Label htmlFor="failed-attempts">Failed login attempts threshold</Label>
-                <Input
-                  id="failed-attempts"
-                  type="number"
-                  value="5"
-                  className="mt-1"
-                />
+          <CardContent style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ display: 'grid', gap: '16px', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))' }}>
+              <div style={{ 
+                padding: '16px', 
+                backgroundColor: '#fef3c7', 
+                border: '1px solid #f59e0b', 
+                borderRadius: '8px' 
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                  <AlertTriangle style={{ width: '16px', height: '16px', color: '#d97706', marginRight: '8px' }} />
+                  <h4 style={{ fontWeight: '500', color: '#92400e', margin: 0 }}>High-Risk Activities</h4>
+                </div>
+                <p style={{ fontSize: '14px', color: '#a16207', margin: '0 0 8px 0' }}>
+                  Activities that require immediate attention
+                </p>
+                <Badge variant="outline" style={{ backgroundColor: '#fef3c7', color: '#a16207' }}>
+                  3 alerts this week
+                </Badge>
               </div>
-              <div>
-                <Label htmlFor="lockout-duration">Account lockout duration (minutes)</Label>
-                <Input
-                  id="lockout-duration"
-                  type="number"
-                  value="30"
-                  className="mt-1"
-                />
+              
+              <div style={{ 
+                padding: '16px', 
+                backgroundColor: '#fee2e2', 
+                border: '1px solid #ef4444', 
+                borderRadius: '8px' 
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                  <Shield style={{ width: '16px', height: '16px', color: '#dc2626', marginRight: '8px' }} />
+                  <h4 style={{ fontWeight: '500', color: '#991b1b', margin: 0 }}>Security Violations</h4>
+                </div>
+                <p style={{ fontSize: '14px', color: '#b91c1c', margin: '0 0 8px 0' }}>
+                  Content policy violations detected
+                </p>
+                <Badge variant="outline" style={{ backgroundColor: '#fee2e2', color: '#b91c1c' }}>
+                  1 violation today
+                </Badge>
               </div>
+            </div>
+            
+            <div>
+              <Label htmlFor="alert-threshold">Alert threshold</Label>
+              <Select defaultValue="medium">
+                <SelectTrigger style={{ marginTop: '4px' }}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="high">High - Only critical alerts</SelectItem>
+                  <SelectItem value="medium">Medium - Important alerts</SelectItem>
+                  <SelectItem value="low">Low - All alerts</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             
             <Separator />
             
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div>
-                  <Label htmlFor="real-time-monitoring">Real-time monitoring</Label>
-                  <p className="text-sm text-slate-600">Monitor all user activities in real-time</p>
+                  <Label htmlFor="email-alerts">Email notifications</Label>
+                  <p style={{ fontSize: '14px', color: '#64748b', margin: '4px 0 0 0' }}>
+                    Send security alerts via email
+                  </p>
                 </div>
-                <Switch id="real-time-monitoring" defaultChecked />
+                <Switch id="email-alerts" defaultChecked />
               </div>
-              <div className="flex items-center justify-between">
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div>
-                  <Label htmlFor="security-alerts">Security alerts</Label>
-                  <p className="text-sm text-slate-600">Send notifications for security events</p>
+                  <Label htmlFor="slack-alerts">Slack notifications</Label>
+                  <p style={{ fontSize: '14px', color: '#64748b', margin: '4px 0 0 0' }}>
+                    Send alerts to Slack channels
+                  </p>
                 </div>
-                <Switch id="security-alerts" defaultChecked />
+                <Switch id="slack-alerts" defaultChecked />
               </div>
-              <div className="flex items-center justify-between">
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div>
-                  <Label htmlFor="audit-logging">Audit logging</Label>
-                  <p className="text-sm text-slate-600">Log all admin actions and changes</p>
+                  <Label htmlFor="sms-alerts">SMS notifications</Label>
+                  <p style={{ fontSize: '14px', color: '#64748b', margin: '4px 0 0 0' }}>
+                    Send critical alerts via SMS
+                  </p>
                 </div>
-                <Switch id="audit-logging" defaultChecked />
+                <Switch id="sms-alerts" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Data Protection */}
+        {/* Compliance & Reporting */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center">
-              <FileText className="w-5 h-5 mr-2" />
-              Data Protection
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2">
-              <div>
-                <Label htmlFor="data-retention">Data retention period (days)</Label>
-                <Input
-                  id="data-retention"
-                  type="number"
-                  value="90"
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <Label htmlFor="backup-frequency">Backup frequency</Label>
-                <Select defaultValue="daily">
-                  <SelectTrigger className="mt-1">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="hourly">Hourly</SelectItem>
-                    <SelectItem value="daily">Daily</SelectItem>
-                    <SelectItem value="weekly">Weekly</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            
-            <Separator />
-            
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="encryption-at-rest">Encryption at rest</Label>
-                  <p className="text-sm text-slate-600">Encrypt stored data and backups</p>
-                </div>
-                <Switch id="encryption-at-rest" defaultChecked />
-              </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="encryption-in-transit">Encryption in transit</Label>
-                  <p className="text-sm text-slate-600">Encrypt data transmission</p>
-                </div>
-                <Switch id="encryption-in-transit" defaultChecked />
-              </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="gdpr-compliance">GDPR compliance mode</Label>
-                  <p className="text-sm text-slate-600">Enable GDPR-compliant data handling</p>
-                </div>
-                <Switch id="gdpr-compliance" defaultChecked />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Current Security Status */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <AlertTriangle className="w-5 h-5 mr-2" />
-              Security Status
+            <CardTitle style={{ display: 'flex', alignItems: 'center' }}>
+              <FileText style={{ width: '20px', height: '20px', marginRight: '8px' }} />
+              Compliance & Reporting
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-4 md:grid-cols-3">
-              <div className="text-center">
-                <Badge variant="default" className="mb-2">Active</Badge>
-                <div className="text-sm text-slate-600">Content Filtering</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Badge style={{ backgroundColor: '#dcfce7', color: '#166534' }}>SOC 2 Compliant</Badge>
+                <Badge style={{ backgroundColor: '#dbeafe', color: '#1e40af' }}>GDPR Ready</Badge>
+                <Badge variant="secondary">HIPAA Compatible</Badge>
               </div>
-              <div className="text-center">
-                <Badge variant="default" className="mb-2">Enabled</Badge>
-                <div className="text-sm text-slate-600">Real-time Monitoring</div>
-              </div>
-              <div className="text-center">
-                <Badge variant="secondary" className="mb-2">Configured</Badge>
-                <div className="text-sm text-slate-600">Alert System</div>
+              
+              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                <Button style={{ flex: '1', minWidth: '200px' }}>
+                  Generate Security Report
+                </Button>
+                <Button variant="outline" style={{ flex: '1', minWidth: '200px' }}>
+                  Export Audit Logs
+                </Button>
+                <Button variant="outline" style={{ flex: '1', minWidth: '200px' }}>
+                  Download Compliance Certificate
+                </Button>
               </div>
             </div>
           </CardContent>
         </Card>
-
-        {/* Save Settings */}
-        <div className="flex justify-end space-x-2">
-          <Button variant="outline">Reset to Defaults</Button>
-          <Button>Save Security Settings</Button>
-        </div>
       </div>
     </AdminLayout>
   );
