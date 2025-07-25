@@ -87,6 +87,33 @@ export default function SetupApiKeys() {
       keyPlaceholder: "pplx-...",
       models: aiModels?.filter(m => m.provider === 'perplexity') || [],
       instructions: "Get your API key from perplexity.ai/settings/api"
+    },
+    {
+      id: "google",
+      name: "Google",
+      icon: Globe,
+      description: "Gemini models for multimodal AI capabilities",
+      keyPlaceholder: "AIza...",
+      models: aiModels?.filter(m => m.provider === 'google') || [],
+      instructions: "Get your API key from console.cloud.google.com"
+    },
+    {
+      id: "cohere",
+      name: "Cohere",
+      icon: Zap,
+      description: "Command models for enterprise applications",
+      keyPlaceholder: "co-...",
+      models: aiModels?.filter(m => m.provider === 'cohere') || [],
+      instructions: "Get your API key from dashboard.cohere.ai"
+    },
+    {
+      id: "mistral",
+      name: "Mistral AI",
+      icon: Zap,
+      description: "Open-source and commercial language models",
+      keyPlaceholder: "...",
+      models: aiModels?.filter(m => m.provider === 'mistral') || [],
+      instructions: "Get your API key from console.mistral.ai"
     }
   ];
 
@@ -170,89 +197,155 @@ export default function SetupApiKeys() {
           </CardContent>
         </Card>
 
-        {/* Provider Cards */}
-        <div className="grid gap-6">
+        {/* Provider Cards - Grid Layout */}
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', 
+          gap: '24px',
+          marginTop: '24px'
+        }}>
           {apiProviders.map((provider) => {
             const status = getConnectionStatus(provider);
             const currentKey = apiKeys[provider.id] || '';
             const isPlaceholder = currentKey.startsWith('placeholder-') || currentKey === '';
             
             return (
-              <Card key={provider.name} className={isPlaceholder ? "border-red-200" : "border-green-200"}>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <provider.icon className="h-6 w-6 text-sentinel-blue" />
-                      <div>
-                        <CardTitle className="text-lg">{provider.name}</CardTitle>
-                        <CardDescription>{provider.description}</CardDescription>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Badge 
-                        variant={status === "connected" ? "default" : "secondary"}
-                        className={status === "connected" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}
-                      >
-                        {status === "connected" ? "API Key Set" : "Need API Key"}
-                      </Badge>
-                      <span className="text-sm text-gray-500">
-                        {provider.models.length} model{provider.models.length !== 1 ? 's' : ''}
-                      </span>
+              <Card 
+                key={provider.name} 
+                style={{ 
+                  border: isPlaceholder ? '1px solid #fecaca' : '1px solid #bbf7d0',
+                  backgroundColor: isPlaceholder ? '#fef2f2' : '#f0fdf4',
+                  height: 'fit-content'
+                }}
+              >
+                <CardHeader style={{ paddingBottom: '16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                    <provider.icon style={{ width: '24px', height: '24px', color: '#1e3a8a' }} />
+                    <div>
+                      <CardTitle style={{ fontSize: '18px', fontWeight: '600', margin: '0' }}>
+                        {provider.name}
+                      </CardTitle>
+                      <CardDescription style={{ fontSize: '14px', color: '#6b7280', margin: '4px 0 0 0' }}>
+                        {provider.description}
+                      </CardDescription>
                     </div>
                   </div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Badge 
+                      style={{ 
+                        backgroundColor: status === "connected" ? '#dcfce7' : '#fee2e2',
+                        color: status === "connected" ? '#166534' : '#991b1b',
+                        border: 'none',
+                        fontSize: '12px',
+                        padding: '4px 8px'
+                      }}
+                    >
+                      {status === "connected" ? "API Key Set" : "Need API Key"}
+                    </Badge>
+                    <span style={{ fontSize: '12px', color: '#3b82f6', fontWeight: '500' }}>
+                      {provider.models.length} model{provider.models.length !== 1 ? 's' : ''}
+                    </span>
+                  </div>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor={`${provider.id}-key`}>API Key</Label>
-                    <div className="flex space-x-2">
+                
+                <CardContent style={{ paddingTop: '0' }}>
+                  <div style={{ marginBottom: '20px' }}>
+                    <Label 
+                      htmlFor={`${provider.id}-key`}
+                      style={{ fontSize: '14px', fontWeight: '500', color: '#374151', display: 'block', marginBottom: '8px' }}
+                    >
+                      API Key
+                    </Label>
+                    <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
                       <Input
                         id={`${provider.id}-key`}
                         type="password"
                         placeholder={provider.keyPlaceholder}
                         value={currentKey}
                         onChange={(e) => handleApiKeyChange(provider.id, e.target.value)}
-                        className={isPlaceholder ? "border-red-300" : "border-green-300"}
+                        style={{ 
+                          flex: '1',
+                          border: isPlaceholder ? '1px solid #fca5a5' : '1px solid #86efac',
+                          borderRadius: '6px',
+                          padding: '8px 12px'
+                        }}
                       />
                       <Button
                         onClick={() => handleSaveApiKey(provider.id)}
                         disabled={updateApiKeyMutation.isPending}
-                        size="sm"
-                        variant={isPlaceholder ? "default" : "outline"}
+                        style={{
+                          backgroundColor: isPlaceholder ? '#1e3a8a' : 'transparent',
+                          color: isPlaceholder ? 'white' : '#1e3a8a',
+                          border: isPlaceholder ? 'none' : '1px solid #1e3a8a',
+                          borderRadius: '6px',
+                          padding: '8px 16px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          fontSize: '14px',
+                          cursor: 'pointer'
+                        }}
                       >
-                        <Save className="h-4 w-4 mr-1" />
+                        <Save style={{ width: '16px', height: '16px' }} />
                         Save
                       </Button>
                     </div>
-                    <p className="text-xs text-gray-600">
+                    <p style={{ fontSize: '12px', color: '#6b7280', margin: '0' }}>
                       {provider.instructions}
                     </p>
                     {isPlaceholder && (
-                      <p className="text-sm text-red-600">⚠ Enter your real API key to enable {provider.name} models</p>
+                      <p style={{ fontSize: '13px', color: '#dc2626', margin: '8px 0 0 0' }}>
+                        ⚠ Enter your real API key to enable {provider.name} models
+                      </p>
                     )}
                   </div>
                   
-                  <div className="space-y-2">
-                    <Label>Available Models</Label>
-                    <div className="flex flex-wrap gap-2">
+                  <div style={{ marginBottom: '20px' }}>
+                    <Label style={{ fontSize: '14px', fontWeight: '500', color: '#374151', display: 'block', marginBottom: '8px' }}>
+                      Available Models
+                    </Label>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                       {provider.models.map(model => (
-                        <Badge key={model.id} variant="outline" className="text-xs">
+                        <Badge 
+                          key={model.id} 
+                          style={{ 
+                            backgroundColor: '#f3f4f6',
+                            color: '#374151',
+                            border: '1px solid #d1d5db',
+                            fontSize: '11px',
+                            padding: '2px 6px'
+                          }}
+                        >
                           {model.name}
                         </Badge>
                       ))}
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between pt-2">
-                    <div className="text-sm text-gray-600">
-                      Status: {isPlaceholder ? "Not configured" : "Configured"}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '16px', borderTop: '1px solid #e5e7eb' }}>
+                    <div style={{ fontSize: '13px', color: '#6b7280' }}>
+                      Status: <span style={{ fontWeight: '500', color: isPlaceholder ? '#dc2626' : '#16a34a' }}>
+                        {isPlaceholder ? "Not configured" : "Configured"}
+                      </span>
                     </div>
                     <Button
-                      variant="outline"
-                      size="sm"
                       onClick={() => testConnection(provider.id)}
                       disabled={isTestingConnection === provider.id || isPlaceholder}
+                      style={{
+                        backgroundColor: 'transparent',
+                        color: '#1e3a8a',
+                        border: '1px solid #1e3a8a',
+                        borderRadius: '6px',
+                        padding: '6px 12px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        fontSize: '13px',
+                        cursor: isPlaceholder ? 'not-allowed' : 'pointer',
+                        opacity: isPlaceholder ? '0.5' : '1'
+                      }}
                     >
-                      <TestTube className="h-4 w-4 mr-1" />
+                      <TestTube style={{ width: '14px', height: '14px' }} />
                       {isTestingConnection === provider.id ? "Testing..." : "Test Connection"}
                     </Button>
                   </div>
