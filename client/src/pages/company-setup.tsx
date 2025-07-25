@@ -470,20 +470,15 @@ export default function CompanySetup() {
                     {showCompanyName && (
                       <div>
                         <div style={{ 
-                          fontSize: previewZoomed ? '32px' : '28px', 
+                          fontSize: `${Math.floor(logoSize * 0.28)}px`, 
                           fontWeight: 700, 
                           color: '#1e293b',
                           transition: 'all 0.3s ease'
                         }}>
                           {currentCompany.name}
                         </div>
-                        <div style={{ 
-                          fontSize: '11px', 
-                          color: '#94a3b8', 
-                          marginTop: '4px',
-                          fontStyle: 'italic'
-                        }}>
-                          Click logo to {previewZoomed ? 'zoom out' : 'zoom in'} - state will be saved
+                        <div style={{ fontSize: '12px', color: '#64748b', marginTop: '4px' }}>
+                          Company ID: {currentCompany.id}
                         </div>
                       </div>
                     )}
