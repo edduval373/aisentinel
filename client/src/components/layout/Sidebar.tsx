@@ -78,7 +78,32 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
     }
   ];
 
-  const ownersSections = [];
+  const ownersSections = [
+    {
+      id: "company-setup",
+      name: "Company Setup",
+      href: "/company-setup",
+      icon: Building,
+    },
+    {
+      id: "create-models",
+      name: "Create AI Models",
+      href: "/admin/create-models",
+      icon: Bot,
+    },
+    {
+      id: "model-fusion",
+      name: "Setup Model Fusion",
+      href: "/admin/model-fusion",
+      icon: Brain,
+    },
+    {
+      id: "setup-api-keys",
+      name: "Setup API Keys",
+      href: "/admin/setup-api-keys",
+      icon: Key,
+    }
+  ];
 
   const adminSections = [
     {
@@ -364,8 +389,8 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
             </>
           )}
 
-          {/* OWNERS Section - visible to super-user and owners */}
-          {(isSuperUser || isOwner) && (
+          {/* OWNERS Section - visible to super-user, owners, and demo users */}
+          {(isSuperUser || isOwner || isDemoUser) && (
             <>
               <div style={{ paddingTop: '16px', paddingBottom: '8px' }}>
                 <h3 style={{ 
@@ -380,143 +405,54 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                 </h3>
               </div>
               
-              <button
-                onClick={() => {
-                  if (location === "/admin/company-setup") {
-                    // If already on this page, just close the sidebar
-                    onToggle();
-                  } else {
-                    // Navigate to the page
-                    navigate("/admin/company-setup");
-                    if (window.innerWidth < 1024) onToggle(); // Close on mobile
-                  }
-                }}
-                style={{
-                  width: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  textAlign: 'left',
-                  borderRadius: '8px',
-                  padding: '8px 12px',
-                  transition: 'all 0.2s',
-                  color: location === "/admin/company-setup" ? 'white' : '#cbd5e1',
-                  backgroundColor: location === "/admin/company-setup" ? '#374151' : 'transparent',
-                  border: 'none',
-                  cursor: 'pointer'
-                }}
-                onMouseEnter={(e) => {
-                  if (location !== "/admin/company-setup") {
-                    e.currentTarget.style.backgroundColor = '#374151';
-                    e.currentTarget.style.color = 'white';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (location !== "/admin/company-setup") {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = '#cbd5e1';
-                  }
-                }}
-              >
-                <Building style={{ 
-                  width: '20px', 
-                  height: '20px',
-                  color: location === "/admin/company-setup" ? '#3b82f6' : '#94a3b8'
-                }} />
-                <span>Setup Company</span>
-              </button>
-              
-              <button
-                onClick={() => {
-                  if (location === "/admin/create-models") {
-                    // If already on this page, just close the sidebar
-                    onToggle();
-                  } else {
-                    // Navigate to the page
-                    navigate("/admin/create-models");
-                    if (window.innerWidth < 1024) onToggle(); // Close on mobile
-                  }
-                }}
-                style={{
-                  width: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  textAlign: 'left',
-                  borderRadius: '8px',
-                  padding: '8px 12px',
-                  transition: 'all 0.2s',
-                  color: location === "/admin/create-models" ? 'white' : '#cbd5e1',
-                  backgroundColor: location === "/admin/create-models" ? '#374151' : 'transparent',
-                  border: 'none',
-                  cursor: 'pointer'
-                }}
-                onMouseEnter={(e) => {
-                  if (location !== "/admin/create-models") {
-                    e.currentTarget.style.backgroundColor = '#374151';
-                    e.currentTarget.style.color = 'white';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (location !== "/admin/create-models") {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = '#cbd5e1';
-                  }
-                }}
-              >
-                <Bot style={{ 
-                  width: '20px', 
-                  height: '20px',
-                  color: location === "/admin/create-models" ? '#3b82f6' : '#94a3b8'
-                }} />
-                <span>Setup AI Models</span>
-              </button>
-              
-              <button
-                onClick={() => {
-                  if (location === "/admin/model-fusion") {
-                    // If already on this page, just close the sidebar
-                    onToggle();
-                  } else {
-                    // Navigate to the page
-                    navigate("/admin/model-fusion");
-                    if (window.innerWidth < 1024) onToggle(); // Close on mobile
-                  }
-                }}
-                style={{
-                  width: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  textAlign: 'left',
-                  borderRadius: '8px',
-                  padding: '8px 12px',
-                  transition: 'all 0.2s',
-                  color: location === "/admin/model-fusion" ? 'white' : '#cbd5e1',
-                  backgroundColor: location === "/admin/model-fusion" ? '#374151' : 'transparent',
-                  border: 'none',
-                  cursor: 'pointer'
-                }}
-                onMouseEnter={(e) => {
-                  if (location !== "/admin/model-fusion") {
-                    e.currentTarget.style.backgroundColor = '#374151';
-                    e.currentTarget.style.color = 'white';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (location !== "/admin/model-fusion") {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = '#cbd5e1';
-                  }
-                }}
-              >
-                <Brain style={{ 
-                  width: '20px', 
-                  height: '20px',
-                  color: location === "/admin/model-fusion" ? '#3b82f6' : '#94a3b8'
-                }} />
-                <span>Setup Model Fusion</span>
-              </button>
+              {ownersSections.map((section) => (
+                <button
+                  key={section.id}
+                  onClick={() => {
+                    if (location === section.href) {
+                      // If already on this page, just close the sidebar
+                      onToggle();
+                    } else {
+                      // Navigate to the page
+                      navigate(section.href);
+                      if (window.innerWidth < 1024) onToggle(); // Close on mobile
+                    }
+                  }}
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    textAlign: 'left',
+                    borderRadius: '8px',
+                    padding: '8px 12px',
+                    transition: 'all 0.2s',
+                    color: location === section.href ? 'white' : '#cbd5e1',
+                    backgroundColor: location === section.href ? '#374151' : 'transparent',
+                    border: 'none',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (location !== section.href) {
+                      e.currentTarget.style.backgroundColor = '#374151';
+                      e.currentTarget.style.color = 'white';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (location !== section.href) {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                      e.currentTarget.style.color = '#cbd5e1';
+                    }
+                  }}
+                >
+                  <section.icon style={{ 
+                    width: '20px', 
+                    height: '20px',
+                    color: location === section.href ? '#3b82f6' : '#94a3b8'
+                  }} />
+                  <span>{section.name}</span>
+                </button>
+              ))}
             </>
           )}
 
