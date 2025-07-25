@@ -561,6 +561,140 @@ export class DatabaseStorage implements IStorage {
       .where(eq(permissions.id, id));
   }
 
+  // User management operations
+  async getCompanyUsers(companyId: number): Promise<any[]> {
+    const companyUsers = await db
+      .select({
+        id: users.id,
+        email: users.email,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        profileImageUrl: users.profileImageUrl,
+        role: users.role,
+        roleLevel: users.roleLevel,
+        department: users.department,
+        lastLoginAt: users.lastLoginAt,
+        createdAt: users.createdAt,
+        isTrialUser: users.isTrialUser
+      })
+      .from(users)
+      .where(eq(users.companyId, companyId))
+      .orderBy(users.firstName, users.lastName);
+
+    // Get session count for each user
+    const usersWithStats = await Promise.all(
+      companyUsers.map(async (user) => {
+        const [sessionCount] = await db
+          .select({ count: count() })
+          .from(chatSessions)
+          .where(eq(chatSessions.userId, user.id));
+
+        const [lastActivity] = await db
+          .select({ timestamp: userActivities.timestamp })
+          .from(userActivities)
+          .where(eq(userActivities.userId, user.id))
+          .orderBy(desc(userActivities.timestamp))
+          .limit(1);
+
+        return {
+          ...user,
+          name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email,
+          totalSessions: sessionCount.count,
+          lastActive: lastActivity?.timestamp || user.lastLoginAt || user.createdAt,
+          status: user.lastLoginAt && user.lastLoginAt > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) ? 'active' : 'inactive'
+        };
+      })
+    );
+
+    return usersWithStats;
+  }
+
+  async inviteUser(companyId: number, userData: {
+    email: string;
+    firstName: string;
+    lastName: string;
+    role: string;
+    roleLevel: number;
+    department?: string;
+  }): Promise<any> {
+    // First add to company employees
+    const [employee] = await db.insert(companyEmployees).values({
+      companyId,
+      email: userData.email,
+      role: userData.role,
+      department: userData.department,
+      isActive: true
+    }).returning();
+
+    // Create a pending user record (they'll be activated when they sign in)
+    const [user] = await db.insert(users).values({
+      id: `pending-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      email: userData.email,
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      role: userData.role,
+      roleLevel: userData.roleLevel,
+      companyId,
+      department: userData.department,
+      isTrialUser: false
+    }).returning();
+
+    return {
+      ...user,
+      name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email,
+      totalSessions: 0,
+      lastActive: null,
+      status: 'pending'
+    };
+  }
+
+  async updateUser(userId: string, companyId: number, userData: {
+    firstName?: string;
+    lastName?: string;
+    role?: string;
+    roleLevel?: number;
+    department?: string;
+  }): Promise<any> {
+    const [updated] = await db
+      .update(users)
+      .set({
+        ...userData,
+        updatedAt: new Date()
+      })
+      .where(and(eq(users.id, userId), eq(users.companyId, companyId)))
+      .returning();
+
+    // Also update in company employees if role changed
+    if (userData.role) {
+      await db
+        .update(companyEmployees)
+        .set({ role: userData.role, department: userData.department })
+        .where(and(eq(companyEmployees.email, updated.email), eq(companyEmployees.companyId, companyId)));
+    }
+
+    return {
+      ...updated,
+      name: `${updated.firstName || ''} ${updated.lastName || ''}`.trim() || updated.email
+    };
+  }
+
+  async deleteUser(userId: string, companyId: number): Promise<void> {
+    // Get user email first
+    const [user] = await db.select({ email: users.email }).from(users).where(eq(users.id, userId));
+    
+    if (user) {
+      // Remove from company employees
+      await db
+        .delete(companyEmployees)
+        .where(and(eq(companyEmployees.email, user.email), eq(companyEmployees.companyId, companyId)));
+      
+      // Delete user record
+      await db
+        .delete(users)
+        .where(and(eq(users.id, userId), eq(users.companyId, companyId)));
+    }
+  }
+
   // User Activities operations
   async createUserActivity(activity: InsertUserActivity): Promise<UserActivity> {
     const [created] = await db.insert(userActivities).values(activity).returning();

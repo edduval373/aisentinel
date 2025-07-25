@@ -727,6 +727,117 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // User management routes
+  app.get('/api/admin/users', cookieAuth, async (req: AuthenticatedRequest, res) => {
+    try {
+      const userRoleLevel = req.user?.roleLevel || 1;
+      if (userRoleLevel < 98) { // Must be administrator (98) or higher
+        return res.status(403).json({ message: "Administrator access required" });
+      }
+      if (!req.user?.companyId) {
+        return res.status(400).json({ message: "No company associated with user" });
+      }
+      
+      console.log("Fetching users for admin:", { userId: req.user?.userId, companyId: req.user.companyId, roleLevel: userRoleLevel });
+      const users = await storage.getCompanyUsers(req.user.companyId);
+      console.log("Retrieved users:", users.length, "users");
+      res.json(users);
+    } catch (error) {
+      console.error("Error fetching admin users:", error);
+      res.status(500).json({ message: "Failed to fetch users" });
+    }
+  });
+
+  app.post('/api/admin/users/invite', cookieAuth, async (req: AuthenticatedRequest, res) => {
+    try {
+      const userRoleLevel = req.user?.roleLevel || 1;
+      if (userRoleLevel < 98) { // Must be administrator (98) or higher
+        return res.status(403).json({ message: "Administrator access required" });
+      }
+      if (!req.user?.companyId) {
+        return res.status(400).json({ message: "No company associated with user" });
+      }
+
+      const { email, firstName, lastName, role, department } = req.body;
+      
+      // Determine role level based on role
+      let roleLevel = 1; // default user
+      if (role === 'admin') roleLevel = 2;
+      if (role === 'owner') roleLevel = 99;
+      
+      const userData = {
+        email,
+        firstName,
+        lastName,
+        role,
+        roleLevel,
+        department
+      };
+
+      console.log("Inviting user with data:", userData);
+      const newUser = await storage.inviteUser(req.user.companyId, userData);
+      res.json(newUser);
+    } catch (error) {
+      console.error("Error inviting user:", error);
+      res.status(500).json({ message: "Failed to invite user", error: error.message });
+    }
+  });
+
+  app.patch('/api/admin/users/:id', cookieAuth, async (req: AuthenticatedRequest, res) => {
+    try {
+      const userRoleLevel = req.user?.roleLevel || 1;
+      if (userRoleLevel < 98) { // Must be administrator (98) or higher
+        return res.status(403).json({ message: "Administrator access required" });
+      }
+      if (!req.user?.companyId) {
+        return res.status(400).json({ message: "No company associated with user" });
+      }
+      
+      const userId = req.params.id;
+      const { firstName, lastName, role, department } = req.body;
+      
+      // Determine role level based on role
+      let roleLevel = 1; // default user
+      if (role === 'admin') roleLevel = 2;
+      if (role === 'owner') roleLevel = 99;
+      
+      const userData = {
+        firstName,
+        lastName,
+        role,
+        roleLevel,
+        department
+      };
+      
+      console.log("Updating user:", { userId, userData, adminUserId: req.user?.userId, roleLevel: userRoleLevel });
+      const updatedUser = await storage.updateUser(userId, req.user.companyId, userData);
+      res.json(updatedUser);
+    } catch (error) {
+      console.error("Error updating user:", error);
+      res.status(500).json({ message: "Failed to update user" });
+    }
+  });
+
+  app.delete('/api/admin/users/:id', cookieAuth, async (req: AuthenticatedRequest, res) => {
+    try {
+      const userRoleLevel = req.user?.roleLevel || 1;
+      if (userRoleLevel < 98) { // Must be administrator (98) or higher
+        return res.status(403).json({ message: "Administrator access required" });
+      }
+      if (!req.user?.companyId) {
+        return res.status(400).json({ message: "No company associated with user" });
+      }
+      
+      const userId = req.params.id;
+      console.log("Deleting user:", { userId, adminUserId: req.user?.userId, roleLevel: userRoleLevel });
+      await storage.deleteUser(userId, req.user.companyId);
+      res.json({ message: "User deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      res.status(500).json({ message: "Failed to delete user" });
+    }
+  });
+
   // User Activities routes
   app.get('/api/user-activities', isAuthenticated, async (req: any, res) => {
     try {

@@ -1,40 +1,126 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth"; 
 import { useToast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button-standard";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card-standard";
-import { Badge } from "@/components/ui/badge-standard";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { hasAccessLevel, ACCESS_REQUIREMENTS } from "@/utils/roleBasedAccess";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { Users, Plus, Shield, Edit, Ban, Mail, UserPlus } from "lucide-react";
+import { Users, Plus, Shield, Edit, Trash2, Mail, UserPlus, AlertTriangle } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  role: string;
+  roleLevel: number;
+  department?: string;
+  status: string;
+  totalSessions: number;
+  lastActive: string | Date;
+  profileImageUrl?: string;
+}
 
 export default function AdminUsers() {
   const { toast } = useToast();
   const { user, isAuthenticated, isLoading } = useAuth();
+  const queryClient = useQueryClient();
+  
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  
   const [inviteForm, setInviteForm] = useState({
     email: '',
-    name: '',
+    firstName: '',
+    lastName: '',
     role: 'user',
-    message: ''
+    department: ''
   });
+  
   const [editForm, setEditForm] = useState({
-    name: '',
-    email: '',
+    firstName: '',
+    lastName: '',
     role: '',
-    status: ''
+    department: ''
   });
 
   // Check if user has administrator level access (98 or above)
   const hasAdminAccess = hasAccessLevel(user?.roleLevel, ACCESS_REQUIREMENTS.USER_MANAGEMENT);
+
+  // Fetch users query
+  const { data: users = [], isLoading: usersLoading, error: usersError } = useQuery({
+    queryKey: ['/api/admin/users'],
+    enabled: isAuthenticated && hasAdminAccess,
+  });
+
+  // Invite user mutation
+  const inviteUserMutation = useMutation({
+    mutationFn: async (userData: typeof inviteForm) => {
+      const response = await fetch('/api/admin/users/invite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData),
+        credentials: 'include'
+      });
+      if (!response.ok) throw new Error('Failed to invite user');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/users'] });
+      toast({ title: "Success", description: "User invitation sent successfully" });
+      setInviteDialogOpen(false);
+      setInviteForm({ email: '', firstName: '', lastName: '', role: 'user', department: '' });
+    },
+    onError: (error: any) => {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    }
+  });
+
+  // Update user mutation
+  const updateUserMutation = useMutation({
+    mutationFn: async ({ id, ...userData }: { id: string } & typeof editForm) => {
+      const response = await fetch(`/api/admin/users/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData),
+        credentials: 'include'
+      });
+      if (!response.ok) throw new Error('Failed to update user');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/users'] });
+      toast({ title: "Success", description: "User updated successfully" });
+      setEditDialogOpen(false);
+      setSelectedUser(null);
+    },
+    onError: (error: any) => {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    }
+  });
+
+  // Delete user mutation
+  const deleteUserMutation = useMutation({
+    mutationFn: async (userId: string) => {
+      const response = await fetch(`/api/admin/users/${userId}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+      if (!response.ok) throw new Error('Failed to delete user');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/users'] });
+      toast({ title: "Success", description: "User deleted successfully" });
+      setDeleteDialogOpen(false);
+      setSelectedUser(null);
+    },
+    onError: (error: any) => {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    }
+  });
 
   useEffect(() => {
     if (!isLoading && (!isAuthenticated || !hasAdminAccess)) {
@@ -50,23 +136,105 @@ export default function AdminUsers() {
     }
   }, [isAuthenticated, isLoading, hasAdminAccess, toast]);
 
-  if (isLoading) {
+  const handleInviteUser = () => {
+    if (!inviteForm.email || !inviteForm.firstName || !inviteForm.lastName) {
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      });
+      return;
+    }
+    inviteUserMutation.mutate(inviteForm);
+  };
+
+  const handleEditUser = (user: User) => {
+    setSelectedUser(user);
+    setEditForm({
+      firstName: user.firstName || '',
+      lastName: user.lastName || '',
+      role: user.role,
+      department: user.department || ''
+    });
+    setEditDialogOpen(true);
+  };
+
+  const handleSaveUser = () => {
+    if (!selectedUser || !editForm.firstName || !editForm.lastName) {
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      });
+      return;
+    }
+    updateUserMutation.mutate({ id: selectedUser.id, ...editForm });
+  };
+
+  const handleDeleteUser = (user: User) => {
+    setSelectedUser(user);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDeleteUser = () => {
+    if (!selectedUser) return;
+    deleteUserMutation.mutate(selectedUser.id);
+  };
+
+  const getRoleBadgeStyle = (role: string) => {
+    switch (role) {
+      case "super-user": return { backgroundColor: '#dc2626', color: 'white' };
+      case "owner": return { backgroundColor: '#ea580c', color: 'white' };
+      case "admin": return { backgroundColor: '#dc2626', color: 'white' };
+      case "user": return { backgroundColor: '#16a34a', color: 'white' };
+      default: return { backgroundColor: '#6b7280', color: 'white' };
+    }
+  };
+
+  const getStatusBadgeStyle = (status: string) => {
+    switch (status) {
+      case "active": return { backgroundColor: '#16a34a', color: 'white' };
+      case "inactive": return { backgroundColor: '#eab308', color: 'white' };
+      case "pending": return { backgroundColor: '#3b82f6', color: 'white' };
+      case "banned": return { backgroundColor: '#dc2626', color: 'white' };
+      default: return { backgroundColor: '#6b7280', color: 'white' };
+    }
+  };
+
+  const formatLastActive = (lastActive: string | Date) => {
+    if (!lastActive) return 'Never';
+    const date = new Date(lastActive);
+    const now = new Date();
+    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+    
+    if (diffInMinutes < 1) return 'Just now';
+    if (diffInMinutes < 60) return `${diffInMinutes} minutes ago`;
+    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)} hours ago`;
+    return `${Math.floor(diffInMinutes / 1440)} days ago`;
+  };
+
+  if (isLoading || usersLoading) {
     return (
-      <AdminLayout title="User Management" subtitle="Manage users, roles, and permissions">
+      <AdminLayout title="User Management" subtitle="Manage user accounts, roles, and permissions">
         <div style={{ 
           display: 'flex', 
           alignItems: 'center', 
           justifyContent: 'center', 
-          height: '256px' 
+          height: '256px',
+          flexDirection: 'column',
+          gap: '16px'
         }}>
-          <div style={{
-            width: '48px',
-            height: '48px',
-            border: '2px solid #3b82f6',
-            borderTop: '2px solid transparent',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite'
-          }}></div>
+          <img 
+            src="/ai-sentinel-logo.png" 
+            alt="Loading" 
+            style={{
+              width: '64px',
+              height: '64px',
+              animation: 'spin 2s linear infinite',
+              filter: 'brightness(1.1) saturate(1.3) contrast(1.2)'
+            }} 
+          />
+          <p style={{ color: '#6b7280', fontSize: '14px' }}>Loading user management...</p>
         </div>
       </AdminLayout>
     );
@@ -75,7 +243,7 @@ export default function AdminUsers() {
   // Return access denied if not authenticated or lacks access
   if (!isAuthenticated || !hasAdminAccess) {
     return (
-      <AdminLayout title="User Management" subtitle="Manage users, roles, and permissions">
+      <AdminLayout title="User Management" subtitle="Manage user accounts, roles, and permissions">
         <div style={{ 
           display: 'flex', 
           flexDirection: 'column',
@@ -98,424 +266,702 @@ export default function AdminUsers() {
     );
   }
 
-  const users = [
-    {
-      id: "1",
-      name: "Edward Duval",
-      email: "ed.duval15@gmail.com",
-      role: "admin",
-      status: "active",
-      lastActive: "2 minutes ago",
-      totalSessions: 45,
-      avatar: null
-    },
-    {
-      id: "2", 
-      name: "Sarah Johnson",
-      email: "sarah.j@company.com",
-      role: "user",
-      status: "active",
-      lastActive: "1 hour ago",
-      totalSessions: 23,
-      avatar: null
-    },
-    {
-      id: "3",
-      name: "Mike Chen",
-      email: "mike.chen@company.com", 
-      role: "user",
-      status: "inactive",
-      lastActive: "3 days ago",
-      totalSessions: 12,
-      avatar: null
-    },
-    {
-      id: "4",
-      name: "Lisa Rodriguez",
-      email: "lisa.r@company.com",
-      role: "moderator",
-      status: "active", 
-      lastActive: "30 minutes ago",
-      totalSessions: 67,
-      avatar: null
-    }
-  ];
-
-  const getRoleBadgeColor = (role: string) => {
-    switch (role) {
-      case "admin": return "bg-red-100 text-red-800";
-      case "moderator": return "bg-blue-100 text-blue-800";
-      case "user": return "bg-green-100 text-green-800";
-      default: return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  const getStatusBadgeColor = (status: string) => {
-    switch (status) {
-      case "active": return "bg-green-100 text-green-800";
-      case "inactive": return "bg-yellow-100 text-yellow-800";
-      case "banned": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  const handleInviteUser = async () => {
-    if (!inviteForm.email || !inviteForm.name) {
-      toast({
-        title: "Error",
-        description: "Please fill in all required fields",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      toast({
-        title: "Invitation Sent",
-        description: `Invitation sent to ${inviteForm.email} successfully`,
-      });
-      
-      // Reset form and close dialog
-      setInviteForm({
-        email: '',
-        name: '',
-        role: 'user',
-        message: ''
-      });
-      setInviteDialogOpen(false);
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to send invitation",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleEditUser = (user: any) => {
-    setSelectedUser(user);
-    setEditForm({
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      status: user.status
-    });
-    setEditDialogOpen(true);
-  };
-
-  const handleSaveUser = async () => {
-    if (!editForm.name || !editForm.email) {
-      toast({
-        title: "Error",
-        description: "Please fill in all required fields",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      toast({
-        title: "User Updated",
-        description: `${editForm.name}'s information has been updated successfully`,
-      });
-      
-      setEditDialogOpen(false);
-      setSelectedUser(null);
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update user",
-        variant: "destructive",
-      });
-    }
-  };
+  const activeUsers = users.filter(u => u.status === 'active').length;
+  const adminUsers = users.filter(u => ['admin', 'owner', 'super-user'].includes(u.role)).length;
+  const totalSessions = users.reduce((sum, u) => sum + u.totalSessions, 0);
 
   return (
     <AdminLayout title="User Management" subtitle="Manage user accounts, roles, and permissions">
-      <div className="p-6 space-y-6">
-        <div className="flex items-center justify-between">
-          <Dialog open={inviteDialogOpen} onOpenChange={setInviteDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="w-4 h-4 mr-2" />
-                Invite User
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle className="flex items-center">
-                  <UserPlus className="w-5 h-5 mr-2" />
-                  Invite New User
-                </DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4 py-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email Address *</Label>
-                  <Input
-                    id="email"
+      <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '1200px', margin: '0 auto' }}>
+        
+        {/* Header with Action Button */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <h2 style={{ fontSize: '24px', fontWeight: '600', color: '#1f2937', margin: 0 }}>User Management</h2>
+            <p style={{ fontSize: '14px', color: '#6b7280', margin: '4px 0 0 0' }}>Manage user accounts, roles, and permissions for your company</p>
+          </div>
+          <button
+            onClick={() => setInviteDialogOpen(true)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              backgroundColor: '#3b82f6',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              padding: '12px 20px',
+              fontSize: '14px',
+              fontWeight: '500',
+              cursor: 'pointer',
+              transition: 'background-color 0.2s'
+            }}
+            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
+            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#3b82f6'}
+          >
+            <Plus size={16} />
+            Invite User
+          </button>
+        </div>
+
+        {/* Statistics Cards */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
+          <div style={{
+            backgroundColor: 'white',
+            border: '1px solid #e5e7eb',
+            borderRadius: '12px',
+            padding: '20px',
+            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{
+                width: '40px',
+                height: '40px',
+                backgroundColor: '#dbeafe',
+                borderRadius: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <Users size={20} style={{ color: '#3b82f6' }} />
+              </div>
+              <div>
+                <p style={{ fontSize: '24px', fontWeight: '700', color: '#1f2937', margin: 0 }}>{users.length}</p>
+                <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>Total Users</p>
+              </div>
+            </div>
+          </div>
+
+          <div style={{
+            backgroundColor: 'white',
+            border: '1px solid #e5e7eb',
+            borderRadius: '12px',
+            padding: '20px',
+            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{
+                width: '40px',
+                height: '40px',
+                backgroundColor: '#dcfce7',
+                borderRadius: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <Shield size={20} style={{ color: '#16a34a' }} />
+              </div>
+              <div>
+                <p style={{ fontSize: '24px', fontWeight: '700', color: '#1f2937', margin: 0 }}>{activeUsers}</p>
+                <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>Active Users</p>
+              </div>
+            </div>
+          </div>
+
+          <div style={{
+            backgroundColor: 'white',
+            border: '1px solid #e5e7eb',
+            borderRadius: '12px',
+            padding: '20px',
+            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{
+                width: '40px',
+                height: '40px',
+                backgroundColor: '#fef3c7',
+                borderRadius: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <Shield size={20} style={{ color: '#d97706' }} />
+              </div>
+              <div>
+                <p style={{ fontSize: '24px', fontWeight: '700', color: '#1f2937', margin: 0 }}>{adminUsers}</p>
+                <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>Administrators</p>
+              </div>
+            </div>
+          </div>
+
+          <div style={{
+            backgroundColor: 'white',
+            border: '1px solid #e5e7eb',
+            borderRadius: '12px',
+            padding: '20px',
+            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{
+                width: '40px',
+                height: '40px',
+                backgroundColor: '#e0e7ff',
+                borderRadius: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <Users size={20} style={{ color: '#6366f1' }} />
+              </div>
+              <div>
+                <p style={{ fontSize: '24px', fontWeight: '700', color: '#1f2937', margin: 0 }}>{totalSessions}</p>
+                <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>Total Sessions</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Users List */}
+        <div style={{
+          backgroundColor: 'white',
+          border: '1px solid #e5e7eb',
+          borderRadius: '12px',
+          overflow: 'hidden',
+          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
+        }}>
+          <div style={{ padding: '20px', borderBottom: '1px solid #e5e7eb' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#1f2937', margin: 0 }}>All Users</h3>
+            <p style={{ fontSize: '14px', color: '#6b7280', margin: '4px 0 0 0' }}>Manage user accounts and permissions</p>
+          </div>
+          
+          <div style={{ padding: '20px' }}>
+            {users.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '40px' }}>
+                <Users size={48} style={{ color: '#9ca3af', margin: '0 auto 16px' }} />
+                <p style={{ fontSize: '16px', color: '#6b7280', margin: 0 }}>No users found</p>
+                <p style={{ fontSize: '14px', color: '#9ca3af', margin: '4px 0 0 0' }}>Invite users to get started</p>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {users.map((user) => (
+                  <div key={user.id} style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '16px',
+                    border: '1px solid #f3f4f6',
+                    borderRadius: '8px',
+                    backgroundColor: '#fafafa',
+                    transition: 'all 0.2s'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div style={{
+                        width: '40px',
+                        height: '40px',
+                        borderRadius: '50%',
+                        backgroundColor: '#3b82f6',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'white',
+                        fontSize: '14px',
+                        fontWeight: '600'
+                      }}>
+                        {user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : user.email[0].toUpperCase()}
+                      </div>
+                      <div>
+                        <p style={{ fontSize: '16px', fontWeight: '500', color: '#1f2937', margin: 0 }}>{user.name}</p>
+                        <p style={{ fontSize: '14px', color: '#6b7280', margin: '2px 0 0 0' }}>{user.email}</p>
+                        <p style={{ fontSize: '12px', color: '#9ca3af', margin: '2px 0 0 0' }}>
+                          Last active: {formatLastActive(user.lastActive)}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                      <div style={{ textAlign: 'right' }}>
+                        <p style={{ fontSize: '14px', fontWeight: '500', color: '#1f2937', margin: 0 }}>
+                          {user.totalSessions} sessions
+                        </p>
+                        <div style={{ display: 'flex', gap: '6px', marginTop: '4px', justifyContent: 'flex-end' }}>
+                          <span style={{
+                            ...getRoleBadgeStyle(user.role),
+                            fontSize: '11px',
+                            fontWeight: '500',
+                            padding: '2px 6px',
+                            borderRadius: '4px',
+                            textTransform: 'capitalize'
+                          }}>
+                            {user.role}
+                          </span>
+                          <span style={{
+                            ...getStatusBadgeStyle(user.status),
+                            fontSize: '11px',
+                            fontWeight: '500',
+                            padding: '2px 6px',
+                            borderRadius: '4px',
+                            textTransform: 'capitalize'
+                          }}>
+                            {user.status}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <button
+                          onClick={() => handleEditUser(user)}
+                          style={{
+                            width: '32px',
+                            height: '32px',
+                            border: '1px solid #d1d5db',
+                            borderRadius: '6px',
+                            backgroundColor: 'white',
+                            color: '#6b7280',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            transition: 'all 0.2s'
+                          }}
+                          onMouseOver={(e) => {
+                            e.currentTarget.style.backgroundColor = '#f3f4f6';
+                            e.currentTarget.style.color = '#374151';
+                          }}
+                          onMouseOut={(e) => {
+                            e.currentTarget.style.backgroundColor = 'white';
+                            e.currentTarget.style.color = '#6b7280';
+                          }}
+                        >
+                          <Edit size={14} />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteUser(user)}
+                          style={{
+                            width: '32px',
+                            height: '32px',
+                            border: '1px solid #fca5a5',
+                            borderRadius: '6px',
+                            backgroundColor: '#fef2f2',
+                            color: '#dc2626',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            transition: 'all 0.2s'
+                          }}
+                          onMouseOver={(e) => {
+                            e.currentTarget.style.backgroundColor = '#fee2e2';
+                            e.currentTarget.style.borderColor = '#f87171';
+                          }}
+                          onMouseOut={(e) => {
+                            e.currentTarget.style.backgroundColor = '#fef2f2';
+                            e.currentTarget.style.borderColor = '#fca5a5';
+                          }}
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Invite User Modal */}
+        {inviteDialogOpen && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000
+          }}>
+            <div style={{
+              backgroundColor: 'white',
+              borderRadius: '12px',
+              padding: '24px',
+              width: '100%',
+              maxWidth: '480px',
+              margin: '16px',
+              maxHeight: '90vh',
+              overflow: 'auto'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+                <UserPlus size={20} style={{ color: '#3b82f6' }} />
+                <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#1f2937', margin: 0 }}>Invite New User</h3>
+              </div>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
+                    Email Address *
+                  </label>
+                  <input
                     type="email"
                     placeholder="user@company.com"
                     value={inviteForm.email}
                     onChange={(e) => setInviteForm({...inviteForm, email: e.target.value})}
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      boxSizing: 'border-box'
+                    }}
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="name">Full Name *</Label>
-                  <Input
-                    id="name"
-                    placeholder="John Doe"
-                    value={inviteForm.name}
-                    onChange={(e) => setInviteForm({...inviteForm, name: e.target.value})}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="role">Role</Label>
-                  <Select value={inviteForm.role} onValueChange={(value) => setInviteForm({...inviteForm, role: value})}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="user">User</SelectItem>
-                      <SelectItem value="moderator">Moderator</SelectItem>
-                      <SelectItem value="admin">Administrator</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="message">Welcome Message (Optional)</Label>
-                  <Textarea
-                    id="message"
-                    placeholder="Welcome to AI Sentinel! You've been invited to join our platform..."
-                    value={inviteForm.message}
-                    onChange={(e) => setInviteForm({...inviteForm, message: e.target.value})}
-                    rows={3}
-                  />
-                </div>
-              </div>
-              <div className="flex justify-end space-x-2">
-                <Button variant="outline" onClick={() => setInviteDialogOpen(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={handleInviteUser}>
-                  <Mail className="w-4 h-4 mr-2" />
-                  Send Invitation
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
-
-          {/* Edit User Dialog */}
-          <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle className="flex items-center">
-                  <Edit className="w-5 h-5 mr-2" />
-                  Edit User
-                </DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4 py-4">
-                <div className="space-y-2">
-                  <Label htmlFor="edit-name">Full Name *</Label>
-                  <Input
-                    id="edit-name"
-                    placeholder="John Doe"
-                    value={editForm.name}
-                    onChange={(e) => setEditForm({...editForm, name: e.target.value})}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="edit-email">Email Address *</Label>
-                  <Input
-                    id="edit-email"
-                    type="email"
-                    placeholder="user@company.com"
-                    value={editForm.email}
-                    onChange={(e) => setEditForm({...editForm, email: e.target.value})}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="edit-role">Role</Label>
-                  <Select value={editForm.role} onValueChange={(value) => setEditForm({...editForm, role: value})}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="user">User</SelectItem>
-                      <SelectItem value="moderator">Moderator</SelectItem>
-                      <SelectItem value="admin">Administrator</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="edit-status">Status</Label>
-                  <Select value={editForm.status} onValueChange={(value) => setEditForm({...editForm, status: value})}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="active">Active</SelectItem>
-                      <SelectItem value="inactive">Inactive</SelectItem>
-                      <SelectItem value="banned">Banned</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div className="flex justify-end space-x-2">
-                <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={handleSaveUser}>
-                  Save Changes
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
-        </div>
-
-      {/* User Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <Users className="w-5 h-5 text-sentinel-blue" />
-              <div>
-                <p className="text-2xl font-bold text-slate-900">{users.length}</p>
-                <p className="text-sm text-slate-600">Total Users</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <Shield className="w-5 h-5 text-green-600" />
-              <div>
-                <p className="text-2xl font-bold text-slate-900">{users.filter(u => u.status === 'active').length}</p>
-                <p className="text-sm text-slate-600">Active Users</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <Shield className="w-5 h-5 text-red-600" />
-              <div>
-                <p className="text-2xl font-bold text-slate-900">{users.filter(u => u.role === 'admin').length}</p>
-                <p className="text-sm text-slate-600">Administrators</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <Users className="w-5 h-5 text-blue-600" />
-              <div>
-                <p className="text-2xl font-bold text-slate-900">{users.reduce((sum, u) => sum + u.totalSessions, 0)}</p>
-                <p className="text-sm text-slate-600">Total Sessions</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Users List */}
-      <Card>
-        <CardHeader>
-          <CardTitle>All Users</CardTitle>
-          <CardDescription>Manage user accounts and permissions</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {users.map((userData) => (
-              <div key={userData.id} className="flex items-center justify-between p-4 border border-slate-200 rounded-lg">
-                <div className="flex items-center space-x-4">
-                  <Avatar className="w-10 h-10">
-                    <AvatarImage src={userData.avatar || undefined} />
-                    <AvatarFallback>
-                      {userData.name.split(' ').map(n => n[0]).join('')}
-                    </AvatarFallback>
-                  </Avatar>
+                
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                   <div>
-                    <p className="font-medium text-slate-900">{userData.name}</p>
-                    <p className="text-sm text-slate-600">{userData.email}</p>
-                    <p className="text-xs text-slate-500">Last active: {userData.lastActive}</p>
+                    <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
+                      First Name *
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="John"
+                      value={inviteForm.firstName}
+                      onChange={(e) => setInviteForm({...inviteForm, firstName: e.target.value})}
+                      style={{
+                        width: '100%',
+                        padding: '12px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                  </div>
+                  
+                  <div>
+                    <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
+                      Last Name *
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Doe"
+                      value={inviteForm.lastName}
+                      onChange={(e) => setInviteForm({...inviteForm, lastName: e.target.value})}
+                      style={{
+                        width: '100%',
+                        padding: '12px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        boxSizing: 'border-box'
+                      }}
+                    />
                   </div>
                 </div>
-                <div className="flex items-center space-x-4">
-                  <div className="text-right">
-                    <p className="text-sm font-medium text-slate-900">{userData.totalSessions} sessions</p>
-                    <div className="flex space-x-2 mt-1">
-                      <Badge className={getRoleBadgeColor(userData.role)}>
-                        {userData.role}
-                      </Badge>
-                      <Badge className={getStatusBadgeColor(userData.status)}>
-                        {userData.status}
-                      </Badge>
-                    </div>
+                
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
+                      Role
+                    </label>
+                    <select
+                      value={inviteForm.role}
+                      onChange={(e) => setInviteForm({...inviteForm, role: e.target.value})}
+                      style={{
+                        width: '100%',
+                        padding: '12px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        boxSizing: 'border-box'
+                      }}
+                    >
+                      <option value="user">User</option>
+                      <option value="admin">Administrator</option>
+                      <option value="owner">Owner</option>
+                    </select>
                   </div>
-                  <div className="flex space-x-2">
-                    <Button variant="outline" size="sm" onClick={() => handleEditUser(userData)}>
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                    <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700">
-                      <Ban className="w-4 h-4" />
-                    </Button>
+                  
+                  <div>
+                    <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
+                      Department
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Engineering"
+                      value={inviteForm.department}
+                      onChange={(e) => setInviteForm({...inviteForm, department: e.target.value})}
+                      style={{
+                        width: '100%',
+                        padding: '12px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        boxSizing: 'border-box'
+                      }}
+                    />
                   </div>
                 </div>
               </div>
-            ))}
+              
+              <div style={{ display: 'flex', gap: '12px', marginTop: '24px', justifyContent: 'flex-end' }}>
+                <button
+                  onClick={() => setInviteDialogOpen(false)}
+                  style={{
+                    padding: '12px 20px',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '8px',
+                    backgroundColor: 'white',
+                    color: '#374151',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleInviteUser}
+                  disabled={inviteUserMutation.isPending}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '12px 20px',
+                    border: 'none',
+                    borderRadius: '8px',
+                    backgroundColor: inviteUserMutation.isPending ? '#9ca3af' : '#3b82f6',
+                    color: 'white',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    cursor: inviteUserMutation.isPending ? 'not-allowed' : 'pointer'
+                  }}
+                >
+                  <Mail size={16} />
+                  {inviteUserMutation.isPending ? 'Sending...' : 'Send Invitation'}
+                </button>
+              </div>
+            </div>
           </div>
-        </CardContent>
-      </Card>
+        )}
 
-      {/* Role Management */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Role Permissions</CardTitle>
-          <CardDescription>Configure permissions for each user role</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4 border border-slate-200 rounded-lg">
-              <h3 className="font-medium text-slate-900 mb-2">Administrator</h3>
-              <ul className="text-sm text-slate-600 space-y-1">
-                <li>• Full system access</li>
-                <li>• User management</li>
-                <li>• AI model configuration</li>
-                <li>• Security settings</li>
-                <li>• Analytics and reports</li>
-              </ul>
-            </div>
-            <div className="p-4 border border-slate-200 rounded-lg">
-              <h3 className="font-medium text-slate-900 mb-2">Moderator</h3>
-              <ul className="text-sm text-slate-600 space-y-1">
-                <li>• Content moderation</li>
-                <li>• User activity monitoring</li>
-                <li>• Security alerts</li>
-                <li>• Basic reporting</li>
-                <li>• Activity type management</li>
-              </ul>
-            </div>
-            <div className="p-4 border border-slate-200 rounded-lg">
-              <h3 className="font-medium text-slate-900 mb-2">User</h3>
-              <ul className="text-sm text-slate-600 space-y-1">
-                <li>• AI chat access</li>
-                <li>• Approved activity types</li>
-                <li>• Personal usage history</li>
-                <li>• Basic profile settings</li>
-              </ul>
+        {/* Edit User Modal */}
+        {editDialogOpen && selectedUser && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000
+          }}>
+            <div style={{
+              backgroundColor: 'white',
+              borderRadius: '12px',
+              padding: '24px',
+              width: '100%',
+              maxWidth: '480px',
+              margin: '16px',
+              maxHeight: '90vh',
+              overflow: 'auto'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+                <Edit size={20} style={{ color: '#3b82f6' }} />
+                <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#1f2937', margin: 0 }}>Edit User</h3>
+              </div>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
+                      First Name *
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="John"
+                      value={editForm.firstName}
+                      onChange={(e) => setEditForm({...editForm, firstName: e.target.value})}
+                      style={{
+                        width: '100%',
+                        padding: '12px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                  </div>
+                  
+                  <div>
+                    <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
+                      Last Name *
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Doe"
+                      value={editForm.lastName}
+                      onChange={(e) => setEditForm({...editForm, lastName: e.target.value})}
+                      style={{
+                        width: '100%',
+                        padding: '12px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                  </div>
+                </div>
+                
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
+                      Role
+                    </label>
+                    <select
+                      value={editForm.role}
+                      onChange={(e) => setEditForm({...editForm, role: e.target.value})}
+                      style={{
+                        width: '100%',
+                        padding: '12px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        boxSizing: 'border-box'
+                      }}
+                    >
+                      <option value="user">User</option>
+                      <option value="admin">Administrator</option>
+                      <option value="owner">Owner</option>
+                    </select>
+                  </div>
+                  
+                  <div>
+                    <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
+                      Department
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Engineering"
+                      value={editForm.department}
+                      onChange={(e) => setEditForm({...editForm, department: e.target.value})}
+                      style={{
+                        width: '100%',
+                        padding: '12px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              <div style={{ display: 'flex', gap: '12px', marginTop: '24px', justifyContent: 'flex-end' }}>
+                <button
+                  onClick={() => setEditDialogOpen(false)}
+                  style={{
+                    padding: '12px 20px',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '8px',
+                    backgroundColor: 'white',
+                    color: '#374151',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveUser}
+                  disabled={updateUserMutation.isPending}
+                  style={{
+                    padding: '12px 20px',
+                    border: 'none',
+                    borderRadius: '8px',
+                    backgroundColor: updateUserMutation.isPending ? '#9ca3af' : '#3b82f6',
+                    color: 'white',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    cursor: updateUserMutation.isPending ? 'not-allowed' : 'pointer'
+                  }}
+                >
+                  {updateUserMutation.isPending ? 'Saving...' : 'Save Changes'}
+                </button>
+              </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        )}
+
+        {/* Delete Confirmation Modal */}
+        {deleteDialogOpen && selectedUser && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000
+          }}>
+            <div style={{
+              backgroundColor: 'white',
+              borderRadius: '12px',
+              padding: '24px',
+              width: '100%',
+              maxWidth: '400px',
+              margin: '16px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                <AlertTriangle size={20} style={{ color: '#dc2626' }} />
+                <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#1f2937', margin: 0 }}>Delete User</h3>
+              </div>
+              
+              <p style={{ fontSize: '14px', color: '#6b7280', margin: '0 0 20px 0', lineHeight: '1.5' }}>
+                Are you sure you want to delete <strong>{selectedUser.name}</strong>? This action cannot be undone and will permanently remove the user from your organization.
+              </p>
+              
+              <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+                <button
+                  onClick={() => setDeleteDialogOpen(false)}
+                  style={{
+                    padding: '12px 20px',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '8px',
+                    backgroundColor: 'white',
+                    color: '#374151',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDeleteUser}
+                  disabled={deleteUserMutation.isPending}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '12px 20px',
+                    border: 'none',
+                    borderRadius: '8px',
+                    backgroundColor: deleteUserMutation.isPending ? '#9ca3af' : '#dc2626',
+                    color: 'white',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    cursor: deleteUserMutation.isPending ? 'not-allowed' : 'pointer'
+                  }}
+                >
+                  <Trash2 size={16} />
+                  {deleteUserMutation.isPending ? 'Deleting...' : 'Delete User'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </AdminLayout>
   );
