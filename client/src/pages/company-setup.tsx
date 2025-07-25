@@ -60,10 +60,10 @@ export default function CompanySetup() {
   const [imageNaturalSize, setImageNaturalSize] = useState({ width: 0, height: 0 });
   const [imageDisplaySize, setImageDisplaySize] = useState({ width: 0, height: 0 });
   const [cropData, setCropData] = useState({
-    x: 50,
-    y: 50,
-    width: 200,
-    height: 200
+    x: 30,
+    y: 100,
+    width: 400,
+    height: 150
   });
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
@@ -159,13 +159,14 @@ export default function CompanySetup() {
           
           setImageDisplaySize({ width: displayWidth, height: displayHeight });
           
-          // Set initial crop area in center
-          const cropSize = Math.min(displayWidth, displayHeight) * 0.6;
+          // Set initial crop area as a banner-style rectangle
+          const cropWidth = displayWidth * 0.8;  // 80% of image width
+          const cropHeight = displayHeight * 0.4; // 40% of image height for banner style
           setCropData({
-            x: (displayWidth - cropSize) / 2,
-            y: (displayHeight - cropSize) / 2,
-            width: cropSize,
-            height: cropSize
+            x: (displayWidth - cropWidth) / 2,
+            y: (displayHeight - cropHeight) / 2,
+            width: cropWidth,
+            height: cropHeight
           });
         };
         img.src = result;
@@ -1294,7 +1295,7 @@ export default function CompanySetup() {
                 </div>
                 
                 <p style={{ fontSize: '14px', color: '#64748b', marginTop: '12px', margin: '12px 0 0 0' }}>
-                  Drag the selection area or use the handles to resize
+                  Drag to move selection • Use handles to resize width and height independently • Perfect for banners or any rectangular crop
                 </p>
               </div>
 
