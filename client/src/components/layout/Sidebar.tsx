@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useLocation } from "wouter";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button-standard";
 import { 
   Shield, 
   MessageSquare, 
@@ -21,7 +21,6 @@ import {
   Brain,
   Key
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 
 

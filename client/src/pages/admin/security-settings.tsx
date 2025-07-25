@@ -2,14 +2,14 @@ import { useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import AdminLayout from "@/components/layout/AdminLayout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Separator } from "@/components/ui/separator";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card-standard";
+import { Button } from "@/components/ui/button-standard";
+import { Badge } from "@/components/ui/badge-standard";
+import { Input } from "@/components/ui/input-standard";
+import { Label } from "@/components/ui/label-standard";
+import { Switch } from "@/components/ui/switch-standard";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select-standard";
+import { Separator } from "@/components/ui/separator-standard";
 import { Shield, Lock, AlertTriangle, Eye, FileText, Users } from "lucide-react";
 
 export default function AdminSecuritySettings() {
@@ -33,8 +33,20 @@ export default function AdminSecuritySettings() {
   if (isLoading) {
     return (
       <AdminLayout title="Security Settings" subtitle="Configure system security and monitoring">
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sentinel-blue"></div>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          height: '256px' 
+        }}>
+          <div style={{
+            width: '48px',
+            height: '48px',
+            border: '2px solid #3b82f6',
+            borderTop: '2px solid transparent',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite'
+          }}></div>
         </div>
       </AdminLayout>
     );
