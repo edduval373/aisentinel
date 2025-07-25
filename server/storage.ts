@@ -5,6 +5,7 @@ import {
   companyRoles,
   aiModels,
   activityTypes,
+  permissions,
   userActivities,
   chatSessions,
   chatMessages,
@@ -28,6 +29,8 @@ import {
   type InsertAiModel,
   type ActivityType,
   type InsertActivityType,
+  type Permission,
+  type InsertPermission,
   type UserActivity,
   type InsertUserActivity,
   type ChatSession,
@@ -113,6 +116,12 @@ export interface IStorage {
   createActivityType(activityType: InsertActivityType): Promise<ActivityType>;
   updateActivityType(id: number, activityType: Partial<InsertActivityType>): Promise<ActivityType>;
   deleteActivityType(id: number): Promise<void>;
+  
+  // Permissions operations
+  getPermissions(companyId: number): Promise<Permission[]>;
+  createPermission(permission: InsertPermission): Promise<Permission>;
+  updatePermission(id: number, permission: Partial<InsertPermission>): Promise<Permission>;
+  deletePermission(id: number): Promise<void>;
   
   // User Activities operations
   createUserActivity(activity: InsertUserActivity): Promise<UserActivity>;
@@ -525,6 +534,31 @@ export class DatabaseStorage implements IStorage {
     await db
       .delete(activityTypes)
       .where(eq(activityTypes.id, id));
+  }
+
+  // Permissions operations
+  async getPermissions(companyId: number): Promise<Permission[]> {
+    return await db.select().from(permissions).where(eq(permissions.companyId, companyId)).orderBy(permissions.name);
+  }
+
+  async createPermission(permission: InsertPermission): Promise<Permission> {
+    const [created] = await db.insert(permissions).values(permission).returning();
+    return created;
+  }
+
+  async updatePermission(id: number, permission: Partial<InsertPermission>): Promise<Permission> {
+    const [updated] = await db
+      .update(permissions)
+      .set(permission)
+      .where(eq(permissions.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deletePermission(id: number): Promise<void> {
+    await db
+      .delete(permissions)
+      .where(eq(permissions.id, id));
   }
 
   // User Activities operations

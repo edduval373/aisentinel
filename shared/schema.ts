@@ -208,6 +208,20 @@ export const activityTypes = pgTable("activity_types", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Permissions configuration
+export const permissions = pgTable("permissions", {
+  id: serial("id").primaryKey(),
+  companyId: integer("company_id").references(() => companies.id).notNull(),
+  name: varchar("name").notNull(),
+  description: text("description"),
+  category: varchar("category").notNull(), // ai_model_access, activity_types, content_access, administrative
+  enabled: boolean("enabled").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => [
+  index("idx_permissions_company").on(table.companyId),
+  index("idx_permissions_category").on(table.category),
+]);
+
 // User activities tracking
 export const userActivities = pgTable("user_activities", {
   id: serial("id").primaryKey(),
@@ -313,6 +327,7 @@ export const insertCompanyRoleSchema = createInsertSchema(companyRoles).omit({ i
 export const insertUserSchema = createInsertSchema(users).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertAiModelSchema = createInsertSchema(aiModels).omit({ id: true, createdAt: true });
 export const insertActivityTypeSchema = createInsertSchema(activityTypes).omit({ id: true, createdAt: true });
+export const insertPermissionSchema = createInsertSchema(permissions).omit({ id: true, createdAt: true });
 export const insertUserActivitySchema = createInsertSchema(userActivities).omit({ id: true, timestamp: true });
 export const insertChatSessionSchema = createInsertSchema(chatSessions).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertChatMessageSchema = createInsertSchema(chatMessages).omit({ id: true, timestamp: true });
@@ -336,6 +351,8 @@ export type AiModel = typeof aiModels.$inferSelect;
 export type InsertAiModel = z.infer<typeof insertAiModelSchema>;
 export type ActivityType = typeof activityTypes.$inferSelect;
 export type InsertActivityType = z.infer<typeof insertActivityTypeSchema>;
+export type Permission = typeof permissions.$inferSelect;
+export type InsertPermission = z.infer<typeof insertPermissionSchema>;
 export type UserActivity = typeof userActivities.$inferSelect;
 export type InsertUserActivity = z.infer<typeof insertUserActivitySchema>;
 export type ChatSession = typeof chatSessions.$inferSelect;

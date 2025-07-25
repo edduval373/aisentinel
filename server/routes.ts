@@ -345,13 +345,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Check if user is super-user (role level 100)
       if (!req.user || req.user.roleLevel < 100) {
         console.log("Company create denied - insufficient permissions:", { 
-          userId: req.user?.id, 
+          userId: req.user?.userId, 
           roleLevel: req.user?.roleLevel 
         });
         return res.status(403).json({ message: "Super-user access required" });
       }
 
-      console.log("Creating company:", { userId: req.user.id, roleLevel: req.user.roleLevel });
+      console.log("Creating company:", { userId: req.user?.userId, roleLevel: req.user.roleLevel });
       const company = await storage.createCompany(req.body);
       console.log("Company created successfully:", company);
       res.json(company);
@@ -366,13 +366,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Check if user is super-user (role level 100)
       if (!req.user || req.user.roleLevel < 100) {
         console.log("Company fetch denied - insufficient permissions:", { 
-          userId: req.user?.id, 
+          userId: req.user?.userId, 
           roleLevel: req.user?.roleLevel 
         });
         return res.status(403).json({ message: "Super-user access required" });
       }
       
-      console.log("Fetching companies for super-user:", { userId: req.user.id, roleLevel: req.user.roleLevel });
+      console.log("Fetching companies for super-user:", { userId: req.user?.userId, roleLevel: req.user.roleLevel });
       const companies = await storage.getCompanies();
       res.json(companies);
     } catch (error) {
@@ -386,14 +386,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Check if user is super-user (role level 100)
       if (!req.user || req.user.roleLevel < 100) {
         console.log("Company update denied - insufficient permissions:", { 
-          userId: req.user?.id, 
+          userId: req.user?.userId, 
           roleLevel: req.user?.roleLevel 
         });
         return res.status(403).json({ message: "Super-user access required" });
       }
       
       const id = parseInt(req.params.id);
-      console.log("Updating company:", { id, userId: req.user.id, roleLevel: req.user.roleLevel });
+      console.log("Updating company:", { id, userId: req.user?.userId, roleLevel: req.user.roleLevel });
       
       const company = await storage.updateCompany(id, req.body);
       res.json(company);
@@ -445,7 +445,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (showCompanyName !== undefined) updateData.showCompanyName = showCompanyName;
       if (showCompanyLogo !== undefined) updateData.showCompanyLogo = showCompanyLogo;
       
-      console.log("Updating company display settings:", { companyId, updateData, user: req.user.id });
+      console.log("Updating company display settings:", { companyId, updateData, user: req.user?.userId });
       const updatedCompany = await storage.updateCompany(companyId, updateData);
       res.json(updatedCompany);
     } catch (error) {
@@ -580,7 +580,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "No company associated with user" });
       }
       
-      console.log("Fetching activity types for admin:", { userId: req.user.id, companyId: req.user.companyId, roleLevel: userRoleLevel });
+      console.log("Fetching activity types for admin:", { userId: req.user?.userId, companyId: req.user.companyId, roleLevel: userRoleLevel });
       const types = await storage.getActivityTypes(req.user.companyId);
       console.log("Retrieved activity types:", types.length, "types");
       res.json(types);
@@ -623,7 +623,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Administrator access required" });
       }
       const id = parseInt(req.params.id);
-      console.log("Updating activity type:", { id, userId: req.user.id, roleLevel: userRoleLevel });
+      console.log("Updating activity type:", { id, userId: req.user?.userId, roleLevel: userRoleLevel });
       const type = await storage.updateActivityType(id, req.body);
       res.json(type);
     } catch (error) {
@@ -639,12 +639,91 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Administrator access required" });
       }
       const id = parseInt(req.params.id);
-      console.log("Deleting activity type:", { id, userId: req.user.id, roleLevel: userRoleLevel });
+      console.log("Deleting activity type:", { id, userId: req.user?.userId, roleLevel: userRoleLevel });
       await storage.deleteActivityType(id);
       res.json({ message: "Activity type deleted successfully" });
     } catch (error) {
       console.error("Error deleting activity type:", error);
       res.status(500).json({ message: "Failed to delete activity type" });
+    }
+  });
+
+  // Permissions routes
+  app.get('/api/admin/permissions', cookieAuth, async (req: AuthenticatedRequest, res) => {
+    try {
+      const userRoleLevel = req.user?.roleLevel || 1;
+      if (userRoleLevel < 98) { // Must be administrator (98) or higher
+        return res.status(403).json({ message: "Administrator access required" });
+      }
+      if (!req.user?.companyId) {
+        return res.status(400).json({ message: "No company associated with user" });
+      }
+      
+      console.log("Fetching permissions for admin:", { userId: req.user?.userId, companyId: req.user.companyId, roleLevel: userRoleLevel });
+      const permissions = await storage.getPermissions(req.user.companyId);
+      console.log("Retrieved permissions:", permissions.length, "permissions");
+      res.json(permissions);
+    } catch (error) {
+      console.error("Error fetching admin permissions:", error);
+      res.status(500).json({ message: "Failed to fetch permissions" });
+    }
+  });
+
+  app.post('/api/admin/permissions', cookieAuth, async (req: AuthenticatedRequest, res) => {
+    try {
+      const userRoleLevel = req.user?.roleLevel || 1;
+      if (userRoleLevel < 98) { // Must be administrator (98) or higher
+        return res.status(403).json({ message: "Administrator access required" });
+      }
+      if (!req.user?.companyId) {
+        return res.status(400).json({ message: "No company associated with user" });
+      }
+
+      // Ensure roles is properly formatted as an array
+      const permissionData = {
+        ...req.body,
+        companyId: req.user.companyId,
+        roles: Array.isArray(req.body.roles) ? req.body.roles : []
+      };
+
+      console.log("Creating permission with data:", permissionData);
+      const permission = await storage.createPermission(permissionData);
+      res.json(permission);
+    } catch (error) {
+      console.error("Error creating permission:", error);
+      res.status(500).json({ message: "Failed to create permission", error: error.message });
+    }
+  });
+
+  app.patch('/api/admin/permissions/:id', cookieAuth, async (req: AuthenticatedRequest, res) => {
+    try {
+      const userRoleLevel = req.user?.roleLevel || 1;
+      if (userRoleLevel < 98) { // Must be administrator (98) or higher
+        return res.status(403).json({ message: "Administrator access required" });
+      }
+      const id = parseInt(req.params.id);
+      console.log("Updating permission:", { id, userId: req.user?.userId, roleLevel: userRoleLevel });
+      const permission = await storage.updatePermission(id, req.body);
+      res.json(permission);
+    } catch (error) {
+      console.error("Error updating permission:", error);
+      res.status(500).json({ message: "Failed to update permission" });
+    }
+  });
+
+  app.delete('/api/admin/permissions/:id', cookieAuth, async (req: AuthenticatedRequest, res) => {
+    try {
+      const userRoleLevel = req.user?.roleLevel || 1;
+      if (userRoleLevel < 98) { // Must be administrator (98) or higher
+        return res.status(403).json({ message: "Administrator access required" });
+      }
+      const id = parseInt(req.params.id);
+      console.log("Deleting permission:", { id, userId: req.user?.userId, roleLevel: userRoleLevel });
+      await storage.deletePermission(id);
+      res.json({ message: "Permission deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting permission:", error);
+      res.status(500).json({ message: "Failed to delete permission" });
     }
   });
 
