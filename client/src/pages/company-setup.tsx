@@ -76,7 +76,7 @@ export default function CompanySetup() {
       setShowCompanyName(currentCompany.showCompanyName !== false);
       setShowCompanyLogo(currentCompany.showCompanyLogo !== false);
       // Enforce constraints when loading from database
-      setLogoSize(Math.min(Math.max(currentCompany.logoSize || 80, 60), 120));
+      setLogoSize(Math.min(Math.max(currentCompany.logoSize || 80, 60), 200));
       setCompanyNameSize(Math.min(Math.max(currentCompany.companyNameSize || 18, 14), 24));
     }
   }, [currentCompany]);
@@ -607,7 +607,7 @@ export default function CompanySetup() {
                   {logoSize}px
                 </span>
                 <button
-                  onClick={() => setLogoSize(Math.min(120, logoSize + 10))}
+                  onClick={() => setLogoSize(Math.min(200, logoSize + 10))}
                   style={{
                     width: '32px',
                     height: '32px',
@@ -639,7 +639,7 @@ export default function CompanySetup() {
                   color: '#64748b', 
                   marginLeft: '8px' 
                 }}>
-                  (60-120px, header max: 56px)
+                  (60-200px, header max: 56px)
                 </span>
               </div>
             )}

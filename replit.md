@@ -247,6 +247,15 @@ Recent Updates:
   * SECURED: Owner+ permission requirements for display settings modifications
   * FIXED: Variable initialization error in CompanySetup component causing white screen
   * VERIFIED: Company branding settings now persist in database and are shared across all company employees
+- July 25, 2025. Interactive Cropping Tool and Logo Display Enhancement Complete:
+  * COMPLETED: Fully functional interactive cropping tool with drag-and-resize capabilities
+  * FIXED: Mouse event handling with proper preventDefault and stopPropagation for all resize handles
+  * ADDED: Auto-crop buttons for quick banner-style and full-image cropping
+  * ENHANCED: Logo display to maintain aspect ratio instead of forcing square dimensions
+  * IMPLEMENTED: maxWidth/maxHeight constraints allowing rectangular banner-style logos
+  * REMOVED: Borders from chat screen logos for clean display as requested
+  * INCREASED: Maximum logo size limit from 120px to 200px for larger branding
+  * PRESERVED: Borders on setup/preview pages for dimension visibility during configuration
 - July 25, 2025. Redesigned Setup API Keys Screen for Better Scalability:
   * REDESIGNED: Setup API Keys page with responsive grid layout (auto-fit, minmax 400px)
   * ENHANCED: Card-based design with better visual hierarchy and spacing
