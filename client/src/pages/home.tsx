@@ -81,56 +81,53 @@ function CompanyInfoLarge() {
   }
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: '0', padding: '0' }}>
       {showCompanyLogo && (
         <>
           {isLimitedAccess ? (
             <div style={{ 
-              width: '60px', 
-              height: '60px', 
+              width: '36px', 
+              height: '36px', 
               backgroundColor: '#3b82f6', 
-              borderRadius: '12px',
+              borderRadius: '8px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               color: 'white',
-              fontSize: '20px',
+              fontSize: '14px',
               fontWeight: 700
             }}>
               DEMO
             </div>
           ) : currentCompany.logo ? (
-            <div style={{ position: 'relative', display: 'inline-block' }}>
+            <div style={{ position: 'relative', display: 'inline-block', margin: '0', padding: '0' }}>
               <img 
                 src={currentCompany.logo} 
                 alt={currentCompany.name}
                 style={{ 
-                  width: `${logoSize}px`, 
-                  height: `${logoSize}px`, 
+                  width: `${Math.min(logoSize, 48)}px`, 
+                  height: `${Math.min(logoSize, 48)}px`, 
                   objectFit: 'contain',
-                  borderRadius: '12px',
-                  border: '2px solid #e2e8f0',
-                  transition: 'all 0.3s ease',
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+                  borderRadius: '8px',
+                  border: '1px solid #e2e8f0',
+                  display: 'block'
                 }}
               />
             </div>
           ) : (
             <div 
               style={{ 
-                width: `${logoSize}px`, 
-                height: `${logoSize}px`, 
+                width: `${Math.min(logoSize, 48)}px`, 
+                height: `${Math.min(logoSize, 48)}px`, 
                 backgroundColor: '#3b82f6', 
-                borderRadius: '12px',
+                borderRadius: '8px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: 'white',
-                fontSize: `${Math.floor(logoSize * 0.36)}px`,
+                fontSize: `${Math.floor(Math.min(logoSize, 48) * 0.4)}px`,
                 fontWeight: 700,
-                transition: 'all 0.3s ease',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-                border: '2px solid transparent'
+                border: '1px solid transparent'
               }}
             >
               {currentCompany.name.charAt(0).toUpperCase()}
@@ -140,24 +137,24 @@ function CompanyInfoLarge() {
       )}
       
       {showCompanyName && (
-        <div>
+        <div style={{ margin: '0', padding: '0' }}>
           <div style={{ 
-            fontSize: `${companyNameSize}px`, 
+            fontSize: `${Math.min(companyNameSize, 24)}px`, 
             fontWeight: 700, 
             color: '#1e293b', 
-            textAlign: 'center',
-            transition: 'all 0.3s ease',
-            lineHeight: '1.2',
-            margin: '0'
+            textAlign: 'left',
+            lineHeight: '1.1',
+            margin: '0',
+            padding: '0'
           }}>
             {isLimitedAccess ? 'Demo Company' : currentCompany.name}
           </div>
           {isLimitedAccess ? (
-            <div style={{ fontSize: '14px', color: '#3b82f6', fontWeight: 500, textAlign: 'center', marginTop: '4px' }}>
+            <div style={{ fontSize: '12px', color: '#3b82f6', fontWeight: 500, textAlign: 'left', marginTop: '2px', margin: '2px 0 0 0' }}>
               Using AI Sentinel API Keys
             </div>
           ) : currentCompany.description && (
-            <div style={{ fontSize: '14px', color: '#64748b', textAlign: 'center', marginTop: '4px' }}>
+            <div style={{ fontSize: '12px', color: '#64748b', textAlign: 'left', marginTop: '2px', margin: '2px 0 0 0' }}>
               {currentCompany.description}
             </div>
           )}
@@ -317,13 +314,13 @@ export default function Home() {
         <div style={{ 
           backgroundColor: '#f1f5f9', 
           borderBottom: '1px solid #e2e8f0', 
-          padding: '12px 16px', 
+          padding: '8px 16px', 
           display: 'flex', 
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
           flexShrink: 0,
-          minHeight: '80px',
+          minHeight: '60px',
           position: 'relative'
         }}>
           {/* Menu Button - Positioned absolutely in top left */}
@@ -384,8 +381,10 @@ export default function Home() {
           <div style={{ 
             display: 'flex', 
             alignItems: 'center', 
-            gap: '24px',
-            justifyContent: 'center'
+            gap: '16px',
+            justifyContent: 'center',
+            margin: '0',
+            padding: '0'
           }}>
             <CompanyInfoLarge />
           </div>
