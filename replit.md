@@ -237,6 +237,16 @@ Recent Updates:
   * SYNCHRONIZED: Development and production demo mode logic for consistent behavior
   * ENHANCED: URL pattern matching in production API with comprehensive path detection
   * CONFIRMED: Local development now creates demo sessions successfully (IDs: 307934, 863653)
+- July 25, 2025. PRODUCTION COMPANY DISPLAY SETTINGS - Database Storage Implementation Complete:
+  * MIGRATED: Company branding settings from localStorage to Railway PostgreSQL database storage
+  * ADDED: Database columns (logo_size, show_company_name, show_company_logo) to companies table
+  * CREATED: API endpoint /api/company/:id/display-settings for updating company display preferences 
+  * IMPLEMENTED: Plus/minus buttons for incremental logo size control (60-200px range) in Company Setup page
+  * REMOVED: Zoom functionality from chat screen as requested by user
+  * ENHANCED: Chat interface now reads logo size and visibility settings from database instead of localStorage
+  * SECURED: Owner+ permission requirements for display settings modifications
+  * FIXED: Variable initialization error in CompanySetup component causing white screen
+  * VERIFIED: Company branding settings now persist in database and are shared across all company employees
 - July 25, 2025. Redesigned Setup API Keys Screen for Better Scalability:
   * REDESIGNED: Setup API Keys page with responsive grid layout (auto-fit, minmax 400px)
   * ENHANCED: Card-based design with better visual hierarchy and spacing

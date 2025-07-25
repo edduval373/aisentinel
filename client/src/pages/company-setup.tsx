@@ -41,6 +41,12 @@ export default function CompanySetup() {
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const [ownerToDelete, setOwnerToDelete] = useState<Owner | null>(null);
   
+  // Fetch current user's company information
+  const { data: currentCompany, isLoading: companyLoading, refetch: refetchCompany } = useQuery<Company>({
+    queryKey: ["/api/user/current-company"],
+    enabled: !!user?.companyId,
+  });
+
   // Chat display preview settings
   const [showCompanyName, setShowCompanyName] = useState(true);
   const [showCompanyLogo, setShowCompanyLogo] = useState(true);
@@ -54,12 +60,6 @@ export default function CompanySetup() {
       setLogoSize(currentCompany.logoSize || 100);
     }
   }, [currentCompany]);
-
-  // Fetch current user's company information
-  const { data: currentCompany, isLoading: companyLoading, refetch: refetchCompany } = useQuery<Company>({
-    queryKey: ["/api/user/current-company"],
-    enabled: !!user?.companyId,
-  });
 
   // Fetch owners from API
   const { data: owners = [], isLoading: ownersLoading, refetch: refetchOwners } = useQuery<Owner[]>({
