@@ -116,7 +116,6 @@ function CompanyInfoLarge() {
                   width: 'auto',
                   objectFit: 'contain',
                   borderRadius: '6px',
-                  border: '2px solid #d1d5db',
                   display: 'block'
                 }}
               />
@@ -241,8 +240,7 @@ function CompanyInfo() {
             height: 'auto',
             width: 'auto',
             objectFit: 'contain',
-            borderRadius: '6px',
-            border: '2px solid #d1d5db'
+            borderRadius: '6px'
           }}
         />
       ) : (
