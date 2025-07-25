@@ -577,25 +577,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       <div className="chat-main">
       {/* Chat Messages Area */}
       <div className="chat-messages-container">
-        {/* Demo Mode Notice - Only show for demo users (role level 0) or /demo path */}
-        {(user?.roleLevel === 0 || window.location.pathname === '/demo') && (
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <div style={{ 
-              backgroundColor: '#fef3c7', 
-              borderRadius: '8px', 
-              padding: '8px 16px', 
-              fontSize: '14px', 
-              color: '#92400e',
-              fontWeight: 500,
-              display: 'flex',
-              alignItems: 'center',
-              border: '1px solid #f59e0b'
-            }}>
-              <Shield style={{ width: '16px', height: '16px', color: '#f59e0b', marginRight: '8px' }} />
-              Demo Mode - Using AI Sentinel API Keys. This is a preview of our enterprise AI governance platform.
-            </div>
-          </div>
-        )}
+
 
         {/* Chat Messages */}
         {messagesLoading ? (
