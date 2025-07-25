@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button";
 import Sidebar from "@/components/layout/Sidebar";
 import ChatInterface from "@/components/chat/ChatInterface";
 import { useQuery } from "@tanstack/react-query";
-import { Building2 } from "lucide-react";
+import { Building2, LogOut, RotateCcw, Trash2 } from "lucide-react";
 import { TrialBanner } from "@/components/TrialBanner";
+import { useCompanyContext } from "@/hooks/useCompanyContext";
 
 
 
@@ -299,8 +300,13 @@ function CompanyInfo() {
 export default function Home() {
   const { toast } = useToast();
   const { isAuthenticated, user, isSuperUser, isOwner, isAdmin } = useAuth();
+  const { currentCompanyId, setCurrentCompanyId } = useCompanyContext();
   const [currentSession, setCurrentSession] = useState<number | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showCompanySwitcher, setShowCompanySwitcher] = useState(false);
+  
+  // Check if user is super-user (role level 100+)
+  const isSuperUserLevel = (user?.roleLevel ?? 0) >= 100;
   
   // Check if we're in demo mode or if user is regular user (role level 1)
   const isDemoMode = window.location.pathname.includes('/demo') || window.location.search.includes('demo');
@@ -308,6 +314,53 @@ export default function Home() {
   
   // Determine if sidebar access is allowed (super users, owners, admins only - role level 2+)
   const canAccessSidebar = isAuthenticated && (isSuperUser || isOwner || isAdmin || userRoleLevel >= 2);
+
+  // Fetch all companies for super-user company switching
+  const { data: allCompanies = [] } = useQuery({
+    queryKey: ['/api/admin/companies'],
+    enabled: isSuperUserLevel,
+  });
+
+  // Clear cookies function for super-users
+  const handleClearCookies = () => {
+    // Clear all cookies
+    document.cookie.split(";").forEach((c) => {
+      const eqPos = c.indexOf("=");
+      const name = eqPos > -1 ? c.substr(0, eqPos) : c;
+      document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+    });
+    
+    // Clear localStorage
+    localStorage.clear();
+    sessionStorage.clear();
+    
+    toast({
+      title: "Cookies Cleared",
+      description: "All cookies and session data have been cleared. Redirecting to landing page...",
+    });
+    
+    // Redirect to landing page
+    setTimeout(() => {
+      window.location.href = '/';
+    }, 1500);
+  };
+
+  // Company switching function for super-users
+  const handleCompanySwitch = (companyId: number) => {
+    setCurrentCompanyId(companyId);
+    setShowCompanySwitcher(false);
+    
+    const selectedCompany = allCompanies.find((c: any) => c.id === companyId);
+    toast({
+      title: "Company Switched",
+      description: `Now viewing ${selectedCompany?.name || `Company ${companyId}`}`,
+    });
+    
+    // Refresh the page to update all company-specific data
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
+  };
 
   // Completely bypass authentication - always allow access
   useEffect(() => {
@@ -393,22 +446,143 @@ export default function Home() {
             <CompanyInfoLarge />
           </div>
 
-          {/* Right side - Sign Out Button */}
-          <button
-            onClick={() => window.location.href = '/login'}
-            style={{
-              fontSize: '14px',
-              color: '#64748b',
-              textDecoration: 'underline',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              padding: '6px 8px',
-              flexShrink: 0
-            }}
-          >
-            Sign Out
-          </button>
+          {/* Right side - Super User Controls or Sign Out Button */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+            {isSuperUserLevel && (
+              <>
+                {/* Company Switcher */}
+                <div style={{ position: 'relative' }}>
+                  <button
+                    onClick={() => setShowCompanySwitcher(!showCompanySwitcher)}
+                    style={{
+                      fontSize: '12px',
+                      color: '#3b82f6',
+                      background: 'white',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      padding: '6px 12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px'
+                    }}
+                  >
+                    <Building2 size={14} />
+                    Switch Company
+                  </button>
+                  
+                  {showCompanySwitcher && (
+                    <div style={{
+                      position: 'absolute',
+                      top: '100%',
+                      right: 0,
+                      marginTop: '4px',
+                      backgroundColor: 'white',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                      zIndex: 1000,
+                      minWidth: '200px',
+                      maxHeight: '300px',
+                      overflow: 'auto'
+                    }}>
+                      <div style={{ padding: '8px', borderBottom: '1px solid #e5e7eb' }}>
+                        <div style={{ fontSize: '12px', fontWeight: '600', color: '#374151' }}>
+                          Select Company (Current: {currentCompanyId})
+                        </div>
+                      </div>
+                      {allCompanies.map((company: any) => (
+                        <button
+                          key={company.id}
+                          onClick={() => handleCompanySwitch(company.id)}
+                          style={{
+                            width: '100%',
+                            textAlign: 'left',
+                            padding: '12px',
+                            fontSize: '14px',
+                            color: company.id === currentCompanyId ? '#3b82f6' : '#374151',
+                            backgroundColor: company.id === currentCompanyId ? '#f0f9ff' : 'transparent',
+                            border: 'none',
+                            cursor: 'pointer',
+                            transition: 'background-color 0.2s',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px'
+                          }}
+                          onMouseOver={(e) => {
+                            if (company.id !== currentCompanyId) {
+                              e.currentTarget.style.backgroundColor = '#f9fafb';
+                            }
+                          }}
+                          onMouseOut={(e) => {
+                            if (company.id !== currentCompanyId) {
+                              e.currentTarget.style.backgroundColor = 'transparent';
+                            }
+                          }}
+                        >
+                          <div style={{
+                            width: '24px',
+                            height: '24px',
+                            backgroundColor: '#3b82f6',
+                            borderRadius: '4px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: 'white',
+                            fontSize: '10px',
+                            fontWeight: '600'
+                          }}>
+                            {company.name.charAt(0).toUpperCase()}
+                          </div>
+                          <div>
+                            <div style={{ fontWeight: '500' }}>{company.name}</div>
+                            <div style={{ fontSize: '12px', color: '#6b7280' }}>ID: {company.id}</div>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Clear Cookies Button */}
+                <button
+                  onClick={handleClearCookies}
+                  style={{
+                    fontSize: '12px',
+                    color: '#dc2626',
+                    background: 'white',
+                    border: '1px solid #fca5a5',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    padding: '6px 12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  <Trash2 size={14} />
+                  Clear Cookies
+                </button>
+              </>
+            )}
+            
+            {/* Sign Out Button */}
+            <button
+              onClick={() => window.location.href = '/login'}
+              style={{
+                fontSize: '14px',
+                color: '#64748b',
+                textDecoration: 'underline',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '6px 8px'
+              }}
+            >
+              <LogOut size={14} style={{ display: 'inline', marginRight: '4px' }} />
+              Sign Out
+            </button>
+          </div>
         </div>
         
         {/* Chat Interface Container */}

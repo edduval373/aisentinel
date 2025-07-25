@@ -141,6 +141,14 @@ The application is configured for deployment on Vercel with the following setup:
 
 ```
 Recent Updates:
+- July 25, 2025. Super-User Cookie Management and Company Switching Complete:
+  * ADDED: "Clear Cookies" button for super-users to reset session and return to landing page
+  * IMPLEMENTED: Company switching functionality for super-users to view different company contexts
+  * CREATED: Company dropdown with visual company cards showing name and ID
+  * ENHANCED: Super-user controls positioned in header next to sign-out button
+  * INTEGRATED: Company context switching with page refresh for complete data reload
+  * CONFIGURED: Super-user level 100+ access requirement for advanced controls
+  * VERIFIED: Cookie clearing removes all cookies, localStorage, and sessionStorage
 - July 25, 2025. Demo Mode Enhanced with Owner Role and User Filtering Complete:
   * ENHANCED: Demo users now have owner role level 99 for full admin access (except super-user features)
   * IMPLEMENTED: Demo user filtering in User Management - only shows demo@aisentinel.com profile
