@@ -141,6 +141,15 @@ The application is configured for deployment on Vercel with the following setup:
 
 ```
 Recent Updates:
+- July 25, 2025. Demo Mode Enhanced with Owner Role and User Filtering Complete:
+  * ENHANCED: Demo users now have owner role level 99 for full admin access (except super-user features)
+  * IMPLEMENTED: Demo user filtering in User Management - only shows demo@aisentinel.com profile
+  * UPDATED: User Management page title changes to "Demo User Profile" in demo mode
+  * REMOVED: Invite User button hidden in demo mode - users only manage their own profile
+  * HIDDEN: Delete user button disabled in demo mode for profile safety
+  * CREATED: demo@aisentinel.com user in database with proper owner role level 99
+  * VERIFIED: All admin features fully editable (not view-only) for demo users with owner permissions
+  * CONFIGURED: Company ID 1 enforcement for all demo mode operations and data filtering
 - July 25, 2025. SendGrid Production Issue Completely Fixed - ES6 Import Syntax Resolution:
   * RESOLVED: "require is not defined" error in Vercel serverless function production
   * FIXED: Converted CommonJS require('@sendgrid/mail') to ES6 import syntax for Vercel compatibility

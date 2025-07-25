@@ -49,11 +49,19 @@ export default function AdminUsers() {
   // Check if user has administrator level access (98 or above)
   const hasAdminAccess = hasAccessLevel(user?.roleLevel, ACCESS_REQUIREMENTS.USER_MANAGEMENT);
 
+  // Check if we're in demo mode
+  const isDemoMode = window.location.pathname === '/demo' || user?.email === 'demo@aisentinel.com';
+
   // Fetch users query
-  const { data: users = [], isLoading: usersLoading, error: usersError } = useQuery({
+  const { data: allUsers = [], isLoading: usersLoading, error: usersError } = useQuery({
     queryKey: ['/api/admin/users'],
     enabled: isAuthenticated && hasAdminAccess,
   });
+
+  // Filter users for demo mode - only show demo user
+  const users = isDemoMode 
+    ? allUsers.filter((u: User) => u.email === 'demo@aisentinel.com')
+    : allUsers;
 
   // Invite user mutation
   const inviteUserMutation = useMutation({
@@ -277,31 +285,40 @@ export default function AdminUsers() {
         {/* Header with Action Button */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <h2 style={{ fontSize: '24px', fontWeight: '600', color: '#1f2937', margin: 0 }}>User Management</h2>
-            <p style={{ fontSize: '14px', color: '#6b7280', margin: '4px 0 0 0' }}>Manage user accounts, roles, and permissions for your company</p>
+            <h2 style={{ fontSize: '24px', fontWeight: '600', color: '#1f2937', margin: 0 }}>
+              {isDemoMode ? 'Demo User Profile' : 'User Management'}
+            </h2>
+            <p style={{ fontSize: '14px', color: '#6b7280', margin: '4px 0 0 0' }}>
+              {isDemoMode 
+                ? 'View and edit your demo user profile information'
+                : 'Manage user accounts, roles, and permissions for your company'
+              }
+            </p>
           </div>
-          <button
-            onClick={() => setInviteDialogOpen(true)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              backgroundColor: '#3b82f6',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              padding: '12px 20px',
-              fontSize: '14px',
-              fontWeight: '500',
-              cursor: 'pointer',
-              transition: 'background-color 0.2s'
-            }}
-            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#3b82f6'}
-          >
-            <Plus size={16} />
-            Invite User
-          </button>
+          {!isDemoMode && (
+            <button
+              onClick={() => setInviteDialogOpen(true)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                backgroundColor: '#3b82f6',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '12px 20px',
+                fontSize: '14px',
+                fontWeight: '500',
+                cursor: 'pointer',
+                transition: 'background-color 0.2s'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#3b82f6'}
+            >
+              <Plus size={16} />
+              Invite User
+            </button>
+          )}
         </div>
 
         {/* Statistics Cards */}
@@ -524,32 +541,35 @@ export default function AdminUsers() {
                         >
                           <Edit size={14} />
                         </button>
-                        <button
-                          onClick={() => handleDeleteUser(user)}
-                          style={{
-                            width: '32px',
-                            height: '32px',
-                            border: '1px solid #fca5a5',
-                            borderRadius: '6px',
-                            backgroundColor: '#fef2f2',
-                            color: '#dc2626',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            transition: 'all 0.2s'
-                          }}
-                          onMouseOver={(e) => {
-                            e.currentTarget.style.backgroundColor = '#fee2e2';
-                            e.currentTarget.style.borderColor = '#f87171';
-                          }}
-                          onMouseOut={(e) => {
-                            e.currentTarget.style.backgroundColor = '#fef2f2';
-                            e.currentTarget.style.borderColor = '#fca5a5';
-                          }}
-                        >
-                          <Trash2 size={14} />
-                        </button>
+                        {/* Hide delete button in demo mode since users should only manage their own profile */}
+                        {!isDemoMode && (
+                          <button
+                            onClick={() => handleDeleteUser(user)}
+                            style={{
+                              width: '32px',
+                              height: '32px',
+                              border: '1px solid #fca5a5',
+                              borderRadius: '6px',
+                              backgroundColor: '#fef2f2',
+                              color: '#dc2626',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              transition: 'all 0.2s'
+                            }}
+                            onMouseOver={(e) => {
+                              e.currentTarget.style.backgroundColor = '#fee2e2';
+                              e.currentTarget.style.borderColor = '#f87171';
+                            }}
+                            onMouseOut={(e) => {
+                              e.currentTarget.style.backgroundColor = '#fef2f2';
+                              e.currentTarget.style.borderColor = '#fca5a5';
+                            }}
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
