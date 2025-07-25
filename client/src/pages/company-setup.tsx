@@ -132,7 +132,7 @@ export default function CompanySetup() {
       console.error("Error saving display settings:", error);
       toast({ 
         title: "Error", 
-        description: error.message || "Failed to save display settings", 
+        description: (error as any)?.message || "Failed to save display settings", 
         variant: "destructive" 
       });
     }
@@ -159,12 +159,12 @@ export default function CompanySetup() {
           
           setImageDisplaySize({ width: displayWidth, height: displayHeight });
           
-          // Set initial crop area as a banner-style rectangle
-          const cropWidth = displayWidth * 0.8;  // 80% of image width
-          const cropHeight = displayHeight * 0.4; // 40% of image height for banner style
+          // Set initial crop area as a tight banner around the text
+          const cropWidth = Math.min(displayWidth * 0.85, displayWidth - 20);  
+          const cropHeight = Math.min(displayHeight * 0.35, displayHeight * 0.4); 
           setCropData({
-            x: (displayWidth - cropWidth) / 2,
-            y: (displayHeight - cropHeight) / 2,
+            x: Math.max(10, (displayWidth - cropWidth) / 2),
+            y: Math.max(10, (displayHeight - cropHeight) / 2),
             width: cropWidth,
             height: cropHeight
           });
@@ -259,24 +259,22 @@ export default function CompanySetup() {
         let newCrop = { ...prev };
         
         if (resizeHandle.includes('right')) {
-          newCrop.width = Math.max(50, Math.min(imageDisplaySize.width - prev.x, prev.width + deltaX));
+          newCrop.width = Math.max(30, Math.min(imageDisplaySize.width - prev.x, prev.width + deltaX));
         }
         if (resizeHandle.includes('left')) {
-          const newWidth = Math.max(50, prev.width - deltaX);
-          if (newWidth !== prev.width) {
-            newCrop.x = Math.max(0, prev.x + (prev.width - newWidth));
-            newCrop.width = newWidth;
-          }
+          const newWidth = Math.max(30, prev.width - deltaX);
+          const deltaWidth = prev.width - newWidth;
+          newCrop.x = Math.max(0, Math.min(imageDisplaySize.width - newWidth, prev.x + deltaWidth));
+          newCrop.width = newWidth;
         }
         if (resizeHandle.includes('bottom')) {
-          newCrop.height = Math.max(50, Math.min(imageDisplaySize.height - prev.y, prev.height + deltaY));
+          newCrop.height = Math.max(20, Math.min(imageDisplaySize.height - prev.y, prev.height + deltaY));
         }
         if (resizeHandle.includes('top')) {
-          const newHeight = Math.max(50, prev.height - deltaY);
-          if (newHeight !== prev.height) {
-            newCrop.y = Math.max(0, prev.y + (prev.height - newHeight));
-            newCrop.height = newHeight;
-          }
+          const newHeight = Math.max(20, prev.height - deltaY);
+          const deltaHeight = prev.height - newHeight;
+          newCrop.y = Math.max(0, Math.min(imageDisplaySize.height - newHeight, prev.y + deltaHeight));
+          newCrop.height = newHeight;
         }
         
         return newCrop;
@@ -1111,14 +1109,15 @@ export default function CompanySetup() {
                 flexDirection: 'column',
                 alignItems: 'center'
               }}>
-                <div style={{ 
-                  position: 'relative', 
-                  display: 'inline-block',
-                  userSelect: 'none'
-                }}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
-                onMouseLeave={handleMouseUp}
+                <div 
+                  style={{ 
+                    position: 'relative', 
+                    display: 'inline-block',
+                    userSelect: 'none'
+                  }}
+                  onMouseMove={handleMouseMove}
+                  onMouseUp={handleMouseUp}
+                  onMouseLeave={handleMouseUp}
                 >
                   <img 
                     src={selectedImage} 
@@ -1155,7 +1154,10 @@ export default function CompanySetup() {
                         borderRadius: '4px',
                         cursor: isDragging ? 'grabbing' : 'grab'
                       }}
-                      onMouseDown={(e) => handleMouseDown(e, 'drag')}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        handleMouseDown(e, 'drag');
+                      }}
                     >
                       {/* Resize Handles */}
                       {/* Top-left */}
@@ -1171,7 +1173,11 @@ export default function CompanySetup() {
                           borderRadius: '50%',
                           cursor: 'nw-resize'
                         }}
-                        onMouseDown={(e) => handleMouseDown(e, 'resize', 'top-left')}
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleMouseDown(e, 'resize', 'top-left');
+                        }}
                       />
                       
                       {/* Top-right */}
@@ -1187,7 +1193,11 @@ export default function CompanySetup() {
                           borderRadius: '50%',
                           cursor: 'ne-resize'
                         }}
-                        onMouseDown={(e) => handleMouseDown(e, 'resize', 'top-right')}
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleMouseDown(e, 'resize', 'top-right');
+                        }}
                       />
                       
                       {/* Bottom-left */}
@@ -1203,7 +1213,11 @@ export default function CompanySetup() {
                           borderRadius: '50%',
                           cursor: 'sw-resize'
                         }}
-                        onMouseDown={(e) => handleMouseDown(e, 'resize', 'bottom-left')}
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleMouseDown(e, 'resize', 'bottom-left');
+                        }}
                       />
                       
                       {/* Bottom-right */}
@@ -1219,7 +1233,11 @@ export default function CompanySetup() {
                           borderRadius: '50%',
                           cursor: 'se-resize'
                         }}
-                        onMouseDown={(e) => handleMouseDown(e, 'resize', 'bottom-right')}
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleMouseDown(e, 'resize', 'bottom-right');
+                        }}
                       />
                       
                       {/* Edge handles */}
@@ -1237,7 +1255,11 @@ export default function CompanySetup() {
                           borderRadius: '4px',
                           cursor: 'n-resize'
                         }}
-                        onMouseDown={(e) => handleMouseDown(e, 'resize', 'top')}
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleMouseDown(e, 'resize', 'top');
+                        }}
                       />
                       
                       {/* Bottom */}
@@ -1254,7 +1276,11 @@ export default function CompanySetup() {
                           borderRadius: '4px',
                           cursor: 's-resize'
                         }}
-                        onMouseDown={(e) => handleMouseDown(e, 'resize', 'bottom')}
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleMouseDown(e, 'resize', 'bottom');
+                        }}
                       />
                       
                       {/* Left */}
@@ -1271,7 +1297,11 @@ export default function CompanySetup() {
                           borderRadius: '4px',
                           cursor: 'w-resize'
                         }}
-                        onMouseDown={(e) => handleMouseDown(e, 'resize', 'left')}
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleMouseDown(e, 'resize', 'left');
+                        }}
                       />
                       
                       {/* Right */}
@@ -1288,15 +1318,72 @@ export default function CompanySetup() {
                           borderRadius: '4px',
                           cursor: 'e-resize'
                         }}
-                        onMouseDown={(e) => handleMouseDown(e, 'resize', 'right')}
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleMouseDown(e, 'resize', 'right');
+                        }}
                       />
                     </div>
                   </div>
                 </div>
                 
-                <p style={{ fontSize: '14px', color: '#64748b', marginTop: '12px', margin: '12px 0 0 0' }}>
-                  Drag to move selection • Use handles to resize width and height independently • Perfect for banners or any rectangular crop
-                </p>
+                <div style={{ marginTop: '16px' }}>
+                  <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginBottom: '12px' }}>
+                    <button
+                      onClick={() => {
+                        // Auto-crop to tight fit around image content
+                        const margin = 15;
+                        setCropData({
+                          x: margin,
+                          y: margin,
+                          width: imageDisplaySize.width - (margin * 2),
+                          height: imageDisplaySize.height - (margin * 2)
+                        });
+                      }}
+                      style={{
+                        backgroundColor: '#10b981',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        padding: '8px 16px',
+                        fontSize: '12px',
+                        fontWeight: '500',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Auto-Crop Full
+                    </button>
+                    <button
+                      onClick={() => {
+                        // Auto-crop to banner style around text area
+                        const bannerHeight = imageDisplaySize.height * 0.3;
+                        const bannerY = (imageDisplaySize.height - bannerHeight) / 2;
+                        setCropData({
+                          x: 20,
+                          y: bannerY,
+                          width: imageDisplaySize.width - 40,
+                          height: bannerHeight
+                        });
+                      }}
+                      style={{
+                        backgroundColor: '#f59e0b',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        padding: '8px 16px',
+                        fontSize: '12px',
+                        fontWeight: '500',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Auto-Crop Banner
+                    </button>
+                  </div>
+                  <p style={{ fontSize: '14px', color: '#64748b', textAlign: 'center', margin: '0' }}>
+                    Drag to move • Use handles to resize width and height independently • Auto-crop buttons for quick selection
+                  </p>
+                </div>
               </div>
 
               <div style={{ 
