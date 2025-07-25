@@ -80,6 +80,11 @@ function CompanyInfoLarge() {
     );
   }
 
+  // Calculate proper header constraints (max 56px for header height of 60px)
+  const maxHeaderLogoSize = 56;
+  const headerLogoSize = Math.min(logoSize, maxHeaderLogoSize);
+  const headerNameSize = Math.min(companyNameSize, 18); // Cap at 18px for header
+
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: '0', padding: '0' }}>
       {showCompanyLogo && (
@@ -105,8 +110,8 @@ function CompanyInfoLarge() {
                 src={currentCompany.logo} 
                 alt={currentCompany.name}
                 style={{ 
-                  width: `${Math.min(logoSize, 48)}px`, 
-                  height: `${Math.min(logoSize, 48)}px`, 
+                  width: `${headerLogoSize}px`, 
+                  height: `${headerLogoSize}px`, 
                   objectFit: 'contain',
                   borderRadius: '8px',
                   border: '1px solid #e2e8f0',
@@ -117,8 +122,8 @@ function CompanyInfoLarge() {
           ) : (
             <div 
               style={{ 
-                width: `${Math.min(logoSize, 48)}px`, 
-                height: `${Math.min(logoSize, 48)}px`, 
+                width: `${headerLogoSize}px`, 
+                height: `${headerLogoSize}px`, 
                 backgroundColor: '#3b82f6', 
                 borderRadius: '8px',
                 display: 'flex',
@@ -139,7 +144,7 @@ function CompanyInfoLarge() {
       {showCompanyName && (
         <div style={{ margin: '0', padding: '0' }}>
           <div style={{ 
-            fontSize: `${Math.min(companyNameSize, 24)}px`, 
+            fontSize: `${headerNameSize}px`, 
             fontWeight: 700, 
             color: '#1e293b', 
             textAlign: 'left',

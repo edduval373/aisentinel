@@ -430,13 +430,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Validate logoSize is within acceptable range
-      if (logoSize && (logoSize < 60 || logoSize > 300)) {
-        return res.status(400).json({ error: "Logo size must be between 60 and 300 pixels" });
+      if (logoSize && (logoSize < 60 || logoSize > 120)) {
+        return res.status(400).json({ error: "Logo size must be between 60 and 120 pixels" });
       }
       
       // Validate companyNameSize is within acceptable range
-      if (companyNameSize && (companyNameSize < 16 || companyNameSize > 48)) {
-        return res.status(400).json({ error: "Company name size must be between 16 and 48 pixels" });
+      if (companyNameSize && (companyNameSize < 14 || companyNameSize > 24)) {
+        return res.status(400).json({ error: "Company name size must be between 14 and 24 pixels" });
       }
       
       const updateData: any = {};

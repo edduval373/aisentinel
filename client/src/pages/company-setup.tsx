@@ -498,8 +498,8 @@ export default function CompanySetup() {
                 onClick={() => {
                   setShowCompanyName(true);
                   setShowCompanyLogo(true);
-                  setLogoSize(100);
-                  setCompanyNameSize(28);
+                  setLogoSize(80);
+                  setCompanyNameSize(18);
                 }}
                 style={{
                   backgroundColor: '#6b7280',
@@ -607,7 +607,7 @@ export default function CompanySetup() {
                   {logoSize}px
                 </span>
                 <button
-                  onClick={() => setLogoSize(Math.min(300, logoSize + 10))}
+                  onClick={() => setLogoSize(Math.min(120, logoSize + 10))}
                   style={{
                     width: '32px',
                     height: '32px',
@@ -639,7 +639,7 @@ export default function CompanySetup() {
                   color: '#64748b', 
                   marginLeft: '8px' 
                 }}>
-                  (60-300px)
+                  (60-120px, header max: 56px)
                 </span>
               </div>
             )}
@@ -659,7 +659,7 @@ export default function CompanySetup() {
                 Name Size:
               </label>
               <button
-                onClick={() => setCompanyNameSize(Math.max(16, companyNameSize - 2))}
+                onClick={() => setCompanyNameSize(Math.max(14, companyNameSize - 2))}
                 style={{
                   width: '32px',
                   height: '32px',
@@ -700,7 +700,7 @@ export default function CompanySetup() {
                 {companyNameSize}px
               </span>
               <button
-                onClick={() => setCompanyNameSize(Math.min(48, companyNameSize + 2))}
+                onClick={() => setCompanyNameSize(Math.min(24, companyNameSize + 2))}
                 style={{
                   width: '32px',
                   height: '32px',
@@ -732,7 +732,7 @@ export default function CompanySetup() {
                 color: '#64748b', 
                 marginLeft: '8px' 
               }}>
-                (16-48px)
+                (14-24px, header max: 18px)
               </span>
             </div>
             
