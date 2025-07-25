@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/useAuth";
@@ -42,6 +42,20 @@ export default function CompanySetup() {
   const [showCompanyName, setShowCompanyName] = useState(true);
   const [showCompanyLogo, setShowCompanyLogo] = useState(true);
   const [previewZoomed, setPreviewZoomed] = useState(false);
+
+  // Load saved settings on component mount
+  useEffect(() => {
+    const savedSettings = localStorage.getItem('chatDisplaySettings');
+    if (savedSettings) {
+      try {
+        const parsed = JSON.parse(savedSettings);
+        setShowCompanyName(parsed.showCompanyName);
+        setShowCompanyLogo(parsed.showCompanyLogo);
+      } catch (error) {
+        console.error("Error loading saved chat display settings:", error);
+      }
+    }
+  }, []);
 
   // Fetch current user's company information
   const { data: currentCompany, isLoading: companyLoading } = useQuery<Company>({
@@ -104,6 +118,23 @@ export default function CompanySetup() {
       department: owner.department || ""
     });
     setIsEditModalOpen(true);
+  };
+
+  const handleEditCompany = (company: Company) => {
+    setCompanyEditForm({
+      name: company.name,
+      domain: company.domain,
+      primaryAdminName: company.primaryAdminName,
+      primaryAdminEmail: company.primaryAdminEmail,
+      primaryAdminTitle: company.primaryAdminTitle
+    });
+    setIsEditCompanyModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (ownerToDelete) {
+      removeOwnerMutation.mutate(ownerToDelete.id);
+    }
   };
 
   // Add owner mutation
@@ -184,27 +215,10 @@ export default function CompanySetup() {
     },
   });
 
-  const handleEditCompany = (company: Company) => {
-    setCompanyEditForm({
-      name: company.name,
-      domain: company.domain,
-      primaryAdminName: company.primaryAdminName,
-      primaryAdminEmail: company.primaryAdminEmail,
-      primaryAdminTitle: company.primaryAdminTitle
-    });
-    setIsEditCompanyModalOpen(true);
-  };
-
   const handleSaveCompanyEdit = () => {
     if (companyEditForm.name && companyEditForm.domain) {
       toast({ title: "Success", description: "Company information updated successfully" });
       setIsEditCompanyModalOpen(false);
-    }
-  };
-
-  const handleConfirmDelete = () => {
-    if (ownerToDelete) {
-      removeOwnerMutation.mutate(ownerToDelete.id);
     }
   };
 
