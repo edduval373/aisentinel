@@ -48,32 +48,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Demo AI models route - always returns company 1 models
-  app.get('/api/ai-models', async (req: any, res) => {
+  // Demo and authenticated AI models route - returns company 1 for demo, user's company for authenticated
+  app.get('/api/ai-models', optionalAuth, async (req: any, res) => {
     try {
-      console.log("Demo mode AI models request");
+      let companyId = 1; // Default to company 1 for demo users
       
-      // Always return models from company ID 1 for demo mode
-      const models = await storage.getEnabledAiModels(1);
-      console.log("Returning demo models for company 1:", models.length, "models");
+      // If user is authenticated and has a company, use their company
+      if (req.user && req.user.companyId) {
+        companyId = req.user.companyId;
+        console.log("Authenticated user requesting AI models:", { userId: req.user.userId, companyId });
+      } else {
+        console.log("Demo mode AI models request");
+      }
+      
+      const models = await storage.getEnabledAiModels(companyId);
+      console.log("Returning models for company", companyId + ":", models.length, "models");
       return res.json(models);
     } catch (error) {
-      console.error("Error fetching demo AI models:", error);
+      console.error("Error fetching AI models:", error);
       res.status(500).json({ message: "Failed to fetch AI models" });
     }
   });
 
-  // Demo activity types route - always returns company 1 activity types
-  app.get('/api/activity-types', async (req: any, res) => {
+  // Demo and authenticated activity types route - returns company 1 for demo, user's company for authenticated
+  app.get('/api/activity-types', optionalAuth, async (req: any, res) => {
     try {
-      console.log("Demo mode activity types request");
+      let companyId = 1; // Default to company 1 for demo users
       
-      // Always return activity types from company ID 1 for demo mode
-      const activityTypes = await storage.getActivityTypes(1);
-      console.log("Returning demo activity types for company 1:", activityTypes.length, "types");
+      // If user is authenticated and has a company, use their company
+      if (req.user && req.user.companyId) {
+        companyId = req.user.companyId;
+        console.log("Authenticated user requesting activity types:", { userId: req.user.userId, companyId });
+      } else {
+        console.log("Demo mode activity types request");
+      }
+      
+      const activityTypes = await storage.getActivityTypes(companyId);
+      console.log("Returning activity types for company", companyId + ":", activityTypes.length, "types");
       return res.json(activityTypes);
     } catch (error) {
-      console.error("Error fetching demo activity types:", error);
+      console.error("Error fetching activity types:", error);
       res.status(500).json({ message: "Failed to fetch activity types" });
     }
   });
@@ -1157,36 +1171,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Chat routes with demo mode support
+  // Chat routes with demo and authenticated user support
   app.post('/api/chat/session', async (req: any, res) => {
     try {
-      // Demo mode only when explicitly accessing /demo path
-      const hasSessionCookie = req.headers.cookie?.includes('sessionToken=');
-      const isDemoMode = req.headers['x-demo-mode'] === 'true' || req.headers.referer?.includes('/demo');
-      
-      console.log('Chat session creation - isDemoMode:', isDemoMode, 'hasSessionCookie:', hasSessionCookie);
-      
-      // Handle demo mode
-      if (isDemoMode) {
-        console.log("Demo mode chat session creation");
-        
-        // Generate a simple incremental ID for demo sessions
-        const demoSessionId = Math.floor(Math.random() * 1000000) + 1;
-        const demoSession = {
-          id: demoSessionId, // Random but reasonable integer ID
-          companyId: 1, // Demo company ID
-          userId: 'demo-user', // Demo user ID
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        };
-        
-        console.log('Demo session created:', demoSession.id);
-        return res.json(demoSession);
-      }
-      
-      // Handle authenticated users with cookies
       let userId = null;
       let companyId = null;
+      let roleLevel = 1; // Default user level
 
       // Try cookie auth first
       if (req.cookies?.sessionToken) {
@@ -1194,8 +1184,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const session = await authService.authService.verifySession(req.cookies.sessionToken);
         if (session) {
           userId = session.userId;
-          companyId = session.companyId;
-          console.log('Cookie authentication successful:', { userId, companyId });
+          companyId = session.companyId || 1; // Default to company 1 if no company
+          const user = await storage.getUser(userId);
+          roleLevel = user?.roleLevel || 0; // Get actual role level
+          console.log('Cookie authentication successful:', { userId, companyId, roleLevel });
         }
       }
 
@@ -1203,13 +1195,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!userId && process.env.ENABLE_REPLIT_AUTH === 'true' && req.user?.claims?.sub) {
         userId = req.user.claims.sub;
         const user = await storage.getUser(userId);
-        companyId = user?.companyId;
-        console.log('Replit authentication successful:', { userId, companyId });
+        companyId = user?.companyId || 1; // Default to company 1
+        roleLevel = user?.roleLevel || 1;
+        console.log('Replit authentication successful:', { userId, companyId, roleLevel });
       }
       
-      // If no authentication, return error (user should be on landing page)
-      if (!userId || !companyId) {
-        return res.status(401).json({ message: "Authentication required" });
+      // For demo users (role level 0) or unauthenticated users, use company ID 1
+      if (!userId) {
+        userId = 'demo-user-' + Date.now();
+        companyId = 1;
+        roleLevel = 0;
+        console.log('Demo user session creation:', { userId, companyId, roleLevel });
       }
 
       const session = await storage.createChatSession({ 
@@ -1219,6 +1215,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         aiModel: "Default",
         activityType: "general"
       });
+      
+      console.log('Chat session created successfully:', { sessionId: session.id, userId, companyId, roleLevel });
       res.json(session);
     } catch (error) {
       console.error("Error creating chat session:", error);
@@ -1273,19 +1271,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       if (!userId || !companyId) {
-        // For unauthenticated users, use first available company and anonymous user
-        try {
-          const companies = await storage.getCompanies();
-          if (companies.length > 0) {
-            companyId = companies[0].id;
-            userId = '42450602';
-          } else {
-            return res.json([]); // Return empty array if no companies
-          }
-        } catch (error) {
-          console.error("Error finding default company:", error);
-          return res.json([]);
-        }
+        // For demo users, use company ID 1 and demo user
+        companyId = 1;
+        userId = 'demo-user';
+        console.log('Using demo user for messages:', { userId, companyId });
       }
 
       // Remove company check since we're allowing anonymous access
@@ -1338,20 +1327,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       if (!userId || !companyId) {
-        // For unauthenticated users, use first available company and super-user account
-        try {
-          const companies = await storage.getCompanies();
-          if (companies.length > 0) {
-            companyId = companies[0].id;
-            // Use the existing super-user ID to maintain role structure
-            userId = '42450602';
-          } else {
-            return res.status(400).json({ message: "No companies available" });
-          }
-        } catch (error) {
-          console.error("Error finding default company:", error);
-          return res.status(500).json({ message: "Failed to find company" });
-        }
+        // For demo users, use company ID 1 and demo user
+        companyId = 1;
+        userId = 'demo-user';
+        console.log('Using demo user for chat message:', { userId, companyId });
       }
 
       // Validate session ID and get/create session

@@ -68,6 +68,11 @@ export class AuthService {
           }
         }
 
+        // For demo users (role level 0), always assign to company ID 1
+        if (roleLevel === 0) {
+          companyId = 1;
+        }
+
         // Create new user
         const userId = nanoid(12);
         user = await storage.upsertUser({
