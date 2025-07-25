@@ -1,4 +1,6 @@
 // Minimal Vercel serverless function for AI Sentinel (JavaScript)
+import sgMail from '@sendgrid/mail';
+
 export default async function handler(req, res) {
   // Enhanced server-side logging
   const startTime = Date.now();
@@ -232,7 +234,6 @@ export default async function handler(req, res) {
         const verificationUrl = `${appUrl}/api/auth/verify?token=${verificationToken}&email=${encodeURIComponent(email)}`;
 
         // SendGrid email sending
-        const sgMail = require('@sendgrid/mail');
         sgMail.setApiKey(sendgridApiKey);
 
         const msg = {
