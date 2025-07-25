@@ -70,13 +70,14 @@ export default function CompanySetup() {
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [resizeHandle, setResizeHandle] = useState<string | null>(null);
 
-  // Load settings from current company data
+  // Load settings from current company data with proper constraints
   useEffect(() => {
     if (currentCompany) {
       setShowCompanyName(currentCompany.showCompanyName !== false);
       setShowCompanyLogo(currentCompany.showCompanyLogo !== false);
-      setLogoSize(currentCompany.logoSize || 100);
-      setCompanyNameSize(currentCompany.companyNameSize || 28);
+      // Enforce constraints when loading from database
+      setLogoSize(Math.min(Math.max(currentCompany.logoSize || 80, 60), 120));
+      setCompanyNameSize(Math.min(Math.max(currentCompany.companyNameSize || 18, 14), 24));
     }
   }, [currentCompany]);
 
