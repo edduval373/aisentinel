@@ -5,9 +5,9 @@ import { setupVite, serveStatic, log } from "./vite";
 const app = express();
 const port = 5000;
 
-// Essential middleware only
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Essential middleware only - increased limits for image uploads
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 (async () => {
   try {

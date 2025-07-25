@@ -206,7 +206,8 @@ export default function CompanySetup() {
         0, 0, naturalCropWidth, naturalCropHeight
       );
       
-      const croppedDataUrl = canvas.toDataURL('image/png');
+      // Compress image to reduce file size - use JPEG with high quality for better compression
+      const croppedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
       
       // Update company logo directly via API
       if (currentCompany) {
