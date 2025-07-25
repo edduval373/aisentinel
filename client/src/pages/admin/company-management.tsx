@@ -104,9 +104,12 @@ export default function CompanyManagement() {
 
   // Update company mutation
   const updateCompanyMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: z.infer<typeof companySchema> }) =>
-      apiRequest(`/api/admin/companies/${id}`, "PATCH", data),
-    onSuccess: () => {
+    mutationFn: ({ id, data }: { id: number; data: z.infer<typeof companySchema> }) => {
+      console.log("🔄 Updating company:", id, "with data:", data);
+      return apiRequest(`/api/admin/companies/${id}`, "PATCH", data);
+    },
+    onSuccess: (response) => {
+      console.log("✅ Company update successful:", response);
       queryClient.invalidateQueries({ queryKey: ["/api/admin/companies"] });
       setShowEditCompany(false);
       setEditingCompany(null);
@@ -114,7 +117,7 @@ export default function CompanyManagement() {
       toast({ title: "Success", description: "Company updated successfully" });
     },
     onError: (error: any) => {
-      console.error("Company update error:", error);
+      console.error("❌ Company update error:", error);
       toast({ 
         title: "Error", 
         description: error?.message || "Failed to update company", 
@@ -142,9 +145,12 @@ export default function CompanyManagement() {
   });
 
   const onSubmitCompany = (data: z.infer<typeof companySchema>) => {
+    console.log("📝 Form submitted with data:", data);
     if (editingCompany) {
+      console.log("🔄 Editing existing company:", editingCompany.id, editingCompany.name);
       updateCompanyMutation.mutate({ id: editingCompany.id, data });
     } else {
+      console.log("➕ Creating new company");
       createCompanyMutation.mutate(data);
     }
   };
