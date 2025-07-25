@@ -142,7 +142,10 @@ export default function SetupApiKeys() {
 
   const testConnection = async (provider: string) => {
     const apiKey = apiKeys[provider];
+    console.log('testConnection called for provider:', provider, 'apiKey length:', apiKey?.length);
+    
     if (!apiKey || apiKey.startsWith('placeholder-') || apiKey.includes('$')) {
+      console.log('Invalid API key detected');
       toast({
         title: "Invalid API Key",
         description: "Please enter a real API key (not placeholder or environment variable)",
@@ -151,14 +154,16 @@ export default function SetupApiKeys() {
       return;
     }
 
+    console.log('Setting testing state for provider:', provider);
     setIsTestingConnection(provider);
+    
     try {
       console.log(`Testing ${provider} API key connection...`);
       const response = await apiRequest(`/api/admin/test-api-key`, "POST", { provider, apiKey });
       console.log('Test connection response:', response);
       
       toast({
-        title: "✅ Test Successful",
+        title: "Test Successful",
         description: `${provider.charAt(0).toUpperCase() + provider.slice(1)} API key format is valid`,
       });
     } catch (error: any) {
@@ -177,11 +182,12 @@ export default function SetupApiKeys() {
       }
       
       toast({
-        title: "❌ Test Failed",
+        title: "Test Failed",
         description: errorMessage,
         variant: "destructive",
       });
     } finally {
+      console.log('Clearing testing state for provider:', provider);
       setIsTestingConnection(null);
     }
   };
@@ -335,36 +341,35 @@ export default function SetupApiKeys() {
                     )}
                   </div>
                   
-                  <div style={{ marginBottom: '20px' }}>
-                    <Label style={{ fontSize: '14px', fontWeight: '500', color: '#374151', display: 'block', marginBottom: '8px' }}>
-                      Available Models
-                    </Label>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                      {provider.models.map(model => (
-                        <Badge 
-                          key={model.id} 
-                          style={{ 
-                            backgroundColor: '#f3f4f6',
-                            color: '#374151',
-                            border: '1px solid #d1d5db',
-                            fontSize: '11px',
-                            padding: '2px 6px'
-                          }}
-                        >
-                          {model.name}
-                        </Badge>
-                      ))}
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '20px' }}>
+                    <div style={{ flex: '1' }}>
+                      <Label style={{ fontSize: '14px', fontWeight: '500', color: '#374151', display: 'block', marginBottom: '8px' }}>
+                        Available Models
+                      </Label>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                        {provider.models.map(model => (
+                          <Badge 
+                            key={model.id} 
+                            style={{ 
+                              backgroundColor: '#f3f4f6',
+                              color: '#374151',
+                              border: '1px solid #d1d5db',
+                              fontSize: '11px',
+                              padding: '2px 6px'
+                            }}
+                          >
+                            {model.name}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '16px', borderTop: '1px solid #e5e7eb' }}>
-                    <div style={{ fontSize: '13px', color: '#6b7280' }}>
-                      Status: <span style={{ fontWeight: '500', color: isPlaceholder ? '#dc2626' : '#16a34a' }}>
-                        {isPlaceholder ? "Not configured" : "Configured"}
-                      </span>
-                    </div>
-                    <Button
-                      onClick={() => testConnection(provider.id)}
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('Button clicked for provider:', provider.id);
+                        testConnection(provider.id);
+                      }}
                       disabled={isTestingConnection === provider.id || isPlaceholder}
                       style={{
                         backgroundColor: 'transparent',
@@ -377,12 +382,22 @@ export default function SetupApiKeys() {
                         gap: '4px',
                         fontSize: '13px',
                         cursor: isPlaceholder ? 'not-allowed' : 'pointer',
-                        opacity: isPlaceholder ? '0.5' : '1'
+                        opacity: isPlaceholder ? '0.5' : '1',
+                        marginLeft: '16px',
+                        marginTop: '24px'
                       }}
                     >
                       <TestTube style={{ width: '14px', height: '14px' }} />
                       {isTestingConnection === provider.id ? "Testing..." : "Test Connection"}
-                    </Button>
+                    </button>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', paddingTop: '16px', borderTop: '1px solid #e5e7eb' }}>
+                    <div style={{ fontSize: '13px', color: '#6b7280' }}>
+                      Status: <span style={{ fontWeight: '500', color: isPlaceholder ? '#dc2626' : '#16a34a' }}>
+                        {isPlaceholder ? "Not configured" : "Configured"}
+                      </span>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
