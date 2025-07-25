@@ -5,14 +5,19 @@ import AdminLayout from "@/components/layout/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card-standard";
 import { Badge } from "@/components/ui/badge-standard";
 import { hasAccessLevel, ACCESS_REQUIREMENTS } from "@/utils/roleBasedAccess";
-import { BarChart3, TrendingUp, Users, MessageSquare, Clock, Shield } from "lucide-react";
+import { isDemoModeActive, isReadOnlyMode, getDemoModeMessage } from "@/utils/demoMode";
+import { BarChart3, TrendingUp, Users, MessageSquare, Clock, Shield, Eye } from "lucide-react";
 
 export default function AdminAnalytics() {
   const { toast } = useToast();
   const { user, isAuthenticated, isLoading } = useAuth();
   
-  // Check if user has administrator level access (98 or above)
-  const hasAdminAccess = hasAccessLevel(user?.roleLevel, ACCESS_REQUIREMENTS.MONITORING_REPORTS);
+  // Check if user has administrator level access (98 or above) OR is in demo mode
+  const hasAdminAccess = hasAccessLevel(user?.roleLevel, ACCESS_REQUIREMENTS.MONITORING_REPORTS) || isDemoModeActive(user);
+  
+  // Check if we're in demo mode
+  const isDemoMode = isDemoModeActive(user);
+  const isReadOnly = isReadOnlyMode(user);
 
   useEffect(() => {
     if (!isLoading && (!isAuthenticated || !hasAdminAccess)) {
@@ -146,6 +151,25 @@ export default function AdminAnalytics() {
   return (
     <AdminLayout title="Usage Analytics" subtitle="Monitor system usage and performance metrics">
       <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        
+        {/* Demo Mode Indicator */}
+        {isDemoMode && (
+          <div style={{
+            backgroundColor: '#1e3a8a',
+            color: 'white',
+            padding: '12px 16px',
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontSize: '14px',
+            fontWeight: '500'
+          }}>
+            <Eye size={16} />
+            {getDemoModeMessage()} - You can view all analytics data but cannot make changes
+          </div>
+        )}
+        
         {/* Key Metrics */}
         <div style={{ 
           display: 'grid', 

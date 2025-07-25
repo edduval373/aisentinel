@@ -3,7 +3,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { hasAccessLevel, ACCESS_REQUIREMENTS } from "@/utils/roleBasedAccess";
-import { Users, Plus, Shield, Edit, Trash2, Mail, UserPlus, AlertTriangle } from "lucide-react";
+import { isDemoModeActive, isReadOnlyMode, getDemoModeMessage } from "@/utils/demoMode";
+import { Users, Plus, Shield, Edit, Trash2, Mail, UserPlus, AlertTriangle, Eye } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
 
 interface User {
@@ -46,11 +47,12 @@ export default function AdminUsers() {
     department: ''
   });
 
-  // Check if user has administrator level access (98 or above)
-  const hasAdminAccess = hasAccessLevel(user?.roleLevel, ACCESS_REQUIREMENTS.USER_MANAGEMENT);
+  // Check if user has administrator level access (98 or above) OR is in demo mode
+  const hasAdminAccess = hasAccessLevel(user?.roleLevel, ACCESS_REQUIREMENTS.USER_MANAGEMENT) || isDemoModeActive(user);
 
   // Check if we're in demo mode
-  const isDemoMode = window.location.pathname === '/demo' || user?.email === 'demo@aisentinel.com';
+  const isDemoMode = isDemoModeActive(user);
+  const isReadOnly = isReadOnlyMode(user);
 
   // Fetch users query
   const { data: allUsers = [], isLoading: usersLoading, error: usersError } = useQuery({
@@ -281,6 +283,24 @@ export default function AdminUsers() {
   return (
     <AdminLayout title="User Management" subtitle="Manage user accounts, roles, and permissions">
       <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '1200px', margin: '0 auto' }}>
+        
+        {/* Demo Mode Indicator */}
+        {isDemoMode && (
+          <div style={{
+            backgroundColor: '#1e3a8a',
+            color: 'white',
+            padding: '12px 16px',
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontSize: '14px',
+            fontWeight: '500'
+          }}>
+            <Eye size={16} />
+            {getDemoModeMessage()} - You can view all sections but cannot make changes
+          </div>
+        )}
         
         {/* Header with Action Button */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -516,27 +536,33 @@ export default function AdminUsers() {
                       
                       <div style={{ display: 'flex', gap: '8px' }}>
                         <button
-                          onClick={() => handleEditUser(user)}
+                          onClick={() => !isReadOnly && handleEditUser(user)}
+                          title={isReadOnly ? "Read-only mode - editing disabled" : "Edit user"}
                           style={{
                             width: '32px',
                             height: '32px',
                             border: '1px solid #d1d5db',
                             borderRadius: '6px',
-                            backgroundColor: 'white',
-                            color: '#6b7280',
-                            cursor: 'pointer',
+                            backgroundColor: isReadOnly ? '#f9fafb' : 'white',
+                            color: isReadOnly ? '#9ca3af' : '#6b7280',
+                            cursor: isReadOnly ? 'not-allowed' : 'pointer',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            transition: 'all 0.2s'
+                            transition: 'all 0.2s',
+                            opacity: isReadOnly ? 0.6 : 1
                           }}
                           onMouseOver={(e) => {
-                            e.currentTarget.style.backgroundColor = '#f3f4f6';
-                            e.currentTarget.style.color = '#374151';
+                            if (!isReadOnly) {
+                              e.currentTarget.style.backgroundColor = '#f3f4f6';
+                              e.currentTarget.style.color = '#374151';
+                            }
                           }}
                           onMouseOut={(e) => {
-                            e.currentTarget.style.backgroundColor = 'white';
-                            e.currentTarget.style.color = '#6b7280';
+                            if (!isReadOnly) {
+                              e.currentTarget.style.backgroundColor = 'white';
+                              e.currentTarget.style.color = '#6b7280';
+                            }
                           }}
                         >
                           <Edit size={14} />

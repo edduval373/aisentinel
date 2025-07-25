@@ -14,6 +14,8 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { isDemoModeActive, isReadOnlyMode, getDemoModeMessage } from "@/utils/demoMode";
 import { Bot, Plus, Edit2, Trash2, Key, Settings, Eye, EyeOff, TestTube } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { apiRequest } from "@/lib/queryClient";
@@ -138,6 +140,11 @@ export default function CreateModels() {
   const [activeTab, setActiveTab] = useState("basic");
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { user } = useAuth();
+  
+  // Check if we're in demo mode
+  const isDemoMode = isDemoModeActive(user);
+  const isReadOnly = isReadOnlyMode(user);
 
   // Fetch AI models
   const { data: models = [], isLoading: modelsLoading } = useQuery({
@@ -365,6 +372,25 @@ export default function CreateModels() {
   return (
     <AdminLayout title="Create AI Models" subtitle="Create and manage custom AI models from scratch">
       <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
+        
+        {/* Demo Mode Indicator */}
+        {isDemoMode && (
+          <div style={{
+            backgroundColor: '#1e3a8a',
+            color: 'white',
+            padding: '12px 16px',
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontSize: '14px',
+            fontWeight: '500'
+          }}>
+            <Eye size={16} />
+            {getDemoModeMessage()} - You can view all AI models but cannot make changes
+          </div>
+        )}
+        
         {/* Header Section */}
         <div style={{ 
           display: 'flex', 
@@ -392,35 +418,36 @@ export default function CreateModels() {
               </p>
             </div>
           </div>
-          <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-            <DialogTrigger asChild>
-              <Button 
-                onClick={resetForm}
-                style={{
-                  background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-                  border: 'none',
-                  color: 'white',
-                  padding: '12px 24px',
-                  borderRadius: '12px',
-                  fontWeight: '600',
-                  fontSize: '16px',
-                  boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
-                  transition: 'all 0.2s ease',
-                  cursor: 'pointer'
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(59, 130, 246, 0.4)';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0px)';
-                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.3)';
-                }}
-              >
-                <Plus style={{ width: '20px', height: '20px', marginRight: '8px' }} />
-                Create Model
-              </Button>
-            </DialogTrigger>
+          {!isReadOnly && (
+            <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+              <DialogTrigger asChild>
+                <Button 
+                  onClick={resetForm}
+                  style={{
+                    background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+                    border: 'none',
+                    color: 'white',
+                    padding: '12px 24px',
+                    borderRadius: '12px',
+                    fontWeight: '600',
+                    fontSize: '16px',
+                    boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
+                    transition: 'all 0.2s ease',
+                    cursor: 'pointer'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 6px 20px rgba(59, 130, 246, 0.4)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0px)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.3)';
+                  }}
+                >
+                  <Plus style={{ width: '20px', height: '20px', marginRight: '8px' }} />
+                  Create Model
+                </Button>
+              </DialogTrigger>
             <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>Create New AI Model</DialogTitle>
@@ -757,7 +784,8 @@ export default function CreateModels() {
                 </form>
               </Form>
             </DialogContent>
-          </Dialog>
+            </Dialog>
+          )}
         </div>
 
         {/* Models Grid */}
@@ -1007,13 +1035,14 @@ export default function CreateModels() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => handleTestConfig(model.id)}
-                    disabled={testConfigMutation.isPending}
+                    onClick={() => !isReadOnly && handleTestConfig(model.id)}
+                    disabled={testConfigMutation.isPending || isReadOnly}
+                    title={isReadOnly ? "Read-only mode - test disabled" : "Test API configuration"}
                     style={{
                       flex: 1,
-                      background: '#f0f9ff',
-                      border: '1px solid #0ea5e9',
-                      color: '#0369a1',
+                      background: isReadOnly ? '#f3f4f6' : '#f0f9ff',
+                      border: `1px solid ${isReadOnly ? '#d1d5db' : '#0ea5e9'}`,
+                      color: isReadOnly ? '#9ca3af' : '#0369a1',
                       padding: '8px 12px',
                       borderRadius: '8px',
                       fontSize: '13px',
@@ -1022,6 +1051,8 @@ export default function CreateModels() {
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '6px',
+                      cursor: isReadOnly ? 'not-allowed' : 'pointer',
+                      opacity: isReadOnly ? 0.6 : 1,
                       transition: 'all 0.2s ease'
                     }}
                   >
@@ -1031,12 +1062,14 @@ export default function CreateModels() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => handleEditModel(model)}
+                    onClick={() => !isReadOnly && handleEditModel(model)}
+                    disabled={isReadOnly}
+                    title={isReadOnly ? "Read-only mode - edit disabled" : "Edit model"}
                     style={{
                       flex: 1,
-                      background: '#f0fdf4',
-                      border: '1px solid #22c55e',
-                      color: '#15803d',
+                      background: isReadOnly ? '#f3f4f6' : '#f0fdf4',
+                      border: `1px solid ${isReadOnly ? '#d1d5db' : '#22c55e'}`,
+                      color: isReadOnly ? '#9ca3af' : '#15803d',
                       padding: '8px 12px',
                       borderRadius: '8px',
                       fontSize: '13px',
@@ -1045,6 +1078,8 @@ export default function CreateModels() {
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '6px',
+                      cursor: isReadOnly ? 'not-allowed' : 'pointer',
+                      opacity: isReadOnly ? 0.6 : 1,
                       transition: 'all 0.2s ease'
                     }}
                   >
@@ -1054,12 +1089,14 @@ export default function CreateModels() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => handleDeleteModel(model.id)}
+                    onClick={() => !isReadOnly && handleDeleteModel(model.id)}
+                    disabled={isReadOnly}
+                    title={isReadOnly ? "Read-only mode - delete disabled" : "Delete model"}
                     style={{
                       flex: 1,
-                      background: '#fef2f2',
-                      border: '1px solid #ef4444',
-                      color: '#dc2626',
+                      background: isReadOnly ? '#f3f4f6' : '#fef2f2',
+                      border: `1px solid ${isReadOnly ? '#d1d5db' : '#ef4444'}`,
+                      color: isReadOnly ? '#9ca3af' : '#dc2626',
                       padding: '8px 12px',
                       borderRadius: '8px',
                       fontSize: '13px',
@@ -1068,6 +1105,8 @@ export default function CreateModels() {
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '6px',
+                      cursor: isReadOnly ? 'not-allowed' : 'pointer',
+                      opacity: isReadOnly ? 0.6 : 1,
                       transition: 'all 0.2s ease'
                     }}
                   >

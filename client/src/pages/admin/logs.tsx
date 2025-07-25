@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { hasAccessLevel, ACCESS_REQUIREMENTS } from "@/utils/roleBasedAccess";
-import { BarChart3, Download, Filter, Search, AlertTriangle, Shield, User } from "lucide-react";
+import { isDemoModeActive, isReadOnlyMode, getDemoModeMessage } from "@/utils/demoMode";
+import { BarChart3, Download, Filter, Search, AlertTriangle, Shield, User, Eye } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
 
 export default function AdminLogs() {
@@ -11,8 +12,12 @@ export default function AdminLogs() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
   
-  // Check if user has admin level access (2 or above)
-  const hasAdminAccess = hasAccessLevel(user?.roleLevel, ACCESS_REQUIREMENTS.ACTIVITY_LOGS);
+  // Check if user has admin level access (2 or above) OR is in demo mode
+  const hasAdminAccess = hasAccessLevel(user?.roleLevel, ACCESS_REQUIREMENTS.ACTIVITY_LOGS) || isDemoModeActive(user);
+  
+  // Check if we're in demo mode
+  const isDemoMode = isDemoModeActive(user);
+  const isReadOnly = isReadOnlyMode(user);
 
   useEffect(() => {
     if (!isLoading && (!isAuthenticated || !hasAdminAccess)) {
@@ -151,6 +156,25 @@ export default function AdminLogs() {
   return (
     <AdminLayout title="Activity Logs" subtitle="Monitor system activity and security events">
       <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '1200px', margin: '0 auto' }}>
+        
+        {/* Demo Mode Indicator */}
+        {isDemoMode && (
+          <div style={{
+            backgroundColor: '#1e3a8a',
+            color: 'white',
+            padding: '12px 16px',
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontSize: '14px',
+            fontWeight: '500'
+          }}>
+            <Eye size={16} />
+            {getDemoModeMessage()} - You can view all activity logs but cannot make changes
+          </div>
+        )}
+        
         {/* Stats Cards */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px' }}>
           <div style={{
@@ -336,27 +360,34 @@ export default function AdminLogs() {
                   </select>
                   
                   <button
+                    onClick={() => !isReadOnly && console.log('Export logs')}
+                    title={isReadOnly ? "Read-only mode - export disabled" : "Export logs"}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
                       gap: '8px',
-                      backgroundColor: 'white',
-                      color: '#374151',
+                      backgroundColor: isReadOnly ? '#f9fafb' : 'white',
+                      color: isReadOnly ? '#9ca3af' : '#374151',
                       border: '1px solid #d1d5db',
                       borderRadius: '8px',
                       padding: '12px 20px',
                       fontSize: '14px',
                       fontWeight: '500',
-                      cursor: 'pointer',
+                      cursor: isReadOnly ? 'not-allowed' : 'pointer',
+                      opacity: isReadOnly ? 0.6 : 1,
                       transition: 'background-color 0.2s, border-color 0.2s'
                     }}
                     onMouseOver={(e) => {
-                      e.currentTarget.style.backgroundColor = '#f9fafb';
-                      e.currentTarget.style.borderColor = '#9ca3af';
+                      if (!isReadOnly) {
+                        e.currentTarget.style.backgroundColor = '#f9fafb';
+                        e.currentTarget.style.borderColor = '#9ca3af';
+                      }
                     }}
                     onMouseOut={(e) => {
-                      e.currentTarget.style.backgroundColor = 'white';
-                      e.currentTarget.style.borderColor = '#d1d5db';
+                      if (!isReadOnly) {
+                        e.currentTarget.style.backgroundColor = 'white';
+                        e.currentTarget.style.borderColor = '#d1d5db';
+                      }
                     }}
                   >
                     <Download size={16} />
