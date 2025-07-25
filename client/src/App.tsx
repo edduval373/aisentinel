@@ -40,52 +40,9 @@ function Router() {
   console.log("[APP DEBUG] Authentication check:", { isAuthenticated, role: user?.role, roleLevel: user?.roleLevel, isAdmin, isOwner, isSuperUser });
   console.log("[APP DEBUG] useAuth hook returned:", { isAuthenticated, isLoading, user: !!user, isSuperUser, isOwner, isAdmin });
 
-  // Show loading state while checking authentication
+  // If still loading authentication, show nothing (let HTML loading screen continue)
   if (isLoading) {
-    console.log("[APP DEBUG] Showing loading state");
-    return (
-      <div style={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        minHeight: '100vh', 
-        background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-        paddingBottom: '10vh'
-      }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ 
-            width: '64px', 
-            height: '64px', 
-            animation: 'spin 2s linear infinite',
-            margin: '0 auto 1.5rem'
-          }}>
-            <img 
-              src="/ai-sentinel-logo.png" 
-              alt="AI Sentinel" 
-              style={{ 
-                width: '100%', 
-                height: '100%', 
-                objectFit: 'contain',
-                filter: 'brightness(1.1) saturate(1.3) contrast(1.2)'
-              }} 
-            />
-          </div>
-          <h1 style={{ 
-            fontSize: '2rem', 
-            fontWeight: 'bold', 
-            color: '#1e293b', 
-            marginBottom: '0.5rem' 
-          }}>AI Sentinel</h1>
-          <p style={{ color: '#64748b' }}>Loading Enterprise AI Governance Platform...</p>
-        </div>
-        <style>{`
-          @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-        `}</style>
-      </div>
-    );
+    return null; // Let the HTML loading screen handle this
   }
 
   // Create role-based route guard
