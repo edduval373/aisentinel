@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -39,6 +39,11 @@ export default function CompanyManagement() {
   const [showAddCompany, setShowAddCompany] = useState(false);
   const [showEditCompany, setShowEditCompany] = useState(false);
   const [editingCompany, setEditingCompany] = useState<Company | null>(null);
+  
+  // Debug effect to track state changes
+  React.useEffect(() => {
+    console.log("🔍 State change - showEditCompany:", showEditCompany, "editingCompany:", editingCompany?.name);
+  }, [showEditCompany, editingCompany]);
   const [deleteConfirmDialog, setDeleteConfirmDialog] = useState<{ isOpen: boolean; company: Company | null }>({
     isOpen: false,
     company: null
@@ -147,19 +152,23 @@ export default function CompanyManagement() {
     console.log("🔧 handleEditCompany called for:", company.name);
     console.log("Current showEditCompany state:", showEditCompany);
     
-    setEditingCompany(company);
-    companyForm.reset({
-      name: company.name,
-      domain: company.domain,
-      primaryAdminName: company.primaryAdminName,
-      primaryAdminEmail: company.primaryAdminEmail,
-      primaryAdminTitle: company.primaryAdminTitle,
-      logo: company.logo || "",
-      isActive: company.isActive,
-    });
-    setShowEditCompany(true);
-    
-    console.log("After setShowEditCompany(true), editingCompany:", company.name);
+    // Use setTimeout to ensure state update happens in next tick
+    setTimeout(() => {
+      setEditingCompany(company);
+      companyForm.reset({
+        name: company.name,
+        domain: company.domain,
+        primaryAdminName: company.primaryAdminName,
+        primaryAdminEmail: company.primaryAdminEmail,
+        primaryAdminTitle: company.primaryAdminTitle,
+        logo: company.logo || "",
+        isActive: company.isActive,
+      });
+      setShowEditCompany(true);
+      
+      console.log("After setShowEditCompany(true), editingCompany:", company.name);
+      console.log("Updated showEditCompany state:", true);
+    }, 0);
   };
 
   const handleDeleteClick = (company: Company) => {
@@ -456,13 +465,17 @@ export default function CompanyManagement() {
         </Card>
 
         {/* Edit Company Dialog */}
-        <Dialog open={showEditCompany} onOpenChange={(open) => {
-          setShowEditCompany(open);
-          if (!open) {
-            setEditingCompany(null);
-            companyForm.reset();
-          }
-        }}>
+        <Dialog 
+          open={showEditCompany} 
+          onOpenChange={(open) => {
+            console.log("Edit Dialog onOpenChange called with:", open);
+            setShowEditCompany(open);
+            if (!open) {
+              setEditingCompany(null);
+              companyForm.reset();
+            }
+          }}
+        >
           <DialogContent style={{ 
             maxWidth: '512px', 
             maxHeight: '80vh', 
