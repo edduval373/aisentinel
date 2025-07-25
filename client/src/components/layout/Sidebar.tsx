@@ -179,7 +179,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                 height: '32px', 
                 objectFit: 'contain',
                 flexShrink: 0,
-                filter: 'brightness(0) invert(1)',
+                filter: 'brightness(0) invert(0.85) opacity(0.9)',
                 background: 'transparent'
               }}
             />
