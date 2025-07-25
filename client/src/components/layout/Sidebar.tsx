@@ -123,7 +123,6 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       icon: Settings,
       items: [
         { name: "Content Policies", href: "/admin/policies", icon: BookOpen },
-        { name: "API Configuration", href: "/admin/api-config", icon: Settings },
         { name: "Security Settings", href: "/admin/security-settings", icon: Shield },
       ]
     }
