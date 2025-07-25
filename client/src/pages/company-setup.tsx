@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { Building, Users, Settings, Save, Edit, UserPlus, X } from "lucide-react";
+import { Building, Users, Settings, Save, Edit, UserPlus, X, Monitor } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
 
 interface Company {
@@ -37,6 +37,11 @@ export default function CompanySetup() {
   const [companyEditForm, setCompanyEditForm] = useState({ name: "", domain: "", primaryAdminName: "", primaryAdminEmail: "", primaryAdminTitle: "" });
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const [ownerToDelete, setOwnerToDelete] = useState<Owner | null>(null);
+  
+  // Chat display preview settings
+  const [showCompanyName, setShowCompanyName] = useState(true);
+  const [showCompanyLogo, setShowCompanyLogo] = useState(true);
+  const [previewZoomed, setPreviewZoomed] = useState(false);
 
   // Fetch current user's company information
   const { data: currentCompany, isLoading: companyLoading } = useQuery<Company>({
@@ -213,6 +218,141 @@ export default function CompanySetup() {
   return (
     <AdminLayout title="Company Setup" subtitle="Configure your current company and manage owners">
       <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        
+        {/* Chat Screen Preview */}
+        {currentCompany && (
+          <div style={{ 
+            backgroundColor: '#fff', 
+            border: '1px solid #e5e7eb', 
+            borderRadius: '8px', 
+            padding: '24px',
+            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+              <Monitor style={{ width: '20px', height: '20px', color: '#3b82f6' }} />
+              <h2 style={{ fontSize: '18px', fontWeight: '600', color: '#111827', margin: '0' }}>
+                Chat Screen Preview
+              </h2>
+            </div>
+            
+            {/* Display Options */}
+            <div style={{ display: 'flex', gap: '24px', marginBottom: '20px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                <input 
+                  type="checkbox" 
+                  checked={showCompanyLogo}
+                  onChange={(e) => setShowCompanyLogo(e.target.checked)}
+                  style={{ width: '16px', height: '16px' }}
+                />
+                <span style={{ fontSize: '14px', color: '#374151' }}>Show Company Logo</span>
+              </label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                <input 
+                  type="checkbox" 
+                  checked={showCompanyName}
+                  onChange={(e) => setShowCompanyName(e.target.checked)}
+                  style={{ width: '16px', height: '16px' }}
+                />
+                <span style={{ fontSize: '14px', color: '#374151' }}>Show Company Name</span>
+              </label>
+            </div>
+            
+            {/* Preview Display */}
+            <div style={{ 
+              backgroundColor: '#f1f5f9', 
+              border: '2px dashed #cbd5e1', 
+              borderRadius: '8px', 
+              padding: '20px',
+              textAlign: 'center'
+            }}>
+              <p style={{ fontSize: '12px', color: '#64748b', marginBottom: '16px', fontWeight: 500 }}>
+                How this will appear on chat screen:
+              </p>
+              
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                gap: '24px',
+                minHeight: '80px'
+              }}>
+                {(showCompanyLogo || showCompanyName) ? (
+                  <>
+                    {showCompanyLogo && (
+                      <div style={{ position: 'relative', display: 'inline-block' }}>
+                        {currentCompany.logo ? (
+                          <img 
+                            src={currentCompany.logo} 
+                            alt={currentCompany.name}
+                            onClick={() => setPreviewZoomed(!previewZoomed)}
+                            style={{ 
+                              width: previewZoomed ? '120px' : '80px', 
+                              height: previewZoomed ? '120px' : '80px', 
+                              objectFit: 'contain',
+                              borderRadius: '12px',
+                              border: `2px solid ${previewZoomed ? '#3b82f6' : '#e2e8f0'}`,
+                              cursor: 'pointer',
+                              transition: 'all 0.3s ease',
+                              transform: previewZoomed ? 'scale(1.05)' : 'scale(1)',
+                              boxShadow: previewZoomed ? '0 8px 25px rgba(59, 130, 246, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)'
+                            }}
+                          />
+                        ) : (
+                          <div 
+                            onClick={() => setPreviewZoomed(!previewZoomed)}
+                            style={{ 
+                              width: previewZoomed ? '120px' : '80px', 
+                              height: previewZoomed ? '120px' : '80px', 
+                              backgroundColor: '#3b82f6', 
+                              borderRadius: '12px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              color: 'white',
+                              fontSize: previewZoomed ? '36px' : '28px',
+                              fontWeight: 700,
+                              cursor: 'pointer',
+                              transition: 'all 0.3s ease',
+                              boxShadow: previewZoomed ? '0 8px 25px rgba(59, 130, 246, 0.3)' : '0 4px 12px rgba(0, 0, 0, 0.1)'
+                            }}
+                          >
+                            {currentCompany.name.charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    
+                    {showCompanyName && (
+                      <div>
+                        <div style={{ 
+                          fontSize: previewZoomed ? '32px' : '28px', 
+                          fontWeight: 700, 
+                          color: '#1e293b',
+                          transition: 'all 0.3s ease'
+                        }}>
+                          {currentCompany.name}
+                        </div>
+                        <div style={{ 
+                          fontSize: '11px', 
+                          color: '#94a3b8', 
+                          marginTop: '4px',
+                          fontStyle: 'italic'
+                        }}>
+                          Click logo to {previewZoomed ? 'zoom out' : 'zoom in'}
+                        </div>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div style={{ color: '#9ca3af', fontSize: '16px', fontStyle: 'italic' }}>
+                    No company branding will be displayed
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+        
         {/* Current Company Details */}
         {currentCompany && (
           <div style={{ 

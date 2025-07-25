@@ -115,28 +115,7 @@ function CompanyInfoLarge() {
               }
             }}
           />
-          {/* Zoom indicator */}
-          <div style={{
-            position: 'absolute',
-            bottom: '-8px',
-            right: '-8px',
-            width: '24px',
-            height: '24px',
-            backgroundColor: isZoomed ? '#ef4444' : '#3b82f6',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'white',
-            fontSize: '12px',
-            fontWeight: 700,
-            cursor: 'pointer',
-            border: '2px solid white',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
-            transition: 'all 0.2s ease'
-          }}>
-            {isZoomed ? '−' : '+'}
-          </div>
+
         </div>
       ) : (
         <div 
@@ -182,18 +161,7 @@ function CompanyInfoLarge() {
             {currentCompany.description}
           </div>
         )}
-        {/* Zoom instruction */}
-        {!isLimitedAccess && (
-          <div style={{ 
-            fontSize: '12px', 
-            color: '#94a3b8', 
-            textAlign: 'center', 
-            marginTop: '4px',
-            fontStyle: 'italic'
-          }}>
-            Click logo to {isZoomed ? 'zoom out' : 'zoom in'}
-          </div>
-        )}
+
       </div>
     </div>
   );
