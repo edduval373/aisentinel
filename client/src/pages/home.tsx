@@ -70,6 +70,9 @@ function CompanyInfoLarge() {
   const companyNameSize = currentCompany.companyNameSize || 28;
   const showCompanyName = currentCompany.showCompanyName !== false; // Default to true
   const showCompanyLogo = currentCompany.showCompanyLogo !== false; // Default to true
+  
+  // Debug logging
+  console.log("🎨 CompanyInfoLarge - Logo settings:", { logoSize, companyNameSize, showCompanyName, showCompanyLogo });
 
   // Don't show anything if both logo and name are disabled
   if (!showCompanyLogo && !showCompanyName) {
@@ -80,9 +83,8 @@ function CompanyInfoLarge() {
     );
   }
 
-  // Calculate proper header constraints (max 56px for header height of 60px)
-  const maxHeaderLogoSize = 56;
-  const headerLogoSize = Math.min(logoSize, maxHeaderLogoSize);
+  // Use the full logo size from database settings (no header constraint)
+  const headerLogoSize = logoSize;
   const headerNameSize = Math.min(companyNameSize, 18); // Cap at 18px for header
 
   return (
@@ -213,66 +215,83 @@ function CompanyInfo() {
     );
   }
 
+  // Use company settings from database
+  const logoSize = currentCompany.logoSize || 100;
+  const companyNameSize = currentCompany.companyNameSize || 28;
+  const showCompanyName = currentCompany.showCompanyName !== false;
+  const showCompanyLogo = currentCompany.showCompanyLogo !== false;
+  
+  // Use smaller logo size for header (cap at 56px but honor the database setting if smaller)
+  const headerLogoSize = Math.min(logoSize, 56);
+  
+  console.log("🎨 CompanyInfo - Logo settings:", { logoSize, headerLogoSize, showCompanyName, showCompanyLogo });
+
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-      {isLimitedAccess ? (
-        <div style={{ 
-          width: '48px', 
-          height: '48px', 
-          backgroundColor: '#3b82f6', 
-          borderRadius: '8px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'white',
-          fontSize: '14px',
-          fontWeight: 600
-        }}>
-          DEMO
-        </div>
-      ) : currentCompany.logo ? (
-        <img 
-          src={currentCompany.logo} 
-          alt={currentCompany.name}
-          style={{ 
-            maxWidth: '48px', 
-            maxHeight: '48px', 
-            height: 'auto',
-            width: 'auto',
-            objectFit: 'contain',
-            borderRadius: '6px'
-          }}
-        />
-      ) : (
-        <div style={{ 
-          width: '48px', 
-          height: '48px', 
-          backgroundColor: '#3b82f6', 
-          borderRadius: '8px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'white',
-          fontSize: '16px',
-          fontWeight: 600
-        }}>
-          {currentCompany.name.charAt(0).toUpperCase()}
+      {showCompanyLogo && (
+        <>
+          {isLimitedAccess ? (
+            <div style={{ 
+              width: '48px', 
+              height: '48px', 
+              backgroundColor: '#3b82f6', 
+              borderRadius: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              fontSize: '14px',
+              fontWeight: 600
+            }}>
+              DEMO
+            </div>
+          ) : currentCompany.logo ? (
+            <img 
+              src={currentCompany.logo} 
+              alt={currentCompany.name}
+              style={{ 
+                maxWidth: `${headerLogoSize}px`, 
+                maxHeight: `${headerLogoSize}px`, 
+                height: 'auto',
+                width: 'auto',
+                objectFit: 'contain',
+                borderRadius: '6px'
+              }}
+            />
+          ) : (
+            <div style={{ 
+              width: `${headerLogoSize}px`, 
+              height: `${headerLogoSize}px`, 
+              backgroundColor: '#3b82f6', 
+              borderRadius: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              fontSize: '16px',
+              fontWeight: 600
+            }}>
+              {currentCompany.name.charAt(0).toUpperCase()}
+            </div>
+          )}
+        </>
+      )}
+      {showCompanyName && (
+        <div>
+          <div style={{ fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>
+            {isLimitedAccess ? 'Demo Company' : currentCompany.name}
+          </div>
+          {isLimitedAccess ? (
+            <div style={{ fontSize: '12px', color: '#3b82f6', fontWeight: 500 }}>
+              Using AI Sentinel API Keys
+            </div>
+          ) : currentCompany.description && (
+            <div style={{ fontSize: '12px', color: '#64748b' }}>
+              {currentCompany.description}
+            </div>
+          )}
         </div>
       )}
-      <div>
-        <div style={{ fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>
-          {isLimitedAccess ? 'Demo Company' : currentCompany.name}
-        </div>
-        {isLimitedAccess ? (
-          <div style={{ fontSize: '12px', color: '#3b82f6', fontWeight: 500 }}>
-            Using AI Sentinel API Keys
-          </div>
-        ) : currentCompany.description && (
-          <div style={{ fontSize: '12px', color: '#64748b' }}>
-            {currentCompany.description}
-          </div>
-        )}
-      </div>
     </div>
   );
 }
