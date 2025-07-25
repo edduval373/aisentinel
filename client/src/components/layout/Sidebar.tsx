@@ -180,9 +180,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                 objectFit: 'contain',
                 flexShrink: 0,
                 filter: 'brightness(0) invert(1)',
-                backgroundColor: '#60a5fa',
-                borderRadius: '6px',
-                padding: '4px'
+                background: 'transparent'
               }}
             />
             <span style={{ 
