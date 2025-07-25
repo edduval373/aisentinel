@@ -835,27 +835,44 @@ table tbody tr:hover {
 
 /* Custom styles for JSON tables */
 .json-table {
-  @apply min-w-full border-collapse border border-slate-300 text-sm my-4;
+  min-width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #cbd5e1;
+  font-size: 14px;
+  margin: 16px 0;
 }
 
 .json-table th {
-  @apply border border-slate-300 px-3 py-2 text-left font-medium text-slate-700 bg-slate-50;
+  border: 1px solid #cbd5e1;
+  padding: 8px 12px;
+  text-align: left;
+  font-weight: 500;
+  color: #374151;
+  background-color: #f8fafc;
 }
 
 .json-table td {
-  @apply border border-slate-300 px-3 py-2 text-slate-600;
+  border: 1px solid #cbd5e1;
+  padding: 8px 12px;
+  color: #4b5563;
 }
 
 .json-table tbody tr:hover {
-  @apply bg-slate-50;
+  background-color: #f8fafc;
 }
 
 /* Improve chat message width for tables with scrolling */
 .chat-message-content {
-  @apply max-w-2xl lg:max-w-4xl;
+  max-width: 672px;
   overflow-x: auto;
   max-height: 70vh;
   overflow-y: auto;
+}
+
+@media (min-width: 1024px) {
+  .chat-message-content {
+    max-width: 896px;
+  }
 }
 
 /* Add spin animation for production */
@@ -870,30 +887,39 @@ table tbody tr:hover {
 
 /* Enhanced table container with scroll */
 .table-container {
-  @apply overflow-x-auto overflow-y-auto max-h-96 border border-slate-200 rounded-lg;
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: 384px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
 }
 
 .table-container table {
-  @apply min-w-full;
+  min-width: 100%;
 }
 
 /* Ensure markdown tables are responsive */
 .prose table {
-  @apply block overflow-x-auto whitespace-nowrap;
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
 }
 
 .prose thead,
 .prose tbody,
 .prose tr {
-  @apply block;
+  display: block;
 }
 
 .prose thead tr,
 .prose tbody tr {
-  @apply table w-full table-fixed;
+  display: table;
+  width: 100%;
+  table-layout: fixed;
 }
 
 .prose th,
 .prose td {
-  @apply px-3 py-2 border border-slate-300;
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
 }
