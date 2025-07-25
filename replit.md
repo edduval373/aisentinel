@@ -144,7 +144,7 @@ Recent Updates:
 - July 25, 2025. Company Branding Enhancement - Large Centered Screen Title Implementation:
   * RESTRUCTURED: Chat interface header layout for improved company visibility
   * IMPLEMENTED: Large centered company logo (80px) and name (36px bold) as prominent screen title
-  * REPOSITIONED: Menu button to top-left corner with smaller AI Sentinel logo (40px)
+  * REPOSITIONED: Menu button to top-left corner with AI Sentinel logo (56px - increased 40% from 40px)
   * MOVED: Sign out button to top-right corner for better accessibility
   * ENHANCED: Company display with larger logo, increased text size, and centered alignment
   * CREATED: CompanyInfoLarge component with enhanced styling for better branding

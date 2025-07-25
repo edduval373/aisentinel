@@ -294,8 +294,8 @@ export default function Home() {
               top: '16px',
               left: '16px',
               padding: '4px',
-              minWidth: '48px',
-              height: '48px',
+              minWidth: '64px',
+              height: '64px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -309,8 +309,8 @@ export default function Home() {
               src="/ai-sentinel-logo.png" 
               alt="AI Sentinel" 
               style={{ 
-                width: '40px', 
-                height: '40px', 
+                width: '56px', 
+                height: '56px', 
                 objectFit: 'contain',
                 flexShrink: 0,
                 filter: 'brightness(1.1) saturate(1.3) contrast(1.2)'
