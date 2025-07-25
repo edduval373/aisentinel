@@ -16,6 +16,7 @@ export default function SetupApiKeys() {
   const queryClient = useQueryClient();
   const [isTestingConnection, setIsTestingConnection] = useState<string | null>(null);
   const [testResults, setTestResults] = useState<Record<string, 'success' | 'error' | null>>({});
+  const [errorMessages, setErrorMessages] = useState<Record<string, string>>({});
   const [apiKeys, setApiKeys] = useState<Record<string, string>>({});
 
   // Fetch AI models to get current API keys
@@ -126,8 +127,9 @@ export default function SetupApiKeys() {
 
   const handleApiKeyChange = (provider: string, value: string) => {
     setApiKeys(prev => ({ ...prev, [provider]: value }));
-    // Reset test result when API key changes
+    // Reset test result and error message when API key changes
     setTestResults(prev => ({ ...prev, [provider]: null }));
+    setErrorMessages(prev => ({ ...prev, [provider]: '' }));
   };
 
   const handleSaveApiKey = (provider: string) => {
@@ -150,11 +152,7 @@ export default function SetupApiKeys() {
     if (!apiKey || apiKey.startsWith('placeholder-') || apiKey.includes('$')) {
       console.log('Invalid API key detected');
       setTestResults(prev => ({ ...prev, [provider]: 'error' }));
-      toast({
-        title: "Invalid API Key",
-        description: "Please enter a real API key (not placeholder or environment variable)",
-        variant: "destructive",
-      });
+      setErrorMessages(prev => ({ ...prev, [provider]: "Please enter a real API key (not placeholder or environment variable)" }));
       return;
     }
 
@@ -167,6 +165,7 @@ export default function SetupApiKeys() {
       console.log('Test connection response:', response);
       
       setTestResults(prev => ({ ...prev, [provider]: 'success' }));
+      setErrorMessages(prev => ({ ...prev, [provider]: '' }));
       toast({
         title: "Test Successful",
         description: `${provider.charAt(0).toUpperCase() + provider.slice(1)} API key format is valid`,
@@ -187,6 +186,7 @@ export default function SetupApiKeys() {
         errorMessage = "Owner access required to test API keys";
       }
       
+      setErrorMessages(prev => ({ ...prev, [provider]: errorMessage }));
       toast({
         title: "Test Failed",
         description: errorMessage,
@@ -406,7 +406,15 @@ export default function SetupApiKeys() {
                     </button>
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '16px' }}>
+                  {errorMessages[provider.id] && (
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginTop: '8px' }}>
+                      <div style={{ fontSize: '12px', color: '#dc2626', fontStyle: 'italic' }}>
+                        {errorMessages[provider.id]}
+                      </div>
+                    </div>
+                  )}
+
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', marginTop: '16px' }}>
                     <div style={{ fontSize: '13px', color: '#6b7280' }}>
                       Status: <span style={{ fontWeight: '500', color: isPlaceholder ? '#dc2626' : '#16a34a' }}>
                         {isPlaceholder ? "Not configured" : "Configured"}
