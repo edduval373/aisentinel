@@ -335,7 +335,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <CompanyProvider>
         <TooltipProvider>
-          <Toaster />
+          {/* <Toaster /> */}
           <Router />
         </TooltipProvider>
       </CompanyProvider>
