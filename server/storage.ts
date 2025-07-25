@@ -52,7 +52,7 @@ import {
   type InsertTrialUsage,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, and, count, sql, sum, like } from "drizzle-orm";
+import { eq, desc, and, count, sql, sum, like, inArray } from "drizzle-orm";
 
 // Interface for storage operations
 export interface IStorage {
@@ -295,7 +295,8 @@ export class DatabaseStorage implements IStorage {
       .returning();
     
     // Initialize default models and activity types for the new company
-    await this.initializeCompanyDefaults(newCompany.id);
+    // Temporarily disabled to fix array parsing issues
+    // await this.initializeCompanyDefaults(newCompany.id);
     
     return newCompany;
   }
