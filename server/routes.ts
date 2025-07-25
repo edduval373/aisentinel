@@ -273,37 +273,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
       
-      console.log("Demo mode: Returning company ID 1 as demo company");
+      console.log("Demo mode: Returning company ID 1");
       
-      // Fallback to company ID 1 for demo users
-      try {
-        const demoCompany = await storage.getCompany(1);
-        if (demoCompany) {
-          console.log("Returning demo company:", demoCompany.name, "ID:", demoCompany.id);
-          
-          // Optimize logo for header display
-          const optimizedCompany = {
-            ...demoCompany,
-            logo: demoCompany.logo && demoCompany.logo.length > 50000 ? 
-              demoCompany.logo.substring(0, 50000) + '...' : demoCompany.logo
-          };
-          
-          return res.json(optimizedCompany);
-        }
-      } catch (error) {
-        console.error("Error fetching company ID 1:", error);
-      }
-      
-      // Fallback to first company if company ID 1 doesn't exist
-      const companies = await storage.getCompanies();
-      if (companies.length > 0) {
-        const fallbackCompany = companies[0];
-        console.log("Fallback: Returning first company:", fallbackCompany.name, "ID:", fallbackCompany.id);
+      // Always return company ID 1 for demo users
+      const demoCompany = await storage.getCompany(1);
+      if (demoCompany) {
+        console.log("Returning demo company:", demoCompany.name, "ID:", demoCompany.id);
         
+        // Optimize logo for header display
         const optimizedCompany = {
-          ...fallbackCompany,
-          logo: fallbackCompany.logo && fallbackCompany.logo.length > 50000 ? 
-            fallbackCompany.logo.substring(0, 50000) + '...' : fallbackCompany.logo
+          ...demoCompany,
+          logo: demoCompany.logo && demoCompany.logo.length > 50000 ? 
+            demoCompany.logo.substring(0, 50000) + '...' : demoCompany.logo
         };
         
         return res.json(optimizedCompany);

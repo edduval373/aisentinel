@@ -30,6 +30,10 @@ export function CompanyProvider({ children }: CompanyProviderProps) {
       if (storedCompanyId) {
         setCurrentCompanyIdState(parseInt(storedCompanyId));
       }
+    } else if (!isAuthenticated) {
+      // For demo mode (unauthenticated users), always use company ID 1
+      setCurrentCompanyIdState(1);
+      console.log("Demo mode: Setting company ID to 1");
     }
     setIsLoading(false);
   }, [isAuthenticated, user]);
