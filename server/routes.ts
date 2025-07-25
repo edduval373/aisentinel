@@ -422,7 +422,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch('/api/company/:id/display-settings', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
       const companyId = parseInt(req.params.id);
-      const { logoSize, showCompanyName, showCompanyLogo } = req.body;
+      const { logoSize, companyNameSize, showCompanyName, showCompanyLogo } = req.body;
       
       // Verify user has owner or super-user permissions for this company
       if (!req.user || (req.user.roleLevel < 99 && req.user.companyId !== companyId)) {
@@ -430,12 +430,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Validate logoSize is within acceptable range
-      if (logoSize && (logoSize < 60 || logoSize > 200)) {
-        return res.status(400).json({ error: "Logo size must be between 60 and 200 pixels" });
+      if (logoSize && (logoSize < 60 || logoSize > 300)) {
+        return res.status(400).json({ error: "Logo size must be between 60 and 300 pixels" });
+      }
+      
+      // Validate companyNameSize is within acceptable range
+      if (companyNameSize && (companyNameSize < 16 || companyNameSize > 48)) {
+        return res.status(400).json({ error: "Company name size must be between 16 and 48 pixels" });
       }
       
       const updateData: any = {};
       if (logoSize !== undefined) updateData.logoSize = logoSize;
+      if (companyNameSize !== undefined) updateData.companyNameSize = companyNameSize;
       if (showCompanyName !== undefined) updateData.showCompanyName = showCompanyName;
       if (showCompanyLogo !== undefined) updateData.showCompanyLogo = showCompanyLogo;
       

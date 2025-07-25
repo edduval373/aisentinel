@@ -15,6 +15,7 @@ interface Company {
   primaryAdminTitle: string;
   logo?: string;
   logoSize?: number;
+  companyNameSize?: number;
   showCompanyName?: boolean;
   showCompanyLogo?: boolean;
   isActive: boolean;
@@ -51,6 +52,7 @@ export default function CompanySetup() {
   const [showCompanyName, setShowCompanyName] = useState(true);
   const [showCompanyLogo, setShowCompanyLogo] = useState(true);
   const [logoSize, setLogoSize] = useState(100);
+  const [companyNameSize, setCompanyNameSize] = useState(28);
 
   // Load settings from current company data
   useEffect(() => {
@@ -58,6 +60,7 @@ export default function CompanySetup() {
       setShowCompanyName(currentCompany.showCompanyName !== false);
       setShowCompanyLogo(currentCompany.showCompanyLogo !== false);
       setLogoSize(currentCompany.logoSize || 100);
+      setCompanyNameSize(currentCompany.companyNameSize || 28);
     }
   }, [currentCompany]);
 
@@ -80,6 +83,7 @@ export default function CompanySetup() {
     try {
       const settings = {
         logoSize,
+        companyNameSize,
         showCompanyName,
         showCompanyLogo
       };
@@ -370,7 +374,7 @@ export default function CompanySetup() {
                   {logoSize}px
                 </span>
                 <button
-                  onClick={() => setLogoSize(Math.min(200, logoSize + 10))}
+                  onClick={() => setLogoSize(Math.min(300, logoSize + 10))}
                   style={{
                     width: '32px',
                     height: '32px',
@@ -402,10 +406,102 @@ export default function CompanySetup() {
                   color: '#64748b', 
                   marginLeft: '8px' 
                 }}>
-                  (60-200px)
+                  (60-300px)
                 </span>
               </div>
             )}
+
+            {/* Company Name Size Control */}
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '12px',
+              marginBottom: '20px',
+              padding: '16px',
+              backgroundColor: '#f8fafc',
+              borderRadius: '8px',
+              border: '1px solid #e2e8f0'
+            }}>
+              <label style={{ fontSize: '14px', color: '#374151', minWidth: '80px', fontWeight: '500' }}>
+                Name Size:
+              </label>
+              <button
+                onClick={() => setCompanyNameSize(Math.max(16, companyNameSize - 2))}
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '6px',
+                  border: '1px solid #cbd5e1',
+                  backgroundColor: '#ffffff',
+                  color: '#374151',
+                  fontSize: '18px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#f1f5f9';
+                  e.currentTarget.style.borderColor = '#94a3b8';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '#ffffff';
+                  e.currentTarget.style.borderColor = '#cbd5e1';
+                }}
+              >
+                -
+              </button>
+              <span style={{
+                minWidth: '80px',
+                textAlign: 'center',
+                fontSize: '14px',
+                fontWeight: '600',
+                color: '#1e293b',
+                padding: '6px 12px',
+                backgroundColor: '#ffffff',
+                border: '1px solid #e2e8f0',
+                borderRadius: '6px'
+              }}>
+                {companyNameSize}px
+              </span>
+              <button
+                onClick={() => setCompanyNameSize(Math.min(48, companyNameSize + 2))}
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '6px',
+                  border: '1px solid #cbd5e1',
+                  backgroundColor: '#ffffff',
+                  color: '#374151',
+                  fontSize: '18px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#f1f5f9';
+                  e.currentTarget.style.borderColor = '#94a3b8';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '#ffffff';
+                  e.currentTarget.style.borderColor = '#cbd5e1';
+                }}
+              >
+                +
+              </button>
+              <span style={{ 
+                fontSize: '12px', 
+                color: '#64748b', 
+                marginLeft: '8px' 
+              }}>
+                (16-48px)
+              </span>
+            </div>
             
             {/* Preview Display */}
             <div style={{ 
@@ -470,7 +566,7 @@ export default function CompanySetup() {
                     {showCompanyName && (
                       <div>
                         <div style={{ 
-                          fontSize: `${Math.floor(logoSize * 0.28)}px`, 
+                          fontSize: `${companyNameSize}px`, 
                           fontWeight: 700, 
                           color: '#1e293b',
                           transition: 'all 0.3s ease'

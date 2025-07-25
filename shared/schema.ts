@@ -63,7 +63,8 @@ export const companies = pgTable("companies", {
   primaryAdminEmail: varchar("primary_admin_email"),
   primaryAdminTitle: varchar("primary_admin_title"),
   logo: text("logo"),
-  logoSize: integer("logo_size").default(100), // Logo size in pixels (100-200)
+  logoSize: integer("logo_size").default(100), // Logo size in pixels (60-300)
+  companyNameSize: integer("company_name_size").default(28), // Company name font size in pixels (16-48)
   showCompanyName: boolean("show_company_name").default(true),
   showCompanyLogo: boolean("show_company_logo").default(true),
   isActive: boolean("is_active").default(true),

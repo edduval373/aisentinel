@@ -16,6 +16,10 @@ interface Company {
   name: string;
   logo?: string;
   description?: string;
+  logoSize?: number;
+  companyNameSize?: number;
+  showCompanyName?: boolean;
+  showCompanyLogo?: boolean;
 }
 
 function CompanyInfoLarge() {
@@ -63,6 +67,7 @@ function CompanyInfoLarge() {
 
   // Use company settings from database
   const logoSize = currentCompany.logoSize || 100;
+  const companyNameSize = currentCompany.companyNameSize || 28;
   const showCompanyName = currentCompany.showCompanyName !== false; // Default to true
   const showCompanyLogo = currentCompany.showCompanyLogo !== false; // Default to true
 
@@ -137,7 +142,7 @@ function CompanyInfoLarge() {
       {showCompanyName && (
         <div>
           <div style={{ 
-            fontSize: `${Math.floor(logoSize * 0.36)}px`, 
+            fontSize: `${companyNameSize}px`, 
             fontWeight: 700, 
             color: '#1e293b', 
             textAlign: 'center',
