@@ -347,7 +347,7 @@ export default function SetupApiKeys() {
                     )}
                   </div>
                   
-                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '12px' }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '16px' }}>
                     <div style={{ flex: '1' }}>
                       <Label style={{ fontSize: '14px', fontWeight: '500', color: '#374151', display: 'block', marginBottom: '8px' }}>
                         Available Models
@@ -406,7 +406,7 @@ export default function SetupApiKeys() {
                     </button>
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', marginBottom: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '16px' }}>
                     <div style={{ fontSize: '13px', color: '#6b7280' }}>
                       Status: <span style={{ fontWeight: '500', color: isPlaceholder ? '#dc2626' : '#16a34a' }}>
                         {isPlaceholder ? "Not configured" : "Configured"}
