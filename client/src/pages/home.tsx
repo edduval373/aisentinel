@@ -110,11 +110,13 @@ function CompanyInfoLarge() {
                 src={currentCompany.logo} 
                 alt={currentCompany.name}
                 style={{ 
-                  width: `${headerLogoSize}px`, 
-                  height: `${headerLogoSize}px`, 
+                  maxWidth: `${headerLogoSize}px`, 
+                  maxHeight: `${headerLogoSize}px`, 
+                  height: 'auto',
+                  width: 'auto',
                   objectFit: 'contain',
-                  borderRadius: '8px',
-                  border: '1px solid #e2e8f0',
+                  borderRadius: '6px',
+                  border: '2px solid #d1d5db',
                   display: 'block'
                 }}
               />
@@ -234,11 +236,13 @@ function CompanyInfo() {
           src={currentCompany.logo} 
           alt={currentCompany.name}
           style={{ 
-            width: '48px', 
-            height: '48px', 
+            maxWidth: '48px', 
+            maxHeight: '48px', 
+            height: 'auto',
+            width: 'auto',
             objectFit: 'contain',
-            borderRadius: '8px',
-            border: '1px solid #e2e8f0'
+            borderRadius: '6px',
+            border: '2px solid #d1d5db'
           }}
         />
       ) : (

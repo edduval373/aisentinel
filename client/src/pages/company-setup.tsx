@@ -764,11 +764,13 @@ export default function CompanySetup() {
                             src={currentCompany.logo} 
                             alt={currentCompany.name}
                             style={{ 
-                              width: `${logoSize}px`, 
-                              height: `${logoSize}px`, 
+                              maxWidth: `${logoSize}px`, 
+                              maxHeight: `${logoSize}px`, 
+                              height: 'auto',
+                              width: 'auto',
                               objectFit: 'contain',
                               borderRadius: '12px',
-                              border: '2px solid #e2e8f0',
+                              border: '3px solid #9ca3af',
                               transition: 'all 0.3s ease',
                               boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
                             }}
@@ -906,11 +908,13 @@ export default function CompanySetup() {
                     src={currentCompany.logo} 
                     alt={currentCompany.name} 
                     style={{ 
-                      width: '48px', 
-                      height: '48px', 
-                      objectFit: 'cover', 
-                      borderRadius: '8px', 
-                      border: '1px solid #e5e7eb' 
+                      maxWidth: '48px', 
+                      maxHeight: '48px', 
+                      height: 'auto',
+                      width: 'auto',
+                      objectFit: 'contain', 
+                      borderRadius: '6px', 
+                      border: '2px solid #9ca3af' 
                     }}
                   />
                 )}
