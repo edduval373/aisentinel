@@ -277,8 +277,14 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
               
               <button
                 onClick={() => {
-                  navigate("/admin");
-                  if (window.innerWidth < 1024) onToggle();
+                  if (location === "/admin") {
+                    // If already on this page, just close the sidebar
+                    onToggle();
+                  } else {
+                    // Navigate to the page
+                    navigate("/admin");
+                    if (window.innerWidth < 1024) onToggle(); // Close on mobile
+                  }
                 }}
                 style={{
                   width: '100%',
@@ -313,8 +319,14 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
               
               <button
                 onClick={() => {
-                  navigate("/admin/setup-api-keys");
-                  if (window.innerWidth < 1024) onToggle();
+                  if (location === "/admin/setup-api-keys") {
+                    // If already on this page, just close the sidebar
+                    onToggle();
+                  } else {
+                    // Navigate to the page
+                    navigate("/admin/setup-api-keys");
+                    if (window.innerWidth < 1024) onToggle(); // Close on mobile
+                  }
                 }}
                 style={{
                   width: '100%',
@@ -371,8 +383,14 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
               
               <button
                 onClick={() => {
-                  navigate("/admin/company-setup");
-                  if (window.innerWidth < 1024) onToggle();
+                  if (location === "/admin/company-setup") {
+                    // If already on this page, just close the sidebar
+                    onToggle();
+                  } else {
+                    // Navigate to the page
+                    navigate("/admin/company-setup");
+                    if (window.innerWidth < 1024) onToggle(); // Close on mobile
+                  }
                 }}
                 style={{
                   width: '100%',
@@ -411,8 +429,14 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
               
               <button
                 onClick={() => {
-                  navigate("/admin/create-models");
-                  if (window.innerWidth < 1024) onToggle();
+                  if (location === "/admin/create-models") {
+                    // If already on this page, just close the sidebar
+                    onToggle();
+                  } else {
+                    // Navigate to the page
+                    navigate("/admin/create-models");
+                    if (window.innerWidth < 1024) onToggle(); // Close on mobile
+                  }
                 }}
                 style={{
                   width: '100%',
@@ -451,8 +475,14 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
               
               <button
                 onClick={() => {
-                  navigate("/admin/model-fusion");
-                  if (window.innerWidth < 1024) onToggle();
+                  if (location === "/admin/model-fusion") {
+                    // If already on this page, just close the sidebar
+                    onToggle();
+                  } else {
+                    // Navigate to the page
+                    navigate("/admin/model-fusion");
+                    if (window.innerWidth < 1024) onToggle(); // Close on mobile
+                  }
                 }}
                 style={{
                   width: '100%',
@@ -553,8 +583,14 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                         <button
                           key={item.href}
                           onClick={() => {
-                            navigate(item.href);
-                            if (window.innerWidth < 1024) onToggle();
+                            if (location === item.href) {
+                              // If already on this page, just close the sidebar
+                              onToggle();
+                            } else {
+                              // Navigate to the page
+                              navigate(item.href);
+                              if (window.innerWidth < 1024) onToggle(); // Close on mobile
+                            }
                           }}
                           style={{
                             width: '100%',
