@@ -68,14 +68,23 @@ export default function AdminRoles() {
 
   const fetchRoles = async () => {
     try {
-      const response = await fetch(`/api/company/roles/${user?.companyId}`, {
+      // Use company ID 1 if user companyId is not available
+      const companyId = user?.companyId || 1;
+      console.log("Fetching roles for company:", companyId);
+      
+      const response = await fetch(`/api/company/roles/${companyId}`, {
         credentials: 'include',
       });
       
+      console.log("Roles API response status:", response.status);
+      
       if (response.ok) {
         const data = await response.json();
+        console.log("Roles data received:", data);
         setRoles(data);
       } else {
+        const errorText = await response.text();
+        console.error("API error:", response.status, errorText);
         toast({
           title: "Error",
           description: "Failed to fetch roles",
@@ -116,7 +125,10 @@ export default function AdminRoles() {
         permissions: newRole.permissions
       };
 
-      const response = await fetch(`/api/company/roles/${user?.companyId}`, {
+      // Use company ID 1 if user companyId is not available
+      const companyId = user?.companyId || 1;
+      
+      const response = await fetch(`/api/company/roles/${companyId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

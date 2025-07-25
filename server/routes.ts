@@ -1655,13 +1655,21 @@ This is a demonstration of AI Sentinel's capabilities. In the full version:
   });
 
   // Company Role Management routes (Owner/Super-user only)
-  app.get('/api/company/roles/:companyId', isAuthenticated, async (req: any, res) => {
+  app.get('/api/company/roles/:companyId', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
-      const user = await storage.getUser(req.user.claims.sub);
+      console.log("Fetching company roles - userId:", req.userId, "companyId param:", req.params.companyId);
+      
+      // Get user from cookie authentication
+      const user = await storage.getUser(req.userId!);
       const userRoleLevel = user?.roleLevel || 1;
-      if (userRoleLevel < 99) { // Must be owner (99) or higher
-        return res.status(403).json({ message: "Owner or super-user access required" });
+      
+      console.log("User role level:", userRoleLevel, "Required: 98+");
+      
+      // Must be administrator (98) or higher
+      if (userRoleLevel < 98) {
+        return res.status(403).json({ message: "Administrator access required" });
       }
+      
       const companyId = parseInt(req.params.companyId);
 
       // Ensure user can only access their own company (unless super-user)
@@ -1669,7 +1677,10 @@ This is a demonstration of AI Sentinel's capabilities. In the full version:
         return res.status(403).json({ message: "Access denied" });
       }
 
+      console.log("Fetching roles for company:", companyId);
       const roles = await storage.getCompanyRoles(companyId);
+      console.log("Found roles:", roles.length);
+      
       res.json(roles);
     } catch (error) {
       console.error("Error fetching company roles:", error);
@@ -1677,12 +1688,12 @@ This is a demonstration of AI Sentinel's capabilities. In the full version:
     }
   });
 
-  app.post('/api/company/roles/:companyId', isAuthenticated, async (req: any, res) => {
+  app.post('/api/company/roles/:companyId', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
-      const user = await storage.getUser(req.user.claims.sub);
+      const user = await storage.getUser(req.userId!);
       const userRoleLevel = user?.roleLevel || 1;
-      if (userRoleLevel < 99) { // Must be owner (99) or higher
-        return res.status(403).json({ message: "Owner or super-user access required" });
+      if (userRoleLevel < 98) { // Must be administrator (98) or higher
+        return res.status(403).json({ message: "Administrator access required" });
       }
       const companyId = parseInt(req.params.companyId);
 
@@ -1704,12 +1715,12 @@ This is a demonstration of AI Sentinel's capabilities. In the full version:
     }
   });
 
-  app.patch('/api/company/roles/:roleId', isAuthenticated, async (req: any, res) => {
+  app.patch('/api/company/roles/:roleId', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
-      const user = await storage.getUser(req.user.claims.sub);
+      const user = await storage.getUser(req.userId!);
       const userRoleLevel = user?.roleLevel || 1;
-      if (userRoleLevel < 99) { // Must be owner (99) or higher
-        return res.status(403).json({ message: "Owner or super-user access required" });
+      if (userRoleLevel < 98) { // Must be administrator (98) or higher
+        return res.status(403).json({ message: "Administrator access required" });
       }
       const roleId = parseInt(req.params.roleId);
 
@@ -1721,12 +1732,12 @@ This is a demonstration of AI Sentinel's capabilities. In the full version:
     }
   });
 
-  app.delete('/api/company/roles/:roleId', isAuthenticated, async (req: any, res) => {
+  app.delete('/api/company/roles/:roleId', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
-      const user = await storage.getUser(req.user.claims.sub);
+      const user = await storage.getUser(req.userId!);
       const userRoleLevel = user?.roleLevel || 1;
-      if (userRoleLevel < 99) { // Must be owner (99) or higher
-        return res.status(403).json({ message: "Owner or super-user access required" });
+      if (userRoleLevel < 98) { // Must be administrator (98) or higher
+        return res.status(403).json({ message: "Administrator access required" });
       }
       const roleId = parseInt(req.params.roleId);
 
