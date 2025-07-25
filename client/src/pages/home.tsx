@@ -336,16 +336,16 @@ export default function Home() {
       {canAccessSidebar && <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />}
       
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
-        {/* Top Header - Menu Controls Row */}
+        {/* Compact Header with Company Branding and Menu Controls */}
         <div style={{ 
           backgroundColor: '#f1f5f9', 
           borderBottom: '1px solid #e2e8f0', 
-          padding: '4px 16px', 
+          padding: '8px 16px', 
           display: 'flex', 
           alignItems: 'center',
           justifyContent: 'space-between',
           flexShrink: 0,
-          minHeight: '24px'
+          minHeight: '64px'
         }}>
           {/* Left side - Menu Button */}
           <Button
@@ -354,9 +354,9 @@ export default function Home() {
             onClick={canAccessSidebar ? () => setSidebarOpen(!sidebarOpen) : undefined}
             disabled={!canAccessSidebar}
             style={{ 
-              padding: '2px',
-              minWidth: '32px',
-              height: '32px',
+              padding: '4px',
+              minWidth: '40px',
+              height: '40px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -371,8 +371,8 @@ export default function Home() {
               src="/ai-sentinel-logo.png" 
               alt="AI Sentinel" 
               style={{ 
-                width: '28px', 
-                height: '28px', 
+                width: '32px', 
+                height: '32px', 
                 objectFit: 'contain',
                 flexShrink: 0,
                 filter: 'brightness(1.1) saturate(1.3) contrast(1.2)'
@@ -380,36 +380,35 @@ export default function Home() {
             />
           </Button>
 
+          {/* Center - Company Branding */}
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '16px',
+            justifyContent: 'center',
+            margin: '0',
+            padding: '0',
+            flex: 1
+          }}>
+            <CompanyInfoLarge />
+          </div>
+
           {/* Right side - Sign Out Button */}
           <button
             onClick={() => window.location.href = '/login'}
             style={{
-              fontSize: '12px',
+              fontSize: '14px',
               color: '#64748b',
               textDecoration: 'underline',
               background: 'none',
               border: 'none',
               cursor: 'pointer',
-              padding: '4px 6px',
+              padding: '6px 8px',
               flexShrink: 0
             }}
           >
             Sign Out
           </button>
-        </div>
-
-        {/* Centered Company Branding */}
-        <div style={{ 
-          backgroundColor: '#f1f5f9', 
-          borderBottom: '1px solid #e2e8f0', 
-          padding: '20px 16px', 
-          display: 'flex', 
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexShrink: 0,
-          minHeight: '100px'
-        }}>
-          <CompanyInfoLarge />
         </div>
         
         {/* Chat Interface Container */}
