@@ -208,9 +208,12 @@ export default function CompanySetup() {
       
       const croppedDataUrl = canvas.toDataURL('image/png');
       
-      // Update company logo with cropped image
+      // Update company logo directly via API
       if (currentCompany) {
-        handleEditCompany({ ...currentCompany, logo: croppedDataUrl });
+        updateCompanyLogoMutation.mutate({
+          id: currentCompany.id,
+          logo: croppedDataUrl
+        });
       }
       
       setIsCroppingModalOpen(false);
@@ -394,6 +397,31 @@ export default function CompanySetup() {
       toast({ 
         title: "Error", 
         description: error?.message || "Failed to remove owner", 
+        variant: "destructive" 
+      });
+    },
+  });
+
+  // Update company logo mutation
+  const updateCompanyLogoMutation = useMutation({
+    mutationFn: ({ id, logo }: { id: number; logo: string }) =>
+      apiRequest(`/api/admin/companies/${id}`, "PATCH", { logo }),
+    onSuccess: () => {
+      // Refresh company data and chat display settings
+      refetchCompany();
+      queryClient.invalidateQueries({ queryKey: ["/api/user/current-company"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/company/owners"] });
+      toast({ title: "Success", description: "Logo updated successfully" });
+      
+      // Force a reload to ensure the new logo displays in the chat header
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
+    },
+    onError: (error: any) => {
+      toast({ 
+        title: "Error", 
+        description: error?.message || "Failed to update logo", 
         variant: "destructive" 
       });
     },
