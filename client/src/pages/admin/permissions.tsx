@@ -5,6 +5,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { roleBasedAccess } from "@/lib/roleBasedAccess";
 import AdminLayout from "@/components/layout/AdminLayout";
+import DemoBanner from "@/components/DemoBanner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -289,8 +290,11 @@ export default function AdminPermissions() {
     }
   };
 
-  // Check access level - require Administrator (98+) access
-  if (!isLoading && user && !roleBasedAccess.hasAccessLevel(user.roleLevel, 98)) {
+  // Check access level - require Administrator (98+) access, but allow demo users (0) read-only access
+  const hasReadOnlyAccess = user && (user.roleLevel === 0); // Demo users
+  const hasFullAccess = user && user.roleLevel !== undefined && roleBasedAccess.hasAccessLevel(user.roleLevel, 98); // Administrator+
+  
+  if (!isLoading && user && !hasReadOnlyAccess && !hasFullAccess) {
     return (
       <AdminLayout title="Permissions" subtitle="Configure activity permissions and access controls">
         <div style={{ 
@@ -418,9 +422,13 @@ export default function AdminPermissions() {
   };
 
   return (
-    <AdminLayout title="Permissions" subtitle="Configure activity permissions and access controls">
+    <AdminLayout 
+      title="Permissions" 
+      subtitle="Configure activity permissions and access controls"
+      rightContent={hasReadOnlyAccess ? <DemoBanner message="Demo Mode - Read Only View - Permissions cannot be modified" /> : undefined}
+    >
       <div style={{ padding: '24px' }}>
-        {/* Header with Add Button */}
+        {/* Header with Add Button - Only show for full access users */}
         <div style={{ 
           display: 'flex', 
           justifyContent: 'space-between', 
@@ -435,28 +443,30 @@ export default function AdminPermissions() {
               Configure permissions and access controls for different user activities
             </p>
           </div>
-          <button
-            onClick={() => setIsAddDialogOpen(true)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '12px 24px',
-              backgroundColor: '#3b82f6',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '14px',
-              fontWeight: '500',
-              cursor: 'pointer',
-              transition: 'background-color 0.2s',
-            }}
-            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#3b82f6'}
-          >
-            <Plus style={{ width: '20px', height: '20px' }} />
-            Add Permission
-          </button>
+          {hasFullAccess && (
+            <button
+              onClick={() => setIsAddDialogOpen(true)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '12px 24px',
+                backgroundColor: '#3b82f6',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '14px',
+                fontWeight: '500',
+                cursor: 'pointer',
+                transition: 'background-color 0.2s',
+              }}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#3b82f6'}
+            >
+              <Plus style={{ width: '20px', height: '20px' }} />
+              Add Permission
+            </button>
+          )}
         </div>
 
         {/* Permission Categories Grid */}
@@ -540,46 +550,48 @@ export default function AdminPermissions() {
                               onCheckedChange={(enabled) => 
                                 togglePermissionMutation.mutate({ id: permission.id, enabled })
                               }
-                              disabled={togglePermissionMutation.isPending}
+                              disabled={togglePermissionMutation.isPending || !!hasReadOnlyAccess}
                             />
-                            <div style={{ display: 'flex', gap: '8px' }}>
-                              <button
-                                onClick={() => handleEdit(permission)}
-                                style={{
-                                  padding: '8px',
-                                  backgroundColor: '#3b82f6',
-                                  color: 'white',
-                                  border: 'none',
-                                  borderRadius: '6px',
-                                  cursor: 'pointer',
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  transition: 'background-color 0.2s',
-                                }}
-                                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
-                                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#3b82f6'}
-                              >
-                                <Edit style={{ width: '16px', height: '16px' }} />
-                              </button>
-                              <button
-                                onClick={() => handleDelete(permission)}
-                                style={{
-                                  padding: '8px',
-                                  backgroundColor: '#ef4444',
-                                  color: 'white',
-                                  border: 'none',
-                                  borderRadius: '6px',
-                                  cursor: 'pointer',
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  transition: 'background-color 0.2s',
-                                }}
-                                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#dc2626'}
-                                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#ef4444'}
-                              >
-                                <Trash2 style={{ width: '16px', height: '16px' }} />
-                              </button>
-                            </div>
+                            {hasFullAccess && (
+                              <div style={{ display: 'flex', gap: '8px' }}>
+                                <button
+                                  onClick={() => handleEdit(permission)}
+                                  style={{
+                                    padding: '8px',
+                                    backgroundColor: '#3b82f6',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    transition: 'background-color 0.2s',
+                                  }}
+                                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
+                                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#3b82f6'}
+                                >
+                                  <Edit style={{ width: '16px', height: '16px' }} />
+                                </button>
+                                <button
+                                  onClick={() => handleDelete(permission)}
+                                  style={{
+                                    padding: '8px',
+                                    backgroundColor: '#ef4444',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    transition: 'background-color 0.2s',
+                                  }}
+                                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#dc2626'}
+                                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#ef4444'}
+                                >
+                                  <Trash2 style={{ width: '16px', height: '16px' }} />
+                                </button>
+                              </div>
+                            )}
                           </div>
                         </div>
                       ))}
