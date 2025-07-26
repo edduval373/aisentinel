@@ -297,8 +297,9 @@ export default function AdminPermissions() {
   const isDemoMode = isDemoModeActive(user);
   const hasReadOnlyAccess = user && (user.roleLevel === 0); // Demo users
   const hasFullAccess = user && user.roleLevel !== undefined && roleBasedAccess.hasAccessLevel(user.roleLevel, 98); // Administrator+
+  const hasAnyAccess = hasReadOnlyAccess || hasFullAccess; // Demo OR Administrator+
   
-  if (!isLoading && user && !hasReadOnlyAccess && !hasFullAccess) {
+  if (!isLoading && user && !hasAnyAccess) {
     return (
       <AdminLayout title="Permissions" subtitle="Configure activity permissions and access controls">
         <div style={{ 
@@ -385,15 +386,20 @@ export default function AdminPermissions() {
     return null;
   }
 
-  // Group permissions by category
-  const groupedPermissions = (permissions as Permission[]).reduce((acc: Record<string, Permission[]>, permission: Permission) => {
-    const category = permission.category;
-    if (!acc[category]) {
-      acc[category] = [];
+  // Group permissions by category - handle empty or undefined permissions
+  const groupedPermissions = React.useMemo(() => {
+    if (!permissions || !Array.isArray(permissions)) {
+      return {};
     }
-    acc[category].push(permission);
-    return acc;
-  }, {} as Record<string, Permission[]>);
+    return (permissions as Permission[]).reduce((acc: Record<string, Permission[]>, permission: Permission) => {
+      const category = permission.category;
+      if (!acc[category]) {
+        acc[category] = [];
+      }
+      acc[category].push(permission);
+      return acc;
+    }, {} as Record<string, Permission[]>);
+  }, [permissions]);
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
@@ -474,13 +480,29 @@ export default function AdminPermissions() {
         </div>
 
         {/* Permission Categories Grid */}
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', 
-          gap: '24px',
-          marginBottom: '32px'
-        }}>
-          {Object.entries(groupedPermissions).map(([category, categoryPermissions]) => {
+        {Object.keys(groupedPermissions).length === 0 ? (
+          <div style={{
+            textAlign: 'center',
+            padding: '40px',
+            backgroundColor: '#f9fafb',
+            borderRadius: '12px',
+            border: '1px solid #e5e7eb'
+          }}>
+            <p style={{ fontSize: '16px', color: '#6b7280', marginBottom: '8px' }}>
+              No permissions found
+            </p>
+            <p style={{ fontSize: '14px', color: '#9ca3af' }}>
+              {hasFullAccess ? 'Add your first permission to get started.' : 'Contact your administrator to configure permissions.'}
+            </p>
+          </div>
+        ) : (
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', 
+            gap: '24px',
+            marginBottom: '32px'
+          }}>
+            {Object.entries(groupedPermissions).map(([category, categoryPermissions]) => {
             const Icon = getCategoryIcon(category);
             return (
               <div
