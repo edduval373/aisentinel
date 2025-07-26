@@ -497,34 +497,24 @@ export default function Home() {
               </>
             )}
             
-            {/* Sign Out Button with Demo indicator */}
+            {/* Sign Out/Sign Up Button */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
               <button
-                onClick={() => window.location.href = '/login'}
+                onClick={() => window.location.href = isDemoMode ? '/' : '/login'}
                 style={{
                   fontSize: '14px',
-                  color: '#64748b',
+                  color: isDemoMode ? '#3b82f6' : '#64748b',
                   textDecoration: 'underline',
                   background: 'none',
                   border: 'none',
                   cursor: 'pointer',
-                  padding: '6px 8px'
+                  padding: '6px 8px',
+                  fontWeight: isDemoMode ? '600' : 'normal'
                 }}
               >
                 <LogOut size={14} style={{ display: 'inline', marginRight: '4px' }} />
-                Sign Out
+                {isDemoMode ? 'Sign Up' : 'Sign Out'}
               </button>
-              {isDemoMode && (
-                <div style={{
-                  fontSize: '18px',
-                  color: '#1e3a8a',
-                  fontWeight: '600',
-                  marginTop: '2px',
-                  padding: '0 8px'
-                }}>
-                  DEMO
-                </div>
-              )}
             </div>
           </div>
         </div>
