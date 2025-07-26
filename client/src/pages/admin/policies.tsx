@@ -4,6 +4,7 @@ import { useCompanyContext } from "@/hooks/useCompanyContext";
 import { useToast } from "@/hooks/use-toast";
 import { Shield, AlertTriangle, Save, Plus, Edit, Eye, Settings } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
+import DemoBanner from "@/components/DemoBanner";
 import { hasAccessLevel, canViewAdminPage, ACCESS_REQUIREMENTS } from "@/utils/roleBasedAccess";
 
 export default function AdminPolicies() {
@@ -12,9 +13,12 @@ export default function AdminPolicies() {
   const { currentCompanyId } = useCompanyContext();
   const [activeTab, setActiveTab] = useState("content-filters");
 
-  // Check access level
+  // Check access level - allow demo users (0) read-only access and administrators (2+) full access
+  const hasReadOnlyAccess = user && (user.roleLevel === 0); // Demo users
+  const hasFullAccess = user && user.roleLevel !== undefined && canViewAdminPage(user.roleLevel, ACCESS_REQUIREMENTS.CONTENT_POLICIES); // Admin+
+  
   useEffect(() => {
-    if (!isLoading && (!isAuthenticated || !canViewAdminPage(user?.roleLevel, ACCESS_REQUIREMENTS.CONTENT_POLICIES))) {
+    if (!isLoading && (!isAuthenticated || (!hasReadOnlyAccess && !hasFullAccess))) {
       toast({
         title: "Access Denied",
         description: `Content Policies requires Admin level (2+) access. Your current level: ${user?.roleLevel || 0}`,
@@ -23,7 +27,7 @@ export default function AdminPolicies() {
       window.location.href = "/";
       return;
     }
-  }, [isAuthenticated, isLoading, user, toast]);
+  }, [isAuthenticated, isLoading, user, toast, hasReadOnlyAccess, hasFullAccess]);
 
   if (isLoading) {
     return (
@@ -130,7 +134,11 @@ export default function AdminPolicies() {
   };
 
   return (
-    <AdminLayout title="Content Policies" subtitle={`Manage security policies and content filtering rules for ${user?.companyName || 'Company'}`}>
+    <AdminLayout 
+      title="Content Policies" 
+      subtitle={`Manage security policies and content filtering rules for ${user?.companyName || 'Company'}`}
+      rightContent={hasReadOnlyAccess ? <DemoBanner message="Demo Mode - Read Only View - Content policies cannot be modified" /> : undefined}
+    >
       <div style={{ padding: '24px' }}>
         {/* Tab Navigation */}
         <div style={{
@@ -241,34 +249,36 @@ export default function AdminPolicies() {
               }}>
                 Content Filtering Rules
               </h2>
-              <button style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '10px 16px',
-                backgroundColor: '#3b82f6',
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '14px',
-                fontWeight: '500',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#2563eb';
-                e.currentTarget.style.transform = 'translateY(-1px)';
-                e.currentTarget.style.boxShadow = '0 2px 8px rgba(59, 130, 246, 0.3)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = '#3b82f6';
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
-              }}>
-                <Plus size={16} />
-                Add Filter
-              </button>
+              {hasFullAccess && (
+                <button style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '10px 16px',
+                  backgroundColor: '#3b82f6',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#2563eb';
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(59, 130, 246, 0.3)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '#3b82f6';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
+                }}>
+                  <Plus size={16} />
+                  Add Filter
+                </button>
+              )}
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -337,18 +347,20 @@ export default function AdminPolicies() {
                           <input
                             type="checkbox"
                             defaultChecked={filter.enabled}
+                            disabled={!!hasReadOnlyAccess}
                             style={{ display: 'none' }}
                           />
                           <span style={{
                             position: 'absolute',
-                            cursor: 'pointer',
+                            cursor: hasReadOnlyAccess ? 'not-allowed' : 'pointer',
                             top: 0,
                             left: 0,
                             right: 0,
                             bottom: 0,
                             backgroundColor: filter.enabled ? '#22c55e' : '#cbd5e1',
                             borderRadius: '24px',
-                            transition: 'all 0.3s ease'
+                            transition: 'all 0.3s ease',
+                            opacity: hasReadOnlyAccess ? 0.6 : 1
                           }}>
                             <span style={{
                               position: 'absolute',
@@ -431,58 +443,60 @@ export default function AdminPolicies() {
                       </div>
                     </div>
                     
-                    <div style={{ display: 'flex', gap: '8px' }}>
-                      <button style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        padding: '8px 12px',
-                        backgroundColor: 'white',
-                        color: '#374151',
-                        border: '1px solid #d1d5db',
-                        borderRadius: '6px',
-                        fontSize: '13px',
-                        fontWeight: '500',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s ease'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = '#f9fafb';
-                        e.currentTarget.style.borderColor = '#9ca3af';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = 'white';
-                        e.currentTarget.style.borderColor = '#d1d5db';
-                      }}>
-                        <Settings size={14} />
-                        Configure
-                      </button>
-                      <button style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        padding: '8px 12px',
-                        backgroundColor: 'white',
-                        color: '#374151',
-                        border: '1px solid #d1d5db',
-                        borderRadius: '6px',
-                        fontSize: '13px',
-                        fontWeight: '500',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s ease'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = '#f9fafb';
-                        e.currentTarget.style.borderColor = '#9ca3af';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = 'white';
-                        e.currentTarget.style.borderColor = '#d1d5db';
-                      }}>
-                        <Eye size={14} />
-                        View Logs
-                      </button>
-                    </div>
+                    {hasFullAccess && (
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <button style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          padding: '8px 12px',
+                          backgroundColor: 'white',
+                          color: '#374151',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '6px',
+                          fontSize: '13px',
+                          fontWeight: '500',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = '#f9fafb';
+                          e.currentTarget.style.borderColor = '#9ca3af';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'white';
+                          e.currentTarget.style.borderColor = '#d1d5db';
+                        }}>
+                          <Settings size={14} />
+                          Configure
+                        </button>
+                        <button style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          padding: '8px 12px',
+                          backgroundColor: 'white',
+                          color: '#374151',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '6px',
+                          fontSize: '13px',
+                          fontWeight: '500',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = '#f9fafb';
+                          e.currentTarget.style.borderColor = '#9ca3af';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'white';
+                          e.currentTarget.style.borderColor = '#d1d5db';
+                        }}>
+                          <Eye size={14} />
+                          View Logs
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
@@ -507,34 +521,36 @@ export default function AdminPolicies() {
               }}>
                 Security Configuration
               </h2>
-              <button style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '10px 16px',
-                backgroundColor: '#10b981',
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '14px',
-                fontWeight: '500',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#059669';
-                e.currentTarget.style.transform = 'translateY(-1px)';
-                e.currentTarget.style.boxShadow = '0 2px 8px rgba(16, 185, 129, 0.3)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = '#10b981';
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
-              }}>
-                <Save size={16} />
-                Save Changes
-              </button>
+              {hasFullAccess && (
+                <button style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '10px 16px',
+                  backgroundColor: '#10b981',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#059669';
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(16, 185, 129, 0.3)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '#10b981';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
+                }}>
+                  <Save size={16} />
+                  Save Changes
+                </button>
+              )}
             </div>
 
             <div style={{
@@ -586,6 +602,7 @@ export default function AdminPolicies() {
                     <input
                       type="text"
                       defaultValue="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
+                      readOnly={!!hasReadOnlyAccess}
                       style={{
                         width: '100%',
                         padding: '10px 12px',
@@ -593,8 +610,9 @@ export default function AdminPolicies() {
                         fontFamily: 'Monaco, "Lucida Console", monospace',
                         border: '1px solid #d1d5db',
                         borderRadius: '6px',
-                        backgroundColor: '#f9fafb',
-                        color: '#1f2937'
+                        backgroundColor: hasReadOnlyAccess ? '#f3f4f6' : '#f9fafb',
+                        color: '#1f2937',
+                        cursor: hasReadOnlyAccess ? 'not-allowed' : 'text'
                       }}
                     />
                   </div>
@@ -611,6 +629,7 @@ export default function AdminPolicies() {
                     <input
                       type="text"
                       defaultValue="\b\d{3}-\d{3}-\d{4}\b"
+                      readOnly={!!hasReadOnlyAccess}
                       style={{
                         width: '100%',
                         padding: '10px 12px',
@@ -618,8 +637,9 @@ export default function AdminPolicies() {
                         fontFamily: 'Monaco, "Lucida Console", monospace',
                         border: '1px solid #d1d5db',
                         borderRadius: '6px',
-                        backgroundColor: '#f9fafb',
-                        color: '#1f2937'
+                        backgroundColor: hasReadOnlyAccess ? '#f3f4f6' : '#f9fafb',
+                        color: '#1f2937',
+                        cursor: hasReadOnlyAccess ? 'not-allowed' : 'text'
                       }}
                     />
                   </div>
@@ -636,6 +656,7 @@ export default function AdminPolicies() {
                     <input
                       type="text"
                       defaultValue="\b\d{3}-\d{2}-\d{4}\b"
+                      readOnly={!!hasReadOnlyAccess}
                       style={{
                         width: '100%',
                         padding: '10px 12px',
@@ -643,8 +664,9 @@ export default function AdminPolicies() {
                         fontFamily: 'Monaco, "Lucida Console", monospace',
                         border: '1px solid #d1d5db',
                         borderRadius: '6px',
-                        backgroundColor: '#f9fafb',
-                        color: '#1f2937'
+                        backgroundColor: hasReadOnlyAccess ? '#f3f4f6' : '#f9fafb',
+                        color: '#1f2937',
+                        cursor: hasReadOnlyAccess ? 'not-allowed' : 'text'
                       }}
                     />
                   </div>
@@ -690,6 +712,7 @@ api_key
 credit_card
 social_security
 bank_account`}
+                    readOnly={!!hasReadOnlyAccess}
                     style={{
                       width: '100%',
                       padding: '12px',
@@ -697,10 +720,11 @@ bank_account`}
                       fontFamily: 'Monaco, "Lucida Console", monospace',
                       border: '1px solid #d1d5db',
                       borderRadius: '6px',
-                      backgroundColor: '#f9fafb',
+                      backgroundColor: hasReadOnlyAccess ? '#f3f4f6' : '#f9fafb',
                       color: '#1f2937',
                       resize: 'vertical',
-                      lineHeight: '1.5'
+                      lineHeight: '1.5',
+                      cursor: hasReadOnlyAccess ? 'not-allowed' : 'text'
                     }}
                   />
                 </div>
@@ -752,16 +776,17 @@ bank_account`}
                       <input
                         type="checkbox"
                         defaultChecked={true}
+                        disabled={!!hasReadOnlyAccess}
                         style={{ display: 'none' }}
                       />
                       <span style={{
                         position: 'absolute',
-                        cursor: 'pointer',
+                        cursor: hasReadOnlyAccess ? 'not-allowed' : 'pointer',
                         top: 0,
                         left: 0,
                         right: 0,
                         bottom: 0,
-                        backgroundColor: '#22c55e',
+                        backgroundColor: hasReadOnlyAccess ? '#94a3b8' : '#22c55e',
                         borderRadius: '24px',
                         transition: 'all 0.3s ease'
                       }}>
@@ -797,16 +822,17 @@ bank_account`}
                       <input
                         type="checkbox"
                         defaultChecked={true}
+                        disabled={!!hasReadOnlyAccess}
                         style={{ display: 'none' }}
                       />
                       <span style={{
                         position: 'absolute',
-                        cursor: 'pointer',
+                        cursor: hasReadOnlyAccess ? 'not-allowed' : 'pointer',
                         top: 0,
                         left: 0,
                         right: 0,
                         bottom: 0,
-                        backgroundColor: '#22c55e',
+                        backgroundColor: hasReadOnlyAccess ? '#94a3b8' : '#22c55e',
                         borderRadius: '24px',
                         transition: 'all 0.3s ease'
                       }}>
@@ -842,16 +868,17 @@ bank_account`}
                       <input
                         type="checkbox"
                         defaultChecked={false}
+                        disabled={!!hasReadOnlyAccess}
                         style={{ display: 'none' }}
                       />
                       <span style={{
                         position: 'absolute',
-                        cursor: 'pointer',
+                        cursor: hasReadOnlyAccess ? 'not-allowed' : 'pointer',
                         top: 0,
                         left: 0,
                         right: 0,
                         bottom: 0,
-                        backgroundColor: '#cbd5e1',
+                        backgroundColor: hasReadOnlyAccess ? '#94a3b8' : '#cbd5e1',
                         borderRadius: '24px',
                         transition: 'all 0.3s ease'
                       }}>
@@ -900,34 +927,36 @@ bank_account`}
               }}>
                 Compliance Settings
               </h2>
-              <button style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '10px 16px',
-                backgroundColor: '#10b981',
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '14px',
-                fontWeight: '500',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#059669';
-                e.currentTarget.style.transform = 'translateY(-1px)';
-                e.currentTarget.style.boxShadow = '0 2px 8px rgba(16, 185, 129, 0.3)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = '#10b981';
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
-              }}>
-                <Save size={16} />
-                Save Settings
-              </button>
+              {hasFullAccess && (
+                <button style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '10px 16px',
+                  backgroundColor: '#10b981',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#059669';
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(16, 185, 129, 0.3)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '#10b981';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
+                }}>
+                  <Save size={16} />
+                  Save Settings
+                </button>
+              )}
             </div>
 
             <div style={{
@@ -980,14 +1009,16 @@ bank_account`}
                       <input
                         type="number"
                         defaultValue="90"
+                        readOnly={!!hasReadOnlyAccess}
                         style={{
                           width: '80px',
                           padding: '8px 10px',
                           fontSize: '14px',
                           border: '1px solid #d1d5db',
                           borderRadius: '6px',
-                          backgroundColor: 'white',
-                          color: '#1f2937'
+                          backgroundColor: hasReadOnlyAccess ? '#f3f4f6' : 'white',
+                          color: '#1f2937',
+                          cursor: hasReadOnlyAccess ? 'not-allowed' : 'text'
                         }}
                       />
                       <span style={{
@@ -1012,14 +1043,16 @@ bank_account`}
                       <input
                         type="number"
                         defaultValue="365"
+                        readOnly={!!hasReadOnlyAccess}
                         style={{
                           width: '80px',
                           padding: '8px 10px',
                           fontSize: '14px',
                           border: '1px solid #d1d5db',
                           borderRadius: '6px',
-                          backgroundColor: 'white',
-                          color: '#1f2937'
+                          backgroundColor: hasReadOnlyAccess ? '#f3f4f6' : 'white',
+                          color: '#1f2937',
+                          cursor: hasReadOnlyAccess ? 'not-allowed' : 'text'
                         }}
                       />
                       <span style={{
@@ -1044,14 +1077,16 @@ bank_account`}
                       <input
                         type="number"
                         defaultValue="180"
+                        readOnly={!!hasReadOnlyAccess}
                         style={{
                           width: '80px',
                           padding: '8px 10px',
                           fontSize: '14px',
                           border: '1px solid #d1d5db',
                           borderRadius: '6px',
-                          backgroundColor: 'white',
-                          color: '#1f2937'
+                          backgroundColor: hasReadOnlyAccess ? '#f3f4f6' : 'white',
+                          color: '#1f2937',
+                          cursor: hasReadOnlyAccess ? 'not-allowed' : 'text'
                         }}
                       />
                       <span style={{
@@ -1106,16 +1141,17 @@ bank_account`}
                         <input
                           type="checkbox"
                           defaultChecked={true}
+                          disabled={!!hasReadOnlyAccess}
                           style={{ display: 'none' }}
                         />
                         <span style={{
                           position: 'absolute',
-                          cursor: 'pointer',
+                          cursor: hasReadOnlyAccess ? 'not-allowed' : 'pointer',
                           top: 0,
                           left: 0,
                           right: 0,
                           bottom: 0,
-                          backgroundColor: '#22c55e',
+                          backgroundColor: hasReadOnlyAccess ? '#94a3b8' : '#22c55e',
                           borderRadius: '24px',
                           transition: 'all 0.3s ease'
                         }}>
@@ -1151,16 +1187,17 @@ bank_account`}
                         <input
                           type="checkbox"
                           defaultChecked={true}
+                          disabled={!!hasReadOnlyAccess}
                           style={{ display: 'none' }}
                         />
                         <span style={{
                           position: 'absolute',
-                          cursor: 'pointer',
+                          cursor: hasReadOnlyAccess ? 'not-allowed' : 'pointer',
                           top: 0,
                           left: 0,
                           right: 0,
                           bottom: 0,
-                          backgroundColor: '#22c55e',
+                          backgroundColor: hasReadOnlyAccess ? '#94a3b8' : '#22c55e',
                           borderRadius: '24px',
                           transition: 'all 0.3s ease'
                         }}>
@@ -1196,16 +1233,17 @@ bank_account`}
                         <input
                           type="checkbox"
                           defaultChecked={false}
+                          disabled={!!hasReadOnlyAccess}
                           style={{ display: 'none' }}
                         />
                         <span style={{
                           position: 'absolute',
-                          cursor: 'pointer',
+                          cursor: hasReadOnlyAccess ? 'not-allowed' : 'pointer',
                           top: 0,
                           left: 0,
                           right: 0,
                           bottom: 0,
-                          backgroundColor: '#cbd5e1',
+                          backgroundColor: hasReadOnlyAccess ? '#94a3b8' : '#cbd5e1',
                           borderRadius: '24px',
                           transition: 'all 0.3s ease'
                         }}>
@@ -1241,16 +1279,17 @@ bank_account`}
                         <input
                           type="checkbox"
                           defaultChecked={false}
+                          disabled={!!hasReadOnlyAccess}
                           style={{ display: 'none' }}
                         />
                         <span style={{
                           position: 'absolute',
-                          cursor: 'pointer',
+                          cursor: hasReadOnlyAccess ? 'not-allowed' : 'pointer',
                           top: 0,
                           left: 0,
                           right: 0,
                           bottom: 0,
-                          backgroundColor: '#cbd5e1',
+                          backgroundColor: hasReadOnlyAccess ? '#94a3b8' : '#cbd5e1',
                           borderRadius: '24px',
                           transition: 'all 0.3s ease'
                         }}>
