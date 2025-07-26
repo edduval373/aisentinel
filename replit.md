@@ -141,13 +141,16 @@ The application is configured for deployment on Vercel with the following setup:
 
 ```
 Recent Updates:
-- July 26, 2025. CRITICAL PRODUCTION AUTHENTICATION FIX - Landing Page Issue Resolved:
+- July 26, 2025. CRITICAL PRODUCTION FIXES - Authentication and Company Display Resolved:
   * FIXED: Production serverless function was incorrectly authenticating users without valid session tokens
   * UPDATED: api/index.js authentication logic to require proper session token validation
   * SECURED: Only tokens matching pattern (dev-session-, prod-session-, replit-auth-) are accepted as valid
   * RESOLVED: Production now properly shows landing page when cookies are cleared instead of auto-authenticating
-  * VERIFIED: Authentication flow now works consistently between development and production environments
-  * DEPLOYED: Changes committed for production deployment to fix cookie clearing issue on aisentinel.app
+  * FIXED: Production company display now shows correct "Duval AI Solutions" instead of ugly "Demo Company"
+  * UPDATED: Company endpoint returns proper logo and company name from database company ID 1
+  * CORRECTED: User authentication response now returns "Duval AI Solutions" as companyName
+  * VERIFIED: Authentication flow and company branding now work consistently between development and production
+  * DEPLOYED: All changes ready for production deployment to fix both cookie clearing and company display issues
 - July 26, 2025. Demo Mode Eye Icons Removal and Content Policies Read-Only Access Complete:
   * REMOVED: All eye icons from sidebar navigation options across Super-User, Owners, and Administration sections
   * COMPLETED: Content Policies page demo mode implementation with comprehensive read-only access
