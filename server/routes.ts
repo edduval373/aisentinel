@@ -1009,7 +1009,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/context-documents", isAuthenticated, async (req: any, res) => {
     try {
       const userRoleLevel = await storage.getUserRoleLevel(req.user.claims.sub);
-      if (userRoleLevel < 2) {
+      // Allow demo users (role level 0) read-only access to context documents
+      if (userRoleLevel < 0) {
         return res.status(403).json({ message: "Insufficient permissions" });
       }
 

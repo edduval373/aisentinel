@@ -15,6 +15,7 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Upload, FileText, AlertCircle, CheckCircle, Settings, Link, Trash2, Edit } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
+import DemoBanner from "@/components/DemoBanner";
 import type { ContextDocument, ActivityType } from "@shared/schema";
 
 export default function ContextManagement() {
@@ -280,7 +281,11 @@ export default function ContextManagement() {
   }
 
   return (
-    <AdminLayout title="Context Management" subtitle="Upload and manage company documents that AI can reference during conversations">
+    <AdminLayout 
+      title="Context Management" 
+      subtitle="Upload and manage company documents that AI can reference during conversations"
+      rightContent={<DemoBanner message="Demo Mode - Read Only View - Documents cannot be modified" />}
+    >
       <div className="p-6">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-2xl font-bold text-gray-900">All Documents</h2>

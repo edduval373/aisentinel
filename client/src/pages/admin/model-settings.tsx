@@ -15,6 +15,7 @@ import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Bot, Settings, Zap, Shield, AlertCircle, Thermometer } from "lucide-react";
 import type { AiModel } from "@shared/schema";
+import DemoBanner from "@/components/DemoBanner";
 
 export default function AdminModelSettings() {
   const { toast } = useToast();
@@ -106,7 +107,11 @@ export default function AdminModelSettings() {
   }
 
   return (
-    <AdminLayout title="Model Settings" subtitle="Configure AI model parameters and behavior">
+    <AdminLayout 
+      title="Model Settings" 
+      subtitle="Configure AI model parameters and behavior"
+      rightContent={<DemoBanner message="Demo Mode - Read Only View - Model settings cannot be changed" />}
+    >
       <div className="p-6 space-y-6">
         {/* Dynamic AI Model Settings */}
         {aiModels?.map((model) => (
