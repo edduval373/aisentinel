@@ -14,7 +14,6 @@ import {
   Bot,
   Activity,
   Users,
-  Eye,
   ChevronRight,
   Building,
   FileText,
@@ -136,7 +135,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
     {
       id: "monitoring",
       name: "Monitoring & Reports",
-      icon: Eye,
+      icon: BarChart3,
       items: [
         { name: "Activity Logs", href: "/admin/logs", icon: BarChart3 },
         { name: "Security Reports", href: "/admin/security", icon: Shield },
@@ -339,7 +338,6 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
               >
                 <Building style={{ width: '20px', height: '20px' }} />
                 <span>Company Management</span>
-                {isDemoUser && <Eye style={{ width: '16px', height: '16px', color: '#f59e0b', marginLeft: 'auto' }} />}
               </button>
               
               <button
@@ -386,7 +384,6 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                   color: location === "/admin/setup-api-keys" ? '#3b82f6' : '#94a3b8'
                 }} />
                 <span>Setup API Keys</span>
-                {isDemoUser && <Eye style={{ width: '16px', height: '16px', color: '#f59e0b', marginLeft: 'auto' }} />}
               </button>
             </>
           )}
@@ -453,7 +450,6 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                     color: location === section.href ? '#3b82f6' : '#94a3b8'
                   }} />
                   <span>{section.name}</span>
-                  {isDemoUser && <Eye style={{ width: '16px', height: '16px', color: '#f59e0b', marginLeft: 'auto' }} />}
                 </button>
               ))}
             </>
@@ -505,7 +501,6 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                       <section.icon style={{ width: '20px', height: '20px', color: '#94a3b8' }} />
                       <span>{section.name}</span>
-                      {isDemoUser && <Eye style={{ width: '16px', height: '16px', color: '#f59e0b', marginLeft: 'auto', marginRight: '8px' }} />}
                     </div>
                     <ChevronRight style={{
                       width: '16px',
@@ -561,7 +556,6 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                         >
                           <item.icon style={{ width: '16px', height: '16px' }} />
                           <span>{item.name}</span>
-                          {isDemoUser && <Eye style={{ width: '14px', height: '14px', color: '#f59e0b', marginLeft: 'auto' }} />}
                         </button>
                       ))}
                     </div>

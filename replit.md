@@ -141,10 +141,16 @@ The application is configured for deployment on Vercel with the following setup:
 
 ```
 Recent Updates:
+- July 26, 2025. Demo Mode Eye Icons Removal and Content Policies Read-Only Access Complete:
+  * REMOVED: All eye icons from sidebar navigation options across Super-User, Owners, and Administration sections
+  * COMPLETED: Content Policies page demo mode implementation with comprehensive read-only access
+  * DISABLED: All interactive elements for demo users (Save buttons, input fields, textareas, toggle switches)
+  * ENHANCED: Demo mode banners consistently show "Demo Mode - Read Only View" status
+  * IMPLEMENTED: Visual feedback with grayed-out disabled state and not-allowed cursor for all form elements
+  * UPDATED: Monitoring & Reports section icon changed from Eye to BarChart3 for better consistency
 - July 26, 2025. Demo Mode Complete Access Implementation:
   * FIXED: Demo users now have proper roleLevel 0 throughout entire application (frontend and backend)
   * RESOLVED: Updated RoleGuard component in App.tsx to allow demo users access to all admin pages including Company Setup
-  * ENHANCED: Added eye icons to all admin navigation sections (Super-User, Owners, Administration) indicating read-only access
   * IMPLEMENTED: Demo mode banners appear on all admin pages showing "Demo Mode - Read Only View" status
   * COMPLETED: Demo users can now access Company Setup and all other owner-level admin screens in read-only mode
   * VERIFIED: Authentication check shows consistent "roleLevel":0 for demo users with proper access control
