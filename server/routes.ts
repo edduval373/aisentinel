@@ -1006,15 +1006,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Context Document API routes
-  app.get("/api/context-documents", isAuthenticated, async (req: any, res) => {
+  app.get("/api/context-documents", optionalAuth, async (req: any, res) => {
     try {
-      const userRoleLevel = await storage.getUserRoleLevel(req.user.claims.sub);
+      // For demo mode, return empty array
+      if (!req.user) {
+        console.log("Demo mode context documents request");
+        return res.json([]);
+      }
+
+      const userId = req.user?.claims?.sub || req.user?.userId;
+      if (!userId) {
+        return res.status(400).json({ message: "User ID not found" });
+      }
+
+      const userRoleLevel = await storage.getUserRoleLevel(userId);
       // Allow demo users (role level 0) read-only access to context documents
       if (userRoleLevel < 0) {
         return res.status(403).json({ message: "Insufficient permissions" });
       }
 
-      const user = await storage.getUser(req.user.claims.sub);
+      const user = await storage.getUser(userId);
       if (!user?.companyId) {
         return res.status(400).json({ message: "No company associated with user" });
       }

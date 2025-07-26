@@ -270,10 +270,31 @@ export default function ContextManagement() {
   if (documentsLoading) {
     return (
       <AdminLayout title="Context Management" subtitle="Upload and manage company documents that AI can reference during conversations">
-        <div className="flex items-center justify-center h-96">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-2 text-gray-600">Loading context documents...</p>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '400px'
+        }}>
+          <div style={{ textAlign: 'center' }}>
+            <img 
+              src="/ai-sentinel-logo.png" 
+              alt="Loading" 
+              style={{
+                width: '64px',
+                height: '64px',
+                margin: '0 auto 16px auto',
+                animation: 'spin 2s linear infinite',
+                filter: 'brightness(1.1) saturate(1.3) contrast(1.2)'
+              }}
+            />
+            <p style={{
+              marginTop: '8px',
+              color: '#64748b',
+              fontSize: '16px'
+            }}>
+              Loading context documents...
+            </p>
           </div>
         </div>
       </AdminLayout>
@@ -286,110 +307,369 @@ export default function ContextManagement() {
       subtitle="Upload and manage company documents that AI can reference during conversations"
       rightContent={<DemoBanner message="Demo Mode - Read Only View - Documents cannot be modified" />}
     >
-      <div className="p-6">
-        <div className="flex justify-between items-center mb-8">
-          <h2 className="text-2xl font-bold text-gray-900">All Documents</h2>
-          <Button onClick={() => setShowUploadDialog(true)} className="bg-blue-600 hover:bg-blue-700">
-            <Upload className="w-4 h-4 mr-2" />
+      <div style={{ padding: '24px' }}>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '32px'
+        }}>
+          <h2 style={{
+            fontSize: '24px',
+            fontWeight: 'bold',
+            color: '#111827',
+            margin: 0
+          }}>
+            All Documents
+          </h2>
+          <button
+            onClick={() => setShowUploadDialog(true)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '12px 20px',
+              backgroundColor: '#2563eb',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              fontSize: '14px',
+              fontWeight: '500',
+              cursor: 'pointer',
+              transition: 'background-color 0.2s'
+            }}
+            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#1d4ed8'}
+            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
+          >
+            <Upload style={{ width: '16px', height: '16px' }} />
             Upload Document
-          </Button>
+          </button>
         </div>
 
-        <div className="w-full">
-          <div className="flex space-x-4 mb-6">
-            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg">
+        <div style={{ width: '100%' }}>
+          <div style={{
+            display: 'flex',
+            gap: '16px',
+            marginBottom: '24px'
+          }}>
+            <button style={{
+              padding: '12px 16px',
+              backgroundColor: '#2563eb',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              fontSize: '14px',
+              fontWeight: '500',
+              cursor: 'pointer'
+            }}>
               Documents
             </button>
-            <button className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg">
+            <button style={{
+              padding: '12px 16px',
+              backgroundColor: '#e5e7eb',
+              color: '#374151',
+              border: 'none',
+              borderRadius: '8px',
+              fontSize: '14px',
+              fontWeight: '500',
+              cursor: 'pointer'
+            }}>
               Activity Links
             </button>
           </div>
 
-          <div className="space-y-4">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {documents?.length === 0 ? (
-              <Card>
-                <CardContent className="flex flex-col items-center justify-center py-16">
-                  <FileText className="w-16 h-16 text-gray-400 mb-4" />
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">No Documents Yet</h3>
-                  <p className="text-gray-600 text-center mb-4">
-                    Upload your first company document to get started with context-aware AI responses
-                  </p>
-                  <Button onClick={() => setShowUploadDialog(true)} className="bg-blue-600 hover:bg-blue-700">
-                    <Upload className="w-4 h-4 mr-2" />
-                    Upload Document
-                  </Button>
-                </CardContent>
-              </Card>
+              <div style={{
+                backgroundColor: 'white',
+                border: '1px solid #e5e7eb',
+                borderRadius: '12px',
+                padding: '48px 24px',
+                textAlign: 'center',
+                boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
+              }}>
+                <FileText style={{
+                  width: '64px',
+                  height: '64px',
+                  color: '#9ca3af',
+                  margin: '0 auto 16px auto'
+                }} />
+                <h3 style={{
+                  fontSize: '18px',
+                  fontWeight: '600',
+                  color: '#111827',
+                  marginBottom: '8px'
+                }}>
+                  No Documents Yet
+                </h3>
+                <p style={{
+                  color: '#6b7280',
+                  textAlign: 'center',
+                  marginBottom: '16px',
+                  lineHeight: '1.5'
+                }}>
+                  Upload your first company document to get started with context-aware AI responses
+                </p>
+                <button
+                  onClick={() => setShowUploadDialog(true)}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '12px 20px',
+                    backgroundColor: '#2563eb',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.2s'
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#1d4ed8'}
+                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
+                >
+                  <Upload style={{ width: '16px', height: '16px' }} />
+                  Upload Document
+                </button>
+              </div>
             ) : (
-              <div className="grid gap-4">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {documents?.map((document) => (
-                  <Card key={document.id} className="border-l-4 border-l-blue-500">
-                    <CardHeader className="pb-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                          <FileText className="w-5 h-5 text-blue-600" />
+                  <div key={document.id} style={{
+                    backgroundColor: 'white',
+                    border: '1px solid #e5e7eb',
+                    borderLeft: '4px solid #2563eb',
+                    borderRadius: '12px',
+                    padding: '0',
+                    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+                    transition: 'box-shadow 0.2s'
+                  }}>
+                    <div style={{
+                      padding: '16px 20px 12px 20px',
+                      borderBottom: '1px solid #f3f4f6'
+                    }}>
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between'
+                      }}>
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '12px'
+                        }}>
+                          <FileText style={{
+                            width: '20px',
+                            height: '20px',
+                            color: '#2563eb'
+                          }} />
                           <div>
-                            <CardTitle className="text-lg">{document.name}</CardTitle>
-                            <p className="text-sm text-gray-600">{document.fileName}</p>
+                            <h3 style={{
+                              fontSize: '18px',
+                              fontWeight: '600',
+                              color: '#111827',
+                              margin: 0
+                            }}>
+                              {document.name}
+                            </h3>
+                            <p style={{
+                              fontSize: '14px',
+                              color: '#6b7280',
+                              margin: '4px 0 0 0'
+                            }}>
+                              {document.fileName}
+                            </p>
                           </div>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <Badge className={getCategoryColor(document.category)}>
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px'
+                        }}>
+                          <span style={{
+                            padding: '4px 8px',
+                            borderRadius: '6px',
+                            fontSize: '12px',
+                            fontWeight: '500',
+                            backgroundColor: document.category === 'policy' ? '#fef2f2' :
+                                           document.category === 'procedure' ? '#eff6ff' :
+                                           document.category === 'guideline' ? '#f0fdf4' :
+                                           document.category === 'knowledge' ? '#faf5ff' : '#f9fafb',
+                            color: document.category === 'policy' ? '#991b1b' :
+                                   document.category === 'procedure' ? '#1e40af' :
+                                   document.category === 'guideline' ? '#166534' :
+                                   document.category === 'knowledge' ? '#6b21a8' : '#374151'
+                          }}>
                             {document.category}
-                          </Badge>
-                          <Badge variant="outline">Priority {document.priority}</Badge>
-                          <div className="flex items-center space-x-1">
+                          </span>
+                          <span style={{
+                            padding: '4px 8px',
+                            borderRadius: '6px',
+                            fontSize: '12px',
+                            fontWeight: '500',
+                            backgroundColor: 'white',
+                            color: '#374151',
+                            border: '1px solid #d1d5db'
+                          }}>
+                            Priority {document.priority}
+                          </span>
+                          <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}>
                             {document.isEnabled ? (
-                              <CheckCircle className="w-4 h-4 text-green-600" />
+                              <CheckCircle style={{
+                                width: '16px',
+                                height: '16px',
+                                color: '#059669'
+                              }} />
                             ) : (
-                              <AlertCircle className="w-4 h-4 text-red-600" />
+                              <AlertCircle style={{
+                                width: '16px',
+                                height: '16px',
+                                color: '#dc2626'
+                              }} />
                             )}
-                            <span className="text-sm text-gray-600">
+                            <span style={{
+                              fontSize: '14px',
+                              color: '#6b7280'
+                            }}>
                               {document.isEnabled ? 'Enabled' : 'Disabled'}
                             </span>
                           </div>
                         </div>
                       </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-3">
+                    </div>
+                    <div style={{ padding: '16px 20px' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                         {document.description && (
-                          <p className="text-gray-700">{document.description}</p>
+                          <p style={{
+                            color: '#374151',
+                            margin: 0,
+                            lineHeight: '1.5'
+                          }}>
+                            {document.description}
+                          </p>
                         )}
-                        <div className="flex items-center justify-between text-sm text-gray-600">
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          fontSize: '14px',
+                          color: '#6b7280'
+                        }}>
                           <span>Size: {formatFileSize(document.fileSize)}</span>
                           <span>Created: {new Date(document.createdAt!).toLocaleDateString()}</span>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <Switch
-                            checked={document.isEnabled}
-                            onCheckedChange={() => handleToggleEnabled(document)}
-                          />
-                          <span className="text-sm">Enable for AI reference</span>
-                          <div className="flex-1"></div>
-                          <Button
-                            variant="outline"
-                            size="sm"
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px'
+                        }}>
+                          <label style={{
+                            position: 'relative',
+                            display: 'inline-block',
+                            width: '44px',
+                            height: '24px'
+                          }}>
+                            <input
+                              type="checkbox"
+                              checked={document.isEnabled}
+                              onChange={() => handleToggleEnabled(document)}
+                              style={{
+                                opacity: 0,
+                                width: 0,
+                                height: 0
+                              }}
+                            />
+                            <span style={{
+                              position: 'absolute',
+                              cursor: 'pointer',
+                              top: 0,
+                              left: 0,
+                              right: 0,
+                              bottom: 0,
+                              backgroundColor: document.isEnabled ? '#2563eb' : '#cbd5e1',
+                              transition: '.4s',
+                              borderRadius: '24px'
+                            }}>
+                              <span style={{
+                                position: 'absolute',
+                                content: '""',
+                                height: '18px',
+                                width: '18px',
+                                left: document.isEnabled ? '23px' : '3px',
+                                bottom: '3px',
+                                backgroundColor: 'white',
+                                transition: '.4s',
+                                borderRadius: '50%'
+                              }}></span>
+                            </span>
+                          </label>
+                          <span style={{ fontSize: '14px', color: '#374151' }}>
+                            Enable for AI reference
+                          </span>
+                          <div style={{ flex: 1 }}></div>
+                          <button
                             onClick={() => {
                               setSelectedDocument(document);
                               setShowLinkDialog(true);
                             }}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                              padding: '8px 12px',
+                              backgroundColor: 'white',
+                              color: '#374151',
+                              border: '1px solid #d1d5db',
+                              borderRadius: '6px',
+                              fontSize: '14px',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s'
+                            }}
+                            onMouseOver={(e) => {
+                              e.currentTarget.style.backgroundColor = '#f9fafb';
+                              e.currentTarget.style.borderColor = '#9ca3af';
+                            }}
+                            onMouseOut={(e) => {
+                              e.currentTarget.style.backgroundColor = 'white';
+                              e.currentTarget.style.borderColor = '#d1d5db';
+                            }}
                           >
-                            <Link className="w-4 h-4 mr-1" />
+                            <Link style={{ width: '16px', height: '16px' }} />
                             Link to Activity
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
+                          </button>
+                          <button
                             onClick={() => handleDeleteDocument(document.id)}
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              padding: '8px',
+                              backgroundColor: 'white',
+                              color: '#dc2626',
+                              border: '1px solid #d1d5db',
+                              borderRadius: '6px',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s'
+                            }}
+                            onMouseOver={(e) => {
+                              e.currentTarget.style.backgroundColor = '#fef2f2';
+                              e.currentTarget.style.borderColor = '#fca5a5';
+                            }}
+                            onMouseOut={(e) => {
+                              e.currentTarget.style.backgroundColor = 'white';
+                              e.currentTarget.style.borderColor = '#d1d5db';
+                            }}
                           >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
+                            <Trash2 style={{ width: '16px', height: '16px' }} />
+                          </button>
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
+                    </div>
+                  </div>
                 ))}
               </div>
             )}
