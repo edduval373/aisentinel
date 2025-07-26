@@ -1728,19 +1728,24 @@ This is a demonstration of AI Sentinel's capabilities. In the full version:
   });
 
   // Model Fusion Configuration routes
-  app.get('/api/model-fusion-config', isAuthenticated, async (req: any, res) => {
+  app.get('/api/model-fusion-config', optionalAuth, async (req: any, res) => {
     try {
-      const user = await storage.getUser(req.user.claims.sub);
-      const userRoleLevel = user?.roleLevel || 1;
-      if (userRoleLevel < 99) { // Must be owner (99) or higher
-        return res.status(403).json({ message: "Owner or super-user access required" });
+      let companyId = 1; // Default to company 1 for demo users
+      let userRoleLevel = 0; // Default to demo role level
+      
+      // If user is authenticated, get their company and role level
+      if (req.user && req.user.companyId) {
+        companyId = req.user.companyId;
+        const user = await storage.getUser(req.user.userId);
+        userRoleLevel = user?.roleLevel || 1;
+        
+        // Only authenticated users with owner level need role check
+        if (userRoleLevel < 99) {
+          return res.status(403).json({ message: "Owner or super-user access required" });
+        }
       }
       
-      if (!user?.companyId) {
-        return res.status(400).json({ message: "No company associated with user" });
-      }
-      
-      const config = await storage.getModelFusionConfig(user.companyId);
+      const config = await storage.getModelFusionConfig(companyId);
       res.json(config);
     } catch (error) {
       console.error("Error fetching model fusion config:", error);
