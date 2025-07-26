@@ -4,6 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { roleBasedAccess } from "@/lib/roleBasedAccess";
+import { isDemoModeActive } from "@/utils/demoMode";
 import AdminLayout from "@/components/layout/AdminLayout";
 import DemoBanner from "@/components/DemoBanner";
 import { useForm } from "react-hook-form";
@@ -84,21 +85,23 @@ export default function AdminPermissions() {
   const { isAuthenticated, isLoading, user } = useAuth();
 
   // Fetch permissions data
-  const { data: permissions = [], isLoading: permissionsLoading } = useQuery<Permission[]>({
+  const { data: permissions = [], isLoading: permissionsLoading, error: permissionsError } = useQuery<Permission[]>({
     queryKey: ['/api/admin/permissions'],
-    onError: (error) => {
-      if (isUnauthorizedError(error)) {
-        toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
-      }
-    },
   });
+
+  // Handle query errors
+  useEffect(() => {
+    if (permissionsError && isUnauthorizedError(permissionsError)) {
+      toast({
+        title: "Unauthorized",
+        description: "You are logged out. Logging in again...",
+        variant: "destructive",
+      });
+      setTimeout(() => {
+        window.location.href = "/api/login";
+      }, 500);
+    }
+  }, [permissionsError, toast]);
 
   // Create permission mutation
   const createPermissionMutation = useMutation({
@@ -290,7 +293,8 @@ export default function AdminPermissions() {
     }
   };
 
-  // Check access level - require Administrator (98+) access, but allow demo users (0) read-only access
+  // Check access level - allow demo users (0) read-only access and administrators (98+) full access
+  const isDemoMode = isDemoModeActive(user);
   const hasReadOnlyAccess = user && (user.roleLevel === 0); // Demo users
   const hasFullAccess = user && user.roleLevel !== undefined && roleBasedAccess.hasAccessLevel(user.roleLevel, 98); // Administrator+
   
@@ -382,7 +386,7 @@ export default function AdminPermissions() {
   }
 
   // Group permissions by category
-  const groupedPermissions = permissions.reduce((acc, permission) => {
+  const groupedPermissions = (permissions as Permission[]).reduce((acc: Record<string, Permission[]>, permission: Permission) => {
     const category = permission.category;
     if (!acc[category]) {
       acc[category] = [];
@@ -425,7 +429,7 @@ export default function AdminPermissions() {
     <AdminLayout 
       title="Permissions" 
       subtitle="Configure activity permissions and access controls"
-      rightContent={hasReadOnlyAccess ? <DemoBanner message="Demo Mode - Read Only View - Permissions cannot be modified" /> : undefined}
+      rightContent={isDemoMode && <DemoBanner message="Demo Mode - Read Only View" />}
     >
       <div style={{ padding: '24px' }}>
         {/* Header with Add Button - Only show for full access users */}
@@ -508,13 +512,13 @@ export default function AdminPermissions() {
 
                 {/* Card Content */}
                 <div style={{ padding: '20px' }}>
-                  {categoryPermissions.length === 0 ? (
+                  {(categoryPermissions as Permission[]).length === 0 ? (
                     <p style={{ fontSize: '14px', color: '#9ca3af', textAlign: 'center', margin: '20px 0' }}>
                       No permissions in this category
                     </p>
                   ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                      {categoryPermissions.map((permission) => (
+                      {(categoryPermissions as Permission[]).map((permission: Permission) => (
                         <div
                           key={permission.id}
                           style={{

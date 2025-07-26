@@ -661,11 +661,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Permissions routes
+  // Permissions routes - allow demo users (0) read-only access and administrators (98+) full access
   app.get('/api/admin/permissions', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
       const userRoleLevel = req.user?.roleLevel || 1;
-      if (userRoleLevel < 98) { // Must be administrator (98) or higher
+      // Allow demo users (0) read-only access and administrators (98+) full access
+      if (userRoleLevel !== 0 && userRoleLevel < 98) {
         return res.status(403).json({ message: "Administrator access required" });
       }
       if (!req.user?.companyId) {
