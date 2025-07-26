@@ -14,10 +14,12 @@
 **Problem**: Production shows ugly "Demo Company" instead of real company data
 **Root Cause**: Production API was returning hardcoded demo data instead of company ID 1 data
 **Fix Applied**:
-- Updated `api/index.js` company endpoint (lines 141-150)
-- Now returns correct "Duval AI Solutions" name and description
-- Includes proper company logo from database
+- Updated `api/index.js` company endpoint (lines 141-183)
+- Now connects to actual PostgreSQL database to fetch real company data
+- Returns correct "Duval AI Solutions" name, description, and full logo from database
+- Includes all display settings (logoSize, showCompanyName, showCompanyLogo, companyNameSize)
 - Updated user authentication response to show correct company name
+- Added database fallback for resilient operation
 
 ## Expected Results After Deployment
 

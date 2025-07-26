@@ -136,11 +136,45 @@ export default async function handler(req, res) {
 
     // Current company endpoint
     if (url.includes('user/current-company')) {
+      try {
+        // Try to fetch from database first
+        if (DATABASE_URL) {
+          const { Client } = require('pg');
+          const client = new Client({ connectionString: DATABASE_URL });
+          await client.connect();
+          
+          const result = await client.query('SELECT id, name, domain, logo, logo_size, show_company_name, show_company_logo, company_name_size FROM companies WHERE id = $1', [1]);
+          
+          if (result.rows.length > 0) {
+            const company = result.rows[0];
+            const companyData = {
+              id: company.id,
+              name: company.name,
+              description: 'AI Governance Solutions Provider',
+              logo: company.logo,
+              logoSize: company.logo_size || 200,
+              showCompanyName: company.show_company_name || false,
+              showCompanyLogo: company.show_company_logo !== false,
+              companyNameSize: company.company_name_size || 20
+            };
+            
+            await client.end();
+            res.status(200).json(companyData);
+            return;
+          }
+          
+          await client.end();
+        }
+      } catch (error) {
+        console.error('Database connection failed:', error.message);
+      }
+      
+      // Fallback to hardcoded data if database fails
       const company = {
         id: 1,
         name: 'Duval AI Solutions',
         description: 'AI Governance Solutions Provider',
-        logo: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAIcBQADASIAAhEBAxEB/8QAHQABAAICAwEBAAAAAAAAAAAAAAcIBgkBBAUDAv/EAGMQAAEDAgMEBAULCxAIBQQDAAABAgMEBQYREgkSITETQVFhFCJxgZEVFiMyN0JScnWhsRYjU2KCkqKys8HRFxgzNzlDVmNzpMPwJDVEZ3Wj09LhWIWU4hUlV8LElqXh/wAAaOQAGwEBAAMBAQEBAAAAAAAAAAAAAAECAwQFBgf/xAAsEQEAAgICAgIDAAEEAgMBAAAAAQIDESExBBITQSIyUWEFFCNxM0GBIE2FB/2oADAMBAAIRAxEAPwC5YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+        logo: null, // Use fallback logo display
         logoSize: 200,
         showCompanyName: false,
         showCompanyLogo: true,
