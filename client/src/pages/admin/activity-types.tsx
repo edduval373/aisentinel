@@ -30,8 +30,11 @@ export default function AdminActivityTypes() {
   const { toast } = useToast();
   const { isAuthenticated, isLoading, user } = useAuth();
 
-  // Check access level - require Administrator (98+) access
-  if (!isLoading && user && !roleBasedAccess.hasAccessLevel(user.roleLevel, 98)) {
+  // Check access level - require Administrator (98+) access, but allow demo users (0) read-only access
+  const hasReadOnlyAccess = user && (user.roleLevel === 0); // Demo users
+  const hasFullAccess = user && user.roleLevel !== undefined && roleBasedAccess.hasAccessLevel(user.roleLevel, 98); // Administrator+
+  
+  if (!isLoading && user && !hasReadOnlyAccess && !hasFullAccess) {
     return (
       <AdminLayout title="Activity Types" subtitle="Manage allowed activities and their permissions">
         <div style={{ 
@@ -382,35 +385,37 @@ export default function AdminActivityTypes() {
     <AdminLayout 
       title="Activity Types" 
       subtitle="Manage allowed activities and their permissions"
-      rightContent={<DemoBanner message="Demo Mode - Read Only View - Activity types cannot be modified" />}
+      rightContent={hasReadOnlyAccess ? <DemoBanner message="Demo Mode - Read Only View - Activity types cannot be modified" /> : undefined}
     >
       <div style={{ padding: '24px' }}>
         
-        {/* Add Activity Type Button */}
-        <div style={{ marginBottom: '32px' }}>
-          <button
-            onClick={() => setIsAddDialogOpen(true)}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '12px 20px',
-              backgroundColor: '#3b82f6',
-              color: '#ffffff',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '14px',
-              fontWeight: '500',
-              cursor: 'pointer',
-              transition: 'background-color 0.2s ease',
-            }}
-            onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#2563eb')}
-            onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#3b82f6')}
-          >
-            <Plus style={{ width: '16px', height: '16px' }} />
-            Add Activity Type
-          </button>
-        </div>
+        {/* Add Activity Type Button - Only show for full access users */}
+        {hasFullAccess && (
+          <div style={{ marginBottom: '32px' }}>
+            <button
+              onClick={() => setIsAddDialogOpen(true)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '12px 20px',
+                backgroundColor: '#3b82f6',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '14px',
+                fontWeight: '500',
+                cursor: 'pointer',
+                transition: 'background-color 0.2s ease',
+              }}
+              onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#2563eb')}
+              onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#3b82f6')}
+            >
+              <Plus style={{ width: '16px', height: '16px' }} />
+              Add Activity Type
+            </button>
+          </div>
+        )}
 
         {/* Activity Types Grid */}
         <div style={{ display: 'grid', gap: '24px' }}>
@@ -473,7 +478,7 @@ export default function AdminActivityTypes() {
                   <CustomSwitch
                     checked={activity.isEnabled}
                     onChange={() => handleToggleEnabled(activity.id, activity.isEnabled)}
-                    disabled={toggleActivityTypeMutation.isPending}
+                    disabled={toggleActivityTypeMutation.isPending || !!hasReadOnlyAccess}
                   />
                 </div>
               </div>
@@ -580,94 +585,96 @@ export default function AdminActivityTypes() {
                 </div>
               )}
               
-              {/* Action Buttons */}
-              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                <button
-                  onClick={() => handleEdit(activity)}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    padding: '8px 12px',
-                    backgroundColor: '#ffffff',
-                    color: '#3b82f6',
-                    border: '1px solid #3b82f6',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.backgroundColor = '#3b82f6';
-                    e.currentTarget.style.color = '#ffffff';
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.backgroundColor = '#ffffff';
-                    e.currentTarget.style.color = '#3b82f6';
-                  }}
-                >
-                  <Edit style={{ width: '14px', height: '14px' }} />
-                  Edit
-                </button>
-                
-                <button
-                  onClick={() => handleDelete(activity)}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    padding: '8px 12px',
-                    backgroundColor: '#ffffff',
-                    color: '#ef4444',
-                    border: '1px solid #ef4444',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.backgroundColor = '#ef4444';
-                    e.currentTarget.style.color = '#ffffff';
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.backgroundColor = '#ffffff';
-                    e.currentTarget.style.color = '#ef4444';
-                  }}
-                >
-                  <Trash2 style={{ width: '14px', height: '14px' }} />
-                  Delete
-                </button>
-                
-                <button
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    padding: '8px 12px',
-                    backgroundColor: '#ffffff',
-                    color: '#6b7280',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.backgroundColor = '#f9fafb';
-                    e.currentTarget.style.borderColor = '#9ca3af';
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.backgroundColor = '#ffffff';
-                    e.currentTarget.style.borderColor = '#d1d5db';
-                  }}
-                >
-                  <Settings style={{ width: '14px', height: '14px' }} />
-                  Configure
-                </button>
-              </div>
+              {/* Action Buttons - Only show for full access users */}
+              {hasFullAccess && (
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                  <button
+                    onClick={() => handleEdit(activity)}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      padding: '8px 12px',
+                      backgroundColor: '#ffffff',
+                      color: '#3b82f6',
+                      border: '1px solid #3b82f6',
+                      borderRadius: '6px',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.backgroundColor = '#3b82f6';
+                      e.currentTarget.style.color = '#ffffff';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.backgroundColor = '#ffffff';
+                      e.currentTarget.style.color = '#3b82f6';
+                    }}
+                  >
+                    <Edit style={{ width: '14px', height: '14px' }} />
+                    Edit
+                  </button>
+                  
+                  <button
+                    onClick={() => handleDelete(activity)}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      padding: '8px 12px',
+                      backgroundColor: '#ffffff',
+                      color: '#ef4444',
+                      border: '1px solid #ef4444',
+                      borderRadius: '6px',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.backgroundColor = '#ef4444';
+                      e.currentTarget.style.color = '#ffffff';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.backgroundColor = '#ffffff';
+                      e.currentTarget.style.color = '#ef4444';
+                    }}
+                  >
+                    <Trash2 style={{ width: '14px', height: '14px' }} />
+                    Delete
+                  </button>
+                  
+                  <button
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      padding: '8px 12px',
+                      backgroundColor: '#ffffff',
+                      color: '#6b7280',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '6px',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.backgroundColor = '#f9fafb';
+                      e.currentTarget.style.borderColor = '#9ca3af';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.backgroundColor = '#ffffff';
+                      e.currentTarget.style.borderColor = '#d1d5db';
+                    }}
+                  >
+                    <Settings style={{ width: '14px', height: '14px' }} />
+                    Configure
+                  </button>
+                </div>
+              )}
             </div>
           ))}
 
