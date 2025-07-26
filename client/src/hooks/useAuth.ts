@@ -24,6 +24,8 @@ export function useAuth() {
   const hasAuthCookie = document.cookie.includes('sessionToken=');
   const isDemoMode = window.location.pathname === '/demo';
   
+  console.log('🔍 useAuth - Cookie check:', { hasAuthCookie, isDemoMode, pathname: window.location.pathname });
+  
   // Real authentication - with demo mode bypass
   const { data, isLoading, error } = useQuery<AuthData>({
     queryKey: ['/api/auth/me'],
@@ -64,6 +66,7 @@ export function useAuth() {
       } catch (error) {
         console.log("Authentication failed:", error);
         // No fallback - user must be authenticated (unless demo mode)
+        console.log('🔒 Returning authenticated: false for fresh user');
         return { 
           authenticated: false, 
           user: undefined

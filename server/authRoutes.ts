@@ -111,6 +111,8 @@ export function setupAuthRoutes(app: Express) {
           });
         }
         
+        // NO COOKIES - Return not authenticated (should show landing page)
+        console.log('🔒 No session token found, user not authenticated');
         return res.json({ authenticated: false });
       }
 
