@@ -379,7 +379,7 @@ export default function AdminModelSettings() {
               <div style={{
                 height: '1px',
                 backgroundColor: '#e2e8f0',
-                margin: '20px 0'
+                margin: '16px 0 12px 0'
               }}></div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
