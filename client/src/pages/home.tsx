@@ -38,29 +38,7 @@ function CompanyInfoLarge() {
   });
 
   if (!currentCompany) {
-    return (
-      <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
-        <div style={{ 
-          width: '80px', 
-          height: '80px', 
-          backgroundColor: '#3b82f6', 
-          borderRadius: '12px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'white',
-          fontSize: '24px',
-          fontWeight: 700
-        }}>
-          {isDemoMode ? 'DEMO' : 'L'}
-        </div>
-        <div>
-          <div style={{ fontSize: '36px', fontWeight: 700, color: '#1e293b', textAlign: 'center' }}>
-            Loading...
-          </div>
-        </div>
-      </div>
-    );
+    return null; // Don't show anything during loading
   }
 
   // Use company settings from database
@@ -74,11 +52,7 @@ function CompanyInfoLarge() {
 
   // Don't show anything if both logo and name are disabled
   if (!showCompanyLogo && !showCompanyName) {
-    return (
-      <div style={{ color: '#9ca3af', fontSize: '16px', fontStyle: 'italic', textAlign: 'center' }}>
-        Company branding hidden
-      </div>
-    );
+    return null;
   }
 
   // Use the full logo size from database settings (no header constraint)
@@ -140,11 +114,7 @@ function CompanyInfoLarge() {
           }}>
             {currentCompany.name}
           </div>
-          {isDemoMode ? (
-            <div style={{ fontSize: '12px', color: '#3b82f6', fontWeight: 500, textAlign: 'left', marginTop: '2px', margin: '2px 0 0 0' }}>
-              Demo Mode - Using AI Sentinel API Keys
-            </div>
-          ) : currentCompany.description && (
+          {currentCompany.description && (
             <div style={{ fontSize: '12px', color: '#64748b', textAlign: 'left', marginTop: '2px', margin: '2px 0 0 0' }}>
               {currentCompany.description}
             </div>
@@ -168,29 +138,7 @@ function CompanyInfo() {
   });
 
   if (!currentCompany) {
-    return (
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <div style={{ 
-          width: '48px', 
-          height: '48px', 
-          backgroundColor: '#3b82f6', 
-          borderRadius: '8px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'white',
-          fontSize: '14px',
-          fontWeight: 600
-        }}>
-          DEMO
-        </div>
-        <div>
-          <div style={{ fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>
-            Loading...
-          </div>
-        </div>
-      </div>
-    );
+    return null; // Don't show anything during loading
   }
 
   // Use company settings from database
@@ -244,11 +192,7 @@ function CompanyInfo() {
           <div style={{ fontSize: '16px', fontWeight: 600, color: '#1e293b' }}>
             {currentCompany.name}
           </div>
-          {isDemoMode ? (
-            <div style={{ fontSize: '12px', color: '#3b82f6', fontWeight: 500 }}>
-              Demo Mode - Using AI Sentinel API Keys
-            </div>
-          ) : currentCompany.description && (
+          {currentCompany.description && (
             <div style={{ fontSize: '12px', color: '#64748b' }}>
               {currentCompany.description}
             </div>
