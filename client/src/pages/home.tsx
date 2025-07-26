@@ -500,7 +500,17 @@ export default function Home() {
             {/* Sign Out/Sign Up Button with Demo indicator */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
               <button
-                onClick={() => window.location.href = isDemoMode ? '/' : '/login'}
+                onClick={() => {
+                  if (isDemoMode) {
+                    // Demo users go to email verification screen
+                    window.location.href = '/login';
+                  } else {
+                    // Regular users sign out and clear session
+                    fetch('/api/auth/logout', { method: 'POST' })
+                      .then(() => window.location.href = '/')
+                      .catch(() => window.location.href = '/');
+                  }
+                }}
                 style={{
                   fontSize: '14px',
                   color: isDemoMode ? '#3b82f6' : '#64748b',
