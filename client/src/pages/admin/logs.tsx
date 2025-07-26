@@ -5,6 +5,7 @@ import { hasAccessLevel, canViewAdminPage, ACCESS_REQUIREMENTS } from "@/utils/r
 import { isDemoModeActive, isReadOnlyMode, getDemoModeMessage } from "@/utils/demoMode";
 import { BarChart3, Download, Filter, Search, AlertTriangle, Shield, User, Eye } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
+import DemoBanner from "@/components/DemoBanner";
 
 export default function AdminLogs() {
   const { toast } = useToast();
@@ -154,7 +155,11 @@ export default function AdminLogs() {
   });
 
   return (
-    <AdminLayout title="Activity Logs" subtitle="Monitor system activity and security events">
+    <AdminLayout 
+      title="Activity Logs" 
+      subtitle="Monitor system activity and security events"
+      rightContent={<DemoBanner message="Demo Mode - Read Only View - Activity logs are view-only" />}
+    >
       <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '1200px', margin: '0 auto' }}>
         
         {/* Demo Mode Indicator */}

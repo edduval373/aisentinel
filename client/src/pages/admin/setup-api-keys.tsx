@@ -12,6 +12,7 @@ import AdminLayout from "@/components/layout/AdminLayout";
 import { hasAccessLevel, canViewAdminPage, ACCESS_REQUIREMENTS } from "@/utils/roleBasedAccess";
 import { useAuth } from "@/hooks/useAuth";
 import type { AiModel } from "@shared/schema";
+import DemoBanner from "@/components/DemoBanner";
 
 export default function SetupApiKeys() {
   const { toast } = useToast();
@@ -268,7 +269,11 @@ export default function SetupApiKeys() {
   }
 
   return (
-    <AdminLayout title="Setup API Keys" subtitle="Configure AI provider API keys">
+    <AdminLayout 
+      title="Setup API Keys" 
+      subtitle="Configure AI provider API keys"
+      rightContent={<DemoBanner message="Demo Mode - Read Only View - API keys cannot be modified" />}
+    >
       <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
         {/* Instructions */}
         <Card style={{ border: '1px solid #bfdbfe', backgroundColor: '#eff6ff' }}>

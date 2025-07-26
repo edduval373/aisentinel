@@ -18,6 +18,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { isDemoModeActive, isReadOnlyMode, getDemoModeMessage } from "@/utils/demoMode";
 import { Bot, Plus, Edit2, Trash2, Key, Settings, Eye, EyeOff, TestTube } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
+import DemoBanner from "@/components/DemoBanner";
 import { apiRequest } from "@/lib/queryClient";
 
 // Add spinning AI Sentinel logo keyframes
@@ -369,30 +370,13 @@ export default function CreateModels() {
     );
   }
 
-  // Create demo banner component for inline display
-  const DemoBanner = isDemoMode ? (
-    <div style={{
-      backgroundColor: '#1e3a8a',
-      color: 'white',
-      padding: '8px 16px',
-      borderRadius: '6px',
-      display: 'flex',
-      alignItems: 'center',
-      gap: '8px',
-      fontSize: '13px',
-      fontWeight: '500',
-      marginLeft: '16px'
-    }}>
-      <Eye style={{ width: '16px', height: '16px' }} />
-      <span>Demo Mode - Read Only View - You can view all AI models but cannot make changes</span>
-    </div>
-  ) : null;
+
 
   return (
     <AdminLayout 
       title="Create AI Models" 
       subtitle="Create and manage custom AI models from scratch"
-      rightContent={DemoBanner}
+      rightContent={<DemoBanner message="Demo Mode - Read Only View - AI models cannot be modified" />}
     >
       <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
         

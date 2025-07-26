@@ -8,6 +8,7 @@ import { Brain, Zap, AlertCircle, CheckCircle2 } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { hasAccessLevel, canViewAdminPage } from "@/utils/roleBasedAccess";
 import { useAuth } from "@/hooks/useAuth";
+import DemoBanner from "@/components/DemoBanner";
 
 interface AiModel {
   id: number;
@@ -207,7 +208,11 @@ export default function ModelFusion() {
   }
 
   return (
-    <AdminLayout title="Model Fusion" subtitle="Set up advanced multi-model AI processing for comprehensive research and analysis">
+    <AdminLayout 
+      title="Model Fusion" 
+      subtitle="Set up advanced multi-model AI processing for comprehensive research and analysis"
+      rightContent={<DemoBanner message="Demo Mode - Read Only View - Model fusion settings cannot be modified" />}
+    >
       <div style={{ padding: '24px' }}>
         <div style={{
           display: 'grid',

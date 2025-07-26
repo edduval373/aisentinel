@@ -6,6 +6,7 @@ import { isUnauthorizedError } from "@/lib/authUtils";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Activity, Settings, Plus, Shield, Edit, Trash2, X } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
+import DemoBanner from "@/components/DemoBanner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -378,7 +379,11 @@ export default function AdminActivityTypes() {
   );
 
   return (
-    <AdminLayout title="Activity Types" subtitle="Manage allowed activities and their permissions">
+    <AdminLayout 
+      title="Activity Types" 
+      subtitle="Manage allowed activities and their permissions"
+      rightContent={<DemoBanner message="Demo Mode - Read Only View - Activity types cannot be modified" />}
+    >
       <div style={{ padding: '24px' }}>
         
         {/* Add Activity Type Button */}

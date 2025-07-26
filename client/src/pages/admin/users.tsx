@@ -6,6 +6,7 @@ import { hasAccessLevel, canViewAdminPage, ACCESS_REQUIREMENTS } from "@/utils/r
 import { isDemoModeActive, isReadOnlyMode, getDemoModeMessage } from "@/utils/demoMode";
 import { Users, Plus, Shield, Edit, Trash2, Mail, UserPlus, AlertTriangle, Eye } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
+import DemoBanner from "@/components/DemoBanner";
 
 interface User {
   id: string;
@@ -281,7 +282,11 @@ export default function AdminUsers() {
   const totalSessions = users.reduce((sum, u) => sum + u.totalSessions, 0);
 
   return (
-    <AdminLayout title="User Management" subtitle="Manage user accounts, roles, and permissions">
+    <AdminLayout 
+      title="User Management" 
+      subtitle="Manage user accounts, roles, and permissions"
+      rightContent={<DemoBanner message="Demo Mode - Read Only View - User management is view-only" />}
+    >
       <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '1200px', margin: '0 auto' }}>
         
         {/* Demo Mode Indicator */}

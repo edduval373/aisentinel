@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { Building, Users, Settings, Save, Edit, UserPlus, X, Monitor, Crop, Upload } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
+import DemoBanner from "@/components/DemoBanner";
 
 interface Company {
   id: number;
@@ -477,7 +478,11 @@ export default function CompanySetup() {
   }
 
   return (
-    <AdminLayout title="Company Setup" subtitle="Configure your current company and manage owners">
+    <AdminLayout 
+      title="Company Setup" 
+      subtitle="Configure your current company and manage owners"
+      rightContent={<DemoBanner message="Demo Mode - Read Only View - Company settings cannot be modified" />}
+    >
       <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
         
         {/* Chat Screen Preview */}

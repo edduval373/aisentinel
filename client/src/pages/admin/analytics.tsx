@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge-standard";
 import { hasAccessLevel, canViewAdminPage, ACCESS_REQUIREMENTS } from "@/utils/roleBasedAccess";
 import { isDemoModeActive, isReadOnlyMode, getDemoModeMessage } from "@/utils/demoMode";
 import { BarChart3, TrendingUp, Users, MessageSquare, Clock, Shield, Eye } from "lucide-react";
+import DemoBanner from "@/components/DemoBanner";
 
 export default function AdminAnalytics() {
   const { toast } = useToast();
@@ -149,7 +150,11 @@ export default function AdminAnalytics() {
   ];
 
   return (
-    <AdminLayout title="Usage Analytics" subtitle="Monitor system usage and performance metrics">
+    <AdminLayout 
+      title="Usage Analytics" 
+      subtitle="Monitor system usage and performance metrics"
+      rightContent={<DemoBanner message="Demo Mode - Read Only View - Analytics are view-only" />}
+    >
       <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
         
         {/* Demo Mode Indicator */}
