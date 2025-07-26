@@ -627,7 +627,8 @@ export default function AdminPermissions() {
               </div>
             );
           })}
-        </div>
+          </div>
+        )}
       </div>
     </AdminLayout>
   );

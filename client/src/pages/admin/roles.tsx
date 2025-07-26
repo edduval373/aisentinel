@@ -4,6 +4,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { roleBasedAccess } from "@/lib/roleBasedAccess";
+
+import DemoBanner from "@/components/DemoBanner";
 import { Shield, Users, Settings, Edit, Plus, Trash2, AlertTriangle } from "lucide-react";
 
 interface CompanyRole {
@@ -21,8 +23,10 @@ export default function AdminRoles() {
   const { toast } = useToast();
   const { user, isAuthenticated, isLoading } = useAuth();
   
-  // Check if user has administrator level access (98 or above)
+  // Check if user has administrator level access (98 or above) or is demo user (0)
   const hasAdminAccess = roleBasedAccess.hasAccessLevel(user?.roleLevel || 0, 98);
+  const isDemoMode = user?.roleLevel === 0;
+  const hasAnyAccess = hasAdminAccess || isDemoMode;
   const [roles, setRoles] = useState<CompanyRole[]>([]);
   const [loading, setLoading] = useState(true);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -61,10 +65,10 @@ export default function AdminRoles() {
   ];
 
   useEffect(() => {
-    if (isAuthenticated && hasAdminAccess && user?.companyId) {
+    if (isAuthenticated && hasAnyAccess) {
       fetchRoles();
     }
-  }, [isAuthenticated, hasAdminAccess, user]);
+  }, [isAuthenticated, hasAnyAccess, user]);
 
   const fetchRoles = async () => {
     try {
@@ -306,7 +310,7 @@ export default function AdminRoles() {
   }
 
   // Return access denied if not authenticated or lacks access
-  if (!isAuthenticated || !hasAdminAccess) {
+  if (!isAuthenticated || !hasAnyAccess) {
     return (
       <AdminLayout title="Roles & Permissions" subtitle="Manage user roles and access permissions">
         <div style={{ 
@@ -332,34 +336,40 @@ export default function AdminRoles() {
   }
 
   return (
-    <AdminLayout title="Roles & Permissions" subtitle="Manage user roles and access permissions">
+    <AdminLayout 
+      title="Roles & Permissions" 
+      subtitle="Manage user roles and access permissions"
+      rightContent={isDemoMode && <DemoBanner message="Demo Mode - Read Only View" />}
+    >
       <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '1200px', margin: '0 auto' }}>
         
-        {/* Header with Add Role Button */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-          <button
-            onClick={() => setIsCreateDialogOpen(true)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              backgroundColor: '#3b82f6',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              padding: '12px 20px',
-              fontSize: '14px',
-              fontWeight: '500',
-              cursor: 'pointer',
-              transition: 'background-color 0.2s'
-            }}
-            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#3b82f6'}
-          >
-            <Plus size={16} />
-            Add Role
-          </button>
-        </div>
+        {/* Header with Add Role Button - Only show for full access users */}
+        {hasAdminAccess && (
+          <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+            <button
+              onClick={() => setIsCreateDialogOpen(true)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                backgroundColor: '#3b82f6',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '12px 20px',
+                fontSize: '14px',
+                fontWeight: '500',
+                cursor: 'pointer',
+                transition: 'background-color 0.2s'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#3b82f6'}
+            >
+              <Plus size={16} />
+              Add Role
+            </button>
+          </div>
+        )}
 
         {/* Roles Grid */}
         <div style={{
@@ -396,60 +406,62 @@ export default function AdminRoles() {
                         <Shield size={20} style={{ color: '#3b82f6' }} />
                         <h4 style={{ fontSize: '18px', fontWeight: '600', color: '#1f2937', margin: 0 }}>{role.name}</h4>
                       </div>
-                      <div style={{ display: 'flex', gap: '4px' }}>
-                        <button
-                          onClick={() => openEditDialog(role)}
-                          style={{
-                            width: '32px',
-                            height: '32px',
-                            border: '1px solid #d1d5db',
-                            borderRadius: '6px',
-                            backgroundColor: 'white',
-                            color: '#6b7280',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            transition: 'all 0.2s'
-                          }}
-                          onMouseOver={(e) => {
-                            e.currentTarget.style.backgroundColor = '#f3f4f6';
-                            e.currentTarget.style.color = '#374151';
-                          }}
-                          onMouseOut={(e) => {
-                            e.currentTarget.style.backgroundColor = 'white';
-                            e.currentTarget.style.color = '#6b7280';
-                          }}
-                        >
-                          <Edit size={14} />
-                        </button>
-                        <button
-                          onClick={() => openDeleteDialog(role)}
-                          style={{
-                            width: '32px',
-                            height: '32px',
-                            border: '1px solid #fca5a5',
-                            borderRadius: '6px',
-                            backgroundColor: '#fef2f2',
-                            color: '#dc2626',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            transition: 'all 0.2s'
-                          }}
-                          onMouseOver={(e) => {
-                            e.currentTarget.style.backgroundColor = '#fee2e2';
-                            e.currentTarget.style.borderColor = '#f87171';
-                          }}
-                          onMouseOut={(e) => {
-                            e.currentTarget.style.backgroundColor = '#fef2f2';
-                            e.currentTarget.style.borderColor = '#fca5a5';
-                          }}
-                        >
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
+                      {hasAdminAccess && (
+                        <div style={{ display: 'flex', gap: '4px' }}>
+                          <button
+                            onClick={() => openEditDialog(role)}
+                            style={{
+                              width: '32px',
+                              height: '32px',
+                              border: '1px solid #d1d5db',
+                              borderRadius: '6px',
+                              backgroundColor: 'white',
+                              color: '#6b7280',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              transition: 'all 0.2s'
+                            }}
+                            onMouseOver={(e) => {
+                              e.currentTarget.style.backgroundColor = '#f3f4f6';
+                              e.currentTarget.style.color = '#374151';
+                            }}
+                            onMouseOut={(e) => {
+                              e.currentTarget.style.backgroundColor = 'white';
+                              e.currentTarget.style.color = '#6b7280';
+                            }}
+                          >
+                            <Edit size={14} />
+                          </button>
+                          <button
+                            onClick={() => openDeleteDialog(role)}
+                            style={{
+                              width: '32px',
+                              height: '32px',
+                              border: '1px solid #fca5a5',
+                              borderRadius: '6px',
+                              backgroundColor: '#fef2f2',
+                              color: '#dc2626',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              transition: 'all 0.2s'
+                            }}
+                            onMouseOver={(e) => {
+                              e.currentTarget.style.backgroundColor = '#fee2e2';
+                              e.currentTarget.style.borderColor = '#f87171';
+                            }}
+                            onMouseOut={(e) => {
+                              e.currentTarget.style.backgroundColor = '#fef2f2';
+                              e.currentTarget.style.borderColor = '#fca5a5';
+                            }}
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      )}
                     </div>
                     
                     <p style={{ fontSize: '14px', color: '#6b7280', marginBottom: '12px', lineHeight: '1.5' }}>{role.description}</p>
