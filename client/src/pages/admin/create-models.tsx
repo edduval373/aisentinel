@@ -369,27 +369,32 @@ export default function CreateModels() {
     );
   }
 
+  // Create demo banner component for inline display
+  const DemoBanner = isDemoMode ? (
+    <div style={{
+      backgroundColor: '#1e3a8a',
+      color: 'white',
+      padding: '8px 16px',
+      borderRadius: '6px',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '8px',
+      fontSize: '13px',
+      fontWeight: '500',
+      marginLeft: '16px'
+    }}>
+      <Eye style={{ width: '16px', height: '16px' }} />
+      <span>Demo Mode - Read Only View - You can view all AI models but cannot make changes</span>
+    </div>
+  ) : null;
+
   return (
-    <AdminLayout title="Create AI Models" subtitle="Create and manage custom AI models from scratch">
+    <AdminLayout 
+      title="Create AI Models" 
+      subtitle="Create and manage custom AI models from scratch"
+      rightContent={DemoBanner}
+    >
       <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
-        
-        {/* Demo Mode Indicator */}
-        {isDemoMode && (
-          <div style={{
-            backgroundColor: '#1e3a8a',
-            color: 'white',
-            padding: '12px 16px',
-            borderRadius: '8px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            fontSize: '14px',
-            fontWeight: '500'
-          }}>
-            <Eye size={16} />
-            {getDemoModeMessage()} - You can view all AI models but cannot make changes
-          </div>
-        )}
         
         {/* Header Section */}
         <div style={{ 

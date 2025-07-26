@@ -9,9 +9,10 @@ interface AdminLayoutProps {
   children: React.ReactNode;
   title: string;
   subtitle?: string;
+  rightContent?: React.ReactNode;
 }
 
-export default function AdminLayout({ children, title, subtitle }: AdminLayoutProps) {
+export default function AdminLayout({ children, title, subtitle, rightContent }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -35,41 +36,49 @@ export default function AdminLayout({ children, title, subtitle }: AdminLayoutPr
           padding: '12px 16px', 
           display: 'flex', 
           alignItems: 'center',
+          justifyContent: 'space-between',
           gap: '12px'
         }}>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setSidebarOpen(true)}
-            style={{ 
-              color: '#64748b',
-              padding: '8px'
-            }}
-          >
-            <img 
-              src="/ai-sentinel-logo.png" 
-              alt="AI Sentinel" 
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setSidebarOpen(true)}
               style={{ 
-                width: '32px', 
-                height: '32px', 
-                objectFit: 'contain',
-                flexShrink: 0
+                color: '#64748b',
+                padding: '8px'
               }}
-            />
-          </Button>
-          <div>
-            <h1 style={{ 
-              fontSize: '18px', 
-              fontWeight: '600', 
-              color: '#1e293b',
-              margin: 0 
-            }}>{title}</h1>
-            {subtitle && <p style={{ 
-              fontSize: '14px', 
-              color: '#64748b',
-              margin: 0 
-            }}>{subtitle}</p>}
+            >
+              <img 
+                src="/ai-sentinel-logo.png" 
+                alt="AI Sentinel" 
+                style={{ 
+                  width: '32px', 
+                  height: '32px', 
+                  objectFit: 'contain',
+                  flexShrink: 0
+                }}
+              />
+            </Button>
+            <div>
+              <h1 style={{ 
+                fontSize: '18px', 
+                fontWeight: '600', 
+                color: '#1e293b',
+                margin: 0 
+              }}>{title}</h1>
+              {subtitle && <p style={{ 
+                fontSize: '14px', 
+                color: '#64748b',
+                margin: 0 
+              }}>{subtitle}</p>}
+            </div>
           </div>
+          {rightContent && (
+            <div style={{ flexShrink: 0 }}>
+              {rightContent}
+            </div>
+          )}
         </div>
         
         {/* Main Content */}
