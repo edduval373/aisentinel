@@ -139,27 +139,9 @@ export default function AdminSecuritySettings() {
     <AdminLayout 
       title="Security Settings" 
       subtitle="Configure system security and monitoring"
-      rightContent={isDemoMode && <DemoBanner message={getDemoModeMessage()} />}
+      rightContent={isDemoMode && <DemoBanner message="Demo Mode - Read Only View" />}
     >
       <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-        
-        {/* Demo Mode Banner */}
-        {isDemoMode && (
-          <div style={{
-            backgroundColor: '#1e3a8a',
-            color: 'white',
-            padding: '12px 16px',
-            borderRadius: '8px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            fontSize: '14px',
-            fontWeight: '500'
-          }}>
-            <Eye size={16} />
-            {getDemoModeMessage()} - Security settings are view-only
-          </div>
-        )}
         {/* Content Filtering */}
         <Card>
           <CardHeader>
