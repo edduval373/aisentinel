@@ -405,33 +405,11 @@ export default function ContextManagement() {
                 <p style={{
                   color: '#6b7280',
                   textAlign: 'center',
-                  marginBottom: '16px',
+                  marginBottom: '0',
                   lineHeight: '1.5'
                 }}>
                   Upload your first company document to get started with context-aware AI responses
                 </p>
-                <button
-                  onClick={() => setShowUploadDialog(true)}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '12px 20px',
-                    backgroundColor: '#2563eb',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '8px',
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    cursor: 'pointer',
-                    transition: 'background-color 0.2s'
-                  }}
-                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#1d4ed8'}
-                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
-                >
-                  <Upload style={{ width: '16px', height: '16px' }} />
-                  Upload Document
-                </button>
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
