@@ -30,7 +30,7 @@ export function useAuth() {
     queryFn: async () => {
       // If in demo mode, return demo user authenticated under company 1
       if (isDemoMode) {
-        console.log("Demo mode activated - returning demo user under company 1");
+        console.log("Demo mode activated - returning demo user under company 1 with roleLevel 0");
         return { 
           authenticated: true, 
           user: {
