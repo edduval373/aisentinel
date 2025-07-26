@@ -79,7 +79,7 @@ export default async function handler(req, res) {
         
         // For production, we need to validate against actual database/session store
         // Since this is serverless without database access, check for specific valid tokens
-        const validTokenPattern = /^(dev-session-|prod-session-|replit-auth-)/;
+        const validTokenPattern = /^(dev-session-|prod-session-|replit-auth-|demo-session-)/;
         
         if (validTokenPattern.test(sessionToken)) {
           console.log('✅ [SERVERLESS] Valid session token pattern, user authenticated');
@@ -371,15 +371,20 @@ export default async function handler(req, res) {
           return;
         }
 
-        // Create session token
-        const sessionToken = 'demo-session-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+        // Create production session token 
+        const sessionToken = 'prod-session-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
         
-        // Set session cookie
-        res.setHeader('Set-Cookie', `sessionToken=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${30 * 24 * 60 * 60}`);
+        // Set session cookie with production settings
+        const isProduction = process.env.NODE_ENV === 'production';
+        const secureFlag = isProduction ? 'Secure; ' : '';
+        const cookieValue = `sessionToken=${sessionToken}; HttpOnly; ${secureFlag}SameSite=Lax; Path=/; Max-Age=${30 * 24 * 60 * 60}`;
         
-        console.log('✅ [SERVERLESS] Email verified, session created:', sessionToken);
+        res.setHeader('Set-Cookie', cookieValue);
         
-        // Redirect to main application
+        console.log('✅ [SERVERLESS] Email verified, production session created:', sessionToken);
+        console.log('🍪 [SERVERLESS] Cookie set:', cookieValue);
+        
+        // Redirect to main application (chat interface)
         res.writeHead(302, { 'Location': '/' });
         res.end();
         return;
