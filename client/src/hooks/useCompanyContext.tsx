@@ -32,8 +32,16 @@ export function CompanyProvider({ children }: CompanyProviderProps) {
       }
     } else if (!isAuthenticated) {
       // For demo mode (unauthenticated users), always use company ID 1
-      setCurrentCompanyIdState(1);
-      console.log("Demo mode: Setting company ID to 1");
+      // This only applies when explicitly in demo mode (/demo path)
+      const isDemoPath = window.location.pathname === '/demo';
+      if (isDemoPath) {
+        setCurrentCompanyIdState(1);
+        console.log("Demo mode: Setting company ID to 1");
+      } else {
+        // For unauthenticated users on other paths, no company context needed
+        setCurrentCompanyIdState(null);
+        console.log("Unauthenticated user: No company context");
+      }
     }
     setIsLoading(false);
   }, [isAuthenticated, user]);

@@ -157,6 +157,8 @@ function Router() {
           if (!isAuthenticated) {
             console.log("[APP DEBUG] Not authenticated, showing landing page");
             console.log("[APP DEBUG] About to render Landing component");
+            // Force page title update to ensure we're showing the right page
+            document.title = "AI Sentinel - Enterprise AI Governance Platform";
             return <Landing />;
           }
           console.log("[APP DEBUG] Authenticated, showing home");
