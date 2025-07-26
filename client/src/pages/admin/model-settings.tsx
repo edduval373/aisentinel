@@ -4,16 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import AdminLayout from "@/components/layout/AdminLayout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Slider } from "@/components/ui/slider";
-import { Separator } from "@/components/ui/separator";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Bot, Settings, Zap, Shield, AlertCircle, Thermometer } from "lucide-react";
+import { Bot, Zap } from "lucide-react";
 import type { AiModel } from "@shared/schema";
 import DemoBanner from "@/components/DemoBanner";
 
@@ -40,15 +31,22 @@ export default function AdminModelSettings() {
   });
 
   const getProviderIcon = (provider: string) => {
+    const iconStyle = { 
+      width: '20px', 
+      height: '20px', 
+      marginRight: '8px',
+      color: '#3b82f6'
+    };
+    
     switch (provider) {
       case 'anthropic':
-        return <Bot className="w-5 h-5 mr-2" />;
+        return <Bot style={iconStyle} />;
       case 'openai':
-        return <Bot className="w-5 h-5 mr-2" />;
+        return <Bot style={iconStyle} />;
       case 'perplexity':
-        return <Zap className="w-5 h-5 mr-2" />;
+        return <Zap style={iconStyle} />;
       default:
-        return <Bot className="w-5 h-5 mr-2" />;
+        return <Bot style={iconStyle} />;
     }
   };
 
@@ -95,9 +93,54 @@ export default function AdminModelSettings() {
   if (isLoading || modelsLoading) {
     return (
       <AdminLayout title="Model Settings" subtitle="Configure AI model parameters and behavior">
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sentinel-blue"></div>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '400px',
+          flexDirection: 'column',
+          gap: '24px'
+        }}>
+          <div style={{
+            width: '80px',
+            height: '80px',
+            animation: 'spin 2s linear infinite'
+          }}>
+            <img 
+              src="/ai-sentinel-logo.png" 
+              alt="Loading..." 
+              style={{ 
+                width: '100%', 
+                height: '100%', 
+                objectFit: 'contain',
+                filter: 'brightness(1.2) saturate(1.4) contrast(1.1)'
+              }} 
+            />
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            <h3 style={{
+              fontSize: '20px',
+              fontWeight: '600',
+              color: '#1e293b',
+              margin: '0 0 8px 0'
+            }}>
+              Loading Model Settings
+            </h3>
+            <p style={{
+              fontSize: '16px',
+              color: '#64748b',
+              margin: 0
+            }}>
+              Preparing your AI model configuration...
+            </p>
+          </div>
         </div>
+        <style>{`
+          @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+          }
+        `}</style>
       </AdminLayout>
     );
   }
@@ -112,38 +155,96 @@ export default function AdminModelSettings() {
       subtitle="Configure AI model parameters and behavior"
       rightContent={<DemoBanner message="Demo Mode - Read Only View - Model settings cannot be changed" />}
     >
-      <div className="p-6 space-y-6">
+      <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
         {/* Dynamic AI Model Settings */}
         {aiModels?.map((model) => (
-          <Card key={model.id}>
-            <CardHeader>
-              <CardTitle className="flex items-center">
+          <div key={model.id} style={{
+            backgroundColor: 'white',
+            borderRadius: '12px',
+            border: '1px solid #e2e8f0',
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+            overflow: 'hidden'
+          }}>
+            <div style={{
+              padding: '24px 24px 16px 24px',
+              borderBottom: '1px solid #f1f5f9'
+            }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                marginBottom: '12px'
+              }}>
                 {getProviderIcon(model.provider)}
-                {model.name} Configuration
-              </CardTitle>
-              <div className="flex items-center space-x-2">
-                <Badge variant={model.isEnabled ? "default" : "secondary"}>
+                <h3 style={{
+                  fontSize: '20px',
+                  fontWeight: '600',
+                  color: '#1e293b',
+                  margin: 0
+                }}>
+                  {model.name} Configuration
+                </h3>
+              </div>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px'
+              }}>
+                <span style={{
+                  backgroundColor: model.isEnabled ? '#3b82f6' : '#64748b',
+                  color: 'white',
+                  padding: '4px 12px',
+                  borderRadius: '6px',
+                  fontSize: '12px',
+                  fontWeight: '500'
+                }}>
                   {model.isEnabled ? "Active" : "Disabled"}
-                </Badge>
-                <span className="text-sm text-slate-600">
+                </span>
+                <span style={{
+                  fontSize: '14px',
+                  color: '#64748b'
+                }}>
                   {getModelDescription(model.provider)}
                 </span>
               </div>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid gap-4 md:grid-cols-2">
+            </div>
+            <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                gap: '16px'
+              }}>
                 <div>
-                  <Label htmlFor={`${model.id}-temperature`}>Temperature</Label>
-                  <div className="mt-2 space-y-2">
-                    <Slider
-                      id={`${model.id}-temperature`}
-                      defaultValue={[model.provider === 'perplexity' ? 0.2 : 0.7]}
-                      max={2}
-                      min={0}
-                      step={0.1}
-                      className="w-full"
+                  <label style={{
+                    display: 'block',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    color: '#374151',
+                    marginBottom: '8px'
+                  }}>
+                    Temperature
+                  </label>
+                  <div style={{ marginTop: '8px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <input
+                      type="range"
+                      min="0"
+                      max="2"
+                      step="0.1"
+                      defaultValue={model.provider === 'perplexity' ? '0.2' : '0.7'}
+                      style={{
+                        width: '100%',
+                        height: '6px',
+                        borderRadius: '3px',
+                        background: '#e2e8f0',
+                        outline: 'none',
+                        cursor: 'pointer'
+                      }}
                     />
-                    <div className="flex justify-between text-xs text-slate-500">
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      fontSize: '12px',
+                      color: '#64748b'
+                    }}>
                       <span>Conservative (0.0)</span>
                       <span>Balanced ({model.provider === 'perplexity' ? '0.2' : '0.7'})</span>
                       <span>Creative (2.0)</span>
@@ -151,104 +252,309 @@ export default function AdminModelSettings() {
                   </div>
                 </div>
                 <div>
-                  <Label htmlFor={`${model.id}-max-tokens`}>Max Tokens</Label>
-                  <Input
-                    id={`${model.id}-max-tokens`}
+                  <label style={{
+                    display: 'block',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    color: '#374151',
+                    marginBottom: '8px'
+                  }}>
+                    Max Tokens
+                  </label>
+                  <input
                     type="number"
                     defaultValue="4096"
-                    className="mt-2"
+                    style={{
+                      width: '100%',
+                      padding: '8px 12px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '6px',
+                      fontSize: '14px',
+                      backgroundColor: 'white',
+                      marginTop: '8px'
+                    }}
                   />
                 </div>
               </div>
             
               
-              <div className="grid gap-4 md:grid-cols-2">
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                gap: '16px'
+              }}>
                 <div>
-                  <Label htmlFor={`${model.id}-top-p`}>Top P (Nucleus Sampling)</Label>
-                  <div className="mt-2 space-y-2">
-                    <Slider
-                      id={`${model.id}-top-p`}
-                      defaultValue={[model.provider === 'perplexity' ? 0.9 : 1]}
-                      max={1}
-                      min={0}
-                      step={0.1}
-                      className="w-full"
+                  <label style={{
+                    display: 'block',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    color: '#374151',
+                    marginBottom: '8px'
+                  }}>
+                    Top P (Nucleus Sampling)
+                  </label>
+                  <div style={{ marginTop: '8px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <input
+                      type="range"
+                      min="0"
+                      max="1"
+                      step="0.1"
+                      defaultValue={model.provider === 'perplexity' ? '0.9' : '1'}
+                      style={{
+                        width: '100%',
+                        height: '6px',
+                        borderRadius: '3px',
+                        background: '#e2e8f0',
+                        outline: 'none',
+                        cursor: 'pointer'
+                      }}
                     />
-                    <div className="flex justify-between text-xs text-slate-500">
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      fontSize: '12px',
+                      color: '#64748b'
+                    }}>
                       <span>Focused (0.0)</span>
                       <span>Balanced (1.0)</span>
                     </div>
                   </div>
                 </div>
                 <div>
-                  <Label htmlFor={`${model.id}-frequency-penalty`}>
+                  <label style={{
+                    display: 'block',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    color: '#374151',
+                    marginBottom: '8px'
+                  }}>
                     {model.provider === 'anthropic' ? 'Top K' : 'Frequency Penalty'}
-                  </Label>
-                  <div className="mt-2 space-y-2">
+                  </label>
+                  <div style={{ marginTop: '8px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     {model.provider === 'anthropic' ? (
-                      <Input
-                        id={`${model.id}-frequency-penalty`}
+                      <input
                         type="number"
                         defaultValue="40"
-                        className="w-full"
+                        style={{
+                          width: '100%',
+                          padding: '8px 12px',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '6px',
+                          fontSize: '14px',
+                          backgroundColor: 'white'
+                        }}
                       />
                     ) : (
-                      <Slider
-                        id={`${model.id}-frequency-penalty`}
-                        defaultValue={[0]}
-                        max={2}
-                        min={-2}
-                        step={0.1}
-                        className="w-full"
-                      />
-                    )}
-                    {model.provider !== 'anthropic' && (
-                      <div className="flex justify-between text-xs text-slate-500">
-                        <span>Repetitive (-2.0)</span>
-                        <span>Varied (2.0)</span>
-                      </div>
+                      <>
+                        <input
+                          type="range"
+                          min="-2"
+                          max="2"
+                          step="0.1"
+                          defaultValue="0"
+                          style={{
+                            width: '100%',
+                            height: '6px',
+                            borderRadius: '3px',
+                            background: '#e2e8f0',
+                            outline: 'none',
+                            cursor: 'pointer'
+                          }}
+                        />
+                        <div style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          fontSize: '12px',
+                          color: '#64748b'
+                        }}>
+                          <span>Repetitive (-2.0)</span>
+                          <span>Varied (2.0)</span>
+                        </div>
+                      </>
                     )}
                   </div>
                 </div>
               </div>
-              
-              <Separator />
-              
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
+
+              <div style={{
+                height: '1px',
+                backgroundColor: '#e2e8f0',
+                margin: '20px 0'
+              }}></div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '16px',
+                  backgroundColor: '#f8fafc',
+                  borderRadius: '8px',
+                  border: '1px solid #e2e8f0'
+                }}>
                   <div>
-                    <Label htmlFor={`${model.id}-stream`}>Enable streaming responses</Label>
-                    <p className="text-sm text-slate-600">Stream responses for better user experience</p>
+                    <label style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      color: '#374151',
+                      marginBottom: '4px'
+                    }}>
+                      Enable streaming responses
+                    </label>
+                    <p style={{
+                      fontSize: '14px',
+                      color: '#64748b',
+                      margin: 0
+                    }}>
+                      Stream responses for better user experience
+                    </p>
                   </div>
-                  <Switch id={`${model.id}-stream`} defaultChecked={model.provider !== 'perplexity'} />
+                  <label style={{
+                    position: 'relative',
+                    display: 'inline-block',
+                    width: '44px',
+                    height: '24px'
+                  }}>
+                    <input
+                      type="checkbox"
+                      defaultChecked={model.provider !== 'perplexity'}
+                      style={{
+                        opacity: 0,
+                        width: 0,
+                        height: 0
+                      }}
+                    />
+                    <span style={{
+                      position: 'absolute',
+                      cursor: 'pointer',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      backgroundColor: model.provider !== 'perplexity' ? '#3b82f6' : '#94a3b8',
+                      borderRadius: '24px',
+                      transition: '0.3s'
+                    }}>
+                      <span style={{
+                        position: 'absolute',
+                        content: '',
+                        height: '18px',
+                        width: '18px',
+                        left: model.provider !== 'perplexity' ? '23px' : '3px',
+                        bottom: '3px',
+                        backgroundColor: 'white',
+                        borderRadius: '50%',
+                        transition: '0.3s'
+                      }}></span>
+                    </span>
+                  </label>
                 </div>
-                <div className="flex items-center justify-between">
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '16px',
+                  backgroundColor: '#f8fafc',
+                  borderRadius: '8px',
+                  border: '1px solid #e2e8f0'
+                }}>
                   <div>
-                    <Label htmlFor={`${model.id}-function-calling`}>
+                    <label style={{
+                      display: 'block',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      color: '#374151',
+                      marginBottom: '4px'
+                    }}>
                       {model.provider === 'anthropic' ? 'Enable vision capabilities' : 
                        model.provider === 'perplexity' ? 'Enable web search' : 'Enable function calling'}
-                    </Label>
-                    <p className="text-sm text-slate-600">
+                    </label>
+                    <p style={{
+                      fontSize: '14px',
+                      color: '#64748b',
+                      margin: 0
+                    }}>
                       {model.provider === 'anthropic' ? 'Allow image analysis and processing' : 
                        model.provider === 'perplexity' ? 'Access real-time web information' : 'Allow model to call predefined functions'}
                     </p>
                   </div>
-                  <Switch id={`${model.id}-function-calling`} defaultChecked={model.provider === 'perplexity'} />
+                  <label style={{
+                    position: 'relative',
+                    display: 'inline-block',
+                    width: '44px',
+                    height: '24px'
+                  }}>
+                    <input
+                      type="checkbox"
+                      defaultChecked={model.provider === 'perplexity'}
+                      style={{
+                        opacity: 0,
+                        width: 0,
+                        height: 0
+                      }}
+                    />
+                    <span style={{
+                      position: 'absolute',
+                      cursor: 'pointer',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      backgroundColor: model.provider === 'perplexity' ? '#3b82f6' : '#94a3b8',
+                      borderRadius: '24px',
+                      transition: '0.3s'
+                    }}>
+                      <span style={{
+                        position: 'absolute',
+                        content: '',
+                        height: '18px',
+                        width: '18px',
+                        left: model.provider === 'perplexity' ? '23px' : '3px',
+                        bottom: '3px',
+                        backgroundColor: 'white',
+                        borderRadius: '50%',
+                        transition: '0.3s'
+                      }}></span>
+                    </span>
+                  </label>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         ))}
 
         {/* No models message */}
         {!aiModels || aiModels.length === 0 && (
-          <Card>
-            <CardContent className="text-center py-8">
-              <Bot className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-              <p className="text-slate-600">No AI models configured yet.</p>
-              <p className="text-sm text-slate-500 mt-2">Add models from the AI Models page to configure their settings.</p>
-            </CardContent>
-          </Card>
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '12px',
+            border: '1px solid #e2e8f0',
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+            padding: '48px 24px',
+            textAlign: 'center'
+          }}>
+            <Bot style={{ 
+              width: '48px', 
+              height: '48px', 
+              color: '#94a3b8', 
+              margin: '0 auto 16px auto' 
+            }} />
+            <p style={{
+              fontSize: '16px',
+              color: '#64748b',
+              margin: '0 0 8px 0'
+            }}>
+              No AI models configured yet.
+            </p>
+            <p style={{
+              fontSize: '14px',
+              color: '#94a3b8',
+              margin: 0
+            }}>
+              Add models from the AI Models page to configure their settings.
+            </p>
+          </div>
         )}
       </div>
     </AdminLayout>
