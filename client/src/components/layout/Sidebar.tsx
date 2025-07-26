@@ -34,7 +34,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const [location, navigate] = useLocation();
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
-  const isDemoUser = user?.roleLevel === 0;
+  const isDemoUser = user?.roleLevel === 0 || window.location.pathname === '/demo' || !document.cookie.includes('sessionToken=');
   const isSuperUser = user?.role === 'super-user' || (user?.roleLevel ?? 0) >= 100;
   const isOwner = user?.role === 'owner' || (user?.roleLevel ?? 0) >= 99;
   const isAdmin = user?.role === 'admin' || (user?.roleLevel ?? 0) >= 2;

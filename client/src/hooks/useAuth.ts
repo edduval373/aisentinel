@@ -90,7 +90,8 @@ export function useAuth() {
   // Extract user data for role-based authentication
   const user = data?.user || null;
   const isAuthenticated = data?.authenticated || false;
-  const roleLevel = user?.roleLevel || 1;
+  // For demo mode, ensure roleLevel is 0, otherwise default to 1 for regular users
+  const roleLevel = isDemoMode ? 0 : (user?.roleLevel ?? 1);
   
   // Role level hierarchy: super-user (100), owner (99), admin (2), user (1)
   const isAdmin = roleLevel >= 2;
