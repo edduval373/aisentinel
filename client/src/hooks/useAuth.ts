@@ -20,9 +20,9 @@ interface AuthData {
 export function useAuth() {
   const queryClient = useQueryClient();
   
-  // Check if we're in demo mode (accessing /demo path or no auth cookie)
+  // Check if we're in demo mode (only when explicitly accessing /demo path)
   const hasAuthCookie = document.cookie.includes('sessionToken=');
-  const isDemoMode = window.location.pathname === '/demo' || !hasAuthCookie;
+  const isDemoMode = window.location.pathname === '/demo';
   
   // Real authentication - with demo mode bypass
   const { data, isLoading, error } = useQuery<AuthData>({

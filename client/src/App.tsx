@@ -48,7 +48,7 @@ function Router() {
   // Create role-based route guard
   const RoleGuard = ({ children, requiredRole }: { children: React.ReactNode; requiredRole: 'admin' | 'owner' | 'super-user' }) => {
     // Check if user is in demo mode (roleLevel 0)
-    const isDemoUser = user?.roleLevel === 0 || window.location.pathname === '/demo' || !document.cookie.includes('sessionToken=');
+    const isDemoUser = user?.roleLevel === 0 || window.location.pathname === '/demo';
     
     const hasAccess = 
       isDemoUser || // Demo users can access all admin pages in read-only mode
