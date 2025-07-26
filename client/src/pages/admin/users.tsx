@@ -285,27 +285,9 @@ export default function AdminUsers() {
     <AdminLayout 
       title="User Management" 
       subtitle="Manage user accounts, roles, and permissions"
-      rightContent={<DemoBanner message="Demo Mode - Read Only View - User management is view-only" />}
+      rightContent={isDemoMode && <DemoBanner message="Demo Mode - Read Only View" />}
     >
       <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '1200px', margin: '0 auto' }}>
-        
-        {/* Demo Mode Indicator */}
-        {isDemoMode && (
-          <div style={{
-            backgroundColor: '#1e3a8a',
-            color: 'white',
-            padding: '12px 16px',
-            borderRadius: '8px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            fontSize: '14px',
-            fontWeight: '500'
-          }}>
-            <Eye size={16} />
-            {getDemoModeMessage()} - You can view all sections but cannot make changes
-          </div>
-        )}
         
         {/* Header with Action Button */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
