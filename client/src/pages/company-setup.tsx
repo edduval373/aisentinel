@@ -796,7 +796,7 @@ export default function CompanySetup() {
                   <>
                     {showCompanyLogo && (
                       <div style={{ position: 'relative', display: 'inline-block' }}>
-                        {currentCompany.logo ? (
+                        {currentCompany?.logo ? (
                           <img 
                             src={currentCompany.logo} 
                             alt={currentCompany.name}

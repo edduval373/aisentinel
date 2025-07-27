@@ -279,15 +279,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const demoCompany = await storage.getCompany(1);
       if (demoCompany) {
         console.log("Returning demo company:", demoCompany.name, "ID:", demoCompany.id);
-        
-        // Optimize logo for header display
-        const optimizedCompany = {
-          ...demoCompany,
-          logo: demoCompany.logo && demoCompany.logo.length > 50000 ? 
-            demoCompany.logo.substring(0, 50000) + '...' : demoCompany.logo
-        };
-        
-        return res.json(optimizedCompany);
+        return res.json(demoCompany);
       }
 
       console.log("No companies found in database");
