@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useLocation } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button-standard";
 import { 
   Shield, 
@@ -33,6 +34,12 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const { user } = useAuth(); // Re-enabled to get Railway database user data
   const [location, navigate] = useLocation();
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
+
+  // Fetch current company data
+  const { data: currentCompany } = useQuery({
+    queryKey: ['/api/user/current-company'],
+    enabled: !!user && !!user.companyId,
+  });
 
   const isDemoUser = user?.roleLevel === 0 || window.location.pathname === '/demo' || !document.cookie.includes('sessionToken=');
   const isSuperUser = user?.role === 'super-user' || (user?.roleLevel ?? 0) >= 100;
@@ -596,6 +603,63 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 
       {/* Bottom section */}
       <div style={{ borderTop: '1px solid #3b82f6', padding: '12px' }}>
+        {/* Current Company Display */}
+        {currentCompany && (
+          <div style={{ 
+            marginBottom: '12px',
+            paddingBottom: '12px',
+            borderBottom: '1px solid #374151'
+          }}>
+            <div style={{ 
+              color: '#94a3b8', 
+              fontSize: '10px', 
+              fontWeight: 800, 
+              textTransform: 'uppercase', 
+              letterSpacing: '0.05em',
+              marginBottom: '6px'
+            }}>
+              CURRENT COMPANY
+            </div>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}>
+              {currentCompany.logo && (
+                <img 
+                  src={currentCompany.logo} 
+                  alt={currentCompany.name}
+                  style={{
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '4px',
+                    objectFit: 'cover',
+                    flexShrink: 0
+                  }}
+                />
+              )}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{
+                  color: '#f1f5f9',
+                  fontSize: '12px',
+                  fontWeight: '500',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap'
+                }}>
+                  {currentCompany.name}
+                </div>
+                <div style={{
+                  color: '#94a3b8',
+                  fontSize: '10px'
+                }}>
+                  ID: {currentCompany.id}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        
         {/* User Info Display */}
         <div style={{ 
           display: 'flex', 
