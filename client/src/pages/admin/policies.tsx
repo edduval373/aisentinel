@@ -19,7 +19,7 @@ export default function AdminPolicies() {
   // Demo mode functionality
   const isDemoMode = isDemoModeActive(user);
   const isReadOnly = isReadOnlyMode(user);
-  const { showDemoDialog, hideDemoDialog, isDemoDialogOpen } = useDemoDialog();
+  const { showDialog, closeDialog, DialogComponent, isOpen } = useDemoDialog();
 
   // Check access level - allow demo users (0) read-only access and administrators (2+) full access
   const hasReadOnlyAccess = user && (user.roleLevel === 0); // Demo users
@@ -259,7 +259,17 @@ export default function AdminPolicies() {
               </h2>
               {hasFullAccess && (
                 <button 
-                onClick={() => isDemoMode ? showDemoDialog('content-filter-create') : null}
+                onClick={() => isDemoMode ? showDialog({
+                  title: 'Content Filter Creation',
+                  description: 'Create custom content filters to automatically detect and block inappropriate content, PII, or policy violations in AI interactions.',
+                  features: [
+                    'Custom rule creation with regex pattern support',
+                    'Severity level configuration (High, Medium, Low)',
+                    'Real-time content scanning and blocking',
+                    'Detailed violation reporting and analytics',
+                    'Integration with compliance frameworks'
+                  ]
+                }) : null}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -456,7 +466,17 @@ export default function AdminPolicies() {
                     {hasFullAccess && (
                       <div style={{ display: 'flex', gap: '8px' }}>
                         <button 
-                        onClick={() => isDemoMode ? showDemoDialog('content-filter-configure') : null}
+                        onClick={() => isDemoMode ? showDialog({
+                          title: 'Content Filter Configuration',
+                          description: 'Configure advanced settings for this content filter including detection patterns, severity thresholds, and response actions.',
+                          features: [
+                            'Customize detection patterns and keywords',
+                            'Adjust sensitivity and threshold settings',
+                            'Configure automated response actions',
+                            'Set up violation notification preferences',
+                            'Test filter effectiveness with sample content'
+                          ]
+                        }) : null}
                         style={{
                           display: 'flex',
                           alignItems: 'center',
@@ -483,7 +503,17 @@ export default function AdminPolicies() {
                           Configure
                         </button>
                         <button 
-                        onClick={() => isDemoMode ? showDemoDialog('content-filter-logs') : null}
+                        onClick={() => isDemoMode ? showDialog({
+                          title: 'Content Filter Activity Logs',
+                          description: 'View detailed logs of content filter activities including blocked content, violation patterns, and filtering statistics.',
+                          features: [
+                            'Real-time activity logs with timestamps',
+                            'Detailed violation reports and patterns',
+                            'Filter performance statistics and metrics',
+                            'Export logs for compliance reporting',
+                            'Search and filter log entries by criteria'
+                          ]
+                        }) : null}
                         style={{
                           display: 'flex',
                           alignItems: 'center',
@@ -537,7 +567,17 @@ export default function AdminPolicies() {
               </h2>
               {hasFullAccess && (
                 <button 
-                onClick={() => isDemoMode ? showDemoDialog('security-rules-save') : null}
+                onClick={() => isDemoMode ? showDialog({
+                  title: 'Security Rules Configuration',
+                  description: 'Save changes to security rules including PII detection patterns, blocked keywords, and automated response settings.',
+                  features: [
+                    'PII detection pattern customization',
+                    'Blocked keywords and phrase management', 
+                    'Automated response configuration',
+                    'Security violation threshold settings',
+                    'Integration with external security systems'
+                  ]
+                }) : null}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -945,7 +985,17 @@ bank_account`}
               </h2>
               {hasFullAccess && (
                 <button 
-                onClick={() => isDemoMode ? showDemoDialog('compliance-save') : null}
+                onClick={() => isDemoMode ? showDialog({
+                  title: 'Compliance Settings Management',
+                  description: 'Save compliance configuration including data retention policies, audit settings, and regulatory framework adherence.',
+                  features: [
+                    'GDPR, HIPAA, SOX, and PCI DSS compliance settings',
+                    'Data retention policy configuration',
+                    'Automated compliance reporting',
+                    'Audit trail management and logging',
+                    'External SIEM integration settings'
+                  ]
+                }) : null}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -1560,23 +1610,8 @@ bank_account`}
         )}
       </div>
 
-      {/* Demo Info Dialog */}
-      <DemoInfoDialog
-        isOpen={isDemoDialogOpen}
-        onClose={hideDemoDialog}
-        title="Content Policies Demo"
-        description="This is a demonstration of AI Sentinel's comprehensive content policy management system. In the full version, administrators can create custom content filters, configure security rules, and manage compliance settings."
-        features={[
-          "Real-time content filtering with custom rules and severity levels",
-          "PII detection patterns with regex configuration", 
-          "Security rule automation with blocking and logging capabilities",
-          "Compliance framework integration (GDPR, HIPAA, SOX, PCI DSS)",
-          "Data retention policy management with automated enforcement",
-          "Audit trail logging with external SIEM integration",
-          "Role-based access control for policy configuration",
-          "Custom notification and escalation workflows"
-        ]}
-      />
+      {/* Demo Dialog Component */}
+      <DialogComponent />
     </AdminLayout>
   );
 }
