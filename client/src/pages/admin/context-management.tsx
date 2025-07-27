@@ -17,7 +17,6 @@ import { Upload, FileText, AlertCircle, CheckCircle, Settings, Link, Trash2, Edi
 import AdminLayout from "@/components/layout/AdminLayout";
 import DemoBanner from "@/components/DemoBanner";
 import { isDemoModeActive } from "@/utils/demoMode";
-import DemoInfoDialog from "@/components/demo/DemoInfoDialog";
 import { useDemoDialog } from "@/hooks/useDemoDialog";
 import type { ContextDocument, ActivityType } from "@shared/schema";
 
@@ -39,7 +38,26 @@ export default function ContextManagement() {
 
   // Demo mode detection
   const isDemoMode = isDemoModeActive(user);
-  const { showDialog, openDialog, closeDialog } = useDemoDialog('context-management');
+  const { showDialog, closeDialog, DialogComponent } = useDemoDialog();
+
+  const openDialog = (type: string) => {
+    const dialogConfig = {
+      title: "Context Management",
+      description: "This feature allows you to upload and manage company documents that AI can reference during conversations. Documents can be categorized, prioritized, and linked to specific activity types for contextual AI responses.",
+      features: [
+        "Upload documents in multiple formats (TXT, MD, JSON, PDF, DOCX)",
+        "Categorize documents by type (Policy, Procedure, Guideline, Knowledge)",
+        "Set priority levels for document importance",
+        "Enable/disable documents for AI reference",
+        "Link documents to specific activity types",
+        "Full document lifecycle management"
+      ]
+    };
+    closeDialog(); // Close any existing dialog first
+    setTimeout(() => {
+      showDialog(dialogConfig);
+    }, 10);
+  };
 
   // Fetch context documents
   const { data: documents, isLoading: documentsLoading } = useQuery<ContextDocument[]>({
@@ -783,20 +801,7 @@ export default function ContextManagement() {
         </Dialog>
 
         {/* Demo Info Dialog */}
-        <DemoInfoDialog
-          isOpen={showDialog}
-          onClose={closeDialog}
-          title="Context Management"
-          description="This feature allows you to upload and manage company documents that AI can reference during conversations. Documents can be categorized, prioritized, and linked to specific activity types for contextual AI responses."
-          features={[
-            "Upload documents in multiple formats (TXT, MD, JSON, PDF, DOCX)",
-            "Categorize documents by type (Policy, Procedure, Guideline, Knowledge)",
-            "Set priority levels for document importance",
-            "Enable/disable documents for AI reference",
-            "Link documents to specific activity types",
-            "Full document lifecycle management"
-          ]}
-        />
+        <DialogComponent />
       </div>
     </AdminLayout>
   );
