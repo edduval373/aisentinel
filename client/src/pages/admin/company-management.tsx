@@ -53,9 +53,39 @@ export default function CompanyManagement() {
   const queryClient = useQueryClient();
 
   // Fetch all companies (super-user only)
-  const { data: companies = [], isLoading: companiesLoading } = useQuery<Company[]>({
+  const { data: companies = [], isLoading: companiesLoading, error: companiesError } = useQuery<Company[]>({
     queryKey: ["/api/admin/companies"],
   });
+
+  // Debug logging for companies query
+  React.useEffect(() => {
+    console.log("🏢 Companies query state:", {
+      isLoading: companiesLoading,
+      hasError: !!companiesError,
+      error: companiesError,
+      companiesCount: companies?.length || 0,
+      companies: companies
+    });
+    
+    // Check cookies manually
+    console.log("🍪 Document cookies:", document.cookie);
+    
+    // Manual API test
+    if (!companiesLoading && companies.length === 0 && !companiesError) {
+      console.log("🧪 Manual API test - fetching companies directly...");
+      fetch('/api/admin/companies', { credentials: 'include' })
+        .then(res => {
+          console.log("🧪 Manual fetch response status:", res.status);
+          return res.json();
+        })
+        .then(data => {
+          console.log("🧪 Manual fetch response data:", data);
+        })
+        .catch(err => {
+          console.error("🧪 Manual fetch error:", err);
+        });
+    }
+  }, [companies, companiesLoading, companiesError]);
 
   const companyForm = useForm<z.infer<typeof companySchema>>({
     resolver: zodResolver(companySchema),
@@ -394,7 +424,30 @@ export default function CompanyManagement() {
         {/* Companies List */}
         <Card>
           <CardContent style={{ padding: '24px' }}>
-            {companies.length === 0 ? (
+            {companiesError ? (
+              <div style={{ 
+                textAlign: 'center', 
+                padding: '32px 0', 
+                color: '#ef4444' 
+              }}>
+                <Building style={{ 
+                  width: '48px', 
+                  height: '48px', 
+                  margin: '0 auto 8px', 
+                  color: '#d1d5db' 
+                }} />
+                <p>Error loading companies</p>
+                <p style={{ fontSize: '14px' }}>
+                  {companiesError?.message || 'Failed to fetch companies'}
+                </p>
+                <Button 
+                  onClick={() => queryClient.invalidateQueries({ queryKey: ["/api/admin/companies"] })}
+                  style={{ marginTop: '16px' }}
+                >
+                  Retry
+                </Button>
+              </div>
+            ) : companies.length === 0 ? (
               <div style={{ 
                 textAlign: 'center', 
                 padding: '32px 0', 
