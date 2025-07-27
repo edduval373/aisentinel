@@ -101,15 +101,19 @@ export default function AdminActivityTypes() {
     }
   }, [isAuthenticated, isLoading, toast]);
 
-  // Fetch activity types from database
+  // Fetch activity types from database - use demo endpoint for demo users
+  const apiEndpoint = isDemoMode ? '/api/activity-types' : '/api/admin/activity-types';
   const { data: activityTypes, isLoading: typesLoading } = useQuery<ActivityType[]>({
-    queryKey: ['/api/admin/activity-types'],
+    queryKey: [apiEndpoint],
     enabled: !isLoading,
   });
 
   // Create activity type mutation
   const createActivityTypeMutation = useMutation({
     mutationFn: async (data: z.infer<typeof activityTypeSchema>) => {
+      if (isDemoMode) {
+        throw new Error("Demo mode - functionality disabled");
+      }
       return apiRequest('/api/admin/activity-types', 'POST', data);
     },
     onSuccess: () => {
@@ -146,6 +150,9 @@ export default function AdminActivityTypes() {
   // Toggle activity type enabled status
   const toggleActivityTypeMutation = useMutation({
     mutationFn: async ({ id, isEnabled }: { id: number; isEnabled: boolean }) => {
+      if (isDemoMode) {
+        throw new Error("Demo mode - functionality disabled");
+      }
       return apiRequest(`/api/admin/activity-types/${id}`, 'PATCH', { isEnabled });
     },
     onSuccess: () => {
@@ -179,6 +186,9 @@ export default function AdminActivityTypes() {
   // Update activity type mutation
   const updateActivityTypeMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: z.infer<typeof activityTypeSchema> }) => {
+      if (isDemoMode) {
+        throw new Error("Demo mode - functionality disabled");
+      }
       return apiRequest(`/api/admin/activity-types/${id}`, 'PATCH', data);
     },
     onSuccess: () => {
@@ -215,6 +225,9 @@ export default function AdminActivityTypes() {
   // Delete activity type mutation
   const deleteActivityTypeMutation = useMutation({
     mutationFn: async (id: number) => {
+      if (isDemoMode) {
+        throw new Error("Demo mode - functionality disabled");
+      }
       return apiRequest(`/api/admin/activity-types/${id}`, 'DELETE');
     },
     onSuccess: () => {
