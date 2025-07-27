@@ -14,7 +14,6 @@ import {
   Zap, 
   Globe,
   CheckCircle2,
-  Star,
   ArrowRight,
   X
 } from "lucide-react";
@@ -196,8 +195,8 @@ export default function FeaturesBenefitsDialog({ open, onOpenChange }: FeaturesB
                 background: 'rgba(255, 255, 255, 0.2)',
                 border: 'none',
                 borderRadius: '50%',
-                width: '40px',
-                height: '40px',
+                width: '60px',
+                height: '60px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -211,7 +210,7 @@ export default function FeaturesBenefitsDialog({ open, onOpenChange }: FeaturesB
                 e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
               }}
             >
-              <X style={{ width: '20px', height: '20px', color: 'white' }} />
+              <X style={{ width: '60px', height: '60px', color: 'white' }} />
             </Button>
             
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '12px' }}>
@@ -223,7 +222,15 @@ export default function FeaturesBenefitsDialog({ open, onOpenChange }: FeaturesB
                 alignItems: 'center',
                 justifyContent: 'center'
               }}>
-                <Star style={{ width: '32px', height: '32px', color: 'white' }} />
+                <img 
+                  src="/ai-sentinel-logo.png" 
+                  alt="AI Sentinel Logo"
+                  style={{ 
+                    width: '32px', 
+                    height: '32px',
+                    filter: 'brightness(0) invert(1)'
+                  }} 
+                />
               </div>
               <div>
                 <DialogTitle style={{
