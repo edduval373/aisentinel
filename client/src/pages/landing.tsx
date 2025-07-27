@@ -83,7 +83,14 @@ export default function Landing() {
   }, []);
   
   return (
-    <div className="ai-sentinel-page" style={{ margin: 0, padding: 0, minHeight: '100vh' }}>
+    <div style={{ 
+      margin: 0, 
+      padding: 0, 
+      minHeight: '100vh',
+      fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+      lineHeight: '1.6',
+      color: '#1e293b'
+    }}>
       {/* Header */}
       <header style={{ 
         position: 'relative', 
@@ -132,23 +139,75 @@ export default function Landing() {
       </header>
 
       {/* Hero Section */}
-      <section className="ai-sentinel-hero" style={{ paddingTop: '2rem' }}>
-        <div className="ai-sentinel-hero-container">
-          <h2 className="ai-sentinel-hero-title">
+      <section style={{ 
+        paddingTop: '2rem',
+        paddingBottom: '4rem',
+        backgroundColor: '#f8fafc',
+        textAlign: 'center'
+      }}>
+        <div style={{
+          maxWidth: '80rem',
+          margin: '0 auto',
+          padding: '0 1rem'
+        }}>
+          <h2 style={{
+            fontSize: '3.5rem',
+            fontWeight: 'bold',
+            marginBottom: '1.5rem',
+            color: '#1e293b'
+          }}>
             Enterprise AI
             <span style={{color: 'hsl(221, 83%, 53%)'}}> Governance</span>
           </h2>
-          <p className="ai-sentinel-hero-subtitle">
+          <p style={{
+            fontSize: '1.25rem',
+            color: '#64748b',
+            marginBottom: '3rem',
+            maxWidth: '48rem',
+            margin: '0 auto 3rem auto'
+          }}>
             Secure, compliant, and monitored AI interactions for your organization. 
             Control AI usage while maintaining productivity and security.
           </p>
-          <div className="ai-sentinel-button-container">
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '1rem'
+          }}>
             <button
               onClick={handleLogin}
-              className="ai-sentinel-button-primary"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '12px 24px',
+                backgroundColor: '#1e40af',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '16px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                textDecoration: 'none',
+                transition: 'all 0.2s ease',
+                minWidth: '200px',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                margin: '8px'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = '#1d4ed8';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 6px 12px -1px rgba(0, 0, 0, 0.15)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = '#1e40af';
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+              }}
             >
               Start 30-Day Free Trial
-              <CheckCircle className="ml-2 w-5 h-5" style={{marginLeft: '8px', color: 'white', width: '20px', height: '20px'}} />
+              <CheckCircle style={{marginLeft: '8px', color: 'white', width: '20px', height: '20px'}} />
             </button>
             <button
               onClick={handleDemoMode}
@@ -223,14 +282,36 @@ export default function Landing() {
           
 
           
-          <div className="ai-sentinel-credit-notice">
-            <div className="ai-sentinel-credit-header">
-              <Lock className="w-4 h-4" style={{color: '#1d4ed8'}} />
-              <span className="ai-sentinel-credit-title">
+          <div style={{
+            backgroundColor: '#f1f5f9',
+            border: '1px solid #e2e8f0',
+            borderRadius: '8px',
+            padding: '16px',
+            marginTop: '24px',
+            maxWidth: '500px',
+            margin: '24px auto 0 auto'
+          }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              marginBottom: '8px'
+            }}>
+              <Lock style={{width: '16px', height: '16px', color: '#1d4ed8'}} />
+              <span style={{
+                fontWeight: '600',
+                color: '#1e293b',
+                fontSize: '14px'
+              }}>
                 Secure Trial Requires Credit Card
               </span>
             </div>
-            <p className="ai-sentinel-credit-text">
+            <p style={{
+              fontSize: '14px',
+              color: '#64748b',
+              margin: 0,
+              lineHeight: '1.5'
+            }}>
               No charges during 30-day trial. Card required to prevent abuse and ensure service quality.
             </p>
           </div>
@@ -238,13 +319,35 @@ export default function Landing() {
       </section>
 
       {/* Features Section */}
-      <section className="ai-sentinel-features" style={{ marginTop: '-72px' }}>
-        <div className="ai-sentinel-features-container">
-          <div className="ai-sentinel-features-header">
-            <h3 className="ai-sentinel-features-title">
+      <section style={{ 
+        marginTop: '4rem',
+        paddingTop: '4rem',
+        paddingBottom: '4rem',
+        backgroundColor: 'white'
+      }}>
+        <div style={{
+          maxWidth: '80rem',
+          margin: '0 auto',
+          padding: '0 1rem'
+        }}>
+          <div style={{
+            textAlign: 'center',
+            marginBottom: '3rem'
+          }}>
+            <h3 style={{
+              fontSize: '2.5rem',
+              fontWeight: 'bold',
+              color: '#1e293b',
+              marginBottom: '1rem'
+            }}>
               Complete AI Governance Solution
             </h3>
-            <p className="ai-sentinel-features-subtitle">
+            <p style={{
+              fontSize: '1.125rem',
+              color: '#64748b',
+              maxWidth: '48rem',
+              margin: '0 auto'
+            }}>
               Comprehensive tools to manage, monitor, and secure your organization's AI interactions
             </p>
           </div>
