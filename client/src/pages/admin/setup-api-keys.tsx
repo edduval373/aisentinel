@@ -13,11 +13,36 @@ import { hasAccessLevel, canViewAdminPage, ACCESS_REQUIREMENTS } from "@/utils/r
 import { useAuth } from "@/hooks/useAuth";
 import type { AiModel } from "@shared/schema";
 import DemoBanner from "@/components/DemoBanner";
+import { isDemoModeActive } from "@/utils/demoMode";
+import { useDemoDialog } from "@/hooks/useDemoDialog";
 
 export default function SetupApiKeys() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user } = useAuth();
+  
+  // Demo mode detection
+  const isDemoMode = isDemoModeActive(user);
+  const { showDialog, closeDialog, DialogComponent } = useDemoDialog();
+
+  const openDialog = (type: string) => {
+    const dialogConfig = {
+      title: "API Configuration",
+      description: "Secure API key management for multiple AI providers with comprehensive testing and validation features.",
+      features: [
+        "Secure encrypted storage of API keys for OpenAI, Anthropic, Google, Cohere, Mistral AI",
+        "Real-time API key validation and connection testing",
+        "Provider-specific rate limiting and timeout configuration",
+        "Connection status monitoring with detailed error reporting",
+        "Automatic API key rotation and expiration tracking",
+        "Advanced security features including key masking and audit logging"
+      ]
+    };
+    closeDialog();
+    setTimeout(() => {
+      showDialog(dialogConfig);
+    }, 10);
+  };
   
   // Check if user has owner level access (99 or above)
   const hasOwnerAccess = canViewAdminPage(user?.roleLevel, ACCESS_REQUIREMENTS.SETUP_API_KEYS);
@@ -356,28 +381,33 @@ export default function SetupApiKeys() {
                         type="password"
                         placeholder={provider.keyPlaceholder}
                         value={currentKey}
-                        onChange={(e) => handleApiKeyChange(provider.id, e.target.value)}
+                        onChange={isDemoMode ? undefined : (e) => handleApiKeyChange(provider.id, e.target.value)}
+                        onClick={isDemoMode ? () => openDialog('input') : undefined}
+                        disabled={isDemoMode}
                         style={{ 
                           flex: '1',
                           border: isPlaceholder ? '1px solid #fca5a5' : '1px solid #86efac',
                           borderRadius: '6px',
-                          padding: '8px 12px'
+                          padding: '8px 12px',
+                          opacity: isDemoMode ? 0.6 : 1,
+                          cursor: isDemoMode ? 'not-allowed' : 'text'
                         }}
                       />
                       <Button
-                        onClick={() => handleSaveApiKey(provider.id)}
-                        disabled={updateApiKeyMutation.isPending}
+                        onClick={isDemoMode ? () => openDialog('save') : () => handleSaveApiKey(provider.id)}
+                        disabled={isDemoMode || updateApiKeyMutation.isPending}
                         style={{
-                          backgroundColor: isPlaceholder ? '#1e3a8a' : 'transparent',
-                          color: isPlaceholder ? 'white' : '#1e3a8a',
-                          border: isPlaceholder ? 'none' : '1px solid #1e3a8a',
+                          backgroundColor: (isDemoMode || !isPlaceholder) ? 'transparent' : '#1e3a8a',
+                          color: (isDemoMode || !isPlaceholder) ? '#1e3a8a' : 'white',
+                          border: (isDemoMode || !isPlaceholder) ? '1px solid #1e3a8a' : 'none',
                           borderRadius: '6px',
                           padding: '8px 16px',
                           display: 'flex',
                           alignItems: 'center',
                           gap: '4px',
                           fontSize: '14px',
-                          cursor: 'pointer'
+                          cursor: (isDemoMode || updateApiKeyMutation.isPending) ? 'not-allowed' : 'pointer',
+                          opacity: isDemoMode ? 0.6 : 1
                         }}
                       >
                         <Save style={{ width: '16px', height: '16px' }} />
@@ -417,13 +447,13 @@ export default function SetupApiKeys() {
                       </div>
                     </div>
                     <button
-                      onClick={(e) => {
+                      onClick={isDemoMode ? () => openDialog('test') : (e) => {
                         e.preventDefault();
                         e.stopPropagation();
                         console.log('Button clicked for provider:', provider.id);
                         testConnection(provider.id);
                       }}
-                      disabled={isTestingConnection === provider.id || isPlaceholder}
+                      disabled={isDemoMode || isTestingConnection === provider.id || isPlaceholder}
                       style={{
                         backgroundColor: 'transparent',
                         color: testResults[provider.id] === 'success' ? '#16a34a' : testResults[provider.id] === 'error' ? '#dc2626' : '#1e3a8a',
@@ -434,8 +464,8 @@ export default function SetupApiKeys() {
                         alignItems: 'center',
                         gap: '4px',
                         fontSize: '13px',
-                        cursor: isPlaceholder ? 'not-allowed' : 'pointer',
-                        opacity: isPlaceholder ? '0.5' : '1',
+                        cursor: (isDemoMode || isPlaceholder) ? 'not-allowed' : 'pointer',
+                        opacity: (isDemoMode || isPlaceholder) ? '0.5' : '1',
                         marginLeft: '16px',
                         marginTop: '24px'
                       }}
@@ -494,6 +524,7 @@ export default function SetupApiKeys() {
           </CardContent>
         </Card>
       </div>
+      {isDemoMode && DialogComponent && <DialogComponent />}
     </AdminLayout>
   );
 }
