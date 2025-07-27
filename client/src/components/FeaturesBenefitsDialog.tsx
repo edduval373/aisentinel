@@ -203,7 +203,7 @@ export default function FeaturesBenefitsDialog({ open, onOpenChange }: FeaturesB
               <div style={{
                 width: '64px',
                 height: '64px',
-                background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+                backgroundColor: '#3b82f6',
                 padding: '8px',
                 borderRadius: '8px',
                 display: 'flex',

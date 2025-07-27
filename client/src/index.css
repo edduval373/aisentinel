@@ -59,7 +59,7 @@ body {
 
 /* AI Sentinel Custom CSS - Pure CSS Implementation */
 
-/* Features & Benefits Dialog - Hide ALL default close buttons */
+/* Features & Benefits Dialog - Hide default close buttons but show our custom X */
 .features-benefits-dialog [data-radix-dialog-close-button] {
   display: none !important;
 }
@@ -68,60 +68,13 @@ body {
   display: none !important;
 }
 
-.features-benefits-dialog > button:first-child {
-  display: none !important;
-}
-
-.features-benefits-dialog [data-dialog-close] {
-  display: none !important;
-}
-
-/* Target all possible close button variations */
-.features-benefits-dialog button[data-state] {
-  display: none !important;
-}
-
-.features-benefits-dialog > div > button:first-child {
-  display: none !important;
-}
-
-.features-benefits-dialog [data-radix-collection-item] button {
-  display: none !important;
-}
-
-/* Hide any button that's positioned absolutely in top right */
-.features-benefits-dialog button[style*="position: absolute"][style*="right"] {
-  display: none !important;
-}
-
-/* Hide any X icon in default position */
-.features-benefits-dialog svg[stroke="currentColor"]:not([style*="width: 60px"]) {
-  display: none !important;
-}
-
-/* Hide any small buttons (default close buttons are typically small) */
-.features-benefits-dialog button:not([style*="width: 60px"]):not([style*="padding: 6px 12px"]) {
-  display: none !important;
-}
-
-/* Ensure our custom close button is always visible */
-.features-benefits-dialog button[style*="width: 60px"] {
-  display: flex !important;
-}
-
-/* Hide the shadcn Dialog's automatic close button */
-.features-benefits-dialog [data-radix-dialog-content] > button {
-  display: none !important;
-}
-
-/* Show only our specific buttons */
-.features-benefits-dialog button[style*="padding: 6px 12px"] {
-  display: flex !important;
-}
-
-/* Ensure the X icon is visible */
+/* Show our custom X icon and category buttons */
 .features-benefits-dialog svg[style*="position: absolute"] {
   display: block !important;
+}
+
+.features-benefits-dialog button[style*="padding: 6px 12px"] {
+  display: flex !important;
 }
 
 /* Layout and Structure */
