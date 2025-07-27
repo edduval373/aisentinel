@@ -378,13 +378,57 @@ export default function Landing() {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
-                    body: JSON.stringify({ email: 'ed.duval+test2@gmail.com' })
+                    body: JSON.stringify({ email: 'ed.duval+test3@gmail.com' })
+                  });
+                  if (response.ok) window.location.href = '/chat';
+                }}
+                style={{
+                  padding: '6px 12px',
+                  backgroundColor: '#7c3aed',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  fontSize: '12px',
+                  cursor: 'pointer'
+                }}
+              >
+                Owner (99)
+              </button>
+              <button
+                onClick={async () => {
+                  const response = await fetch('/api/auth/dev-login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ email: 'ed.duval+test4@gmail.com' })
                   });
                   if (response.ok) window.location.href = '/chat';
                 }}
                 style={{
                   padding: '6px 12px',
                   backgroundColor: '#f59e0b',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  fontSize: '12px',
+                  cursor: 'pointer'
+                }}
+              >
+                Admin (98)
+              </button>
+              <button
+                onClick={async () => {
+                  const response = await fetch('/api/auth/dev-login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ email: 'ed.duval+test2@gmail.com' })
+                  });
+                  if (response.ok) window.location.href = '/chat';
+                }}
+                style={{
+                  padding: '6px 12px',
+                  backgroundColor: '#16a34a',
                   color: 'white',
                   border: 'none',
                   borderRadius: '4px',

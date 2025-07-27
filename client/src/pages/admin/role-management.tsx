@@ -125,6 +125,7 @@ export default function RoleManagement() {
   const getRoleName = (roleLevel: number) => {
     if (roleLevel >= 100) return 'Super-User';
     if (roleLevel >= 99) return 'Owner';
+    if (roleLevel >= 98) return 'Administrator';
     if (roleLevel >= 2) return 'Admin';
     return 'User';
   };
@@ -260,6 +261,7 @@ export default function RoleManagement() {
               >
                 <option value={1}>User (1)</option>
                 <option value={2}>Admin (2)</option>
+                <option value={98}>Admin (98)</option>
                 <option value={99}>Owner (99)</option>
                 <option value={100}>Super-User (100)</option>
               </select>

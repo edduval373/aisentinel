@@ -223,7 +223,8 @@ export function setupAuthRoutes(app: Express) {
 
       const roleMap: { [key: number]: string } = {
         1: 'user',
-        2: 'admin', 
+        2: 'admin',
+        98: 'admin',
         99: 'owner',
         100: 'super-user'
       };
