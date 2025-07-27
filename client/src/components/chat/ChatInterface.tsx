@@ -44,10 +44,17 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
     // Removed authentication error handling
   });
   
-  // Auto-select first available AI model
+  // Auto-select first available AI model (prioritize working models)
   useEffect(() => {
     if (aiModels && aiModels.length > 0 && selectedModel === null) {
-      setSelectedModel(aiModels[0].id);
+      // Prefer models with valid API keys
+      const workingModel = aiModels.find((model: any) => model.hasValidApiKey !== false);
+      if (workingModel) {
+        setSelectedModel(workingModel.id);
+      } else {
+        // Fallback to first model even if API key is not configured
+        setSelectedModel(aiModels[0].id);
+      }
     }
   }, [aiModels, selectedModel]);
 
@@ -449,9 +456,10 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                 <SelectValue placeholder="Select AI Model" />
               </SelectTrigger>
               <SelectContent>
-                {aiModels?.map((model) => (
+                {aiModels?.map((model: any) => (
                   <SelectItem key={model.id} value={model.id.toString()}>
                     {model.name}
+                    {model.hasValidApiKey === false ? ' ⚠️' : ''}
                   </SelectItem>
                 ))}
                 {modelFusionConfig?.isEnabled && (

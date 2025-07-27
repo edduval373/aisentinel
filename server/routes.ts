@@ -61,7 +61,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log("Demo mode AI models request");
       }
       
-      const models = await storage.getEnabledAiModels(companyId);
+      // Get working models first, fallback to all models if none are working
+      let models = await storage.getWorkingAiModels(companyId);
+      
+      // If no working models, return all models but with a warning flag
+      if (models.length === 0) {
+        console.log("No working AI models found, returning all models with demo fallback");
+        const allModels = await storage.getEnabledAiModels(companyId);
+        
+        // If still no models, create basic demo models
+        if (allModels.length === 0) {
+          console.log("No models found in database, providing demo models");
+          models = [
+            {
+              id: 1,
+              name: "GPT-4o (Demo)",
+              provider: "openai",
+              hasValidApiKey: false,
+              warning: "Demo mode - configure API keys to enable"
+            },
+            {
+              id: 2,
+              name: "Claude Sonnet 4 (Demo)",
+              provider: "anthropic", 
+              hasValidApiKey: false,
+              warning: "Demo mode - configure API keys to enable"
+            }
+          ];
+        } else {
+          models = allModels.map(model => ({
+            ...model,
+            hasValidApiKey: false,
+            warning: "API key not configured"
+          }));
+        }
+      } else {
+        // Mark working models as having valid API keys
+        models = models.map(model => ({
+          ...model,
+          hasValidApiKey: true
+        }));
+      }
+      
       console.log("Returning models for company", companyId + ":", models.length, "models");
       return res.json(models);
     } catch (error) {
@@ -83,7 +124,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log("Demo mode activity types request");
       }
       
-      const activityTypes = await storage.getActivityTypes(companyId);
+      let activityTypes = await storage.getActivityTypes(companyId);
+      
+      // If no activity types found, provide demo fallback
+      if (activityTypes.length === 0) {
+        console.log("No activity types found, providing demo fallback");
+        activityTypes = [
+          {
+            id: 1,
+            name: "General Chat (Demo)",
+            description: "General purpose AI conversation",
+            isEnabled: true
+          },
+          {
+            id: 2,
+            name: "Code Review (Demo)", 
+            description: "Code analysis and improvement suggestions",
+            isEnabled: true
+          },
+          {
+            id: 3,
+            name: "Business Analysis (Demo)",
+            description: "Business strategy and analysis",
+            isEnabled: true
+          },
+          {
+            id: 4,
+            name: "Document Review (Demo)",
+            description: "Document analysis and summarization", 
+            isEnabled: true
+          }
+        ];
+      }
+      
       console.log("Returning activity types for company", companyId + ":", activityTypes.length, "types");
       return res.json(activityTypes);
     } catch (error) {

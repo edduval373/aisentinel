@@ -115,6 +115,7 @@ export interface IStorage {
   
   // AI Models operations
   getAiModels(companyId: number): Promise<AiModel[]>;
+  getWorkingAiModels(companyId: number): Promise<AiModel[]>;
   getEnabledAiModels(companyId: number): Promise<AiModel[]>;
   createAiModel(model: InsertAiModel): Promise<AiModel>;
   updateAiModel(id: number, model: Partial<InsertAiModel>): Promise<AiModel>;
@@ -543,6 +544,11 @@ export class DatabaseStorage implements IStorage {
 
   // AI Models operations
   async getAiModels(companyId: number): Promise<AiModel[]> {
+    // Return all models - let the frontend handle filtering by API key status
+    return await db.select().from(aiModels).where(eq(aiModels.companyId, companyId)).orderBy(aiModels.name);
+  }
+
+  async getWorkingAiModels(companyId: number): Promise<AiModel[]> {
     // Only return models with valid API keys (not placeholder values)
     const allModels = await db.select().from(aiModels).where(eq(aiModels.companyId, companyId)).orderBy(aiModels.name);
     

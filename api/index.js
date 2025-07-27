@@ -108,28 +108,103 @@ export default async function handler(req, res) {
       return;
     }
 
-    // AI Models endpoint
+    // AI Models endpoint - enhanced with fallback logic
     if (url.includes('ai-models')) {
+      console.log('🤖 [SERVERLESS] AI Models request');
+      
+      try {
+        const DATABASE_URL = process.env.DATABASE_URL;
+        console.log('🤖 [SERVERLESS] DATABASE_URL available:', DATABASE_URL ? 'YES' : 'NO');
+        
+        // Try to fetch from database first
+        if (DATABASE_URL) {
+          const { Client } = require('pg');
+          const client = new Client({ connectionString: DATABASE_URL });
+          await client.connect();
+          
+          const result = await client.query('SELECT id, name, provider, api_key, is_enabled FROM ai_models WHERE company_id = 1 AND is_enabled = true ORDER BY name');
+          
+          if (result.rows.length > 0) {
+            const models = result.rows.map(row => ({
+              id: row.id,
+              name: row.name,
+              provider: row.provider,
+              isEnabled: row.is_enabled,
+              hasValidApiKey: row.api_key && !row.api_key.startsWith('$') && row.api_key.length > 10
+            }));
+            
+            console.log('✅ [SERVERLESS] AI Models from database:', models.length);
+            await client.end();
+            res.status(200).json(models);
+            return;
+          }
+          
+          await client.end();
+        }
+      } catch (error) {
+        console.error('❌ [SERVERLESS] Database connection failed:', error.message);
+      }
+      
+      // Fallback demo models for production when database unavailable
       const models = [
-        { id: 1, name: 'GPT-4o', provider: 'OpenAI', enabled: true },
-        { id: 2, name: 'Claude Sonnet 4', provider: 'Anthropic', enabled: true },
-        { id: 3, name: 'Claude Haiku', provider: 'Anthropic', enabled: true },
-        { id: 4, name: 'GPT-4 Turbo', provider: 'OpenAI', enabled: true },
-        { id: 5, name: 'Claude Opus', provider: 'Anthropic', enabled: true },
-        { id: 6, name: 'Perplexity Sonar', provider: 'Perplexity', enabled: true }
+        { id: 1, name: 'GPT-4o (Demo)', provider: 'OpenAI', isEnabled: true, hasValidApiKey: false, warning: 'Demo mode - configure API keys to enable' },
+        { id: 2, name: 'Claude Sonnet 4 (Demo)', provider: 'Anthropic', isEnabled: true, hasValidApiKey: false, warning: 'Demo mode - configure API keys to enable' },
+        { id: 3, name: 'Claude Haiku (Demo)', provider: 'Anthropic', isEnabled: true, hasValidApiKey: false, warning: 'Demo mode - configure API keys to enable' },
+        { id: 4, name: 'GPT-4 Turbo (Demo)', provider: 'OpenAI', isEnabled: true, hasValidApiKey: false, warning: 'Demo mode - configure API keys to enable' },
+        { id: 5, name: 'Claude Opus (Demo)', provider: 'Anthropic', isEnabled: true, hasValidApiKey: false, warning: 'Demo mode - configure API keys to enable' },
+        { id: 6, name: 'Perplexity Sonar (Demo)', provider: 'Perplexity', isEnabled: true, hasValidApiKey: false, warning: 'Demo mode - configure API keys to enable' }
       ];
+      
+      console.log('✅ [SERVERLESS] Using fallback AI models:', models.length);
       res.status(200).json(models);
       return;
     }
 
-    // Activity Types endpoint  
+    // Activity Types endpoint - enhanced with fallback logic
     if (url.includes('activity-types')) {
+      console.log('📋 [SERVERLESS] Activity Types request');
+      
+      try {
+        const DATABASE_URL = process.env.DATABASE_URL;
+        console.log('📋 [SERVERLESS] DATABASE_URL available:', DATABASE_URL ? 'YES' : 'NO');
+        
+        // Try to fetch from database first
+        if (DATABASE_URL) {
+          const { Client } = require('pg');
+          const client = new Client({ connectionString: DATABASE_URL });
+          await client.connect();
+          
+          const result = await client.query('SELECT id, name, description, is_enabled FROM activity_types WHERE company_id = 1 AND is_enabled = true ORDER BY name');
+          
+          if (result.rows.length > 0) {
+            const types = result.rows.map(row => ({
+              id: row.id,
+              name: row.name,
+              description: row.description,
+              isEnabled: row.is_enabled
+            }));
+            
+            console.log('✅ [SERVERLESS] Activity Types from database:', types.length);
+            await client.end();
+            res.status(200).json(types);
+            return;
+          }
+          
+          await client.end();
+        }
+      } catch (error) {
+        console.error('❌ [SERVERLESS] Database connection failed:', error.message);
+      }
+      
+      // Fallback demo activity types for production when database unavailable
       const types = [
-        { id: 1, name: 'General Chat', description: 'General conversation', enabled: true },
-        { id: 2, name: 'Code Review', description: 'Code analysis and review', enabled: true },
-        { id: 3, name: 'Business Analysis', description: 'Business document analysis', enabled: true },
-        { id: 4, name: 'Document Review', description: 'Document review and analysis', enabled: true }
+        { id: 1, name: 'General Chat (Demo)', description: 'General purpose AI conversation', isEnabled: true },
+        { id: 2, name: 'Code Review (Demo)', description: 'Code analysis and improvement suggestions', isEnabled: true },
+        { id: 3, name: 'Business Analysis (Demo)', description: 'Business strategy and analysis', isEnabled: true },
+        { id: 4, name: 'Document Review (Demo)', description: 'Document analysis and summarization', isEnabled: true }
       ];
+      
+      console.log('✅ [SERVERLESS] Using fallback activity types:', types.length);
       res.status(200).json(types);
       return;
     }
