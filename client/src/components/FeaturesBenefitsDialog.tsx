@@ -200,27 +200,15 @@ export default function FeaturesBenefitsDialog({ open, onOpenChange }: FeaturesB
             />
             
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '12px' }}>
-              <div 
-                className="logo-blue-background"
-                style={{
-                  width: '64px',
+              <img 
+                src="/ai-sentinel-logo.png" 
+                alt="AI Sentinel Logo"
+                style={{ 
+                  width: '64px', 
                   height: '64px',
-                  padding: '8px',
-                  borderRadius: '8px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
-                <div style={{
-                  width: '48px',
-                  height: '48px',
-                  backgroundImage: 'url(/ai-sentinel-logo.png)',
-                  backgroundSize: 'contain',
-                  backgroundRepeat: 'no-repeat',
-                  backgroundPosition: 'center',
                   filter: 'brightness(0) invert(1)'
-                }} />
-              </div>
+                }} 
+              />
               <div>
                 <DialogTitle style={{
                   fontSize: '32px',
