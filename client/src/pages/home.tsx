@@ -527,7 +527,6 @@ export default function Home() {
                   e.currentTarget.style.background = '#3b82f6';
                 }}
               >
-                <Star style={{ width: '12px', height: '12px' }} />
                 Features & Benefits
               </Button>
             )}
