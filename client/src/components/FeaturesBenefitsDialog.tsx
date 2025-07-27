@@ -184,8 +184,9 @@ export default function FeaturesBenefitsDialog({ open, onOpenChange }: FeaturesB
             borderRadius: '20px 20px 0 0',
             position: 'relative'
           }}>
-            <Button
+            <div
               onClick={() => onOpenChange(false)}
+              className="custom-close-button"
               style={{
                 position: 'absolute',
                 right: '20px',
@@ -208,8 +209,8 @@ export default function FeaturesBenefitsDialog({ open, onOpenChange }: FeaturesB
                 e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
               }}
             >
-              <X style={{ width: '60px', height: '60px', color: 'white' }} />
-            </Button>
+              <X style={{ width: '24px', height: '24px', color: 'white' }} />
+            </div>
             
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '12px' }}>
               <img 

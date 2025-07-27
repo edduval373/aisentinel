@@ -114,13 +114,12 @@ body {
   display: none !important;
 }
 
-/* Comprehensive hiding of all close buttons except our custom one */
-.features-benefits-dialog button {
-  display: none !important;
+/* Show only our specific buttons */
+.features-benefits-dialog button[style*="padding: 6px 12px"] {
+  display: flex !important;
 }
 
-.features-benefits-dialog button[style*="width: 60px"],
-.features-benefits-dialog button[style*="padding: 6px 12px"] {
+.features-benefits-dialog .custom-close-button {
   display: flex !important;
 }
 
