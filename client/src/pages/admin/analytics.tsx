@@ -153,25 +153,34 @@ export default function AdminAnalytics() {
     <AdminLayout 
       title="Usage Analytics" 
       subtitle="Monitor system usage and performance metrics"
-      rightContent={<DemoBanner message="Demo Mode - Read Only View - Analytics are view-only" />}
     >
       <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
         
-        {/* Demo Mode Indicator */}
+        {/* Demo Banner - Top Right */}
         {isDemoMode && (
-          <div style={{
-            backgroundColor: '#1e3a8a',
-            color: 'white',
-            padding: '12px 16px',
-            borderRadius: '8px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            fontSize: '14px',
-            fontWeight: '500'
-          }}>
-            <Eye size={16} />
-            {getDemoModeMessage()} - You can view all analytics data but cannot make changes
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
+            <div style={{
+              backgroundColor: '#1e40af',
+              borderRadius: '20px',
+              padding: '8px 16px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.1)'
+            }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              <span style={{ 
+                fontSize: '14px', 
+                fontWeight: '500', 
+                color: 'white',
+                whiteSpace: 'nowrap'
+              }}>
+                Demo Mode - Read Only View
+              </span>
+            </div>
           </div>
         )}
         

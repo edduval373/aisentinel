@@ -145,28 +145,26 @@ export default function AdminSecurity() {
         {isDemoMode && (
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
             <div style={{
-              backgroundColor: '#fef3c7',
-              border: '1px solid #fbbf24',
-              borderRadius: '8px',
-              padding: '12px 16px',
-              maxWidth: '400px',
-              boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
+              backgroundColor: '#1e40af',
+              borderRadius: '20px',
+              padding: '8px 16px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.1)'
             }}>
-              <h4 style={{ 
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              <span style={{ 
                 fontSize: '14px', 
-                fontWeight: '600', 
-                color: '#92400e', 
-                margin: '0 0 4px 0' 
+                fontWeight: '500', 
+                color: 'white',
+                whiteSpace: 'nowrap'
               }}>
                 Demo Mode - Read Only View
-              </h4>
-              <p style={{ 
-                fontSize: '12px', 
-                color: '#a16207', 
-                margin: 0 
-              }}>
-                Viewing security reports demo for {user?.companyName || 'your company'}. All data is simulated for demonstration purposes.
-              </p>
+              </span>
             </div>
           </div>
         )}
