@@ -431,10 +431,37 @@ export default function CompanySetup() {
     },
   });
 
-  const handleSaveCompanyEdit = () => {
-    if (companyEditForm.name && companyEditForm.domain) {
+  // Update company information mutation
+  const updateCompanyMutation = useMutation({
+    mutationFn: ({ id, data }: { id: number; data: any }) =>
+      apiRequest(`/api/admin/companies/${id}`, "PATCH", data),
+    onSuccess: () => {
+      refetchCompany();
+      queryClient.invalidateQueries({ queryKey: ["/api/user/current-company"] });
       toast({ title: "Success", description: "Company information updated successfully" });
       setIsEditCompanyModalOpen(false);
+    },
+    onError: (error: any) => {
+      toast({ 
+        title: "Error", 
+        description: error?.message || "Failed to update company information", 
+        variant: "destructive" 
+      });
+    },
+  });
+
+  const handleSaveCompanyEdit = () => {
+    if (companyEditForm.name && companyEditForm.domain && currentCompany) {
+      updateCompanyMutation.mutate({
+        id: currentCompany.id,
+        data: {
+          name: companyEditForm.name,
+          domain: companyEditForm.domain,
+          primaryAdminName: companyEditForm.primaryAdminName,
+          primaryAdminEmail: companyEditForm.primaryAdminEmail,
+          primaryAdminTitle: companyEditForm.primaryAdminTitle
+        }
+      });
     }
   };
 
@@ -943,7 +970,13 @@ export default function CompanySetup() {
               borderTop: '1px solid #e5e7eb' 
             }}>
               <button
-                onClick={saveChatDisplaySettings}
+                onClick={() => {
+                  if (user?.roleLevel === 0) {
+                    showDialog(DEMO_DIALOGS.COMPANY_SETUP);
+                  } else {
+                    saveChatDisplaySettings();
+                  }
+                }}
                 style={{
                   backgroundColor: '#3b82f6',
                   color: 'white',
@@ -1752,6 +1785,191 @@ export default function CompanySetup() {
                   }}
                 >
                   Delete Owner
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Edit Company Modal */}
+        {isEditCompanyModalOpen && currentCompany && (
+          <div style={{
+            position: 'fixed',
+            top: '0',
+            left: '0',
+            right: '0',
+            bottom: '0',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: '1000'
+          }}>
+            <div style={{
+              backgroundColor: '#fff',
+              borderRadius: '8px',
+              padding: '24px',
+              width: '100%',
+              maxWidth: '600px',
+              margin: '16px',
+              maxHeight: '90vh',
+              overflow: 'auto'
+            }}>
+              <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#111827', margin: '0 0 16px 0' }}>
+                Edit Company Information
+              </h3>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '4px' }}>
+                    Company Name *
+                  </label>
+                  <input
+                    type="text"
+                    value={companyEditForm.name}
+                    onChange={(e) => setCompanyEditForm({ ...companyEditForm, name: e.target.value })}
+                    style={{
+                      width: '100%',
+                      padding: '8px 12px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '6px',
+                      fontSize: '14px'
+                    }}
+                  />
+                </div>
+                
+                <div>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '4px' }}>
+                    Domain *
+                  </label>
+                  <input
+                    type="text"
+                    value={companyEditForm.domain}
+                    onChange={(e) => setCompanyEditForm({ ...companyEditForm, domain: e.target.value })}
+                    style={{
+                      width: '100%',
+                      padding: '8px 12px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '6px',
+                      fontSize: '14px'
+                    }}
+                  />
+                </div>
+                
+                <div>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '4px' }}>
+                    Primary Admin Name
+                  </label>
+                  <input
+                    type="text"
+                    value={companyEditForm.primaryAdminName}
+                    onChange={(e) => setCompanyEditForm({ ...companyEditForm, primaryAdminName: e.target.value })}
+                    style={{
+                      width: '100%',
+                      padding: '8px 12px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '6px',
+                      fontSize: '14px'
+                    }}
+                  />
+                </div>
+                
+                <div>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '4px' }}>
+                    Primary Admin Email
+                  </label>
+                  <input
+                    type="email"
+                    value={companyEditForm.primaryAdminEmail}
+                    onChange={(e) => setCompanyEditForm({ ...companyEditForm, primaryAdminEmail: e.target.value })}
+                    style={{
+                      width: '100%',
+                      padding: '8px 12px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '6px',
+                      fontSize: '14px'
+                    }}
+                  />
+                </div>
+                
+                <div>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '4px' }}>
+                    Primary Admin Title
+                  </label>
+                  <input
+                    type="text"
+                    value={companyEditForm.primaryAdminTitle}
+                    onChange={(e) => setCompanyEditForm({ ...companyEditForm, primaryAdminTitle: e.target.value })}
+                    style={{
+                      width: '100%',
+                      padding: '8px 12px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '6px',
+                      fontSize: '14px'
+                    }}
+                  />
+                </div>
+              </div>
+              
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '24px' }}>
+                <button
+                  onClick={() => {
+                    setIsEditCompanyModalOpen(false);
+                    setCompanyEditForm({ name: "", domain: "", primaryAdminName: "", primaryAdminEmail: "", primaryAdminTitle: "" });
+                  }}
+                  style={{
+                    backgroundColor: 'transparent',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '6px',
+                    padding: '8px 16px',
+                    fontSize: '14px',
+                    cursor: 'pointer',
+                    color: '#374151'
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    if (user?.roleLevel === 0) {
+                      showDialog(DEMO_DIALOGS.COMPANY_EDIT);
+                    } else {
+                      handleSaveCompanyEdit();
+                    }
+                  }}
+                  disabled={!companyEditForm.name || !companyEditForm.domain || updateCompanyMutation.isPending}
+                  style={{
+                    backgroundColor: '#3b82f6',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '6px',
+                    padding: '8px 16px',
+                    fontSize: '14px',
+                    cursor: (!companyEditForm.name || !companyEditForm.domain || updateCompanyMutation.isPending) ? 'not-allowed' : 'pointer',
+                    opacity: (!companyEditForm.name || !companyEditForm.domain || updateCompanyMutation.isPending) ? '0.5' : '1',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  {updateCompanyMutation.isPending ? (
+                    <>
+                      <div style={{ 
+                        width: '16px', 
+                        height: '16px', 
+                        border: '2px solid #ffffff40', 
+                        borderTop: '2px solid #ffffff', 
+                        borderRadius: '50%', 
+                        animation: 'spin 1s linear infinite' 
+                      }}></div>
+                      Updating...
+                    </>
+                  ) : (
+                    <>
+                      <Save style={{ width: '16px', height: '16px' }} />
+                      Update Company
+                    </>
+                  )}
                 </button>
               </div>
             </div>
