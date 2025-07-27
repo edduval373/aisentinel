@@ -326,6 +326,20 @@ export class DatabaseStorage implements IStorage {
     return demoUser;
   }
 
+  async updateDemoUserSession(email: string, sessionToken: string, expiresAt: Date): Promise<DemoUser> {
+    const [updated] = await db
+      .update(demoUsers)
+      .set({ 
+        sessionToken,
+        expiresAt,
+        questionsUsed: 0, // Reset questions for new session
+        lastQuestionAt: null
+      })
+      .where(eq(demoUsers.email, email))
+      .returning();
+    return updated;
+  }
+
   // Company operations
   async getCompany(id: number): Promise<Company | undefined> {
     const [company] = await db.select().from(companies).where(eq(companies.id, id));

@@ -288,16 +288,26 @@ export function setupAuthRoutes(app: Express) {
       // Set expiration to 24 hours for demo accounts
       const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
       
-      // Create demo user record
-      const demoUser = await storage.createDemoUser({
-        email,
-        ipAddress: ipAddress || 'unknown',
-        userAgent: userAgent || 'unknown',
-        questionsUsed: 0,
-        maxQuestions: 3,
-        sessionToken,
-        expiresAt,
-      });
+      // Check if demo user already exists
+      let demoUser = await storage.getDemoUserByEmail(email);
+      
+      if (demoUser) {
+        // Update existing demo user with new session
+        demoUser = await storage.updateDemoUserSession(email, sessionToken, expiresAt);
+        console.log(`✅ DEMO SIGNUP: Updated existing demo user ID ${demoUser.id} with new session`);
+      } else {
+        // Create new demo user record
+        demoUser = await storage.createDemoUser({
+          email,
+          ipAddress: ipAddress || 'unknown',
+          userAgent: userAgent || 'unknown',
+          questionsUsed: 0,
+          maxQuestions: 3,
+          sessionToken,
+          expiresAt,
+        });
+        console.log(`✅ DEMO SIGNUP: Created new demo user with ID ${demoUser.id}`);
+      }
       
       console.log(`✅ DEMO SIGNUP: Created demo user with ID ${demoUser.id}`);
       
