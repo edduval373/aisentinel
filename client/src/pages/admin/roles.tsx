@@ -8,6 +8,8 @@ import { isDemoModeActive, isReadOnlyMode, getDemoModeMessage } from "@/utils/de
 
 import DemoBanner from "@/components/DemoBanner";
 import { Shield, Users, Settings, Edit, Plus, Trash2, AlertTriangle } from "lucide-react";
+import { useDemoDialog } from "@/hooks/useDemoDialog";
+import DemoInfoDialog from "@/components/demo/DemoInfoDialog";
 
 interface CompanyRole {
   id: number;
@@ -30,6 +32,9 @@ export default function AdminRoles() {
   // Check if we're in demo mode
   const isDemoMode = isDemoModeActive(user);
   const isReadOnly = isReadOnlyMode(user);
+  
+  // Demo dialog hook
+  const { showDemoDialog, hideDemoDialog, isDemoDialogOpen } = useDemoDialog();
   const [roles, setRoles] = useState<CompanyRole[]>([]);
   const [loading, setLoading] = useState(true);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -356,7 +361,7 @@ export default function AdminRoles() {
         {hasAdminAccess && (
           <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
             <button
-              onClick={() => setIsCreateDialogOpen(true)}
+              onClick={() => isDemoMode ? showDemoDialog('role-create') : setIsCreateDialogOpen(true)}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -418,7 +423,7 @@ export default function AdminRoles() {
                       {hasAdminAccess && (
                         <div style={{ display: 'flex', gap: '4px' }}>
                           <button
-                            onClick={() => openEditDialog(role)}
+                            onClick={() => isDemoMode ? showDemoDialog('role-edit') : openEditDialog(role)}
                             style={{
                               width: '32px',
                               height: '32px',
@@ -444,7 +449,7 @@ export default function AdminRoles() {
                             <Edit size={14} />
                           </button>
                           <button
-                            onClick={() => openDeleteDialog(role)}
+                            onClick={() => isDemoMode ? showDemoDialog('role-delete') : openDeleteDialog(role)}
                             style={{
                               width: '32px',
                               height: '32px',
@@ -982,6 +987,21 @@ export default function AdminRoles() {
             </div>
           </div>
         )}
+
+        {/* Demo Mode Dialog */}
+        <DemoInfoDialog 
+          isOpen={isDemoDialogOpen} 
+          onClose={hideDemoDialog}
+          feature="Role Management"
+          description="View and manage company role hierarchies with sophisticated permission systems. Create custom roles with specific access levels, assign granular permissions, and maintain secure role-based access control across your organization."
+          capabilities={[
+            "Create custom company roles with hierarchy levels",
+            "Assign granular permissions for different system features", 
+            "Manage role-based access control with security levels",
+            "Configure role descriptions and capability matrices",
+            "Monitor role assignments and permission inheritance"
+          ]}
+        />
       </div>
     </AdminLayout>
   );
