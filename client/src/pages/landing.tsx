@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Shield, Users, BarChart3, Lock, CheckCircle, AlertTriangle } from "lucide-react";
+import { Shield, Users, BarChart3, Lock, CheckCircle, AlertTriangle, Settings } from "lucide-react";
 
 export default function Landing() {
   console.log("[LANDING DEBUG] Landing component rendering...");
