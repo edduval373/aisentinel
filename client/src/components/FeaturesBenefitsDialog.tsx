@@ -191,37 +191,30 @@ export default function FeaturesBenefitsDialog({ open, onOpenChange }: FeaturesB
                 position: 'absolute',
                 right: '20px',
                 top: '20px',
-                background: 'rgba(255, 255, 255, 0.2)',
-                border: 'none',
-                borderRadius: '50%',
-                width: '60px',
-                height: '60px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
                 cursor: 'pointer',
-                transition: 'all 0.2s ease'
+                transition: 'all 0.2s ease',
+                zIndex: 10
               }}
               onMouseOver={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
+                e.currentTarget.style.opacity = '0.8';
               }}
               onMouseOut={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                e.currentTarget.style.opacity = '1';
               }}
             >
-              <X style={{ width: '24px', height: '24px', color: 'white' }} />
+              <X style={{ width: '32px', height: '32px', color: 'white', strokeWidth: 3 }} />
             </div>
             
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '12px' }}>
-              <img 
-                src="/ai-sentinel-logo.png" 
-                alt="AI Sentinel Logo"
-                style={{ 
-                  width: '64px', 
-                  height: '64px',
-                  filter: 'brightness(1.2) saturate(1.3) contrast(1.2)'
-                }} 
-              />
+              <div style={{
+                width: '64px',
+                height: '64px',
+                backgroundImage: 'url(/ai-sentinel-logo.png)',
+                backgroundSize: 'contain',
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'center',
+                filter: 'brightness(1.2) saturate(1.3) contrast(1.2)'
+              }} />
               <div>
                 <DialogTitle style={{
                   fontSize: '32px',
