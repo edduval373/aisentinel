@@ -168,16 +168,18 @@ export default function FeaturesBenefitsDialog({ open, onOpenChange }: FeaturesB
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent style={{
-        maxWidth: '1200px',
-        maxHeight: '90vh',
-        width: '95vw',
-        padding: '0',
-        background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
-        borderRadius: '20px',
-        boxShadow: '0 25px 50px rgba(0, 0, 0, 0.15)',
-        border: 'none'
-      }}>
+      <DialogContent 
+        className="features-benefits-dialog"
+        style={{
+          maxWidth: '1200px',
+          maxHeight: '90vh',
+          width: '95vw',
+          padding: '0',
+          background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+          borderRadius: '20px',
+          boxShadow: '0 25px 50px rgba(0, 0, 0, 0.15)',
+          border: 'none'
+        }}>
         <div style={{ position: 'relative', height: '100%' }}>
           {/* Header */}
           <DialogHeader style={{
@@ -228,7 +230,7 @@ export default function FeaturesBenefitsDialog({ open, onOpenChange }: FeaturesB
                   style={{ 
                     width: '32px', 
                     height: '32px',
-                    filter: 'brightness(0) invert(1)'
+                    filter: 'brightness(1.2) saturate(1.3) contrast(1.2)'
                   }} 
                 />
               </div>

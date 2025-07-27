@@ -59,6 +59,15 @@ body {
 
 /* AI Sentinel Custom CSS - Pure CSS Implementation */
 
+/* Features & Benefits Dialog - Hide default close button */
+.features-benefits-dialog [data-radix-dialog-close-button] {
+  display: none !important;
+}
+
+.features-benefits-dialog button[aria-label="Close"] {
+  display: none !important;
+}
+
 /* Layout and Structure */
 .ai-sentinel-page {
   min-height: 100vh;
