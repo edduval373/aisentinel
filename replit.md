@@ -141,6 +141,14 @@ The application is configured for deployment on Vercel with the following setup:
 
 ```
 Recent Updates:
+- July 27, 2025. PRODUCTION DISCONNECTION ISSUE COMPLETELY RESOLVED:
+  * FIXED: Critical production "Disconnected" status by adding missing /api/admin/companies endpoint to serverless function
+  * RESOLVED: "No companies found" error in Company Management page - frontend can now properly fetch companies data
+  * ADDED: Complete admin companies endpoint with database fallback and proper authentication checking
+  * ENHANCED: Serverless function with chat session messages endpoint for better chat functionality
+  * UPDATED: Available routes documentation to include all supported endpoints
+  * AUTHENTICATED: Production now properly authenticates super-users and returns company data from database
+  * VERIFIED: Both development and production environments now have consistent API endpoint coverage
 - July 27, 2025. COMPREHENSIVE 5-ACCOUNT TESTING ENVIRONMENT AND DEMO MODE BUG FIX COMPLETED:
   * EXPANDED: Full 5-account testing setup with ed.duval15@gmail.com (Super-User 100), ed.duval+test3@gmail.com (Owner 99), ed.duval+test4@gmail.com (Administrator 98), ed.duval+test2@gmail.com (Admin 2), ed.duval+test1@gmail.com (User 1)
   * ENHANCED: Color-coded quick login buttons - Red (super-user), Purple (owner), Amber (administrator), Green (admin), Teal (user)
