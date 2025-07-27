@@ -77,26 +77,29 @@ const isUnauthorizedError = (error: any) => {
 };
 
 export default function AdminPermissions() {
+  // ALL STATE HOOKS FIRST - in exact same order every render
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const [editingPermission, setEditingPermission] = useState<Permission | null>(null);
   const [permissionToDelete, setPermissionToDelete] = useState<Permission | null>(null);
+  
+  // ALL CONTEXT HOOKS NEXT - in exact same order every render  
   const { toast } = useToast();
   const { isAuthenticated, isLoading, user } = useAuth();
   const { showDemoDialog, DialogComponent } = useDemoDialog();
 
-  // Calculate demo mode early and consistently 
+  // CALCULATE DERIVED VALUES - consistent every render
   const isDemoMode = isDemoModeActive(user);
   const apiEndpoint = isDemoMode ? '/api/permissions' : '/api/admin/permissions';
 
-  // Fetch permissions data first (before mutations to maintain hook order)
+  // ALL QUERY HOOKS - in exact same order every render
   const { data: permissions = [], isLoading: permissionsLoading, error: permissionsError } = useQuery<Permission[]>({
     queryKey: [apiEndpoint],
     enabled: !isLoading,
   });
 
-  // Forms must be declared early to maintain hook order
+  // ALL FORM HOOKS - in exact same order every render
   const form = useForm<z.infer<typeof permissionSchema>>({
     resolver: zodResolver(permissionSchema),
     defaultValues: {
@@ -117,35 +120,7 @@ export default function AdminPermissions() {
     },
   });
 
-  // Handle query errors
-  useEffect(() => {
-    if (permissionsError && isUnauthorizedError(permissionsError)) {
-      toast({
-        title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
-        variant: "destructive",
-      });
-      setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
-    }
-  }, [permissionsError, toast]);
-
-  // Redirect if not admin
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      toast({
-        title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
-        variant: "destructive",
-      });
-      setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
-      return;
-    }
-  }, [isAuthenticated, isLoading, toast]);
-
+  // ALL MUTATION HOOKS - in exact same order every render
   // Create permission mutation
   const createPermissionMutation = useMutation({
     mutationFn: async (data: z.infer<typeof permissionSchema>) => {
@@ -290,8 +265,35 @@ export default function AdminPermissions() {
     },
   });
 
+  // ALL useEffect HOOKS LAST - in exact same order every render
+  useEffect(() => {
+    if (permissionsError && isUnauthorizedError(permissionsError)) {
+      toast({
+        title: "Unauthorized",
+        description: "You are logged out. Logging in again...",
+        variant: "destructive",
+      });
+      setTimeout(() => {
+        window.location.href = "/api/login";
+      }, 500);
+    }
+  }, [permissionsError, toast]);
 
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      toast({
+        title: "Unauthorized",
+        description: "You are logged out. Logging in again...",
+        variant: "destructive",
+      });
+      setTimeout(() => {
+        window.location.href = "/api/login";
+      }, 500);
+      return;
+    }
+  }, [isAuthenticated, isLoading, toast]);
 
+  // REGULAR FUNCTIONS (not hooks) - after all hooks are declared
   const onSubmit = (data: z.infer<typeof permissionSchema>) => {
     console.log("Form data being submitted:", data);
     createPermissionMutation.mutate(data);
