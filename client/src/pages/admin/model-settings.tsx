@@ -7,10 +7,35 @@ import AdminLayout from "@/components/layout/AdminLayout";
 import { Bot, Zap } from "lucide-react";
 import type { AiModel } from "@shared/schema";
 import DemoBanner from "@/components/DemoBanner";
+import { isDemoModeActive } from "@/utils/demoMode";
+import { useDemoDialog } from "@/hooks/useDemoDialog";
 
 export default function AdminModelSettings() {
   const { toast } = useToast();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
+  
+  // Demo mode detection
+  const isDemoMode = isDemoModeActive(user);
+  const { showDialog, closeDialog, DialogComponent } = useDemoDialog();
+
+  const openDialog = (type: string) => {
+    const dialogConfig = {
+      title: "Model Settings",
+      description: "Configure AI model parameters and behavior settings. Adjust temperature, context windows, and capabilities for each AI model to optimize performance for different use cases.",
+      features: [
+        "Temperature control for response creativity vs consistency",
+        "Context window configuration for conversation length",
+        "Streaming response settings for real-time interaction",
+        "Vision capabilities for image analysis and processing",
+        "Model-specific parameter optimization",
+        "Real-time parameter testing and validation"
+      ]
+    };
+    closeDialog();
+    setTimeout(() => {
+      showDialog(dialogConfig);
+    }, 10);
+  };
 
   // Fetch AI models from database (using authentication bypass)
   const { data: aiModels, isLoading: modelsLoading } = useQuery<AiModel[]>({
@@ -230,14 +255,17 @@ export default function AdminModelSettings() {
                       max="2"
                       step="0.1"
                       defaultValue={model.provider === 'perplexity' ? '0.2' : '0.7'}
+                      onClick={isDemoMode ? () => openDialog('temperature') : undefined}
                       style={{
                         width: '100%',
                         height: '6px',
                         borderRadius: '3px',
                         background: '#e2e8f0',
                         outline: 'none',
-                        cursor: 'pointer'
+                        cursor: isDemoMode ? 'not-allowed' : 'pointer',
+                        opacity: isDemoMode ? 0.6 : 1
                       }}
+                      disabled={isDemoMode}
                     />
                     <div style={{
                       display: 'flex',
@@ -264,15 +292,19 @@ export default function AdminModelSettings() {
                   <input
                     type="number"
                     defaultValue="4096"
+                    onClick={isDemoMode ? () => openDialog('tokens') : undefined}
                     style={{
                       width: '100%',
                       padding: '8px 12px',
                       border: '1px solid #d1d5db',
                       borderRadius: '6px',
                       fontSize: '14px',
-                      backgroundColor: 'white',
-                      marginTop: '8px'
+                      backgroundColor: isDemoMode ? '#f8fafc' : 'white',
+                      marginTop: '8px',
+                      cursor: isDemoMode ? 'not-allowed' : 'text',
+                      opacity: isDemoMode ? 0.6 : 1
                     }}
+                    disabled={isDemoMode}
                   />
                 </div>
               </div>
@@ -300,14 +332,17 @@ export default function AdminModelSettings() {
                       max="1"
                       step="0.1"
                       defaultValue={model.provider === 'perplexity' ? '0.9' : '1'}
+                      onClick={isDemoMode ? () => openDialog('topP') : undefined}
                       style={{
                         width: '100%',
                         height: '6px',
                         borderRadius: '3px',
                         background: '#e2e8f0',
                         outline: 'none',
-                        cursor: 'pointer'
+                        cursor: isDemoMode ? 'not-allowed' : 'pointer',
+                        opacity: isDemoMode ? 0.6 : 1
                       }}
+                      disabled={isDemoMode}
                     />
                     <div style={{
                       display: 'flex',
@@ -335,14 +370,18 @@ export default function AdminModelSettings() {
                       <input
                         type="number"
                         defaultValue="40"
+                        onClick={isDemoMode ? () => openDialog('topK') : undefined}
                         style={{
                           width: '100%',
                           padding: '8px 12px',
                           border: '1px solid #d1d5db',
                           borderRadius: '6px',
                           fontSize: '14px',
-                          backgroundColor: 'white'
+                          backgroundColor: isDemoMode ? '#f8fafc' : 'white',
+                          cursor: isDemoMode ? 'not-allowed' : 'text',
+                          opacity: isDemoMode ? 0.6 : 1
                         }}
+                        disabled={isDemoMode}
                       />
                     ) : (
                       <>
@@ -352,14 +391,17 @@ export default function AdminModelSettings() {
                           max="2"
                           step="0.1"
                           defaultValue="0"
+                          onClick={isDemoMode ? () => openDialog('frequency') : undefined}
                           style={{
                             width: '100%',
                             height: '6px',
                             borderRadius: '3px',
                             background: '#e2e8f0',
                             outline: 'none',
-                            cursor: 'pointer'
+                            cursor: isDemoMode ? 'not-allowed' : 'pointer',
+                            opacity: isDemoMode ? 0.6 : 1
                           }}
+                          disabled={isDemoMode}
                         />
                         <div style={{
                           display: 'flex',
@@ -415,7 +457,8 @@ export default function AdminModelSettings() {
                     display: 'inline-block',
                     width: '44px',
                     height: '24px'
-                  }}>
+                  }}
+                  onClick={isDemoMode ? () => openDialog('streaming') : undefined}>
                     <input
                       type="checkbox"
                       defaultChecked={model.provider !== 'perplexity'}
@@ -424,17 +467,19 @@ export default function AdminModelSettings() {
                         width: 0,
                         height: 0
                       }}
+                      disabled={isDemoMode}
                     />
                     <span style={{
                       position: 'absolute',
-                      cursor: 'pointer',
+                      cursor: isDemoMode ? 'not-allowed' : 'pointer',
                       top: 0,
                       left: 0,
                       right: 0,
                       bottom: 0,
                       backgroundColor: model.provider !== 'perplexity' ? '#3b82f6' : '#94a3b8',
                       borderRadius: '24px',
-                      transition: '0.3s'
+                      transition: '0.3s',
+                      opacity: isDemoMode ? 0.6 : 1
                     }}>
                       <span style={{
                         position: 'absolute',
@@ -484,7 +529,8 @@ export default function AdminModelSettings() {
                     display: 'inline-block',
                     width: '44px',
                     height: '24px'
-                  }}>
+                  }}
+                  onClick={isDemoMode ? () => openDialog('capabilities') : undefined}>
                     <input
                       type="checkbox"
                       defaultChecked={model.provider === 'perplexity'}
@@ -493,17 +539,19 @@ export default function AdminModelSettings() {
                         width: 0,
                         height: 0
                       }}
+                      disabled={isDemoMode}
                     />
                     <span style={{
                       position: 'absolute',
-                      cursor: 'pointer',
+                      cursor: isDemoMode ? 'not-allowed' : 'pointer',
                       top: 0,
                       left: 0,
                       right: 0,
                       bottom: 0,
                       backgroundColor: model.provider === 'perplexity' ? '#3b82f6' : '#94a3b8',
                       borderRadius: '24px',
-                      transition: '0.3s'
+                      transition: '0.3s',
+                      opacity: isDemoMode ? 0.6 : 1
                     }}>
                       <span style={{
                         position: 'absolute',
@@ -557,6 +605,9 @@ export default function AdminModelSettings() {
           </div>
         )}
       </div>
+      
+      {/* Demo Dialog Component */}
+      <DialogComponent />
     </AdminLayout>
   );
 }
