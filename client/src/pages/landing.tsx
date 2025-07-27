@@ -187,10 +187,37 @@ export default function Landing() {
             </button>
             <button
               onClick={() => window.location.href = "/pricing"}
-              className="ai-sentinel-button-secondary"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '12px 24px',
+                backgroundColor: '#7c3aed',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '16px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                textDecoration: 'none',
+                transition: 'all 0.2s ease',
+                minWidth: '200px',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                margin: '8px'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = '#6d28d9';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 6px 12px -1px rgba(0, 0, 0, 0.15)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = '#7c3aed';
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+              }}
             >
               View Pricing Plans
-              <BarChart3 className="ml-2 w-5 h-5" style={{marginLeft: '8px', color: 'hsl(221, 83%, 53%)', width: '20px', height: '20px'}} />
+              <BarChart3 style={{marginLeft: '8px', color: 'white', width: '20px', height: '20px'}} />
             </button>
           </div>
           
