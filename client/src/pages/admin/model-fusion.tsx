@@ -9,6 +9,8 @@ import { apiRequest } from "@/lib/queryClient";
 import { hasAccessLevel, canViewAdminPage } from "@/utils/roleBasedAccess";
 import { useAuth } from "@/hooks/useAuth";
 import DemoBanner from "@/components/DemoBanner";
+import { isDemoModeActive } from "@/utils/demoMode";
+import { useDemoDialog } from "@/hooks/useDemoDialog";
 
 interface AiModel {
   id: number;
@@ -28,6 +30,29 @@ interface ModelFusionConfig {
 export default function ModelFusion() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  
+  // Demo mode detection
+  const isDemoMode = isDemoModeActive(user);
+  const { showDialog, closeDialog, DialogComponent } = useDemoDialog();
+
+  const openDialog = (type: string) => {
+    const dialogConfig = {
+      title: "Model Fusion",
+      description: "Configure advanced multi-model AI processing for comprehensive research and analysis. Combine multiple AI models to provide thorough, well-rounded responses.",
+      features: [
+        "Enable/disable multi-model processing for enhanced accuracy",
+        "Select summary model to consolidate responses from all models",
+        "Configure which AI models participate in fusion processing",
+        "Real-time processing across OpenAI, Anthropic, and other providers",
+        "Comprehensive analysis combining different AI perspectives",
+        "Advanced response synthesis and conflict resolution"
+      ]
+    };
+    closeDialog();
+    setTimeout(() => {
+      showDialog(dialogConfig);
+    }, 10);
+  };
 
   // Check access level - require Owner level (99+)
   if (!canViewAdminPage(user?.roleLevel, 99)) {
@@ -263,7 +288,12 @@ export default function ModelFusion() {
                   <Switch
                     id="model-fusion-enabled"
                     checked={localConfig.isEnabled || false}
-                    onCheckedChange={handleToggleEnabled}
+                    onCheckedChange={isDemoMode ? () => openDialog('enable') : handleToggleEnabled}
+                    disabled={isDemoMode}
+                    style={{
+                      opacity: isDemoMode ? 0.6 : 1,
+                      cursor: isDemoMode ? 'not-allowed' : 'pointer'
+                    }}
                   />
                 </div>
 
@@ -297,8 +327,9 @@ export default function ModelFusion() {
                   </p>
                   <select
                     value={localConfig.summaryModelId?.toString() || ""}
-                    onChange={(e) => handleSummaryModelChange(e.target.value)}
-                    disabled={!localConfig.isEnabled}
+                    onChange={isDemoMode ? undefined : (e) => handleSummaryModelChange(e.target.value)}
+                    onClick={isDemoMode ? () => openDialog('summary') : undefined}
+                    disabled={isDemoMode || !localConfig.isEnabled}
                     style={{
                       width: '100%',
                       padding: '8px 12px',
@@ -306,8 +337,9 @@ export default function ModelFusion() {
                       border: '1px solid #d1d5db',
                       fontSize: '14px',
                       color: '#374151',
-                      backgroundColor: localConfig.isEnabled ? 'white' : '#f9fafb',
-                      cursor: localConfig.isEnabled ? 'pointer' : 'not-allowed'
+                      backgroundColor: (isDemoMode || !localConfig.isEnabled) ? '#f9fafb' : 'white',
+                      cursor: (isDemoMode || !localConfig.isEnabled) ? 'not-allowed' : 'pointer',
+                      opacity: isDemoMode ? 0.6 : 1
                     }}
                   >
                     <option value="">Select a model for summarization</option>
@@ -412,12 +444,14 @@ export default function ModelFusion() {
                                 type="checkbox"
                                 id={`model-${model.id}`}
                                 checked={selectedModels.has(model.id)}
-                                onChange={(e) => handleModelToggle(model.id, e.target.checked)}
-                                disabled={!localConfig.isEnabled}
+                                onChange={isDemoMode ? undefined : (e) => handleModelToggle(model.id, e.target.checked)}
+                                onClick={isDemoMode ? () => openDialog('models') : undefined}
+                                disabled={isDemoMode || !localConfig.isEnabled}
                                 style={{
                                   width: '16px',
                                   height: '16px',
-                                  cursor: localConfig.isEnabled ? 'pointer' : 'not-allowed'
+                                  cursor: (isDemoMode || !localConfig.isEnabled) ? 'not-allowed' : 'pointer',
+                                  opacity: isDemoMode ? 0.6 : 1
                                 }}
                               />
                             </td>
@@ -442,8 +476,8 @@ export default function ModelFusion() {
               padding: '24px'
             }}>
               <button
-                onClick={handleSaveConfiguration}
-                disabled={saveConfigMutation.isPending}
+                onClick={isDemoMode ? () => openDialog('save') : handleSaveConfiguration}
+                disabled={isDemoMode || saveConfigMutation.isPending}
                 style={{
                   width: '100%',
                   display: 'flex',
@@ -454,19 +488,20 @@ export default function ModelFusion() {
                   fontSize: '16px',
                   fontWeight: '500',
                   color: 'white',
-                  backgroundColor: saveConfigMutation.isPending ? '#9ca3af' : '#3b82f6',
+                  backgroundColor: (isDemoMode || saveConfigMutation.isPending) ? '#9ca3af' : '#3b82f6',
                   border: 'none',
                   borderRadius: '8px',
-                  cursor: saveConfigMutation.isPending ? 'not-allowed' : 'pointer',
-                  transition: 'all 0.2s'
+                  cursor: (isDemoMode || saveConfigMutation.isPending) ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.2s',
+                  opacity: isDemoMode ? 0.6 : 1
                 }}
                 onMouseEnter={(e) => {
-                  if (!saveConfigMutation.isPending) {
+                  if (!isDemoMode && !saveConfigMutation.isPending) {
                     e.currentTarget.style.backgroundColor = '#2563eb';
                   }
                 }}
                 onMouseLeave={(e) => {
-                  if (!saveConfigMutation.isPending) {
+                  if (!isDemoMode && !saveConfigMutation.isPending) {
                     e.currentTarget.style.backgroundColor = '#3b82f6';
                   }
                 }}
@@ -541,6 +576,7 @@ export default function ModelFusion() {
           </div>
         </div>
       </div>
+      {isDemoMode && DialogComponent && <DialogComponent />}
     </AdminLayout>
   );
 }
