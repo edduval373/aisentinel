@@ -6,10 +6,12 @@ import { Button } from "@/components/ui/button";
 import Sidebar from "@/components/layout/Sidebar";
 import ChatInterface from "@/components/chat/ChatInterface";
 import { useQuery } from "@tanstack/react-query";
-import { Building2, LogOut, RotateCcw, Trash2 } from "lucide-react";
+import { Building2, LogOut, RotateCcw, Trash2, Star } from "lucide-react";
 import TutorialArrow from "@/components/tutorial/TutorialArrow";
 import { useTutorial } from "@/hooks/useTutorial";
 import { DemoUsageBanner } from "@/components/demo/DemoUsageBanner";
+import FeaturesBenefitsDialog from "@/components/FeaturesBenefitsDialog";
+import { useFeaturesBenefits } from "@/hooks/useFeaturesBenefits";
 
 import { useCompanyContext } from "@/hooks/useCompanyContext";
 
@@ -212,6 +214,9 @@ export default function Home() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { showTutorial, completeTutorial } = useTutorial();
   const [showCompanySwitcher, setShowCompanySwitcher] = useState(false);
+  
+  // Features & Benefits dialog for demo users
+  const { showDialog, openDialog, closeDialog } = useFeaturesBenefits();
   
   // Check if user is super-user (role level 100+)
   const isSuperUserLevel = (user?.roleLevel ?? 0) >= 100;
@@ -498,6 +503,35 @@ export default function Home() {
               </>
             )}
             
+            {/* Features & Benefits button for demo users */}
+            {isDemoMode && (
+              <Button
+                onClick={openDialog}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  background: '#3b82f6',
+                  color: 'white',
+                  border: 'none',
+                  fontWeight: '600',
+                  padding: '6px 12px',
+                  borderRadius: '6px',
+                  fontSize: '12px',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.background = '#2563eb';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.background = '#3b82f6';
+                }}
+              >
+                <Star style={{ width: '12px', height: '12px' }} />
+                Features & Benefits
+              </Button>
+            )}
+            
             {/* Sign Out/Sign Up Button with Demo indicator */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
               <button
@@ -559,6 +593,9 @@ export default function Home() {
           onComplete={completeTutorial}
         />
       )}
+
+      {/* Features & Benefits Dialog */}
+      <FeaturesBenefitsDialog open={showDialog} onClose={closeDialog} />
     </div>
   );
 }

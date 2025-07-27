@@ -465,38 +465,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
               </SelectContent>
             </Select>
 
-            {/* Demo Features Button */}
-            {isDemoMode && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={openDialog}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                  color: 'white',
-                  border: 'none',
-                  fontWeight: '600',
-                  padding: '8px 12px',
-                  borderRadius: '8px',
-                  boxShadow: '0 2px 8px rgba(245, 158, 11, 0.3)',
-                  transition: 'all 0.2s ease'
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-1px)';
-                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(245, 158, 11, 0.4)';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0px)';
-                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(245, 158, 11, 0.3)';
-                }}
-              >
-                <Star style={{ width: '14px', height: '14px' }} />
-                Show Features & Benefits
-              </Button>
-            )}
+
 
             {/* Chat Management Buttons */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
