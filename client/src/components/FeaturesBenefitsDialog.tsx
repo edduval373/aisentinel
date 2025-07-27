@@ -147,7 +147,6 @@ const features = [
 ];
 
 const categories = [
-  { name: "All Features", color: "#3b82f6" },
   { name: "AI Technology", color: "#8b5cf6" },
   { name: "Security", color: "#ef4444" },
   { name: "Access Management", color: "#f59e0b" },
@@ -155,16 +154,13 @@ const categories = [
   { name: "Customization", color: "#06b6d4" },
   { name: "Compliance", color: "#f97316" },
   { name: "Monitoring", color: "#84cc16" },
-  { name: "Workflow", color: "#ec4899" },
-  { name: "Enterprise", color: "#6366f1" }
+  { name: "Workflow", color: "#ec4899" }
 ];
 
 export default function FeaturesBenefitsDialog({ open, onOpenChange }: FeaturesBenefitsDialogProps) {
-  const [selectedCategory, setSelectedCategory] = useState("All Features");
+  const [selectedCategory, setSelectedCategory] = useState("AI Technology");
 
-  const filteredFeatures = selectedCategory === "All Features" 
-    ? features 
-    : features.filter(feature => feature.category === selectedCategory);
+  const filteredFeatures = features.filter(feature => feature.category === selectedCategory);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -216,24 +212,15 @@ export default function FeaturesBenefitsDialog({ open, onOpenChange }: FeaturesB
             </Button>
             
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '12px' }}>
-              <div style={{
-                background: 'rgba(255, 255, 255, 0.2)',
-                borderRadius: '16px',
-                padding: '12px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
-                <img 
-                  src="/ai-sentinel-logo.png" 
-                  alt="AI Sentinel Logo"
-                  style={{ 
-                    width: '32px', 
-                    height: '32px',
-                    filter: 'brightness(1.2) saturate(1.3) contrast(1.2)'
-                  }} 
-                />
-              </div>
+              <img 
+                src="/ai-sentinel-logo.png" 
+                alt="AI Sentinel Logo"
+                style={{ 
+                  width: '64px', 
+                  height: '64px',
+                  filter: 'brightness(1.2) saturate(1.3) contrast(1.2)'
+                }} 
+              />
               <div>
                 <DialogTitle style={{
                   fontSize: '32px',
@@ -262,9 +249,10 @@ export default function FeaturesBenefitsDialog({ open, onOpenChange }: FeaturesB
           }}>
             <div style={{
               display: 'flex',
-              gap: '12px',
-              flexWrap: 'wrap',
-              paddingBottom: '24px'
+              gap: '8px',
+              flexWrap: 'nowrap',
+              paddingBottom: '24px',
+              justifyContent: 'space-between'
             }}>
               {categories.map((category) => (
                 <Button
@@ -277,9 +265,10 @@ export default function FeaturesBenefitsDialog({ open, onOpenChange }: FeaturesB
                     color: selectedCategory === category.name ? 'white' : '#64748b',
                     border: `1px solid ${selectedCategory === category.name ? category.color : '#e2e8f0'}`,
                     borderRadius: '20px',
-                    padding: '8px 16px',
-                    fontSize: '14px',
+                    padding: '6px 12px',
+                    fontSize: '13px',
                     fontWeight: '500',
+                    whiteSpace: 'nowrap',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease'
                   }}

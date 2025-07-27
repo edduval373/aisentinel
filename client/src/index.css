@@ -68,6 +68,14 @@ body {
   display: none !important;
 }
 
+.features-benefits-dialog > button:first-child {
+  display: none !important;
+}
+
+.features-benefits-dialog [data-dialog-close] {
+  display: none !important;
+}
+
 /* Layout and Structure */
 .ai-sentinel-page {
   min-height: 100vh;
