@@ -6,6 +6,9 @@ import { Shield, AlertTriangle, Save, Plus, Edit, Eye, Settings } from "lucide-r
 import AdminLayout from "@/components/layout/AdminLayout";
 import DemoBanner from "@/components/DemoBanner";
 import { hasAccessLevel, canViewAdminPage, ACCESS_REQUIREMENTS } from "@/utils/roleBasedAccess";
+import { isDemoModeActive, isReadOnlyMode } from "@/utils/demoMode";
+import { useDemoDialog } from "@/hooks/useDemoDialog";
+import DemoInfoDialog from "@/components/demo/DemoInfoDialog";
 
 export default function AdminPolicies() {
   const { toast } = useToast();
@@ -13,9 +16,14 @@ export default function AdminPolicies() {
   const { currentCompanyId } = useCompanyContext();
   const [activeTab, setActiveTab] = useState("content-filters");
 
+  // Demo mode functionality
+  const isDemoMode = isDemoModeActive(user);
+  const isReadOnly = isReadOnlyMode(user);
+  const { showDemoDialog, hideDemoDialog, isDemoDialogOpen } = useDemoDialog();
+
   // Check access level - allow demo users (0) read-only access and administrators (2+) full access
   const hasReadOnlyAccess = user && (user.roleLevel === 0); // Demo users
-  const hasFullAccess = user && user.roleLevel !== undefined && canViewAdminPage(user.roleLevel, ACCESS_REQUIREMENTS.CONTENT_POLICIES); // Admin+
+  const hasFullAccess = user && user.roleLevel !== undefined && canViewAdminPage(user, ACCESS_REQUIREMENTS.CONTENT_POLICIES); // Admin+
   
   useEffect(() => {
     if (!isLoading && (!isAuthenticated || (!hasReadOnlyAccess && !hasFullAccess))) {
@@ -250,7 +258,9 @@ export default function AdminPolicies() {
                 Content Filtering Rules
               </h2>
               {hasFullAccess && (
-                <button style={{
+                <button 
+                onClick={() => isDemoMode ? showDemoDialog('content-filter-create') : null}
+                style={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: '8px',
@@ -445,7 +455,9 @@ export default function AdminPolicies() {
                     
                     {hasFullAccess && (
                       <div style={{ display: 'flex', gap: '8px' }}>
-                        <button style={{
+                        <button 
+                        onClick={() => isDemoMode ? showDemoDialog('content-filter-configure') : null}
+                        style={{
                           display: 'flex',
                           alignItems: 'center',
                           gap: '6px',
@@ -470,7 +482,9 @@ export default function AdminPolicies() {
                           <Settings size={14} />
                           Configure
                         </button>
-                        <button style={{
+                        <button 
+                        onClick={() => isDemoMode ? showDemoDialog('content-filter-logs') : null}
+                        style={{
                           display: 'flex',
                           alignItems: 'center',
                           gap: '6px',
@@ -522,7 +536,9 @@ export default function AdminPolicies() {
                 Security Configuration
               </h2>
               {hasFullAccess && (
-                <button style={{
+                <button 
+                onClick={() => isDemoMode ? showDemoDialog('security-rules-save') : null}
+                style={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: '8px',
@@ -928,7 +944,9 @@ bank_account`}
                 Compliance Settings
               </h2>
               {hasFullAccess && (
-                <button style={{
+                <button 
+                onClick={() => isDemoMode ? showDemoDialog('compliance-save') : null}
+                style={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: '8px',
@@ -1541,6 +1559,24 @@ bank_account`}
           </div>
         )}
       </div>
+
+      {/* Demo Info Dialog */}
+      <DemoInfoDialog
+        isOpen={isDemoDialogOpen}
+        onClose={hideDemoDialog}
+        title="Content Policies Demo"
+        description="This is a demonstration of AI Sentinel's comprehensive content policy management system. In the full version, administrators can create custom content filters, configure security rules, and manage compliance settings."
+        features={[
+          "Real-time content filtering with custom rules and severity levels",
+          "PII detection patterns with regex configuration", 
+          "Security rule automation with blocking and logging capabilities",
+          "Compliance framework integration (GDPR, HIPAA, SOX, PCI DSS)",
+          "Data retention policy management with automated enforcement",
+          "Audit trail logging with external SIEM integration",
+          "Role-based access control for policy configuration",
+          "Custom notification and escalation workflows"
+        ]}
+      />
     </AdminLayout>
   );
 }
