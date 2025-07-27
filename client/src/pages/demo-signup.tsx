@@ -3,30 +3,28 @@ import { Shield, ArrowLeft } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 
 export default function DemoSignup() {
-  const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleStartDemo = async () => {
     setIsLoading(true);
     setError('');
 
     try {
-      console.log("[DEMO SIGNUP] Creating demo account for:", email);
+      console.log("[DEMO SIGNUP] Starting demo mode");
       
       const response = await apiRequest('/api/auth/demo-signup', 'POST', {
-        email,
-        ipAddress: window.location.hostname, // Simple IP tracking
+        email: 'demo@aisentinel.com', // Default demo email
+        ipAddress: window.location.hostname,
         userAgent: navigator.userAgent
       });
 
       if (response.success) {
-        console.log("[DEMO SIGNUP] Demo account created successfully");
+        console.log("[DEMO SIGNUP] Demo session created successfully");
         // Redirect to chat interface
         window.location.href = '/demo';
       } else {
-        setError(response.message || 'Failed to create demo account');
+        setError(response.message || 'Failed to start demo');
       }
     } catch (error: any) {
       console.error("[DEMO SIGNUP] Error:", error);
@@ -126,47 +124,8 @@ export default function DemoSignup() {
           </ul>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '24px' }}>
-            <label style={{ 
-              display: 'block', 
-              fontSize: '14px', 
-              fontWeight: 500, 
-              color: '#374151',
-              marginBottom: '8px'
-            }}>
-              Email Address
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-              required
-              style={{
-                width: '100%',
-                padding: '12px 16px',
-                border: '1px solid #d1d5db',
-                borderRadius: '8px',
-                fontSize: '16px',
-                backgroundColor: 'white',
-                color: '#1f2937',
-                outline: 'none',
-                transition: 'border-color 0.2s',
-                boxSizing: 'border-box'
-              }}
-              onFocus={(e) => {
-                e.target.style.borderColor = '#2563eb';
-                e.target.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
-              }}
-              onBlur={(e) => {
-                e.target.style.borderColor = '#d1d5db';
-                e.target.style.boxShadow = 'none';
-              }}
-            />
-          </div>
-
+        {/* Demo Start Section */}
+        <div style={{ marginBottom: '24px' }}>
           {error && (
             <div style={{
               backgroundColor: '#fef2f2',
@@ -182,33 +141,33 @@ export default function DemoSignup() {
           )}
 
           <button
-            type="submit"
-            disabled={isLoading || !email.trim()}
+            onClick={handleStartDemo}
+            disabled={isLoading}
             style={{
               width: '100%',
-              backgroundColor: isLoading || !email.trim() ? '#9ca3af' : '#2563eb',
+              backgroundColor: isLoading ? '#9ca3af' : '#2563eb',
               color: 'white',
               padding: '12px 24px',
               borderRadius: '8px',
               border: 'none',
               fontSize: '16px',
               fontWeight: 600,
-              cursor: isLoading || !email.trim() ? 'not-allowed' : 'pointer',
+              cursor: isLoading ? 'not-allowed' : 'pointer',
               transition: 'all 0.2s',
               marginBottom: '20px'
             }}
             onMouseOver={(e) => {
-              if (!isLoading && email.trim()) {
+              if (!isLoading) {
                 e.currentTarget.style.backgroundColor = '#1d4ed8';
               }
             }}
             onMouseOut={(e) => {
-              if (!isLoading && email.trim()) {
+              if (!isLoading) {
                 e.currentTarget.style.backgroundColor = '#2563eb';
               }
             }}
           >
-            {isLoading ? 'Creating Demo Account...' : 'Start Demo (3 Free Questions)'}
+            {isLoading ? 'Starting Demo...' : 'Start Demo (3 Free Questions)'}
           </button>
 
           <button
@@ -242,7 +201,7 @@ export default function DemoSignup() {
             <ArrowLeft style={{ width: '16px', height: '16px' }} />
             Back to Home
           </button>
-        </form>
+        </div>
 
         {/* Fine Print */}
         <div style={{
