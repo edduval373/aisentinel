@@ -81,6 +81,12 @@ body {
 .features-benefits-dialog .logo-blue-background {
   background: #3b82f6 !important;
   background-color: #3b82f6 !important;
+  background-image: none !important;
+}
+
+.logo-blue-background {
+  background: #3b82f6 !important;
+  background-color: #3b82f6 !important;
 }
 
 /* Layout and Structure */

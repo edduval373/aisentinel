@@ -205,8 +205,6 @@ export default function FeaturesBenefitsDialog({ open, onOpenChange }: FeaturesB
                 style={{
                   width: '64px',
                   height: '64px',
-                  backgroundColor: '#3b82f6 !important',
-                  background: '#3b82f6 !important',
                   padding: '8px',
                   borderRadius: '8px',
                   display: 'flex',
