@@ -200,15 +200,6 @@ export default function FeaturesBenefitsDialog({ open, onOpenChange }: FeaturesB
             />
             
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '12px' }}>
-              <img 
-                src="/ai-sentinel-logo.png" 
-                alt="AI Sentinel Logo"
-                style={{ 
-                  width: '64px', 
-                  height: '64px',
-                  filter: 'brightness(0) invert(1)'
-                }} 
-              />
               <div>
                 <DialogTitle style={{
                   fontSize: '32px',
