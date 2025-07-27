@@ -281,10 +281,10 @@ export default function SetupApiKeys() {
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
               <AlertCircle style={{ width: '20px', height: '20px', color: '#2563eb', marginTop: '2px' }} />
               <div>
-                <h3 style={{ fontWeight: '500', color: '#1e3a8a', margin: '0 0 4px 0' }}>Super-User API Key Management</h3>
+                <h3 style={{ fontWeight: '500', color: '#1e3a8a', margin: '0 0 4px 0' }}>Company API Key Management</h3>
                 <p style={{ fontSize: '14px', color: '#1d4ed8', margin: '0', lineHeight: '1.5' }}>
-                  As a super-user, you can configure API keys for all AI providers. These keys will be used by all companies in the system.
-                  Make sure to use valid, working API keys to enable AI model functionality.
+                  As a company owner, you can configure API keys for all AI providers. These keys will be used by your company for AI model functionality.
+                  Make sure to use valid, working API keys to enable AI features for your organization.
                 </p>
               </div>
             </div>
