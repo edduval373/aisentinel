@@ -140,15 +140,36 @@ export default function AdminSecurity() {
 
   return (
     <AdminLayout title="Security Reports" subtitle={subtitle}>
-      {/* Demo Banner */}
-      {isDemoMode && (
-        <DemoBanner 
-          title="Demo Mode - Read Only View"
-          description={`Viewing security reports demo for ${user?.companyName || 'your company'}. All data is simulated for demonstration purposes.`}
-        />
-      )}
-      
       <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '1200px', margin: '0 auto' }}>
+        {/* Demo Banner - Top Right */}
+        {isDemoMode && (
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
+            <div style={{
+              backgroundColor: '#fef3c7',
+              border: '1px solid #fbbf24',
+              borderRadius: '8px',
+              padding: '12px 16px',
+              maxWidth: '400px',
+              boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
+            }}>
+              <h4 style={{ 
+                fontSize: '14px', 
+                fontWeight: '600', 
+                color: '#92400e', 
+                margin: '0 0 4px 0' 
+              }}>
+                Demo Mode - Read Only View
+              </h4>
+              <p style={{ 
+                fontSize: '12px', 
+                color: '#a16207', 
+                margin: 0 
+              }}>
+                Viewing security reports demo for {user?.companyName || 'your company'}. All data is simulated for demonstration purposes.
+              </p>
+            </div>
+          </div>
+        )}
         {/* Security Overview */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px' }}>
           <div style={{
