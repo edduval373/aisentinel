@@ -141,6 +141,13 @@ The application is configured for deployment on Vercel with the following setup:
 
 ```
 Recent Updates:
+- July 27, 2025. CRITICAL AUTHENTICATION FIX - Super-User Issue Resolved:
+  * FIXED: Critical authentication bug where user was being logged in as super-user (role level 100) instead of company user
+  * CORRECTED: Updated user record from super-user (level 100) to regular user (level 1) with company ID 1 assignment
+  * RESOLVED: Authentication system now properly assigns users to company ID 1 instead of super-user privileges
+  * VERIFIED: Database user record updated correctly with role='user', role_level=1, company_id=1
+  * CLEARED: All existing sessions deleted to force new authentication with correct role level
+  * SECURED: Users now properly authenticated as company employees rather than system administrators
 - July 27, 2025. Landing Page Layout Fix Complete:
   * FIXED: Critical CSS class issues causing broken layout and ugly styling in production
   * CONVERTED: All problematic CSS classes to inline styles for guaranteed cross-environment rendering
