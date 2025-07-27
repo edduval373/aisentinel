@@ -119,8 +119,9 @@ body {
   display: flex !important;
 }
 
-.features-benefits-dialog .custom-close-button {
-  display: flex !important;
+/* Ensure the X icon is visible */
+.features-benefits-dialog svg[style*="position: absolute"] {
+  display: block !important;
 }
 
 /* Layout and Structure */

@@ -184,37 +184,42 @@ export default function FeaturesBenefitsDialog({ open, onOpenChange }: FeaturesB
             borderRadius: '20px 20px 0 0',
             position: 'relative'
           }}>
-            <div
+            <X 
               onClick={() => onOpenChange(false)}
-              className="custom-close-button"
-              style={{
+              style={{ 
                 position: 'absolute',
                 right: '20px',
                 top: '20px',
+                width: '32px', 
+                height: '32px', 
+                color: 'white', 
+                strokeWidth: 3,
                 cursor: 'pointer',
-                transition: 'all 0.2s ease',
                 zIndex: 10
               }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.opacity = '0.8';
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.opacity = '1';
-              }}
-            >
-              <X style={{ width: '32px', height: '32px', color: 'white', strokeWidth: 3 }} />
-            </div>
+            />
             
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '12px' }}>
               <div style={{
                 width: '64px',
                 height: '64px',
-                backgroundImage: 'url(/ai-sentinel-logo.png)',
-                backgroundSize: 'contain',
-                backgroundRepeat: 'no-repeat',
-                backgroundPosition: 'center',
-                filter: 'brightness(1.2) saturate(1.3) contrast(1.2)'
-              }} />
+                background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+                padding: '8px',
+                borderRadius: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <div style={{
+                  width: '48px',
+                  height: '48px',
+                  backgroundImage: 'url(/ai-sentinel-logo.png)',
+                  backgroundSize: 'contain',
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'center',
+                  filter: 'brightness(0) invert(1)'
+                }} />
+              </div>
               <div>
                 <DialogTitle style={{
                   fontSize: '32px',
