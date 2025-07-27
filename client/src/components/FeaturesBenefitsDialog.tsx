@@ -200,16 +200,19 @@ export default function FeaturesBenefitsDialog({ open, onOpenChange }: FeaturesB
             />
             
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '12px' }}>
-              <div style={{
-                width: '64px',
-                height: '64px',
-                backgroundColor: '#3b82f6',
-                padding: '8px',
-                borderRadius: '8px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
+              <div 
+                className="logo-blue-background"
+                style={{
+                  width: '64px',
+                  height: '64px',
+                  backgroundColor: '#3b82f6 !important',
+                  background: '#3b82f6 !important',
+                  padding: '8px',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
                 <div style={{
                   width: '48px',
                   height: '48px',

@@ -77,6 +77,12 @@ body {
   display: flex !important;
 }
 
+/* Force blue background for logo container */
+.features-benefits-dialog .logo-blue-background {
+  background: #3b82f6 !important;
+  background-color: #3b82f6 !important;
+}
+
 /* Layout and Structure */
 .ai-sentinel-page {
   min-height: 100vh;
