@@ -114,6 +114,187 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Demo and authenticated users route - returns 3 demo users for demo mode, real users for authenticated
+  app.get('/api/users', optionalAuth, async (req: any, res) => {
+    try {
+      // For demo mode, return 3 example users
+      if (!req.user) {
+        console.log("Demo mode users request");
+        const demoUsers = [
+          {
+            id: 'demo-user-1',
+            name: 'Sarah Johnson',
+            email: 'sarah.johnson@duvalsolutions.net',
+            firstName: 'Sarah',
+            lastName: 'Johnson',
+            role: 'admin',
+            roleLevel: 2,
+            department: 'Engineering',
+            status: 'active',
+            totalSessions: 47,
+            lastActive: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
+            profileImageUrl: null,
+            isDemoUser: true
+          },
+          {
+            id: 'demo-user-2',
+            name: 'Michael Chen',
+            email: 'michael.chen@duvalsolutions.net',
+            firstName: 'Michael',
+            lastName: 'Chen',
+            role: 'user',
+            roleLevel: 1,
+            department: 'Marketing',
+            status: 'active',
+            totalSessions: 23,
+            lastActive: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(), // 5 hours ago
+            profileImageUrl: null,
+            isDemoUser: true
+          },
+          {
+            id: 'demo-user-3',
+            name: 'Emily Rodriguez',
+            email: 'emily.rodriguez@duvalsolutions.net',
+            firstName: 'Emily',
+            lastName: 'Rodriguez',
+            role: 'owner',
+            roleLevel: 99,
+            department: 'Operations',
+            status: 'active',
+            totalSessions: 156,
+            lastActive: new Date(Date.now() - 30 * 60 * 1000).toISOString(), // 30 minutes ago
+            profileImageUrl: null,
+            isDemoUser: true
+          }
+        ];
+        
+        console.log("Returning demo users:", demoUsers.length, "users");
+        return res.json(demoUsers);
+      }
+      
+      // For authenticated users, return their company's users
+      const companyId = req.user.companyId;
+      console.log("Authenticated user requesting users:", { userId: req.user.userId, companyId });
+      
+      const users = await storage.getCompanyUsers(companyId);
+      console.log("Returning users for company", companyId + ":", users.length, "users");
+      return res.json(users);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      res.status(500).json({ message: "Failed to fetch users" });
+    }
+  });
+
+  // Demo CRUD operations for users
+  app.post('/api/users/invite', optionalAuth, async (req: any, res) => {
+    try {
+      // For demo mode, simulate successful user invitation
+      if (!req.user) {
+        console.log("Demo mode user invite request");
+        const { email, firstName, lastName, role, department } = req.body;
+        
+        // Return a simulated new user
+        const newUser = {
+          id: `demo-user-${Date.now()}`,
+          name: `${firstName} ${lastName}`,
+          email,
+          firstName,
+          lastName,
+          role,
+          roleLevel: role === 'admin' ? 2 : role === 'owner' ? 99 : 1,
+          department,
+          status: 'active',
+          totalSessions: 0,
+          lastActive: new Date().toISOString(),
+          profileImageUrl: null,
+          isDemoUser: true
+        };
+        
+        console.log("Demo user invitation simulated:", newUser);
+        return res.json({ message: "User invitation sent successfully (demo)", user: newUser });
+      }
+      
+      // For authenticated users, use real invitation logic
+      const userRoleLevel = req.user?.roleLevel || 1;
+      if (userRoleLevel < 98) {
+        return res.status(403).json({ message: "Administrator access required" });
+      }
+      
+      const user = await storage.inviteUser(req.user.companyId, req.body);
+      res.json(user);
+    } catch (error) {
+      console.error("Error inviting user:", error);
+      res.status(500).json({ message: "Failed to invite user" });
+    }
+  });
+
+  app.patch('/api/users/:id', optionalAuth, async (req: any, res) => {
+    try {
+      // For demo mode, simulate successful user update
+      if (!req.user) {
+        console.log("Demo mode user update request:", req.params.id);
+        const { firstName, lastName, role, department } = req.body;
+        
+        // Return a simulated updated user
+        const updatedUser = {
+          id: req.params.id,
+          name: `${firstName} ${lastName}`,
+          email: req.params.id.includes('1') ? 'sarah.johnson@duvalsolutions.net' : 
+                 req.params.id.includes('2') ? 'michael.chen@duvalsolutions.net' : 
+                 'emily.rodriguez@duvalsolutions.net',
+          firstName,
+          lastName,
+          role,
+          roleLevel: role === 'admin' ? 2 : role === 'owner' ? 99 : 1,
+          department,
+          status: 'active',
+          totalSessions: Math.floor(Math.random() * 100),
+          lastActive: new Date().toISOString(),
+          profileImageUrl: null,
+          isDemoUser: true
+        };
+        
+        console.log("Demo user update simulated:", updatedUser);
+        return res.json({ message: "User updated successfully (demo)", user: updatedUser });
+      }
+      
+      // For authenticated users, use real update logic
+      const userRoleLevel = req.user?.roleLevel || 1;
+      if (userRoleLevel < 98) {
+        return res.status(403).json({ message: "Administrator access required" });
+      }
+      
+      const user = await storage.updateUser(req.params.id, req.user.companyId, req.body);
+      res.json(user);
+    } catch (error) {
+      console.error("Error updating user:", error);
+      res.status(500).json({ message: "Failed to update user" });
+    }
+  });
+
+  app.delete('/api/users/:id', optionalAuth, async (req: any, res) => {
+    try {
+      // For demo mode, simulate successful user deletion
+      if (!req.user) {
+        console.log("Demo mode user delete request:", req.params.id);
+        console.log("Demo user deletion simulated");
+        return res.json({ message: "User deleted successfully (demo)" });
+      }
+      
+      // For authenticated users, use real deletion logic
+      const userRoleLevel = req.user?.roleLevel || 1;
+      if (userRoleLevel < 98) {
+        return res.status(403).json({ message: "Administrator access required" });
+      }
+      
+      await storage.deleteUser(req.params.id, req.user.companyId);
+      res.json({ message: "User deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      res.status(500).json({ message: "Failed to delete user" });
+    }
+  });
+
   // AI model update route with required authentication and role-based authorization
   app.patch('/api/ai-models/:id', requireAuth, async (req: any, res) => {
     try {

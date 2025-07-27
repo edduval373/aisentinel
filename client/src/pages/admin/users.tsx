@@ -55,21 +55,23 @@ export default function AdminUsers() {
   const isDemoMode = isDemoModeActive(user);
   const isReadOnly = isReadOnlyMode(user);
 
+  // Use demo-compatible endpoint
+  const apiEndpoint = isDemoMode ? '/api/users' : '/api/admin/users';
+  
   // Fetch users query
   const { data: allUsers = [], isLoading: usersLoading, error: usersError } = useQuery({
-    queryKey: ['/api/admin/users'],
-    enabled: isAuthenticated && hasAdminAccess,
+    queryKey: [apiEndpoint],
+    enabled: !isLoading && hasAdminAccess,
   });
 
-  // Filter users for demo mode - only show demo user
-  const users = isDemoMode 
-    ? allUsers.filter((u: User) => u.email === 'demo@aisentinel.com')
-    : allUsers;
+  // In demo mode, use all the users returned from the demo endpoint
+  const users = allUsers;
 
   // Invite user mutation
   const inviteUserMutation = useMutation({
     mutationFn: async (userData: typeof inviteForm) => {
-      const response = await fetch('/api/admin/users/invite', {
+      const endpoint = isDemoMode ? '/api/users/invite' : '/api/admin/users/invite';
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userData),
@@ -79,7 +81,7 @@ export default function AdminUsers() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/users'] });
+      queryClient.invalidateQueries({ queryKey: [apiEndpoint] });
       toast({ title: "Success", description: "User invitation sent successfully" });
       setInviteDialogOpen(false);
       setInviteForm({ email: '', firstName: '', lastName: '', role: 'user', department: '' });
@@ -92,7 +94,8 @@ export default function AdminUsers() {
   // Update user mutation
   const updateUserMutation = useMutation({
     mutationFn: async ({ id, ...userData }: { id: string } & typeof editForm) => {
-      const response = await fetch(`/api/admin/users/${id}`, {
+      const endpoint = isDemoMode ? `/api/users/${id}` : `/api/admin/users/${id}`;
+      const response = await fetch(endpoint, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userData),
@@ -102,7 +105,7 @@ export default function AdminUsers() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/users'] });
+      queryClient.invalidateQueries({ queryKey: [apiEndpoint] });
       toast({ title: "Success", description: "User updated successfully" });
       setEditDialogOpen(false);
       setSelectedUser(null);
@@ -115,7 +118,8 @@ export default function AdminUsers() {
   // Delete user mutation
   const deleteUserMutation = useMutation({
     mutationFn: async (userId: string) => {
-      const response = await fetch(`/api/admin/users/${userId}`, {
+      const endpoint = isDemoMode ? `/api/users/${userId}` : `/api/admin/users/${userId}`;
+      const response = await fetch(endpoint, {
         method: 'DELETE',
         credentials: 'include'
       });
@@ -123,7 +127,7 @@ export default function AdminUsers() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/users'] });
+      queryClient.invalidateQueries({ queryKey: [apiEndpoint] });
       toast({ title: "Success", description: "User deleted successfully" });
       setDeleteDialogOpen(false);
       setSelectedUser(null);
