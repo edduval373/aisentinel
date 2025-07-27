@@ -1,30 +1,40 @@
 import { useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { useCompanyContext } from "@/hooks/useCompanyContext";
 import { useToast } from "@/hooks/use-toast";
-import { hasAccessLevel, canViewAdminPage, ACCESS_REQUIREMENTS } from "@/utils/roleBasedAccess";
+import { useDemoDialog } from "@/hooks/useDemoDialog";
+import { hasAccessLevel, ACCESS_REQUIREMENTS } from "@/utils/roleBasedAccess";
+import { isDemoModeActive, isReadOnlyMode } from "@/utils/demoMode";
 import { Shield, AlertTriangle, CheckCircle, XCircle, RefreshCw } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
+import DemoBanner from "@/components/DemoBanner";
 
 export default function AdminSecurity() {
   const { toast } = useToast();
   const { user, isAuthenticated, isLoading } = useAuth();
+  const { currentCompanyId } = useCompanyContext();
   
-  // Check if user has admin level access (2 or above)
-  const hasAdminAccess = canViewAdminPage(user?.roleLevel, ACCESS_REQUIREMENTS.SECURITY_REPORTS);
+  // Demo mode functionality
+  const isDemoMode = isDemoModeActive(user);
+  const isReadOnly = isReadOnlyMode(user);
+  const { showDialog, closeDialog, DialogComponent } = useDemoDialog();
+  
+  // Check access level - allow demo users (0) read-only access and administrators (2+) full access
+  const hasReadOnlyAccess = user && (user.roleLevel === 0); // Demo users
+  const hasFullAccess = user && user.roleLevel !== undefined && hasAccessLevel(user.roleLevel, ACCESS_REQUIREMENTS.SECURITY_REPORTS);
+  const hasAdminAccess = hasReadOnlyAccess || hasFullAccess;
 
   useEffect(() => {
-    if (!isLoading && (!isAuthenticated || !hasAdminAccess)) {
+    if (!isLoading && (!isAuthenticated || (!hasReadOnlyAccess && !hasFullAccess))) {
       toast({
         title: "Access Denied",
-        description: "Admin access required (level 2+)",
+        description: `Security Reports requires Admin level (2+) access. Your current level: ${user?.roleLevel || 0}`,
         variant: "destructive",
       });
-      setTimeout(() => {
-        window.location.href = "/";
-      }, 1000);
+      window.location.href = "/";
       return;
     }
-  }, [isAuthenticated, isLoading, hasAdminAccess, toast]);
+  }, [isAuthenticated, isLoading, user, toast, hasReadOnlyAccess, hasFullAccess]);
 
   if (isLoading) {
     return (
@@ -124,8 +134,20 @@ export default function AdminSecurity() {
     }
   };
 
+  const subtitle = isDemoMode 
+    ? `Demo Mode - Security monitoring and threat analysis preview for ${user?.companyName || 'your company'}`
+    : "Monitor security events and threats";
+
   return (
-    <AdminLayout title="Security Reports" subtitle="Monitor security events and threats">
+    <AdminLayout title="Security Reports" subtitle={subtitle}>
+      {/* Demo Banner */}
+      {isDemoMode && (
+        <DemoBanner 
+          title="Demo Mode - Read Only View"
+          description={`Viewing security reports demo for ${user?.companyName || 'your company'}. All data is simulated for demonstration purposes.`}
+        />
+      )}
+      
       <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '1200px', margin: '0 auto' }}>
         {/* Security Overview */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px' }}>
@@ -253,27 +275,47 @@ export default function AdminSecurity() {
               <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>Recent security events requiring attention</p>
             </div>
             <button
+              onClick={() => {
+                if (isDemoMode) {
+                  showDialog({
+                    title: 'Security Reports Refresh',
+                    description: `Refresh real-time security reports and threat monitoring data for ${user?.companyName || 'your company'} including active threats, blocked attempts, and security scores.`,
+                    features: [
+                      'Real-time security score updates and threat analysis',
+                      'Active threat detection and response status monitoring',
+                      'Blocked attempt tracking with detailed forensics',
+                      'Security incident timeline and resolution status',
+                      'Automated threat intelligence feeds and vulnerability scanning'
+                    ]
+                  });
+                }
+              }}
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
-                backgroundColor: 'white',
-                color: '#374151',
+                backgroundColor: hasReadOnlyAccess ? '#f9fafb' : 'white',
+                color: hasReadOnlyAccess ? '#9ca3af' : '#374151',
                 border: '1px solid #d1d5db',
                 borderRadius: '8px',
                 padding: '8px 16px',
                 fontSize: '14px',
                 fontWeight: '500',
-                cursor: 'pointer',
+                cursor: hasReadOnlyAccess ? 'not-allowed' : 'pointer',
+                opacity: hasReadOnlyAccess ? 0.6 : 1,
                 transition: 'background-color 0.2s, border-color 0.2s'
               }}
               onMouseOver={(e) => {
-                e.currentTarget.style.backgroundColor = '#f9fafb';
-                e.currentTarget.style.borderColor = '#9ca3af';
+                if (!hasReadOnlyAccess) {
+                  e.currentTarget.style.backgroundColor = '#f9fafb';
+                  e.currentTarget.style.borderColor = '#9ca3af';
+                }
               }}
               onMouseOut={(e) => {
-                e.currentTarget.style.backgroundColor = 'white';
-                e.currentTarget.style.borderColor = '#d1d5db';
+                if (!hasReadOnlyAccess) {
+                  e.currentTarget.style.backgroundColor = 'white';
+                  e.currentTarget.style.borderColor = '#d1d5db';
+                }
               }}
             >
               <RefreshCw size={16} />
@@ -337,49 +379,112 @@ export default function AdminSecurity() {
                       </div>
                     </div>
                     <div style={{ marginTop: '12px', display: 'flex', gap: '8px' }}>
-                      <button style={{
-                        backgroundColor: 'white',
-                        color: '#374151',
+                      <button 
+                        onClick={() => {
+                          if (isDemoMode) {
+                            showDialog({
+                              title: 'Security Alert Investigation',
+                              description: `Launch detailed investigation tools for security incidents at ${user?.companyName || 'your company'} with comprehensive forensic analysis and threat intelligence.`,
+                              features: [
+                                'Deep packet inspection and network traffic analysis',
+                                'User behavior analytics and anomaly detection',
+                                'Threat intelligence correlation and attribution',
+                                'Automated incident response playbook execution',
+                                'Digital forensics timeline reconstruction and evidence collection'
+                              ]
+                            });
+                          }
+                        }}
+                        style={{
+                        backgroundColor: hasReadOnlyAccess ? '#f9fafb' : 'white',
+                        color: hasReadOnlyAccess ? '#9ca3af' : '#374151',
                         border: '1px solid #d1d5db',
                         borderRadius: '6px',
                         padding: '6px 12px',
                         fontSize: '13px',
                         fontWeight: '500',
-                        cursor: 'pointer',
+                        cursor: hasReadOnlyAccess ? 'not-allowed' : 'pointer',
+                        opacity: hasReadOnlyAccess ? 0.6 : 1,
                         transition: 'background-color 0.2s'
                       }}
-                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
-                      onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'white'}>
+                      onMouseOver={(e) => {
+                        if (!hasReadOnlyAccess) e.currentTarget.style.backgroundColor = '#f9fafb';
+                      }}
+                      onMouseOut={(e) => {
+                        if (!hasReadOnlyAccess) e.currentTarget.style.backgroundColor = 'white';
+                      }}>
                         Investigate
                       </button>
-                      <button style={{
-                        backgroundColor: 'white',
-                        color: '#374151',
+                      <button 
+                        onClick={() => {
+                          if (isDemoMode) {
+                            showDialog({
+                              title: 'Acknowledge Security Alert',
+                              description: `Mark security alerts as acknowledged with automated notification workflows for ${user?.companyName || 'your company'} security team coordination.`,
+                              features: [
+                                'Alert status tracking and responsibility assignment',
+                                'Automated notification to security team members',
+                                'Incident escalation and priority management',
+                                'Compliance audit trail and documentation',
+                                'Integration with ticketing and workflow systems'
+                              ]
+                            });
+                          }
+                        }}
+                        style={{
+                        backgroundColor: hasReadOnlyAccess ? '#f9fafb' : 'white',
+                        color: hasReadOnlyAccess ? '#9ca3af' : '#374151',
                         border: '1px solid #d1d5db',
                         borderRadius: '6px',
                         padding: '6px 12px',
                         fontSize: '13px',
                         fontWeight: '500',
-                        cursor: 'pointer',
+                        cursor: hasReadOnlyAccess ? 'not-allowed' : 'pointer',
+                        opacity: hasReadOnlyAccess ? 0.6 : 1,
                         transition: 'background-color 0.2s'
                       }}
-                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
-                      onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'white'}>
+                      onMouseOver={(e) => {
+                        if (!hasReadOnlyAccess) e.currentTarget.style.backgroundColor = '#f9fafb';
+                      }}
+                      onMouseOut={(e) => {
+                        if (!hasReadOnlyAccess) e.currentTarget.style.backgroundColor = 'white';
+                      }}>
                         Acknowledge
                       </button>
-                      <button style={{
-                        backgroundColor: 'white',
-                        color: '#374151',
+                      <button 
+                        onClick={() => {
+                          if (isDemoMode) {
+                            showDialog({
+                              title: 'Resolve Security Alert',
+                              description: `Complete security incident resolution with automated remediation actions and detailed reporting for ${user?.companyName || 'your company'} security posture.`,
+                              features: [
+                                'Automated threat containment and remediation',
+                                'Post-incident analysis and lessons learned documentation',
+                                'Security posture improvement recommendations',
+                                'Compliance reporting and regulatory notification',
+                                'Knowledge base updates and playbook refinement'
+                              ]
+                            });
+                          }
+                        }}
+                        style={{
+                        backgroundColor: hasReadOnlyAccess ? '#f9fafb' : 'white',
+                        color: hasReadOnlyAccess ? '#9ca3af' : '#374151',
                         border: '1px solid #d1d5db',
                         borderRadius: '6px',
                         padding: '6px 12px',
                         fontSize: '13px',
                         fontWeight: '500',
-                        cursor: 'pointer',
+                        cursor: hasReadOnlyAccess ? 'not-allowed' : 'pointer',
+                        opacity: hasReadOnlyAccess ? 0.6 : 1,
                         transition: 'background-color 0.2s'
                       }}
-                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
-                      onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'white'}>
+                      onMouseOver={(e) => {
+                        if (!hasReadOnlyAccess) e.currentTarget.style.backgroundColor = '#f9fafb';
+                      }}
+                      onMouseOut={(e) => {
+                        if (!hasReadOnlyAccess) e.currentTarget.style.backgroundColor = 'white';
+                      }}>
                         Resolve
                       </button>
                     </div>
@@ -503,6 +608,9 @@ export default function AdminSecurity() {
           </div>
         </div>
       </div>
+      
+      {/* Demo Dialog Component */}
+      <DialogComponent />
     </AdminLayout>
   );
 }
