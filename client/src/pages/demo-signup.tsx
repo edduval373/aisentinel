@@ -64,17 +64,16 @@ export default function DemoSignup() {
             gap: '12px',
             marginBottom: '24px'
           }}>
-            <div style={{ 
-              width: '40px', 
-              height: '40px', 
-              backgroundColor: '#2563eb', 
-              borderRadius: '8px', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center' 
-            }}>
-              <Shield style={{ width: '20px', height: '20px', color: 'white' }} />
-            </div>
+            <img 
+              src="/ai-sentinel-logo.png" 
+              alt="AI Sentinel" 
+              style={{ 
+                width: '40px', 
+                height: '40px', 
+                objectFit: 'contain',
+                flexShrink: 0
+              }}
+            />
             <h1 style={{ 
               fontSize: '24px', 
               fontWeight: 700, 
