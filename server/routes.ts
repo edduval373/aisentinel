@@ -92,6 +92,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Demo and authenticated permissions route - returns company 1 for demo, user's company for authenticated
+  app.get('/api/permissions', optionalAuth, async (req: any, res) => {
+    try {
+      let companyId = 1; // Default to company 1 for demo users
+      
+      // If user is authenticated and has a company, use their company
+      if (req.user && req.user.companyId) {
+        companyId = req.user.companyId;
+        console.log("Authenticated user requesting permissions:", { userId: req.user.userId, companyId });
+      } else {
+        console.log("Demo mode permissions request");
+      }
+      
+      const permissions = await storage.getPermissions(companyId);
+      console.log("Returning permissions for company", companyId + ":", permissions.length, "permissions");
+      return res.json(permissions);
+    } catch (error) {
+      console.error("Error fetching permissions:", error);
+      res.status(500).json({ message: "Failed to fetch permissions" });
+    }
+  });
+
   // AI model update route with required authentication and role-based authorization
   app.patch('/api/ai-models/:id', requireAuth, async (req: any, res) => {
     try {

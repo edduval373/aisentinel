@@ -86,9 +86,13 @@ export default function AdminPermissions() {
   const { isAuthenticated, isLoading, user } = useAuth();
   const { showDemoDialog, DialogComponent } = useDemoDialog();
 
-  // Fetch permissions data - admin endpoint handles demo users (role level 0) with read-only access
+  // Calculate demo mode early to use in mutations
+  const isDemoMode = isDemoModeActive(user);
+
+  // Fetch permissions data using demo-compatible endpoint for demo users, admin endpoint for authenticated users
+  const apiEndpoint = isDemoMode ? '/api/permissions' : '/api/admin/permissions';
   const { data: permissions = [], isLoading: permissionsLoading, error: permissionsError } = useQuery<Permission[]>({
-    queryKey: ['/api/admin/permissions'],
+    queryKey: [apiEndpoint],
     enabled: !isLoading,
   });
 
@@ -306,7 +310,6 @@ export default function AdminPermissions() {
   };
 
   // Check access level - allow demo users (0) read-only access and administrators (98+) full access
-  const isDemoMode = isDemoModeActive(user);
   const hasReadOnlyAccess = user && (user.roleLevel === 0); // Demo users
   const hasFullAccess = user && user.roleLevel !== undefined && roleBasedAccess.hasAccessLevel(user.roleLevel, 98); // Administrator+
   const hasAnyAccess = hasReadOnlyAccess || hasFullAccess; // Demo OR Administrator+
