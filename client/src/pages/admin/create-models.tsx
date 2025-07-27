@@ -20,6 +20,7 @@ import { Bot, Plus, Edit2, Trash2, Key, Settings, Eye, EyeOff, TestTube } from "
 import AdminLayout from "@/components/layout/AdminLayout";
 import DemoBanner from "@/components/DemoBanner";
 import { apiRequest } from "@/lib/queryClient";
+import { useDemoDialog, DEMO_DIALOGS } from "@/hooks/useDemoDialog";
 
 // Add spinning AI Sentinel logo keyframes
 const spinKeyframes = `
@@ -142,6 +143,7 @@ export default function CreateModels() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user } = useAuth();
+  const { showDialog, DialogComponent } = useDemoDialog();
   
   // Check if we're in demo mode
   const isDemoMode = isDemoModeActive(user);
@@ -407,7 +409,36 @@ export default function CreateModels() {
               </p>
             </div>
           </div>
-          {!isReadOnly && (
+          {isReadOnly ? (
+            // Demo mode - show info dialog
+            <Button 
+              onClick={() => showDialog(DEMO_DIALOGS.CREATE_AI_MODELS)}
+              style={{
+                background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+                border: 'none',
+                color: 'white',
+                padding: '12px 24px',
+                borderRadius: '12px',
+                fontWeight: '600',
+                fontSize: '16px',
+                boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
+                transition: 'all 0.2s ease',
+                cursor: 'pointer'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(59, 130, 246, 0.4)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0px)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.3)';
+              }}
+            >
+              <Plus style={{ width: '20px', height: '20px', marginRight: '8px' }} />
+              Learn About Model Creation
+            </Button>
+          ) : (
+            // Regular mode - functional dialog
             <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
               <DialogTrigger asChild>
                 <Button 
@@ -1024,9 +1055,9 @@ export default function CreateModels() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => !isReadOnly && handleTestConfig(model.id)}
-                    disabled={testConfigMutation.isPending || isReadOnly}
-                    title={isReadOnly ? "Read-only mode - test disabled" : "Test API configuration"}
+                    onClick={isReadOnly ? () => showDialog(DEMO_DIALOGS.CREATE_AI_MODELS) : () => handleTestConfig(model.id)}
+                    disabled={testConfigMutation.isPending && !isReadOnly}
+                    title={isReadOnly ? "Learn about API testing in demo mode" : "Test API configuration"}
                     style={{
                       flex: 1,
                       background: isReadOnly ? '#f3f4f6' : '#f0f9ff',
@@ -1040,7 +1071,7 @@ export default function CreateModels() {
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '6px',
-                      cursor: isReadOnly ? 'not-allowed' : 'pointer',
+                      cursor: isReadOnly ? 'pointer' : 'pointer',
                       opacity: isReadOnly ? 0.6 : 1,
                       transition: 'all 0.2s ease'
                     }}
@@ -1051,9 +1082,8 @@ export default function CreateModels() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => !isReadOnly && handleEditModel(model)}
-                    disabled={isReadOnly}
-                    title={isReadOnly ? "Read-only mode - edit disabled" : "Edit model"}
+                    onClick={isReadOnly ? () => showDialog(DEMO_DIALOGS.CREATE_AI_MODELS) : () => handleEditModel(model)}
+                    title={isReadOnly ? "Learn about model editing in demo mode" : "Edit model"}
                     style={{
                       flex: 1,
                       background: isReadOnly ? '#f3f4f6' : '#f0fdf4',
@@ -1067,7 +1097,7 @@ export default function CreateModels() {
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '6px',
-                      cursor: isReadOnly ? 'not-allowed' : 'pointer',
+                      cursor: 'pointer',
                       opacity: isReadOnly ? 0.6 : 1,
                       transition: 'all 0.2s ease'
                     }}
@@ -1078,9 +1108,8 @@ export default function CreateModels() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => !isReadOnly && handleDeleteModel(model.id)}
-                    disabled={isReadOnly}
-                    title={isReadOnly ? "Read-only mode - delete disabled" : "Delete model"}
+                    onClick={isReadOnly ? () => showDialog(DEMO_DIALOGS.CREATE_AI_MODELS) : () => handleDeleteModel(model.id)}
+                    title={isReadOnly ? "Learn about model deletion in demo mode" : "Delete model"}
                     style={{
                       flex: 1,
                       background: isReadOnly ? '#f3f4f6' : '#fef2f2',
@@ -1094,7 +1123,7 @@ export default function CreateModels() {
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '6px',
-                      cursor: isReadOnly ? 'not-allowed' : 'pointer',
+                      cursor: 'pointer',
                       opacity: isReadOnly ? 0.6 : 1,
                       transition: 'all 0.2s ease'
                     }}
@@ -1492,6 +1521,9 @@ export default function CreateModels() {
             </Form>
           </DialogContent>
         </Dialog>
+        
+        {/* Demo Info Dialog */}
+        <DialogComponent />
       </div>
     </AdminLayout>
   );
