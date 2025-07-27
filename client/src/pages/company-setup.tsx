@@ -515,44 +515,80 @@ export default function CompanySetup() {
               border: '1px solid #e2e8f0',
               flexWrap: 'wrap'
             }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+              <label 
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '8px', 
+                  cursor: user?.roleLevel === 0 ? 'not-allowed' : 'pointer',
+                  opacity: user?.roleLevel === 0 ? 0.6 : 1
+                }}
+                onClick={user?.roleLevel === 0 ? () => showDialog(DEMO_DIALOGS.COMPANY_SETUP) : undefined}
+              >
                 <input 
                   type="checkbox" 
                   checked={showCompanyLogo}
-                  onChange={(e) => setShowCompanyLogo(e.target.checked)}
-                  style={{ width: '16px', height: '16px' }}
+                  onChange={user?.roleLevel === 0 ? undefined : (e) => setShowCompanyLogo(e.target.checked)}
+                  disabled={user?.roleLevel === 0}
+                  style={{ 
+                    width: '16px', 
+                    height: '16px',
+                    cursor: user?.roleLevel === 0 ? 'not-allowed' : 'pointer'
+                  }}
                 />
                 <span style={{ fontSize: '14px', color: '#374151', fontWeight: '500' }}>Show Company Logo</span>
               </label>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+              <label 
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '8px', 
+                  cursor: user?.roleLevel === 0 ? 'not-allowed' : 'pointer',
+                  opacity: user?.roleLevel === 0 ? 0.6 : 1
+                }}
+                onClick={user?.roleLevel === 0 ? () => showDialog(DEMO_DIALOGS.COMPANY_SETUP) : undefined}
+              >
                 <input 
                   type="checkbox" 
                   checked={showCompanyName}
-                  onChange={(e) => setShowCompanyName(e.target.checked)}
-                  style={{ width: '16px', height: '16px' }}
+                  onChange={user?.roleLevel === 0 ? undefined : (e) => setShowCompanyName(e.target.checked)}
+                  disabled={user?.roleLevel === 0}
+                  style={{ 
+                    width: '16px', 
+                    height: '16px',
+                    cursor: user?.roleLevel === 0 ? 'not-allowed' : 'pointer'
+                  }}
                 />
                 <span style={{ fontSize: '14px', color: '#374151', fontWeight: '500' }}>Show Company Name</span>
               </label>
               <button
-                onClick={() => {
+                onClick={user?.roleLevel === 0 ? () => showDialog(DEMO_DIALOGS.COMPANY_SETUP) : () => {
                   setShowCompanyName(true);
                   setShowCompanyLogo(true);
                   setLogoSize(80);
                   setCompanyNameSize(18);
                 }}
                 style={{
-                  backgroundColor: '#6b7280',
+                  backgroundColor: user?.roleLevel === 0 ? '#9ca3af' : '#6b7280',
                   color: 'white',
                   border: 'none',
                   borderRadius: '6px',
                   padding: '8px 16px',
                   fontSize: '14px',
                   fontWeight: '500',
-                  cursor: 'pointer',
+                  cursor: user?.roleLevel === 0 ? 'not-allowed' : 'pointer',
                   transition: 'background-color 0.2s ease'
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#4b5563'}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#6b7280'}
+                onMouseEnter={(e) => {
+                  if (user?.roleLevel !== 0) {
+                    e.currentTarget.style.backgroundColor = '#4b5563';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (user?.roleLevel !== 0) {
+                    e.currentTarget.style.backgroundColor = '#6b7280';
+                  }
+                }}
               >
                 Reset to Defaults
               </button>
