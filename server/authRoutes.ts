@@ -84,6 +84,114 @@ export function setupAuthRoutes(app: Express) {
     }
   });
 
+  // Development bypass for email verification
+  app.get('/api/auth/dev-verify', async (req, res) => {
+    try {
+      const token = req.query.token as string;
+      
+      if (!token) {
+        return res.status(400).json({ success: false, message: "No verification token provided" });
+      }
+
+      console.log("🔧 Development verification bypass for token:", token.substring(0, 10) + "...");
+
+      // Check if the token exists in the database
+      const verificationToken = await storage.getEmailVerificationToken(token);
+      
+      if (!verificationToken || verificationToken.isUsed || verificationToken.expiresAt < new Date()) {
+        console.log("❌ Invalid or expired verification token");
+        return res.status(400).json({ success: false, message: "Invalid or expired verification token" });
+      }
+
+      // Mark token as used
+      await storage.markEmailVerificationTokenAsUsed(verificationToken.id);
+      
+      console.log("✅ Valid token found for:", verificationToken.email, "- Creating session with correct role level");
+
+      // Create session using the authentication service
+      const session = await authService.verifyEmailToken(token);
+      
+      if (!session) {
+        console.log("❌ Failed to create session");
+        return res.status(400).json({ success: false, message: "Failed to create session" });
+      }
+
+      console.log("✅ Session created:", session.email, "role level:", session.roleLevel, "company:", session.companyId);
+
+      // Set session cookie for development
+      res.cookie('sessionToken', session.sessionToken, {
+        httpOnly: true,
+        secure: false, // Not secure for development
+        sameSite: 'lax',
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      });
+
+      // Redirect to development environment
+      const devUrl = `https://8b45f032-3543-41c9-9d7b-a06e3bbab484-00-2a5ekmx4eqmb5.worf.replit.dev/?verified=true&email=${encodeURIComponent(session.email)}`;
+      console.log("🔧 Development mode - redirecting to:", devUrl);
+      res.redirect(devUrl);
+    } catch (error: any) {
+      console.error("Development verification error:", error);
+      res.status(500).json({ success: false, message: "An error occurred during verification" });
+    }
+  });
+
+  // Development login endpoint for bypassing email verification issues
+  app.post('/api/auth/dev-login', async (req, res) => {
+    try {
+      const { email } = req.body;
+      
+      if (email !== 'ed.duval15@gmail.com') {
+        return res.status(403).json({ success: false, message: "Development login only available for specific email" });
+      }
+
+      console.log("🔧 Development login for:", email);
+
+      // Get the user directly from the database
+      const user = await storage.getUserByEmail(email);
+      
+      if (!user) {
+        return res.status(404).json({ success: false, message: "User not found" });
+      }
+
+      console.log("✅ User found:", user.email, "role level:", user.roleLevel, "company:", user.companyId);
+
+      // Create a development session
+      const sessionToken = `dev-session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+
+      await storage.createUserSession({
+        userId: user.id,
+        sessionToken,
+        email: user.email,
+        companyId: user.companyId,
+        roleLevel: user.roleLevel,
+        expiresAt,
+      });
+
+      console.log("✅ Development session created:", sessionToken.substring(0, 20) + "...");
+
+      // Set session cookie
+      res.cookie('sessionToken', sessionToken, {
+        httpOnly: true,
+        secure: false, // Not secure for development
+        sameSite: 'lax',
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      });
+
+      res.json({ success: true, message: "Development login successful", user: {
+        id: user.id,
+        email: user.email,
+        roleLevel: user.roleLevel,
+        companyId: user.companyId,
+        role: user.role
+      }});
+    } catch (error: any) {
+      console.error("Development login error:", error);
+      res.status(500).json({ success: false, message: "An error occurred during development login" });
+    }
+  });
+
   // Get current user (with optional auth)
   app.get('/api/auth/me', optionalAuth, async (req: AuthenticatedRequest, res) => {
     try {
@@ -99,10 +207,10 @@ export function setupAuthRoutes(app: Express) {
             email: 'ed.duval15@gmail.com',
             firstName: 'Ed',
             lastName: 'Duval',
-            role: 'super-user',
-            roleLevel: 100,
+            role: 'user',
+            roleLevel: 1,
             companyId: 1,
-            companyName: 'Horizon Edge Enterprises'
+            companyName: 'Duval AI Solutions'
           };
           
           return res.json({
