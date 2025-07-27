@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Building, Users, Settings, Save, Edit, UserPlus, X, Monitor, Crop, Upload } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
 import DemoBanner from "@/components/DemoBanner";
+import { useDemoDialog, DEMO_DIALOGS } from "@/hooks/useDemoDialog";
 
 interface Company {
   id: number;
@@ -35,6 +36,7 @@ export default function CompanySetup() {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { showDialog, DialogComponent } = useDemoDialog();
   const [editingOwner, setEditingOwner] = useState<Owner | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editForm, setEditForm] = useState({ firstName: "", lastName: "", email: "", department: "" });
@@ -555,35 +557,64 @@ export default function CompanySetup() {
                 Reset to Defaults
               </button>
               <div style={{ position: 'relative' }}>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  style={{ display: 'none' }}
-                  id="logo-upload"
-                />
-                <label
-                  htmlFor="logo-upload"
-                  style={{
-                    backgroundColor: '#16a34a',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '6px',
-                    padding: '8px 16px',
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    cursor: 'pointer',
-                    transition: 'background-color 0.2s ease',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px'
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#15803d'}
-                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#16a34a'}
-                >
-                  <Upload style={{ width: '14px', height: '14px' }} />
-                  Upload & Crop Logo
-                </label>
+                {user?.roleLevel === 0 ? (
+                  // Demo mode - show info dialog instead of upload
+                  <button
+                    onClick={() => showDialog(DEMO_DIALOGS.COMPANY_SETUP)}
+                    style={{
+                      backgroundColor: '#3b82f6',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '6px',
+                      padding: '8px 16px',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      cursor: 'pointer',
+                      transition: 'background-color 0.2s ease',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px'
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#3b82f6'}
+                  >
+                    <Upload style={{ width: '14px', height: '14px' }} />
+                    Learn About Logo Upload
+                  </button>
+                ) : (
+                  // Regular mode - functional upload
+                  <>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      style={{ display: 'none' }}
+                      id="logo-upload"
+                    />
+                    <label
+                      htmlFor="logo-upload"
+                      style={{
+                        backgroundColor: '#16a34a',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        padding: '8px 16px',
+                        fontSize: '14px',
+                        fontWeight: '500',
+                        cursor: 'pointer',
+                        transition: 'background-color 0.2s ease',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#15803d'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#16a34a'}
+                    >
+                      <Upload style={{ width: '14px', height: '14px' }} />
+                      Upload & Crop Logo
+                    </label>
+                  </>
+                )}
               </div>
             </div>
 
@@ -603,29 +634,33 @@ export default function CompanySetup() {
                   Logo Size:
                 </label>
                 <button
-                  onClick={() => setLogoSize(Math.max(60, logoSize - 10))}
+                  onClick={user?.roleLevel === 0 ? () => showDialog(DEMO_DIALOGS.COMPANY_SETUP) : () => setLogoSize(Math.max(60, logoSize - 10))}
                   style={{
                     width: '32px',
                     height: '32px',
                     borderRadius: '6px',
                     border: '1px solid #cbd5e1',
-                    backgroundColor: '#ffffff',
-                    color: '#374151',
+                    backgroundColor: user?.roleLevel === 0 ? '#f3f4f6' : '#ffffff',
+                    color: user?.roleLevel === 0 ? '#9ca3af' : '#374151',
                     fontSize: '18px',
                     fontWeight: 'bold',
-                    cursor: 'pointer',
+                    cursor: user?.roleLevel === 0 ? 'not-allowed' : 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     transition: 'all 0.2s ease'
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = '#f1f5f9';
-                    e.currentTarget.style.borderColor = '#94a3b8';
+                    if (user?.roleLevel !== 0) {
+                      e.currentTarget.style.backgroundColor = '#f1f5f9';
+                      e.currentTarget.style.borderColor = '#94a3b8';
+                    }
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = '#ffffff';
-                    e.currentTarget.style.borderColor = '#cbd5e1';
+                    if (user?.roleLevel !== 0) {
+                      e.currentTarget.style.backgroundColor = '#ffffff';
+                      e.currentTarget.style.borderColor = '#cbd5e1';
+                    }
                   }}
                 >
                   -
@@ -644,29 +679,33 @@ export default function CompanySetup() {
                   {logoSize}px
                 </span>
                 <button
-                  onClick={() => setLogoSize(Math.min(200, logoSize + 10))}
+                  onClick={user?.roleLevel === 0 ? () => showDialog(DEMO_DIALOGS.COMPANY_SETUP) : () => setLogoSize(Math.min(200, logoSize + 10))}
                   style={{
                     width: '32px',
                     height: '32px',
                     borderRadius: '6px',
                     border: '1px solid #cbd5e1',
-                    backgroundColor: '#ffffff',
-                    color: '#374151',
+                    backgroundColor: user?.roleLevel === 0 ? '#f3f4f6' : '#ffffff',
+                    color: user?.roleLevel === 0 ? '#9ca3af' : '#374151',
                     fontSize: '18px',
                     fontWeight: 'bold',
-                    cursor: 'pointer',
+                    cursor: user?.roleLevel === 0 ? 'not-allowed' : 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     transition: 'all 0.2s ease'
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = '#f1f5f9';
-                    e.currentTarget.style.borderColor = '#94a3b8';
+                    if (user?.roleLevel !== 0) {
+                      e.currentTarget.style.backgroundColor = '#f1f5f9';
+                      e.currentTarget.style.borderColor = '#94a3b8';
+                    }
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = '#ffffff';
-                    e.currentTarget.style.borderColor = '#cbd5e1';
+                    if (user?.roleLevel !== 0) {
+                      e.currentTarget.style.backgroundColor = '#ffffff';
+                      e.currentTarget.style.borderColor = '#cbd5e1';
+                    }
                   }}
                 >
                   +
@@ -1682,6 +1721,9 @@ export default function CompanySetup() {
             </div>
           </div>
         )}
+        
+        {/* Demo Info Dialog */}
+        <DialogComponent />
       </div>
     </AdminLayout>
   );
