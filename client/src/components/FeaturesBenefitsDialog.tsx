@@ -206,8 +206,7 @@ export default function FeaturesBenefitsDialog({ open, onOpenChange }: FeaturesB
                 style={{ 
                   width: '48px', 
                   height: '48px',
-                  objectFit: 'contain',
-                  filter: 'brightness(0) invert(1)'
+                  objectFit: 'contain'
                 }} 
               />
               <div>
