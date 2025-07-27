@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { useCompanyContext } from "@/hooks/useCompanyContext";
 import { useToast } from "@/hooks/use-toast";
+import { useDemoDialog } from "@/hooks/useDemoDialog";
 import { hasAccessLevel, canViewAdminPage, ACCESS_REQUIREMENTS } from "@/utils/roleBasedAccess";
-import { isDemoModeActive, isReadOnlyMode, getDemoModeMessage } from "@/utils/demoMode";
+import { isDemoModeActive, isReadOnlyMode } from "@/utils/demoMode";
 import { BarChart3, Download, Filter, Search, AlertTriangle, Shield, User, Eye } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
 import DemoBanner from "@/components/DemoBanner";
@@ -10,29 +12,31 @@ import DemoBanner from "@/components/DemoBanner";
 export default function AdminLogs() {
   const { toast } = useToast();
   const { user, isAuthenticated, isLoading } = useAuth();
+  const { currentCompanyId } = useCompanyContext();
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
   
-  // Check if user has admin level access (2 or above) OR is in demo mode
-  const hasAdminAccess = canViewAdminPage(user?.roleLevel, ACCESS_REQUIREMENTS.ACTIVITY_LOGS);
-  
-  // Check if we're in demo mode
+  // Demo mode functionality
   const isDemoMode = isDemoModeActive(user);
   const isReadOnly = isReadOnlyMode(user);
+  const { showDialog, closeDialog, DialogComponent } = useDemoDialog();
+  
+  // Check access level - allow demo users (0) read-only access and administrators (2+) full access
+  const hasReadOnlyAccess = user && (user.roleLevel === 0); // Demo users
+  const hasFullAccess = user && user.roleLevel !== undefined && hasAccessLevel(user.roleLevel, ACCESS_REQUIREMENTS.ACTIVITY_LOGS);
+  const hasAdminAccess = hasReadOnlyAccess || hasFullAccess;
 
   useEffect(() => {
-    if (!isLoading && (!isAuthenticated || !hasAdminAccess)) {
+    if (!isLoading && (!isAuthenticated || (!hasReadOnlyAccess && !hasFullAccess))) {
       toast({
         title: "Access Denied",
-        description: "Admin access required (level 2+)",
+        description: `Activity Logs requires Admin level (2+) access. Your current level: ${user?.roleLevel || 0}`,
         variant: "destructive",
       });
-      setTimeout(() => {
-        window.location.href = "/";
-      }, 1000);
+      window.location.href = "/";
       return;
     }
-  }, [isAuthenticated, isLoading, hasAdminAccess, toast]);
+  }, [isAuthenticated, isLoading, user, toast, hasReadOnlyAccess, hasFullAccess]);
 
   if (isLoading) {
     return (
@@ -157,28 +161,12 @@ export default function AdminLogs() {
   return (
     <AdminLayout 
       title="Activity Logs" 
-      subtitle="Monitor system activity and security events"
-      rightContent={<DemoBanner message="Demo Mode - Read Only View - Activity logs are view-only" />}
+      subtitle={`Monitor system activity and security events for ${user?.companyName || 'Company'}`}
+      rightContent={hasReadOnlyAccess ? <DemoBanner message="Demo Mode - Read Only View" /> : undefined}
     >
       <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '1200px', margin: '0 auto' }}>
         
-        {/* Demo Mode Indicator */}
-        {isDemoMode && (
-          <div style={{
-            backgroundColor: '#1e3a8a',
-            color: 'white',
-            padding: '12px 16px',
-            borderRadius: '8px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            fontSize: '14px',
-            fontWeight: '500'
-          }}>
-            <Eye size={16} />
-            {getDemoModeMessage()} - You can view all activity logs but cannot make changes
-          </div>
-        )}
+
         
         {/* Stats Cards */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px' }}>
@@ -365,31 +353,45 @@ export default function AdminLogs() {
                   </select>
                   
                   <button
-                    onClick={() => !isReadOnly && console.log('Export logs')}
-                    title={isReadOnly ? "Read-only mode - export disabled" : "Export logs"}
+                    onClick={() => {
+                      if (isDemoMode) {
+                        showDialog({
+                          title: 'Activity Log Export',
+                          description: `Export comprehensive activity logs and security events for ${user?.companyName || 'your company'} including user interactions, security alerts, and system events.`,
+                          features: [
+                            'Complete audit trail of all user activities and AI interactions',
+                            'Security events, alerts, and threat detection records',
+                            'System access logs with timestamps and user identification',
+                            'Compliance reporting data for regulatory requirements',
+                            'Multiple export formats (CSV, JSON, PDF) with custom filtering'
+                          ]
+                        });
+                      }
+                    }}
+                    title={hasReadOnlyAccess ? "Demo mode - export disabled" : "Export logs"}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
                       gap: '8px',
-                      backgroundColor: isReadOnly ? '#f9fafb' : 'white',
-                      color: isReadOnly ? '#9ca3af' : '#374151',
+                      backgroundColor: hasReadOnlyAccess ? '#f9fafb' : 'white',
+                      color: hasReadOnlyAccess ? '#9ca3af' : '#374151',
                       border: '1px solid #d1d5db',
                       borderRadius: '8px',
                       padding: '12px 20px',
                       fontSize: '14px',
                       fontWeight: '500',
-                      cursor: isReadOnly ? 'not-allowed' : 'pointer',
-                      opacity: isReadOnly ? 0.6 : 1,
+                      cursor: hasReadOnlyAccess ? 'not-allowed' : 'pointer',
+                      opacity: hasReadOnlyAccess ? 0.6 : 1,
                       transition: 'background-color 0.2s, border-color 0.2s'
                     }}
                     onMouseOver={(e) => {
-                      if (!isReadOnly) {
+                      if (!hasReadOnlyAccess) {
                         e.currentTarget.style.backgroundColor = '#f9fafb';
                         e.currentTarget.style.borderColor = '#9ca3af';
                       }
                     }}
                     onMouseOut={(e) => {
-                      if (!isReadOnly) {
+                      if (!hasReadOnlyAccess) {
                         e.currentTarget.style.backgroundColor = 'white';
                         e.currentTarget.style.borderColor = '#d1d5db';
                       }
@@ -468,6 +470,7 @@ export default function AdminLogs() {
           </div>
         </div>
       </div>
+      <DialogComponent />
     </AdminLayout>
   );
 }
