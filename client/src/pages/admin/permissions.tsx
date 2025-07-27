@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -7,6 +7,7 @@ import { roleBasedAccess } from "@/lib/roleBasedAccess";
 import { isDemoModeActive } from "@/utils/demoMode";
 import AdminLayout from "@/components/layout/AdminLayout";
 import DemoBanner from "@/components/DemoBanner";
+import { useDemoDialog } from "@/hooks/useDemoDialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -83,10 +84,12 @@ export default function AdminPermissions() {
   const [permissionToDelete, setPermissionToDelete] = useState<Permission | null>(null);
   const { toast } = useToast();
   const { isAuthenticated, isLoading, user } = useAuth();
+  const { showDemoDialog, DialogComponent } = useDemoDialog();
 
-  // Fetch permissions data
+  // Fetch permissions data - admin endpoint handles demo users (role level 0) with read-only access
   const { data: permissions = [], isLoading: permissionsLoading, error: permissionsError } = useQuery<Permission[]>({
     queryKey: ['/api/admin/permissions'],
+    enabled: !isLoading,
   });
 
   // Handle query errors
@@ -106,6 +109,9 @@ export default function AdminPermissions() {
   // Create permission mutation
   const createPermissionMutation = useMutation({
     mutationFn: async (data: z.infer<typeof permissionSchema>) => {
+      if (isDemoMode) {
+        throw new Error("Demo mode - functionality disabled");
+      }
       return apiRequest('/api/admin/permissions', 'POST', data);
     },
     onSuccess: () => {
@@ -140,6 +146,9 @@ export default function AdminPermissions() {
   // Update permission mutation
   const updatePermissionMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: z.infer<typeof permissionSchema> }) => {
+      if (isDemoMode) {
+        throw new Error("Demo mode - functionality disabled");
+      }
       return apiRequest(`/api/admin/permissions/${id}`, 'PATCH', data);
     },
     onSuccess: () => {
@@ -175,6 +184,9 @@ export default function AdminPermissions() {
   // Delete permission mutation
   const deletePermissionMutation = useMutation({
     mutationFn: async (id: number) => {
+      if (isDemoMode) {
+        throw new Error("Demo mode - functionality disabled");
+      }
       return apiRequest(`/api/admin/permissions/${id}`, 'DELETE');
     },
     onSuccess: () => {
@@ -455,7 +467,23 @@ export default function AdminPermissions() {
           </div>
           {hasFullAccess && (
             <button
-              onClick={() => setIsAddDialogOpen(true)}
+              onClick={() => {
+                if (isDemoMode) {
+                  showDemoDialog({
+                    title: "Permission Management",
+                    description: "In the full version, you can create custom permissions to control access to specific features and activities. This includes setting up role-based permissions for AI models, activity types, content access, and administrative functions.",
+                    features: [
+                      "Create custom permission categories",
+                      "Define granular access controls", 
+                      "Set role-based restrictions",
+                      "Configure activity-specific permissions",
+                      "Manage administrative access levels"
+                    ]
+                  });
+                } else {
+                  setIsAddDialogOpen(true);
+                }
+              }}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -630,6 +658,7 @@ export default function AdminPermissions() {
           </div>
         )}
       </div>
+      <DialogComponent />
     </AdminLayout>
   );
 }
