@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import AdminLayout from "@/components/layout/AdminLayout";
-import { roleBasedAccess } from "@/lib/roleBasedAccess";
+import { hasAccessLevel, canViewAdminPage, ACCESS_REQUIREMENTS } from "@/utils/roleBasedAccess";
+import { isDemoModeActive, isReadOnlyMode, getDemoModeMessage } from "@/utils/demoMode";
 
 import DemoBanner from "@/components/DemoBanner";
 import { Shield, Users, Settings, Edit, Plus, Trash2, AlertTriangle } from "lucide-react";
@@ -23,10 +24,12 @@ export default function AdminRoles() {
   const { toast } = useToast();
   const { user, isAuthenticated, isLoading } = useAuth();
   
-  // Check if user has administrator level access (98 or above) or is demo user (0)
-  const hasAdminAccess = roleBasedAccess.hasAccessLevel(user?.roleLevel || 0, 98);
-  const isDemoMode = user?.roleLevel === 0;
-  const hasAnyAccess = hasAdminAccess || isDemoMode;
+  // Check if user has administrator level access (98 or above) OR is in demo mode
+  const hasAdminAccess = canViewAdminPage(user, ACCESS_REQUIREMENTS.USER_MANAGEMENT);
+  
+  // Check if we're in demo mode
+  const isDemoMode = isDemoModeActive(user);
+  const isReadOnly = isReadOnlyMode(user);
   const [roles, setRoles] = useState<CompanyRole[]>([]);
   const [loading, setLoading] = useState(true);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -65,18 +68,18 @@ export default function AdminRoles() {
   ];
 
   useEffect(() => {
-    if (isAuthenticated && hasAnyAccess) {
+    if (!isLoading && hasAdminAccess) {
       fetchRoles();
     }
-  }, [isAuthenticated, hasAnyAccess, user]);
+  }, [isLoading, hasAdminAccess, user]);
 
   const fetchRoles = async () => {
     try {
-      // Use company ID 1 if user companyId is not available
-      const companyId = user?.companyId || 1;
-      console.log("Fetching roles for company:", companyId);
+      // Use demo-compatible endpoint
+      const endpoint = isDemoMode ? '/api/roles' : `/api/company/roles/${user?.companyId || 1}`;
+      console.log("Fetching roles for company:", user?.companyId || 1);
       
-      const response = await fetch(`/api/company/roles/${companyId}`, {
+      const response = await fetch(endpoint, {
         credentials: 'include',
       });
       
@@ -129,10 +132,10 @@ export default function AdminRoles() {
         permissions: newRole.permissions
       };
 
-      // Use company ID 1 if user companyId is not available
-      const companyId = user?.companyId || 1;
+      // Use demo-compatible endpoint
+      const endpoint = isDemoMode ? '/api/roles' : `/api/company/roles/${user?.companyId || 1}`;
       
-      const response = await fetch(`/api/company/roles/${companyId}`, {
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -206,7 +209,10 @@ export default function AdminRoles() {
         permissions: editRole.permissions
       };
 
-      const response = await fetch(`/api/company/roles/${editingRole.id}`, {
+      // Use demo-compatible endpoint
+      const endpoint = isDemoMode ? `/api/roles/${editingRole.id}` : `/api/company/roles/${editingRole.id}`;
+
+      const response = await fetch(endpoint, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -251,7 +257,10 @@ export default function AdminRoles() {
     if (!roleToDelete) return;
 
     try {
-      const response = await fetch(`/api/company/roles/${roleToDelete.id}`, {
+      // Use demo-compatible endpoint
+      const endpoint = isDemoMode ? `/api/roles/${roleToDelete.id}` : `/api/company/roles/${roleToDelete.id}`;
+
+      const response = await fetch(endpoint, {
         method: 'DELETE',
         credentials: 'include',
       });
@@ -310,7 +319,7 @@ export default function AdminRoles() {
   }
 
   // Return access denied if not authenticated or lacks access
-  if (!isAuthenticated || !hasAnyAccess) {
+  if (!isAuthenticated || !hasAdminAccess) {
     return (
       <AdminLayout title="Roles & Permissions" subtitle="Manage user roles and access permissions">
         <div style={{ 

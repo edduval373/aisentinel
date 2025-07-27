@@ -295,6 +295,187 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Demo and authenticated company roles route - returns demo roles for demo mode, real roles for authenticated
+  app.get('/api/roles', optionalAuth, async (req: any, res) => {
+    try {
+      // For demo mode, return example company roles
+      if (!req.user) {
+        console.log("Demo mode roles request");
+        const demoRoles = [
+          {
+            id: 1,
+            companyId: 1,
+            name: 'Super Administrator',
+            level: 100,
+            description: 'Full system access with company management capabilities',
+            permissions: ['full_system_access', 'manage_companies', 'manage_users', 'manage_roles', 'manage_settings', 'view_all_data'],
+            isActive: true,
+            createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days ago
+            isDemoRole: true
+          },
+          {
+            id: 2,
+            companyId: 1,
+            name: 'Company Owner',
+            level: 99,
+            description: 'Full company management with AI model configuration',
+            permissions: ['manage_company', 'manage_users', 'manage_ai_models', 'manage_activity_types', 'view_analytics', 'use_chat'],
+            isActive: true,
+            createdAt: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000).toISOString(), // 25 days ago
+            isDemoRole: true
+          },
+          {
+            id: 3,
+            companyId: 1,
+            name: 'Administrator',
+            level: 98,
+            description: 'User and content management with security oversight',
+            permissions: ['manage_users', 'manage_content', 'manage_settings', 'view_analytics', 'use_chat'],
+            isActive: true,
+            createdAt: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(), // 20 days ago
+            isDemoRole: true
+          },
+          {
+            id: 4,
+            companyId: 1,
+            name: 'Standard User',
+            level: 1,
+            description: 'Basic AI chat access with personal data viewing',
+            permissions: ['view_personal_data', 'use_chat', 'use_ai_models'],
+            isActive: true,
+            createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(), // 15 days ago
+            isDemoRole: true
+          },
+          {
+            id: 5,
+            companyId: 1,
+            name: 'Content Manager',
+            level: 50,
+            description: 'Content and security policy management',
+            permissions: ['manage_content', 'view_analytics', 'use_chat'],
+            isActive: true,
+            createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(), // 10 days ago
+            isDemoRole: true
+          }
+        ];
+        
+        console.log("Returning demo roles:", demoRoles.length, "roles");
+        return res.json(demoRoles);
+      }
+      
+      // For authenticated users, return their company's roles
+      const companyId = req.user.companyId;
+      console.log("Authenticated user requesting roles:", { userId: req.user.userId, companyId });
+      
+      const roles = await storage.getCompanyRoles(companyId);
+      console.log("Returning roles for company", companyId + ":", roles.length, "roles");
+      return res.json(roles);
+    } catch (error) {
+      console.error("Error fetching roles:", error);
+      res.status(500).json({ message: "Failed to fetch roles" });
+    }
+  });
+
+  // Demo CRUD operations for company roles
+  app.post('/api/roles', optionalAuth, async (req: any, res) => {
+    try {
+      // For demo mode, simulate successful role creation
+      if (!req.user) {
+        console.log("Demo mode role creation request");
+        const { name, level, description, permissions } = req.body;
+        
+        // Return a simulated new role
+        const newRole = {
+          id: Date.now(),
+          companyId: 1,
+          name,
+          level: parseInt(level),
+          description,
+          permissions: permissions || [],
+          isActive: true,
+          createdAt: new Date().toISOString(),
+          isDemoRole: true
+        };
+        
+        console.log("Demo role creation simulated:", newRole);
+        return res.json({ message: "Role created successfully (demo)", role: newRole });
+      }
+      
+      // For authenticated users, use real creation logic
+      const userRoleLevel = req.user?.roleLevel || 1;
+      if (userRoleLevel < 98) {
+        return res.status(403).json({ message: "Administrator access required" });
+      }
+      
+      const role = await storage.createCompanyRole(req.user.companyId, req.body);
+      res.json(role);
+    } catch (error) {
+      console.error("Error creating role:", error);
+      res.status(500).json({ message: "Failed to create role" });
+    }
+  });
+
+  app.patch('/api/roles/:id', optionalAuth, async (req: any, res) => {
+    try {
+      // For demo mode, simulate successful role update
+      if (!req.user) {
+        console.log("Demo mode role update request:", req.params.id);
+        const { name, level, description, permissions } = req.body;
+        
+        // Return a simulated updated role
+        const updatedRole = {
+          id: parseInt(req.params.id),
+          companyId: 1,
+          name,
+          level: parseInt(level),
+          description,
+          permissions: permissions || [],
+          isActive: true,
+          createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+          isDemoRole: true
+        };
+        
+        console.log("Demo role update simulated:", updatedRole);
+        return res.json({ message: "Role updated successfully (demo)", role: updatedRole });
+      }
+      
+      // For authenticated users, use real update logic
+      const userRoleLevel = req.user?.roleLevel || 1;
+      if (userRoleLevel < 98) {
+        return res.status(403).json({ message: "Administrator access required" });
+      }
+      
+      const role = await storage.updateCompanyRole(parseInt(req.params.id), req.body);
+      res.json(role);
+    } catch (error) {
+      console.error("Error updating role:", error);
+      res.status(500).json({ message: "Failed to update role" });
+    }
+  });
+
+  app.delete('/api/roles/:id', optionalAuth, async (req: any, res) => {
+    try {
+      // For demo mode, simulate successful role deletion
+      if (!req.user) {
+        console.log("Demo mode role delete request:", req.params.id);
+        console.log("Demo role deletion simulated");
+        return res.json({ message: "Role deleted successfully (demo)" });
+      }
+      
+      // For authenticated users, use real deletion logic
+      const userRoleLevel = req.user?.roleLevel || 1;
+      if (userRoleLevel < 98) {
+        return res.status(403).json({ message: "Administrator access required" });
+      }
+      
+      await storage.deleteCompanyRole(parseInt(req.params.id));
+      res.json({ message: "Role deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting role:", error);
+      res.status(500).json({ message: "Failed to delete role" });
+    }
+  });
+
   // AI model update route with required authentication and role-based authorization
   app.patch('/api/ai-models/:id', requireAuth, async (req: any, res) => {
     try {
