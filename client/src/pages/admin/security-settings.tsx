@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { useCompanyContext } from "@/hooks/useCompanyContext";
 import { useToast } from "@/hooks/use-toast";
+import { useDemoDialog } from "@/hooks/useDemoDialog";
 import AdminLayout from "@/components/layout/AdminLayout";
 import DemoBanner from "@/components/DemoBanner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card-standard";
@@ -11,12 +13,14 @@ import { Label } from "@/components/ui/label-standard";
 import { Switch } from "@/components/ui/switch-standard";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select-standard";
 import { Separator } from "@/components/ui/separator-standard";
-import { Shield, Lock, AlertTriangle, Eye, FileText, Users } from "lucide-react";
-import { isDemoModeActive, getDemoModeMessage } from "@/utils/demoMode";
+import { Shield, Lock, AlertTriangle, Eye, FileText, Users, Save } from "lucide-react";
+import { isDemoModeActive, isReadOnlyMode } from "@/utils/demoMode";
+import { roleBasedAccess, ACCESS_REQUIREMENTS } from "@/utils/roleBasedAccess";
 
 export default function AdminSecuritySettings() {
   const { toast } = useToast();
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
+  const { currentCompanyId } = useCompanyContext();
   const [securitySettings, setSecuritySettings] = useState({
     filterLevel: 'strict',
     contentSensitivity: 'high',
@@ -33,25 +37,27 @@ export default function AdminSecuritySettings() {
     slackAlerts: true,
     smsAlerts: false
   });
-  
-  // Check if user has administrator level access (98 or above) or is demo user
-  const hasAdminAccess = user && ((user.roleLevel ?? 0) >= 98 || (user.roleLevel ?? 0) === 0);
+
+  // Demo mode functionality
   const isDemoMode = isDemoModeActive(user);
-  const hasReadOnlyAccess = isDemoMode;
+  const isReadOnly = isReadOnlyMode(user);
+  const { showDialog, closeDialog, DialogComponent } = useDemoDialog();
+
+  // Check access level - allow demo users (0) read-only access and administrators (98+) full access
+  const hasReadOnlyAccess = user && (user.roleLevel === 0); // Demo users
+  const hasFullAccess = user && user.roleLevel !== undefined && roleBasedAccess.hasAccessLevel(user.roleLevel, ACCESS_REQUIREMENTS.SECURITY_SETTINGS);
 
   useEffect(() => {
-    if (!isLoading && (!isAuthenticated || !hasAdminAccess)) {
+    if (!isLoading && (!isAuthenticated || (!hasReadOnlyAccess && !hasFullAccess))) {
       toast({
         title: "Access Denied",
-        description: "Administrator access required (level 98+)",
+        description: `Security Settings requires Administrator level (98+) access. Your current level: ${user?.roleLevel || 0}`,
         variant: "destructive",
       });
-      setTimeout(() => {
-        window.location.href = "/";
-      }, 1000);
+      window.location.href = "/";
       return;
     }
-  }, [isAuthenticated, isLoading, hasAdminAccess, toast]);
+  }, [isAuthenticated, isLoading, user, toast, hasReadOnlyAccess, hasFullAccess]);
 
   const handleSettingChange = (key: string, value: any) => {
     if (hasReadOnlyAccess) return;
@@ -59,13 +65,26 @@ export default function AdminSecuritySettings() {
   };
 
   const handleSaveSettings = async () => {
-    if (hasReadOnlyAccess) return;
+    if (isDemoMode) {
+      showDialog({
+        title: 'Security Settings Management',
+        description: 'Save comprehensive security configuration including content filtering, access controls, and monitoring settings for your organization.',
+        features: [
+          'Content filtering levels and sensitivity controls',
+          'PII, financial data, and code protection settings',
+          'Session management and access control policies',
+          '2FA requirements and device tracking options',
+          'Real-time security alerts and notification preferences'
+        ]
+      });
+      return;
+    }
     
     try {
-      // In a real implementation, this would call an API
+      // In a real implementation, this would call an API with currentCompanyId
       toast({
         title: "Settings Saved",
-        description: "Security settings have been updated successfully",
+        description: `Security settings for ${user?.companyName || 'Company'} have been updated successfully`,
       });
     } catch (error) {
       toast({
@@ -77,13 +96,26 @@ export default function AdminSecuritySettings() {
   };
 
   const handleGenerateReport = async () => {
-    if (hasReadOnlyAccess) return;
+    if (isDemoMode) {
+      showDialog({
+        title: 'Security Report Generation',
+        description: 'Generate comprehensive security reports including configuration status, threat analysis, and compliance summaries.',
+        features: [
+          'Detailed security configuration status reports',
+          'Threat detection and vulnerability analysis',
+          'Compliance framework adherence summaries',
+          'User access and permission audit trails',
+          'Automated PDF and CSV export formats'
+        ]
+      });
+      return;
+    }
     
     try {
-      // In a real implementation, this would generate and download a report
+      // In a real implementation, this would generate and download a report with currentCompanyId
       toast({
         title: "Report Generated",
-        description: "Security report has been generated and will be downloaded shortly",
+        description: `Security report for ${user?.companyName || 'Company'} has been generated and will be downloaded shortly`,
       });
     } catch (error) {
       toast({
@@ -138,8 +170,8 @@ export default function AdminSecuritySettings() {
   return (
     <AdminLayout 
       title="Security Settings" 
-      subtitle="Configure system security and monitoring"
-      rightContent={isDemoMode && <DemoBanner message="Demo Mode - Read Only View" />}
+      subtitle={`Configure system security and monitoring for ${user?.companyName || 'Company'}`}
+      rightContent={hasReadOnlyAccess ? <DemoBanner message="Demo Mode - Read Only View - Security settings cannot be modified" /> : undefined}
     >
       <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
         {/* Content Filtering */}
@@ -494,6 +526,21 @@ export default function AdminSecuritySettings() {
                 </Button>
                 <Button 
                   variant="outline" 
+                  onClick={() => {
+                    if (isDemoMode) {
+                      showDialog({
+                        title: 'Audit Log Export',
+                        description: 'Export comprehensive security audit logs including user activities, access attempts, and security events for compliance reporting.',
+                        features: [
+                          'Complete user activity and access logs',
+                          'Security event and threat detection records',
+                          'Failed authentication and authorization attempts',
+                          'System configuration change tracking',
+                          'Multiple export formats (CSV, JSON, PDF)'
+                        ]
+                      });
+                    }
+                  }}
                   disabled={hasReadOnlyAccess}
                   style={{ 
                     flex: '1', 
@@ -506,6 +553,21 @@ export default function AdminSecuritySettings() {
                 </Button>
                 <Button 
                   variant="outline" 
+                  onClick={() => {
+                    if (isDemoMode) {
+                      showDialog({
+                        title: 'Compliance Certificate Download',
+                        description: 'Download official compliance certificates and attestations for your security framework implementation.',
+                        features: [
+                          'SOC 2 Type II compliance certificates',
+                          'GDPR data protection attestations',
+                          'HIPAA security implementation verification',
+                          'ISO 27001 alignment documentation',
+                          'Custom compliance framework reports'
+                        ]
+                      });
+                    }
+                  }}
                   disabled={hasReadOnlyAccess}
                   style={{ 
                     flex: '1', 
@@ -536,6 +598,7 @@ export default function AdminSecuritySettings() {
           </Button>
         </div>
       </div>
+      <DialogComponent />
     </AdminLayout>
   );
 }
