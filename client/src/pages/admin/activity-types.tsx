@@ -12,6 +12,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import type { ActivityType } from "@shared/schema";
 import { roleBasedAccess } from "@/lib/roleBasedAccess";
+import { isDemoModeActive } from "@/utils/demoMode";
+import { useDemoDialog } from "@/hooks/useDemoDialog";
 
 const activityTypeSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -29,6 +31,29 @@ export default function AdminActivityTypes() {
   const [activityToDelete, setActivityToDelete] = useState<ActivityType | null>(null);
   const { toast } = useToast();
   const { isAuthenticated, isLoading, user } = useAuth();
+
+  // Demo mode detection
+  const isDemoMode = isDemoModeActive(user);
+  const { showDialog, closeDialog, DialogComponent } = useDemoDialog();
+
+  const openDialog = (type: string) => {
+    const dialogConfig = {
+      title: "Activity Types Management",
+      description: "Comprehensive management of AI activity types with role-based permissions and security controls.",
+      features: [
+        "Create custom activity types with specific AI prompts and behaviors",
+        "Configure risk levels (low, medium, high) for security compliance",
+        "Set granular permissions for different user roles and access levels",
+        "Edit existing activity types with validation and audit logging",
+        "Delete unused activity types with confirmation safeguards",
+        "Real-time activity monitoring and usage analytics"
+      ]
+    };
+    closeDialog();
+    setTimeout(() => {
+      showDialog(dialogConfig);
+    }, 10);
+  };
 
   // Check access level - require Administrator (98+) access, but allow demo users (0) read-only access
   const hasReadOnlyAccess = user && (user.roleLevel === 0); // Demo users
@@ -389,33 +414,32 @@ export default function AdminActivityTypes() {
     >
       <div style={{ padding: '24px' }}>
         
-        {/* Add Activity Type Button - Only show for full access users */}
-        {hasFullAccess && (
-          <div style={{ marginBottom: '32px' }}>
-            <button
-              onClick={() => setIsAddDialogOpen(true)}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '12px 20px',
-                backgroundColor: '#3b82f6',
-                color: '#ffffff',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '14px',
-                fontWeight: '500',
-                cursor: 'pointer',
-                transition: 'background-color 0.2s ease',
-              }}
-              onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#2563eb')}
-              onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#3b82f6')}
-            >
-              <Plus style={{ width: '16px', height: '16px' }} />
-              Add Activity Type
-            </button>
-          </div>
-        )}
+        {/* Add Activity Type Button */}
+        <div style={{ marginBottom: '32px' }}>
+          <button
+            onClick={isDemoMode ? () => openDialog('create') : () => setIsAddDialogOpen(true)}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '12px 20px',
+              backgroundColor: '#3b82f6',
+              color: '#ffffff',
+              border: 'none',
+              borderRadius: '8px',
+              fontSize: '14px',
+              fontWeight: '500',
+              cursor: isDemoMode ? 'not-allowed' : 'pointer',
+              transition: 'background-color 0.2s ease',
+              opacity: isDemoMode ? 0.6 : 1,
+            }}
+            onMouseOver={(e) => !isDemoMode && (e.currentTarget.style.backgroundColor = '#2563eb')}
+            onMouseOut={(e) => !isDemoMode && (e.currentTarget.style.backgroundColor = '#3b82f6')}
+          >
+            <Plus style={{ width: '16px', height: '16px' }} />
+            Add Activity Type
+          </button>
+        </div>
 
         {/* Activity Types Grid */}
         <div style={{ display: 'grid', gap: '24px' }}>
@@ -477,8 +501,8 @@ export default function AdminActivityTypes() {
                   </span>
                   <CustomSwitch
                     checked={activity.isEnabled}
-                    onChange={() => handleToggleEnabled(activity.id, activity.isEnabled)}
-                    disabled={toggleActivityTypeMutation.isPending || !!hasReadOnlyAccess}
+                    onChange={isDemoMode ? () => openDialog('toggle') : () => handleToggleEnabled(activity.id, activity.isEnabled)}
+                    disabled={toggleActivityTypeMutation.isPending || isDemoMode}
                   />
                 </div>
               </div>
@@ -585,96 +609,76 @@ export default function AdminActivityTypes() {
                 </div>
               )}
               
-              {/* Action Buttons - Only show for full access users */}
-              {hasFullAccess && (
-                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                  <button
-                    onClick={() => handleEdit(activity)}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                      padding: '8px 12px',
-                      backgroundColor: '#ffffff',
-                      color: '#3b82f6',
-                      border: '1px solid #3b82f6',
-                      borderRadius: '6px',
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                    }}
-                    onMouseOver={(e) => {
+              {/* Action Buttons */}
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                <button
+                  onClick={isDemoMode ? () => openDialog('edit') : () => handleEdit(activity)}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '8px 12px',
+                    backgroundColor: '#ffffff',
+                    color: '#3b82f6',
+                    border: '1px solid #3b82f6',
+                    borderRadius: '6px',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    cursor: isDemoMode ? 'not-allowed' : 'pointer',
+                    transition: 'all 0.2s ease',
+                    opacity: isDemoMode ? 0.6 : 1,
+                  }}
+                  onMouseOver={(e) => {
+                    if (!isDemoMode) {
                       e.currentTarget.style.backgroundColor = '#3b82f6';
                       e.currentTarget.style.color = '#ffffff';
-                    }}
-                    onMouseOut={(e) => {
+                    }
+                  }}
+                  onMouseOut={(e) => {
+                    if (!isDemoMode) {
                       e.currentTarget.style.backgroundColor = '#ffffff';
                       e.currentTarget.style.color = '#3b82f6';
-                    }}
-                  >
-                    <Edit style={{ width: '14px', height: '14px' }} />
-                    Edit
-                  </button>
-                  
-                  <button
-                    onClick={() => handleDelete(activity)}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                      padding: '8px 12px',
-                      backgroundColor: '#ffffff',
-                      color: '#ef4444',
-                      border: '1px solid #ef4444',
-                      borderRadius: '6px',
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                    }}
-                    onMouseOver={(e) => {
+                    }
+                  }}
+                >
+                  <Edit style={{ width: '14px', height: '14px' }} />
+                  Edit
+                </button>
+                
+                <button
+                  onClick={isDemoMode ? () => openDialog('delete') : () => handleDelete(activity)}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '8px 12px',
+                    backgroundColor: '#ffffff',
+                    color: '#ef4444',
+                    border: '1px solid #ef4444',
+                    borderRadius: '6px',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    cursor: isDemoMode ? 'not-allowed' : 'pointer',
+                    transition: 'all 0.2s ease',
+                    opacity: isDemoMode ? 0.6 : 1,
+                  }}
+                  onMouseOver={(e) => {
+                    if (!isDemoMode) {
                       e.currentTarget.style.backgroundColor = '#ef4444';
                       e.currentTarget.style.color = '#ffffff';
-                    }}
-                    onMouseOut={(e) => {
+                    }
+                  }}
+                  onMouseOut={(e) => {
+                    if (!isDemoMode) {
                       e.currentTarget.style.backgroundColor = '#ffffff';
                       e.currentTarget.style.color = '#ef4444';
-                    }}
-                  >
-                    <Trash2 style={{ width: '14px', height: '14px' }} />
-                    Delete
-                  </button>
-                  
-                  <button
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                      padding: '8px 12px',
-                      backgroundColor: '#ffffff',
-                      color: '#6b7280',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '6px',
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                    }}
-                    onMouseOver={(e) => {
-                      e.currentTarget.style.backgroundColor = '#f9fafb';
-                      e.currentTarget.style.borderColor = '#9ca3af';
-                    }}
-                    onMouseOut={(e) => {
-                      e.currentTarget.style.backgroundColor = '#ffffff';
-                      e.currentTarget.style.borderColor = '#d1d5db';
-                    }}
-                  >
-                    <Settings style={{ width: '14px', height: '14px' }} />
-                    Configure
-                  </button>
-                </div>
-              )}
+                    }
+                  }}
+                >
+                  <Trash2 style={{ width: '14px', height: '14px' }} />
+                  Delete
+                </button>
+              </div>
             </div>
           ))}
 
@@ -1197,6 +1201,7 @@ export default function AdminActivityTypes() {
           </div>
         )}
       </div>
+      {isDemoMode && DialogComponent && <DialogComponent />}
     </AdminLayout>
   );
 }
