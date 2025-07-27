@@ -158,7 +158,7 @@ export default function Landing() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 padding: '12px 24px',
-                backgroundColor: '#f59e0b',
+                backgroundColor: '#16a34a',
                 color: 'white',
                 border: 'none',
                 borderRadius: '8px',
@@ -172,12 +172,12 @@ export default function Landing() {
                 margin: '8px'
               }}
               onMouseOver={(e) => {
-                e.currentTarget.style.backgroundColor = '#d97706';
+                e.currentTarget.style.backgroundColor = '#15803d';
                 e.currentTarget.style.transform = 'translateY(-2px)';
                 e.currentTarget.style.boxShadow = '0 6px 12px -1px rgba(0, 0, 0, 0.15)';
               }}
               onMouseOut={(e) => {
-                e.currentTarget.style.backgroundColor = '#f59e0b';
+                e.currentTarget.style.backgroundColor = '#16a34a';
                 e.currentTarget.style.transform = 'translateY(0)';
                 e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
               }}
