@@ -58,9 +58,8 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
     setExpandedSection(expandedSection === sectionId ? null : sectionId);
   };
 
-  const navigation: Array<{name: string, href: string, current: boolean}> = [
-    { name: "AI Chat", href: "/chat", current: location === "/chat" || location === "/" }
-  ];
+  // Remove AI Chat navigation item - logo will handle chat navigation now
+  const navigation: Array<{name: string, href: string, current: boolean}> = [];
 
   const superUserSections = [
     {
@@ -195,10 +194,32 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
           backgroundColor: '#1e2851', 
           borderBottom: '1px solid #3b82f6' 
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button 
+            onClick={() => {
+              navigate('/chat');
+              if (window.innerWidth < 1024) onToggle(); // Close on mobile
+            }}
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '12px',
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              padding: '4px',
+              borderRadius: '8px',
+              transition: 'background-color 0.2s'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(59, 130, 246, 0.2)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent';
+            }}
+          >
             <img 
               src="/ai-sentinel-logo.png" 
-              alt="AI Sentinel" 
+              alt="AI Sentinel Chat" 
               style={{ 
                 width: '32px', 
                 height: '32px', 
@@ -214,9 +235,9 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
               fontSize: '18px', 
               fontWeight: 600 
             }}>
-              AI Sentinel
+              AI Sentinel Chat
             </span>
-          </div>
+          </button>
           <Button
             variant="ghost"
             size="sm"
