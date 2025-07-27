@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator-standard";
 import { Shield, Lock, AlertTriangle, Eye, FileText, Users, Save } from "lucide-react";
 import { isDemoModeActive, isReadOnlyMode } from "@/utils/demoMode";
-import { roleBasedAccess, ACCESS_REQUIREMENTS } from "@/utils/roleBasedAccess";
+import { hasAccessLevel, ACCESS_REQUIREMENTS } from "@/utils/roleBasedAccess";
 
 export default function AdminSecuritySettings() {
   const { toast } = useToast();
@@ -45,7 +45,7 @@ export default function AdminSecuritySettings() {
 
   // Check access level - allow demo users (0) read-only access and administrators (98+) full access
   const hasReadOnlyAccess = user && (user.roleLevel === 0); // Demo users
-  const hasFullAccess = user && user.roleLevel !== undefined && roleBasedAccess.hasAccessLevel(user.roleLevel, ACCESS_REQUIREMENTS.SECURITY_SETTINGS);
+  const hasFullAccess = user && user.roleLevel !== undefined && hasAccessLevel(user.roleLevel, ACCESS_REQUIREMENTS.SECURITY_SETTINGS);
 
   useEffect(() => {
     if (!isLoading && (!isAuthenticated || (!hasReadOnlyAccess && !hasFullAccess))) {
