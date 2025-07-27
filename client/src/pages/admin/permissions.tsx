@@ -86,14 +86,35 @@ export default function AdminPermissions() {
   const { isAuthenticated, isLoading, user } = useAuth();
   const { showDemoDialog, DialogComponent } = useDemoDialog();
 
-  // Calculate demo mode early to use in mutations
+  // Calculate demo mode early and consistently 
   const isDemoMode = isDemoModeActive(user);
-
-  // Fetch permissions data using demo-compatible endpoint for demo users, admin endpoint for authenticated users
   const apiEndpoint = isDemoMode ? '/api/permissions' : '/api/admin/permissions';
+
+  // Fetch permissions data first (before mutations to maintain hook order)
   const { data: permissions = [], isLoading: permissionsLoading, error: permissionsError } = useQuery<Permission[]>({
     queryKey: [apiEndpoint],
     enabled: !isLoading,
+  });
+
+  // Forms must be declared early to maintain hook order
+  const form = useForm<z.infer<typeof permissionSchema>>({
+    resolver: zodResolver(permissionSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+      category: "ai_model_access",
+      enabled: true,
+    },
+  });
+
+  const editForm = useForm<z.infer<typeof permissionSchema>>({
+    resolver: zodResolver(permissionSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+      category: "ai_model_access",
+      enabled: true,
+    },
   });
 
   // Handle query errors
@@ -109,6 +130,21 @@ export default function AdminPermissions() {
       }, 500);
     }
   }, [permissionsError, toast]);
+
+  // Redirect if not admin
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      toast({
+        title: "Unauthorized",
+        description: "You are logged out. Logging in again...",
+        variant: "destructive",
+      });
+      setTimeout(() => {
+        window.location.href = "/api/login";
+      }, 500);
+      return;
+    }
+  }, [isAuthenticated, isLoading, toast]);
 
   // Create permission mutation
   const createPermissionMutation = useMutation({
@@ -254,27 +290,7 @@ export default function AdminPermissions() {
     },
   });
 
-  // Form setup for adding new permissions
-  const form = useForm<z.infer<typeof permissionSchema>>({
-    resolver: zodResolver(permissionSchema),
-    defaultValues: {
-      name: "",
-      description: "",
-      category: "ai_model_access",
-      enabled: true,
-    },
-  });
 
-  // Form setup for editing permissions
-  const editForm = useForm<z.infer<typeof permissionSchema>>({
-    resolver: zodResolver(permissionSchema),
-    defaultValues: {
-      name: "",
-      description: "",
-      category: "ai_model_access",
-      enabled: true,
-    },
-  });
 
   const onSubmit = (data: z.infer<typeof permissionSchema>) => {
     console.log("Form data being submitted:", data);
@@ -340,21 +356,6 @@ export default function AdminPermissions() {
       </AdminLayout>
     );
   }
-
-  // Redirect if not admin
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      toast({
-        title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
-        variant: "destructive",
-      });
-      setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
-      return;
-    }
-  }, [isAuthenticated, isLoading, toast]);
 
   if (isLoading || permissionsLoading) {
     return (
