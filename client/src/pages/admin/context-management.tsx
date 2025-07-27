@@ -16,6 +16,9 @@ import { Badge } from "@/components/ui/badge";
 import { Upload, FileText, AlertCircle, CheckCircle, Settings, Link, Trash2, Edit } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
 import DemoBanner from "@/components/DemoBanner";
+import { isDemoModeActive } from "@/utils/demoMode";
+import DemoInfoDialog from "@/components/demo/DemoInfoDialog";
+import { useDemoDialog } from "@/hooks/useDemoDialog";
 import type { ContextDocument, ActivityType } from "@shared/schema";
 
 export default function ContextManagement() {
@@ -33,6 +36,10 @@ export default function ContextManagement() {
     priority: 1,
     file: null as File | null
   });
+
+  // Demo mode detection
+  const isDemoMode = isDemoModeActive(user);
+  const { showDialog, openDialog, closeDialog } = useDemoDialog('context-management');
 
   // Fetch context documents
   const { data: documents, isLoading: documentsLoading } = useQuery<ContextDocument[]>({
@@ -323,7 +330,7 @@ export default function ContextManagement() {
             All Documents
           </h2>
           <button
-            onClick={() => setShowUploadDialog(true)}
+            onClick={isDemoMode ? () => openDialog('upload-document') : () => setShowUploadDialog(true)}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -555,7 +562,7 @@ export default function ContextManagement() {
                             <input
                               type="checkbox"
                               checked={document.isEnabled}
-                              onChange={() => handleToggleEnabled(document)}
+                              onChange={isDemoMode ? () => openDialog('toggle-document') : () => handleToggleEnabled(document)}
                               style={{
                                 opacity: 0,
                                 width: 0,
@@ -591,7 +598,7 @@ export default function ContextManagement() {
                           </span>
                           <div style={{ flex: 1 }}></div>
                           <button
-                            onClick={() => {
+                            onClick={isDemoMode ? () => openDialog('link-activity') : () => {
                               setSelectedDocument(document);
                               setShowLinkDialog(true);
                             }}
@@ -621,7 +628,7 @@ export default function ContextManagement() {
                             Link to Activity
                           </button>
                           <button
-                            onClick={() => handleDeleteDocument(document.id)}
+                            onClick={isDemoMode ? () => openDialog('delete-document') : () => handleDeleteDocument(document.id)}
                             style={{
                               display: 'flex',
                               alignItems: 'center',
@@ -774,6 +781,22 @@ export default function ContextManagement() {
             </div>
           </DialogContent>
         </Dialog>
+
+        {/* Demo Info Dialog */}
+        <DemoInfoDialog
+          isOpen={showDialog}
+          onClose={closeDialog}
+          title="Context Management"
+          description="This feature allows you to upload and manage company documents that AI can reference during conversations. Documents can be categorized, prioritized, and linked to specific activity types for contextual AI responses."
+          features={[
+            "Upload documents in multiple formats (TXT, MD, JSON, PDF, DOCX)",
+            "Categorize documents by type (Policy, Procedure, Guideline, Knowledge)",
+            "Set priority levels for document importance",
+            "Enable/disable documents for AI reference",
+            "Link documents to specific activity types",
+            "Full document lifecycle management"
+          ]}
+        />
       </div>
     </AdminLayout>
   );
