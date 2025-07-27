@@ -23,6 +23,24 @@ export default function Landing() {
     console.log("[LANDING DEBUG] Landing component mounted successfully");
     document.title = "AI Sentinel - Landing Page (React Working)";
     
+    // Check for returning demo user
+    const getCookie = (name: string) => {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop()?.split(';').shift();
+      return null;
+    };
+
+    const demoUserEmail = getCookie('demoUser');
+    const sessionToken = getCookie('sessionToken');
+    
+    if (demoUserEmail && sessionToken && sessionToken.startsWith('demo-session-')) {
+      console.log("[LANDING DEBUG] Returning demo user detected:", demoUserEmail);
+      console.log("[LANDING DEBUG] Redirecting to demo chat...");
+      window.location.href = '/demo';
+      return;
+    }
+    
     // Check if user just verified email and show success message
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('verified') === 'true') {

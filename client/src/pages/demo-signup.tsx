@@ -1,20 +1,26 @@
 import React, { useState } from 'react';
-import { Shield, ArrowLeft } from "lucide-react";
+import { Shield, ArrowLeft, Mail } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 
 export default function DemoSignup() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [email, setEmail] = useState('');
 
   const handleStartDemo = async () => {
+    if (!email || !email.includes('@')) {
+      setError("Please enter a valid email address");
+      return;
+    }
+
     setIsLoading(true);
     setError('');
 
     try {
-      console.log("[DEMO SIGNUP] Starting demo mode");
+      console.log("[DEMO SIGNUP] Starting demo mode for:", email);
       
       const response = await apiRequest('/api/auth/demo-signup', 'POST', {
-        email: 'demo@aisentinel.com', // Default demo email
+        email: email.trim(),
         ipAddress: 'demo-session', // Simplified IP tracking for demo
         userAgent: navigator.userAgent.substring(0, 200) // Truncate user agent
       });
@@ -121,6 +127,48 @@ export default function DemoSignup() {
             <li style={{ marginBottom: '8px' }}>✓ Enterprise security features</li>
             <li style={{ marginBottom: '0' }}>✓ Full admin panel preview</li>
           </ul>
+        </div>
+
+        {/* Email Input Section */}
+        <div style={{ marginBottom: '24px' }}>
+          <label style={{
+            display: 'block',
+            fontSize: '14px',
+            fontWeight: '500',
+            color: '#374151',
+            marginBottom: '8px'
+          }}>
+            Email Address
+          </label>
+          <div style={{ position: 'relative' }}>
+            <Mail style={{
+              position: 'absolute',
+              left: '12px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              width: '20px',
+              height: '20px',
+              color: '#9ca3af'
+            }} />
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email address"
+              style={{
+                width: '100%',
+                padding: '12px 12px 12px 44px',
+                border: '1px solid #d1d5db',
+                borderRadius: '8px',
+                fontSize: '16px',
+                outline: 'none',
+                transition: 'border-color 0.2s',
+                boxSizing: 'border-box'
+              }}
+              onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+              onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
+            />
+          </div>
         </div>
 
         {/* Demo Start Section */}

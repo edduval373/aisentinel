@@ -309,11 +309,17 @@ export function setupAuthRoutes(app: Express) {
         console.log(`✅ DEMO SIGNUP: Created new demo user with ID ${demoUser.id}`);
       }
       
-      console.log(`✅ DEMO SIGNUP: Created demo user with ID ${demoUser.id}`);
-      
       // Set session cookie
       res.cookie('sessionToken', sessionToken, {
         httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      });
+
+      // Set demo return cookie for automatic redirect on future visits
+      res.cookie('demoUser', email, {
+        httpOnly: false, // Allow client-side access for redirect logic
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
         maxAge: 24 * 60 * 60 * 1000, // 24 hours
