@@ -74,7 +74,7 @@ export default function CompanySetup() {
   // Load settings from current company data with proper constraints
   useEffect(() => {
     if (currentCompany) {
-      setShowCompanyName(currentCompany.showCompanyName !== false);
+      setShowCompanyName(currentCompany.showCompanyName === true);
       setShowCompanyLogo(currentCompany.showCompanyLogo !== false);
       // Enforce constraints when loading from database
       setLogoSize(Math.min(Math.max(currentCompany.logoSize || 80, 60), 200));
