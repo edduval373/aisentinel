@@ -8,9 +8,12 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Download, Wifi, WifiOff, Shield, Building2, RotateCcw, Trash2, History, Brain, MessageSquare } from "lucide-react";
+import { Download, Wifi, WifiOff, Shield, Building2, RotateCcw, Trash2, History, Brain, MessageSquare, Star } from "lucide-react";
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
+import FeaturesBenefitsDialog from "@/components/FeaturesBenefitsDialog";
+import { useFeaturesBenefits } from "@/hooks/useFeaturesBenefits";
+import { isDemoModeActive } from "@/utils/demoMode";
 import type { AiModel, ActivityType, ChatMessage as ChatMessageType, Company, ChatSession } from "@shared/schema";
 
 interface ChatInterfaceProps {
@@ -30,6 +33,10 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   const [lastMessage, setLastMessage] = useState<string>("");
   const [showPreviousChats, setShowPreviousChats] = useState(false);
   const [prefillMessage, setPrefillMessage] = useState<string>("");
+  
+  // Features & Benefits dialog for demo users
+  const { showDialog, openDialog, closeDialog } = useFeaturesBenefits();
+  const isDemoMode = isDemoModeActive(user);
 
   // Fetch AI models
   const { data: aiModels, isLoading: modelsLoading } = useQuery<AiModel[]>({
@@ -458,6 +465,39 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
               </SelectContent>
             </Select>
 
+            {/* Demo Features Button */}
+            {isDemoMode && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={openDialog}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                  color: 'white',
+                  border: 'none',
+                  fontWeight: '600',
+                  padding: '8px 12px',
+                  borderRadius: '8px',
+                  boxShadow: '0 2px 8px rgba(245, 158, 11, 0.3)',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(245, 158, 11, 0.4)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0px)';
+                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(245, 158, 11, 0.3)';
+                }}
+              >
+                <Star style={{ width: '14px', height: '14px' }} />
+                Show Features & Benefits
+              </Button>
+            )}
+
             {/* Chat Management Buttons */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Button
@@ -678,6 +718,12 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
           prefillMessage={prefillMessage}
         />
       </div>
+      
+      {/* Features & Benefits Dialog for demo users */}
+      <FeaturesBenefitsDialog
+        open={showDialog}
+        onOpenChange={closeDialog}
+      />
     </div>
   );
 }
