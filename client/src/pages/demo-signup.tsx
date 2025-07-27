@@ -15,8 +15,8 @@ export default function DemoSignup() {
       
       const response = await apiRequest('/api/auth/demo-signup', 'POST', {
         email: 'demo@aisentinel.com', // Default demo email
-        ipAddress: window.location.hostname,
-        userAgent: navigator.userAgent
+        ipAddress: 'demo-session', // Simplified IP tracking for demo
+        userAgent: navigator.userAgent.substring(0, 200) // Truncate user agent
       });
 
       if (response.success) {
