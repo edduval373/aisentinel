@@ -28,6 +28,7 @@ import AdminContextManagement from "@/pages/admin/context-management.tsx";
 import CreateModels from "@/pages/admin/create-models.tsx";
 import ModelFusion from "@/pages/admin/model-fusion.tsx";
 import SetupApiKeys from "@/pages/admin/setup-api-keys.tsx";
+import RoleManagement from "@/pages/admin/role-management.tsx";
 import CompanySetup from "@/pages/company-setup.tsx";
 import RefreshAuth from "@/pages/refresh-auth.tsx";
 import NotFound from "@/pages/not-found.tsx";
@@ -173,6 +174,14 @@ function Router() {
         {() => (
           <RoleGuard requiredRole="super-user">
             <CompanyManagement />
+          </RoleGuard>
+        )}
+      </Route>
+      
+      <Route path="/admin/role-management">
+        {() => (
+          <RoleGuard requiredRole="super-user">
+            <RoleManagement />
           </RoleGuard>
         )}
       </Route>

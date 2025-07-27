@@ -315,6 +315,109 @@ export default function Landing() {
               No charges during 30-day trial. Card required to prevent abuse and ensure service quality.
             </p>
           </div>
+
+          {/* Development Testing Section */}
+          <div style={{
+            backgroundColor: '#fef3c7',
+            border: '1px solid #fbbf24',
+            borderRadius: '8px',
+            padding: '16px',
+            marginTop: '24px',
+            maxWidth: '600px',
+            margin: '24px auto 0 auto'
+          }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              marginBottom: '12px'
+            }}>
+              <Settings style={{width: '16px', height: '16px', color: '#f59e0b'}} />
+              <span style={{
+                fontWeight: '600',
+                color: '#92400e',
+                fontSize: '14px'
+              }}>
+                Development Testing Accounts
+              </span>
+            </div>
+            <p style={{
+              fontSize: '14px',
+              color: '#92400e',
+              margin: '0 0 12px 0',
+              lineHeight: '1.5'
+            }}>
+              Quick login for testing role management functionality:
+            </p>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              <button
+                onClick={async () => {
+                  const response = await fetch('/api/auth/dev-login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ email: 'ed.duval15@gmail.com' })
+                  });
+                  if (response.ok) window.location.href = '/chat';
+                }}
+                style={{
+                  padding: '6px 12px',
+                  backgroundColor: '#dc2626',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  fontSize: '12px',
+                  cursor: 'pointer'
+                }}
+              >
+                Super-User (100)
+              </button>
+              <button
+                onClick={async () => {
+                  const response = await fetch('/api/auth/dev-login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ email: 'ed.duval+test2@gmail.com' })
+                  });
+                  if (response.ok) window.location.href = '/chat';
+                }}
+                style={{
+                  padding: '6px 12px',
+                  backgroundColor: '#f59e0b',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  fontSize: '12px',
+                  cursor: 'pointer'
+                }}
+              >
+                Admin (2)
+              </button>
+              <button
+                onClick={async () => {
+                  const response = await fetch('/api/auth/dev-login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ email: 'ed.duval+test1@gmail.com' })
+                  });
+                  if (response.ok) window.location.href = '/chat';
+                }}
+                style={{
+                  padding: '6px 12px',
+                  backgroundColor: '#10b981',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  fontSize: '12px',
+                  cursor: 'pointer'
+                }}
+              >
+                User (1)
+              </button>
+            </div>
+          </div>
         </div>
       </section>
 

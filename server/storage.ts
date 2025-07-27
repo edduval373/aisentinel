@@ -705,7 +705,49 @@ export class DatabaseStorage implements IStorage {
     };
   }
 
-  async updateUser(userId: string, companyId: number, userData: {
+  // Super-user method to get all users across all companies
+  async getAllUsers(): Promise<any[]> {
+    const allUsers = await db
+      .select({
+        id: users.id,
+        email: users.email,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        role: users.role,
+        roleLevel: users.roleLevel,
+        companyId: users.companyId,
+        isTrialUser: users.isTrialUser,
+        createdAt: users.createdAt,
+        lastLoginAt: users.lastLoginAt
+      })
+      .from(users)
+      .orderBy(users.email);
+
+    return allUsers;
+  }
+
+  // Super-user updateUser method (no company restriction)
+  async updateUser(userId: string, userData: {
+    firstName?: string;
+    lastName?: string;
+    role?: string;
+    roleLevel?: number;
+    department?: string;
+  }): Promise<any> {
+    const [updated] = await db
+      .update(users)
+      .set({
+        ...userData,
+        updatedAt: new Date()
+      })
+      .where(eq(users.id, userId))
+      .returning();
+
+    return updated;
+  }
+
+  // Company-restricted updateUser method
+  async updateUserInCompany(userId: string, companyId: number, userData: {
     firstName?: string;
     lastName?: string;
     role?: string;

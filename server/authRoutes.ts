@@ -192,6 +192,53 @@ export function setupAuthRoutes(app: Express) {
     }
   });
 
+  // Super-user endpoint to get all users for role management
+  app.get('/api/admin/all-users', cookieAuth, async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.user || req.user.roleLevel < 100) {
+        return res.status(403).json({ message: "Super-user access required" });
+      }
+
+      const users = await storage.getAllUsers();
+      res.json(users);
+    } catch (error: any) {
+      console.error("Get all users error:", error);
+      res.status(500).json({ message: "Failed to fetch users" });
+    }
+  });
+
+  // Super-user endpoint to update user roles
+  app.patch('/api/admin/users/:userId/role', cookieAuth, async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.user || req.user.roleLevel < 100) {
+        return res.status(403).json({ message: "Super-user access required" });
+      }
+
+      const { userId } = req.params;
+      const { roleLevel } = req.body;
+
+      if (typeof roleLevel !== 'number' || roleLevel < 0 || roleLevel > 100) {
+        return res.status(400).json({ message: "Invalid role level" });
+      }
+
+      const roleMap: { [key: number]: string } = {
+        1: 'user',
+        2: 'admin', 
+        99: 'owner',
+        100: 'super-user'
+      };
+
+      const role = roleMap[roleLevel] || 'user';
+
+      await storage.updateUser(userId, { roleLevel, role });
+      
+      res.json({ success: true, message: "User role updated successfully" });
+    } catch (error: any) {
+      console.error("Update user role error:", error);
+      res.status(500).json({ message: "Failed to update user role" });
+    }
+  });
+
   // Get current user (with optional auth)
   app.get('/api/auth/me', optionalAuth, async (req: AuthenticatedRequest, res) => {
     try {

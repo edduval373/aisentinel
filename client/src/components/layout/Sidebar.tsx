@@ -18,7 +18,8 @@ import {
   Building,
   FileText,
   Brain,
-  Key
+  Key,
+  UserCog
 } from "lucide-react";
 
 
@@ -67,6 +68,12 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       name: "Company Management",
       href: "/admin/company-management",
       icon: Building,
+    },
+    {
+      id: "role-management",
+      name: "User Role Management",
+      href: "/admin/role-management",
+      icon: UserCog,
     },
     {
       id: "setup-api-keys",
