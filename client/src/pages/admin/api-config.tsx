@@ -16,6 +16,10 @@ import { useToast } from "@/hooks/use-toast";
 import { Key, Plus, Edit2, Trash2, Eye, EyeOff, TestTube } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { apiRequest } from "@/lib/queryClient";
+import { useAuth } from "@/hooks/useAuth";
+import { isDemoModeActive } from "@/utils/demoMode";
+import DemoInfoDialog from "@/components/demo/DemoInfoDialog";
+import { useDemoDialog } from "@/hooks/useDemoDialog";
 
 const apiConfigSchema = z.object({
   provider: z.string().min(1, "Provider is required"),
@@ -60,6 +64,11 @@ export default function ApiConfiguration() {
   const [showApiKeys, setShowApiKeys] = useState<Record<number, boolean>>({});
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  
+  // Demo mode detection
+  const { user } = useAuth();
+  const isDemoMode = isDemoModeActive(user);
+  const { showDialog, openDialog, closeDialog } = useDemoDialog('api-config');
 
   // Fetch API configurations
   const { data: apiConfigs = [], isLoading: configsLoading } = useQuery({
@@ -225,14 +234,20 @@ export default function ApiConfiguration() {
       <div className="p-6 space-y-6">
         <div className="flex justify-between items-center">
           <h2 className="text-lg font-semibold ml-9">API Configurations</h2>
-          <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-            <DialogTrigger asChild>
-              <Button onClick={resetForm}>
-                <Plus className="w-4 h-4 mr-2" />
-                Add API Config
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
+          {isDemoMode ? (
+            <Button onClick={() => openDialog('create-api-config')}>
+              <Plus className="w-4 h-4 mr-2" />
+              Add API Config
+            </Button>
+          ) : (
+            <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+              <DialogTrigger asChild>
+                <Button onClick={resetForm}>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add API Config
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>Add API Configuration</DialogTitle>
               </DialogHeader>
@@ -399,7 +414,8 @@ export default function ApiConfiguration() {
                 </form>
               </Form>
             </DialogContent>
-          </Dialog>
+            </Dialog>
+          )}
         </div>
 
         {/* Configurations Grid */}
@@ -475,8 +491,8 @@ export default function ApiConfiguration() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => handleTestConfig(config.id)}
-                    disabled={testConfigMutation.isPending}
+                    onClick={isDemoMode ? () => openDialog('test-api-config') : () => handleTestConfig(config.id)}
+                    disabled={!isDemoMode && testConfigMutation.isPending}
                   >
                     <TestTube className="w-3 h-3 mr-1" />
                     Test
@@ -485,7 +501,7 @@ export default function ApiConfiguration() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleEditConfig(config)}
+                      onClick={isDemoMode ? () => openDialog('edit-api-config') : () => handleEditConfig(config)}
                     >
                       <Edit2 className="w-3 h-3 mr-1" />
                       Edit
@@ -493,7 +509,7 @@ export default function ApiConfiguration() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleDeleteConfig(config.id)}
+                      onClick={isDemoMode ? () => openDialog('delete-api-config') : () => handleDeleteConfig(config.id)}
                       className="text-red-600 hover:text-red-700"
                     >
                       <Trash2 className="w-3 h-3 mr-1" />
@@ -677,6 +693,22 @@ export default function ApiConfiguration() {
           </DialogContent>
         </Dialog>
       </div>
+
+      {/* Demo Info Dialog */}
+      <DemoInfoDialog
+        isOpen={showDialog}
+        onClose={closeDialog}
+        title="API Configuration"
+        description="This feature allows you to manage API keys and settings for different AI providers. In the full version, you can add, edit, test, and delete API configurations for providers like OpenAI, Anthropic, Google, Cohere, and custom endpoints."
+        features={[
+          "Add API configurations for multiple providers",
+          "Secure API key management with masking",
+          "Test API connections and validate credentials",
+          "Configure rate limits and timeout settings",
+          "Enable/disable configurations as needed",
+          "Organization ID support for enterprise accounts"
+        ]}
+      />
     </AdminLayout>
   );
 }
