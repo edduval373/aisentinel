@@ -1298,6 +1298,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Demo usage status API
+  app.get('/api/demo/usage', async (req, res) => {
+    try {
+      const sessionToken = req.cookies?.sessionToken;
+      
+      if (!sessionToken || !sessionToken.startsWith('demo-session-')) {
+        return res.status(401).json({ error: "Demo session required" });
+      }
+
+      const demoUser = await storage.getDemoUser(sessionToken);
+      if (!demoUser || demoUser.expiresAt < new Date()) {
+        return res.status(401).json({ error: "Demo session expired" });
+      }
+
+      res.json({
+        questionsUsed: demoUser.questionsUsed,
+        maxQuestions: demoUser.maxQuestions,
+        questionsRemaining: demoUser.maxQuestions - demoUser.questionsUsed,
+        email: demoUser.email,
+        expiresAt: demoUser.expiresAt
+      });
+    } catch (error) {
+      console.error("Error fetching demo usage:", error);
+      res.status(500).json({ error: "Failed to fetch demo usage" });
+    }
+  });
+
   app.post('/api/chat/message', upload.any(), async (req: any, res) => {
     try {
       // Extract data from FormData fields
@@ -1310,6 +1337,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Message is required" });
       }
       
+      // Check if this is a demo user and handle question limits
+      if (req.cookies?.sessionToken?.startsWith('demo-session-')) {
+        const demoUser = await storage.getDemoUser(req.cookies.sessionToken);
+        if (!demoUser || demoUser.expiresAt < new Date()) {
+          return res.status(401).json({ error: "Demo session expired" });
+        }
+        
+        if (demoUser.questionsUsed >= demoUser.maxQuestions) {
+          return res.status(429).json({ 
+            error: "Demo question limit reached", 
+            questionsUsed: demoUser.questionsUsed,
+            maxQuestions: demoUser.maxQuestions,
+            upgradeRequired: true 
+          });
+        }
+      }
+      
       // Handle Model Fusion special case
       const isModelFusion = aiModelId === "model-fusion";
       
@@ -1320,6 +1364,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       let userId = null;
       let companyId = null;
+      let isDemoUser = false;
 
       // Try cookie auth first
       if (req.cookies?.sessionToken) {
@@ -1596,6 +1641,16 @@ This is a demonstration of AI Sentinel's capabilities. In the full version:
       if (user && user.isTrialUser && chatMessage.response) {
         const { authService } = await import('./services/authService');
         await authService.incrementTrialUsage(userId);
+      }
+
+      // Increment demo user question count after successful AI response
+      if (req.cookies?.sessionToken?.startsWith('demo-session-') && chatMessage.response) {
+        try {
+          await storage.incrementDemoUserQuestion(req.cookies.sessionToken);
+          console.log('Demo user question incremented:', req.cookies.sessionToken);
+        } catch (error) {
+          console.error('Error incrementing demo user question:', error);
+        }
       }
 
       res.json({ ...chatMessage, attachments });

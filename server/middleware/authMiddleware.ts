@@ -24,16 +24,45 @@ export const unifiedAuth = async (req: AuthenticatedRequest, res: Response, next
 
     // Try cookie auth first
     if (req.cookies?.sessionToken) {
-      const session = await authService.verifySession(req.cookies.sessionToken);
-      if (session) {
-        const dbUser = await storage.getUser(session.userId);
-        if (dbUser) {
-          userId = session.userId;
-          email = session.email;
-          companyId = session.companyId;
-          roleLevel = session.roleLevel;
-          role = dbUser.role || 'user';
-          user = dbUser;
+      // Check if it's a demo session token
+      if (req.cookies.sessionToken.startsWith('demo-session-')) {
+        const demoUser = await storage.getDemoUser(req.cookies.sessionToken);
+        if (demoUser && demoUser.expiresAt > new Date()) {
+          userId = `demo_${demoUser.id}`;
+          email = demoUser.email;
+          companyId = 1; // Demo users use company ID 1
+          roleLevel = 0; // Demo role level
+          role = 'demo';
+          user = {
+            id: userId,
+            email: demoUser.email,
+            firstName: 'Demo',
+            lastName: 'User',
+            profileImageUrl: null,
+            role: 'demo',
+            roleLevel: 0,
+            companyRoleId: null,
+            companyId: 1,
+            department: null,
+            isTrialUser: false,
+            lastLoginAt: null,
+            createdAt: demoUser.createdAt,
+            updatedAt: demoUser.createdAt,
+          };
+        }
+      } else {
+        // Regular session token
+        const session = await authService.verifySession(req.cookies.sessionToken);
+        if (session) {
+          const dbUser = await storage.getUser(session.userId);
+          if (dbUser) {
+            userId = session.userId;
+            email = session.email;
+            companyId = session.companyId;
+            roleLevel = session.roleLevel;
+            role = dbUser.role || 'user';
+            user = dbUser;
+          }
         }
       }
     }

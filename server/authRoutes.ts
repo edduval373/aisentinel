@@ -271,6 +271,60 @@ export function setupAuthRoutes(app: Express) {
     }
   });
 
+  // Demo signup endpoint - creates demo account with question limits
+  app.post('/api/auth/demo-signup', async (req, res) => {
+    try {
+      const { email, ipAddress, userAgent } = req.body;
+      
+      if (!email) {
+        return res.status(400).json({ success: false, message: "Email is required" });
+      }
+
+      console.log(`🎯 DEMO SIGNUP: Creating demo account for ${email}`);
+
+      // Create demo session token
+      const sessionToken = `demo-session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      
+      // Set expiration to 24 hours for demo accounts
+      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+      
+      // Create demo user record
+      const demoUser = await storage.createDemoUser({
+        email,
+        ipAddress: ipAddress || 'unknown',
+        userAgent: userAgent || 'unknown',
+        questionsUsed: 0,
+        maxQuestions: 3,
+        sessionToken,
+        expiresAt,
+      });
+      
+      console.log(`✅ DEMO SIGNUP: Created demo user with ID ${demoUser.id}`);
+      
+      // Set session cookie
+      res.cookie('sessionToken', sessionToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      });
+
+      res.json({
+        success: true,
+        message: "Demo account created successfully",
+        demoUser: {
+          id: demoUser.id,
+          email: demoUser.email,
+          questionsRemaining: demoUser.maxQuestions - demoUser.questionsUsed,
+          expiresAt: demoUser.expiresAt
+        }
+      });
+    } catch (error: any) {
+      console.error("Demo signup error:", error);
+      res.status(500).json({ success: false, message: "Failed to create demo account" });
+    }
+  });
+
   // Development manual authentication endpoint (since verification was successful)
   app.post('/api/auth/dev-login', async (req, res) => {
     try {

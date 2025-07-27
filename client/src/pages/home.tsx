@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Building2, LogOut, RotateCcw, Trash2 } from "lucide-react";
 import TutorialArrow from "@/components/tutorial/TutorialArrow";
 import { useTutorial } from "@/hooks/useTutorial";
+import { DemoUsageBanner } from "@/components/demo/DemoUsageBanner";
 
 import { useCompanyContext } from "@/hooks/useCompanyContext";
 
@@ -542,6 +543,7 @@ export default function Home() {
         
         {/* Chat Interface Container */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+          <DemoUsageBanner />
           <ChatInterface 
             currentSession={currentSession} 
             setCurrentSession={setCurrentSession}

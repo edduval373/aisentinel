@@ -11,6 +11,11 @@ export default function Landing() {
     window.location.href = "/login";
   };
 
+  const handleDemoMode = () => {
+    console.log("[LANDING DEBUG] Demo mode button clicked");
+    window.location.href = "/demo-signup";
+  };
+
   console.log("[LANDING DEBUG] About to return JSX");
   
   // Check for verification success and redirect authenticated users
@@ -362,28 +367,52 @@ export default function Landing() {
           }}>
             Join organizations that trust AI Sentinel for secure, compliant AI interactions.
           </p>
-          <button
-            onClick={handleLogin}
-            style={{
-              backgroundColor: 'white',
-              color: '#1e40af',
-              padding: '12px 32px',
-              borderRadius: '8px',
-              border: 'none',
-              fontSize: '18px',
-              fontWeight: 600,
-              cursor: 'pointer',
-              transition: 'all 0.2s'
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = '#f3f4f6';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = 'white';
-            }}
-          >
-            Start Now
-          </button>
+          <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <button
+              onClick={handleLogin}
+              style={{
+                backgroundColor: 'white',
+                color: '#1e40af',
+                padding: '12px 32px',
+                borderRadius: '8px',
+                border: 'none',
+                fontSize: '18px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = '#f3f4f6';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = 'white';
+              }}
+            >
+              Start Free Trial
+            </button>
+            <button
+              onClick={handleDemoMode}
+              style={{
+                backgroundColor: 'transparent',
+                color: 'white',
+                padding: '12px 32px',
+                borderRadius: '8px',
+                border: '2px solid white',
+                fontSize: '18px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }}
+            >
+              Try Demo Mode
+            </button>
+          </div>
         </div>
       </section>
 

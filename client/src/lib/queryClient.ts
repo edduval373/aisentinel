@@ -2,8 +2,17 @@ import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
-    const text = (await res.text()) || res.statusText;
-    throw new Error(`${res.status}: ${text}`);
+    try {
+      const errorData = await res.json();
+      // Handle demo limit specifically
+      if (res.status === 429 && errorData.upgradeRequired) {
+        throw { ...errorData, isDemoLimit: true };
+      }
+      throw new Error(errorData.message || `${res.status}: ${res.statusText}`);
+    } catch (parseError) {
+      const text = await res.text().catch(() => res.statusText);
+      throw new Error(`${res.status}: ${text}`);
+    }
   }
 }
 

@@ -17,6 +17,7 @@ import {
   userSessions,
   subscriptions,
   trialUsage,
+  demoUsers,
   type User,
   type UpsertUser,
   type Company,
@@ -53,6 +54,8 @@ import {
   type InsertSubscription,
   type TrialUsage,
   type InsertTrialUsage,
+  type DemoUser,
+  type InsertDemoUser,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, count, sql, sum, like, inArray } from "drizzle-orm";
@@ -73,6 +76,12 @@ export interface IStorage {
   getUserSession(sessionToken: string): Promise<UserSession | undefined>;
   updateUserSessionLastAccessed(sessionId: number): Promise<void>;
   deleteUserSession(sessionToken: string): Promise<void>;
+  
+  // Demo user operations
+  createDemoUser(demoUser: InsertDemoUser): Promise<DemoUser>;
+  getDemoUser(sessionToken: string): Promise<DemoUser | undefined>;
+  incrementDemoUserQuestions(sessionToken: string): Promise<DemoUser>;
+  getDemoUserByEmail(email: string): Promise<DemoUser | undefined>;
   
   // Company operations
   getCompany(id: number): Promise<Company | undefined>;
@@ -281,6 +290,40 @@ export class DatabaseStorage implements IStorage {
 
   async deleteUserSession(sessionToken: string): Promise<void> {
     await db.delete(userSessions).where(eq(userSessions.sessionToken, sessionToken));
+  }
+
+  // Demo user operations
+  async createDemoUser(demoUser: InsertDemoUser): Promise<DemoUser> {
+    const [created] = await db.insert(demoUsers).values(demoUser).returning();
+    return created;
+  }
+
+  async getDemoUser(sessionToken: string): Promise<DemoUser | undefined> {
+    const [demoUser] = await db
+      .select()
+      .from(demoUsers)
+      .where(eq(demoUsers.sessionToken, sessionToken));
+    return demoUser;
+  }
+
+  async incrementDemoUserQuestions(sessionToken: string): Promise<DemoUser> {
+    const [updated] = await db
+      .update(demoUsers)
+      .set({ 
+        questionsUsed: sql`${demoUsers.questionsUsed} + 1`,
+        lastQuestionAt: new Date()
+      })
+      .where(eq(demoUsers.sessionToken, sessionToken))
+      .returning();
+    return updated;
+  }
+
+  async getDemoUserByEmail(email: string): Promise<DemoUser | undefined> {
+    const [demoUser] = await db
+      .select()
+      .from(demoUsers)
+      .where(eq(demoUsers.email, email));
+    return demoUser;
   }
 
   // Company operations

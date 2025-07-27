@@ -153,6 +153,12 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({ message: "Request failed" }));
           console.error('FormData request failed:', errorData);
+          
+          // Handle demo limit specifically
+          if (response.status === 429 && errorData.upgradeRequired) {
+            throw { ...errorData, isDemoLimit: true };
+          }
+          
           throw new Error(errorData.message || `HTTP ${response.status}`);
         }
 
@@ -177,6 +183,20 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
     },
     onError: (error: any) => {
       console.error('Send message error:', error);
+
+      // Check if this is a demo limit error
+      if (error && error.isDemoLimit) {
+        toast({
+          title: "Demo Limit Reached",
+          description: `You've used all ${error.maxQuestions} demo questions. Start your free trial to continue!`,
+          variant: "destructive",
+          action: {
+            altText: "Start Free Trial",
+            onClick: () => window.location.href = '/pricing'
+          }
+        });
+        return;
+      }
 
       // Check if this is actually an error (not an empty object from successful request)
       if (error && Object.keys(error).length > 0 && error.message) {

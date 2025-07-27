@@ -100,6 +100,24 @@ export const companyRoles = pgTable("company_roles", {
   index("idx_company_role_level").on(table.companyId, table.level),
 ]);
 
+// Demo users table - tracks temporary demo accounts with question limits
+export const demoUsers = pgTable("demo_users", {
+  id: serial("id").primaryKey(),
+  email: varchar("email").notNull(),
+  ipAddress: varchar("ip_address"),
+  userAgent: text("user_agent"),
+  questionsUsed: integer("questions_used").default(0),
+  maxQuestions: integer("max_questions").default(3),
+  sessionToken: varchar("session_token").unique().notNull(),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  lastQuestionAt: timestamp("last_question_at"),
+}, (table) => [
+  index("idx_demo_session_token").on(table.sessionToken),
+  index("idx_demo_email").on(table.email),
+  index("idx_demo_ip").on(table.ipAddress),
+]);
+
 // User storage table.
 // (IMPORTANT) This table is mandatory for Replit Auth, don't drop it.
 export const users = pgTable("users", {
@@ -459,3 +477,8 @@ export type Subscription = typeof subscriptions.$inferSelect;
 export type InsertSubscription = z.infer<typeof insertSubscriptionSchema>;
 export type TrialUsage = typeof trialUsage.$inferSelect;
 export type InsertTrialUsage = z.infer<typeof insertTrialUsageSchema>;
+
+// Demo user types
+export const insertDemoUserSchema = createInsertSchema(demoUsers).omit({ id: true, createdAt: true });
+export type DemoUser = typeof demoUsers.$inferSelect;
+export type InsertDemoUser = z.infer<typeof insertDemoUserSchema>;
