@@ -284,11 +284,20 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
     console.log('Environment:', process.env.NODE_ENV);
     
     const ws = new WebSocket(wsUrl);
+    let pingInterval: NodeJS.Timeout | null = null;
 
     ws.onopen = () => {
       setIsConnected(true);
       console.log('✅ WebSocket connected successfully');
       console.log('WebSocket readyState:', ws.readyState);
+      
+      // Send ping every 30 seconds to keep connection alive
+      pingInterval = setInterval(() => {
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ type: 'ping' }));
+          console.log('📡 Sent WebSocket ping');
+        }
+      }, 30000);
     };
 
     ws.onclose = (event) => {
@@ -297,6 +306,10 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       console.log('Close event code:', event.code);
       console.log('Close event reason:', event.reason);
       console.log('Close event was clean:', event.wasClean);
+      
+      if (pingInterval) {
+        clearInterval(pingInterval);
+      }
     };
 
     ws.onerror = (error) => {
@@ -304,18 +317,29 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       console.log('WebSocket readyState on error:', ws.readyState);
       console.log('Error type:', error.type);
       setIsConnected(false);
+      
+      if (pingInterval) {
+        clearInterval(pingInterval);
+      }
     };
 
     ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
         console.log('WebSocket message:', data);
+        
+        if (data.type === 'pong') {
+          console.log('📡 Received WebSocket pong');
+        }
       } catch (error) {
         console.error('Error parsing WebSocket message:', error);
       }
     };
 
     return () => {
+      if (pingInterval) {
+        clearInterval(pingInterval);
+      }
       ws.close();
     };
   }, []);

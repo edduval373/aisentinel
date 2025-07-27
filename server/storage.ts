@@ -543,7 +543,22 @@ export class DatabaseStorage implements IStorage {
 
   // AI Models operations
   async getAiModels(companyId: number): Promise<AiModel[]> {
-    return await db.select().from(aiModels).where(eq(aiModels.companyId, companyId)).orderBy(aiModels.name);
+    // Only return models with valid API keys (not placeholder values)
+    const allModels = await db.select().from(aiModels).where(eq(aiModels.companyId, companyId)).orderBy(aiModels.name);
+    
+    // Filter out models with placeholder API keys
+    return allModels.filter(model => {
+      const apiKey = model.apiKey;
+      // Skip models with placeholder or missing API keys
+      if (!apiKey || 
+          apiKey.startsWith('$') || 
+          apiKey.includes('placeholder') || 
+          apiKey.includes('your-api-key') ||
+          apiKey.length < 10) {
+        return false;
+      }
+      return true;
+    });
   }
 
   async getEnabledAiModels(companyId: number): Promise<AiModel[]> {
