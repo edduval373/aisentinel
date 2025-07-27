@@ -594,7 +594,7 @@ export default function Home() {
       )}
 
       {/* Features & Benefits Dialog */}
-      <FeaturesBenefitsDialog open={showDialog} onClose={closeDialog} />
+      <FeaturesBenefitsDialog open={showDialog} onOpenChange={(open) => !open && closeDialog()} />
     </div>
   );
 }
