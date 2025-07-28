@@ -225,8 +225,8 @@ export default function Home() {
   // Check if user is super-user (role level 100+)
   const isSuperUserLevel = (user?.roleLevel ?? 0) >= 100;
   
-  // Determine if sidebar access is allowed (super users, owners, admins, and demo users - role level 0+)
-  const canAccessSidebar = isAuthenticated && (isSuperUser || isOwner || isAdmin || isDemoMode || userRoleLevel >= 2);
+  // Determine if sidebar access is allowed (demo users always have access, plus super users, owners, admins)
+  const canAccessSidebar = isDemoMode || (isAuthenticated && (isSuperUser || isOwner || isAdmin || userRoleLevel >= 2));
 
   // Fetch all companies for super-user company switching
   const { data: allCompanies = [] } = useQuery<Array<{ id: number; name: string; description?: string }>>({
