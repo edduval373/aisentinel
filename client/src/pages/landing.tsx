@@ -129,12 +129,57 @@ export default function Landing() {
               AI Sentinel
             </h1>
           </div>
-          <Button 
-            onClick={handleLogin} 
-            className="ai-sentinel-sign-in"
-          >
-            Sign In
-          </Button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <Button 
+              onClick={handleLogin} 
+              className="ai-sentinel-sign-in"
+            >
+              Sign In
+            </Button>
+            
+            {/* Development Super-User Login */}
+            <button
+              onClick={async () => {
+                try {
+                  console.log('Attempting super-user login...');
+                  const response = await fetch('/api/auth/super-login', {
+                    method: 'POST',
+                    credentials: 'include',
+                  });
+                  
+                  if (response.ok) {
+                    console.log('Super-user session created, refreshing page...');
+                    window.location.href = '/';
+                  } else {
+                    console.error('Super-user login failed');
+                  }
+                } catch (error) {
+                  console.error('Super-user login error:', error);
+                }
+              }}
+              style={{
+                fontSize: '12px',
+                color: '#dc2626',
+                backgroundColor: '#fee2e2',
+                border: '1px solid #dc2626',
+                borderRadius: '6px',
+                padding: '8px 16px',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                fontWeight: '500'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = '#dc2626';
+                e.currentTarget.style.color = 'white';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = '#fee2e2';
+                e.currentTarget.style.color = '#dc2626';
+              }}
+            >
+              Super-User Login
+            </button>
+          </div>
         </div>
       </header>
 

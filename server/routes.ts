@@ -34,6 +34,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ status: 'OK', timestamp: new Date().toISOString() });
   });
 
+  // Super-user authentication endpoint - for manual login
+  app.post('/api/auth/super-login', async (req, res) => {
+    try {
+      console.log('Super-user login request');
+      const sessionToken = 'super-session-1753717122.508464-7b89b05c';
+      
+      // Set the session cookie
+      res.cookie('sessionToken', sessionToken, {
+        httpOnly: true,
+        secure: false, // Not secure for development  
+        sameSite: 'lax',
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      });
+      
+      console.log('Super-user session cookie set');
+      res.json({ 
+        success: true, 
+        message: 'Super-user session created',
+        sessionToken: sessionToken.substring(0, 20) + '...'
+      });
+    } catch (error) {
+      console.error('Super-user login error:', error);
+      res.status(500).json({ success: false, message: 'Failed to create super-user session' });
+    }
+  });
+
   // Unauthenticated company management route - highest priority for authentication bypass
   app.get('/api/companies', async (req: any, res) => {
     try {
