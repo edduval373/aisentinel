@@ -1414,9 +1414,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('User found:', user?.email, 'Role level:', user?.roleLevel);
       const userRoleLevel = user?.roleLevel || 1;
       
-      if (userRoleLevel < 99) { // Must be owner (99) or super-user (100)
+      if (userRoleLevel < 99) { // Must be owner (99) or super-user (100+)
         console.log('Access denied - insufficient role level:', userRoleLevel);
-        return res.status(403).json({ message: "Owner access required to test API keys" });
+        return res.status(403).json({ message: "Owner or Super-User access required to test API keys" });
       }
 
       const { provider, apiKey } = req.body;
