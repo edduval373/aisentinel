@@ -210,8 +210,14 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
         }}>
           <button 
             onClick={() => {
-              navigate('/chat');
-              if (window.innerWidth < 1024) onToggle(); // Close on mobile
+              // If already on chat page, just close the sidebar
+              if (location === '/chat' || location === '/demo' || location === '/') {
+                onToggle();
+              } else {
+                // Navigate to chat and close on mobile
+                navigate('/chat');
+                if (window.innerWidth < 1024) onToggle();
+              }
             }}
             style={{ 
               display: 'flex', 
