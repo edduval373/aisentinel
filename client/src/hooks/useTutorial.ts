@@ -12,23 +12,28 @@ export function useTutorial() {
     const isDemoUser = user?.roleLevel === 0;
     
     if (isDemoUser) {
-      // Check if tutorial has been completed before
-      const tutorialCompleted = localStorage.getItem(TUTORIAL_STORAGE_KEY);
+      // For demo users, always show the tutorial arrow (ignore localStorage)
+      // Wait a moment for the page to load, then show tutorial
+      const timeout = setTimeout(() => {
+        setShowTutorial(true);
+      }, 1000);
       
-      if (!tutorialCompleted) {
-        // Wait a moment for the page to load, then show tutorial
-        const timeout = setTimeout(() => {
-          setShowTutorial(true);
-        }, 1000);
-        
-        return () => clearTimeout(timeout);
-      }
+      return () => clearTimeout(timeout);
     }
   }, [user]);
 
   const completeTutorial = () => {
-    setShowTutorial(false);
-    localStorage.setItem(TUTORIAL_STORAGE_KEY, 'true');
+    // For demo users, don't hide the tutorial permanently - just temporarily
+    const isDemoUser = user?.roleLevel === 0;
+    
+    if (isDemoUser) {
+      // For demo users, just hide temporarily and it will reappear on next page load
+      setShowTutorial(false);
+    } else {
+      // For regular users, hide permanently
+      setShowTutorial(false);
+      localStorage.setItem(TUTORIAL_STORAGE_KEY, 'true');
+    }
   };
 
   return {
