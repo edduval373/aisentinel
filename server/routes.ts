@@ -611,20 +611,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // API key update endpoint
-  app.post('/api/admin/update-api-key', isAuthenticated, async (req: any, res) => {
+  app.post('/api/admin/update-api-key', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
       const { provider, apiKey } = req.body;
-      console.log(`Update API key request from user: ${req.user.userId}`);
+      console.log(`Update API key request from user: ${req.user?.userId}`);
       
-      const user = await storage.getUser(req.user.userId);
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-      
-      console.log(`User found: ${user.email} Role level: ${user.roleLevel}`);
-      const userRoleLevel = user.roleLevel || 1;
+      const userRoleLevel = req.user?.roleLevel || 1;
       if (userRoleLevel < 99) { // Must be owner (99) or super-user (100)
         return res.status(403).json({ message: "Owner access required to update API keys" });
+      }
+      
+      if (!req.user?.companyId) {
+        return res.status(400).json({ message: "No company associated with user" });
       }
 
       if (!provider || !apiKey) {
@@ -647,7 +645,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Update AI models for this provider
-      const models = await storage.getAiModels(user.companyId);
+      const models = await storage.getAiModels(req.user.companyId);
       const updatedModels = [];
 
       for (const model of models) {
