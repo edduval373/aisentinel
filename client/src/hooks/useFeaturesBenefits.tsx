@@ -7,13 +7,21 @@ export function useFeaturesBenefits(isDemoMode: boolean = false) {
   // Check if dialog has been shown before
   useEffect(() => {
     if (isDemoMode) {
-      // For demo users, always show the features dialog after a short delay
-      const timer = setTimeout(() => {
-        setShowDialog(true);
-        setHasShownOnce(true);
-      }, 2000); // Show after 2 seconds for demo users
+      // Check if Features & Benefits has been shown in this demo session
+      const sessionKey = 'ai-sentinel-demo-features-shown-session';
+      const hasShownThisSession = sessionStorage.getItem(sessionKey);
+      
+      if (!hasShownThisSession) {
+        // For demo users, show the features dialog after a short delay on first visit
+        const timer = setTimeout(() => {
+          setShowDialog(true);
+          setHasShownOnce(true);
+          // Mark as shown for this session only
+          sessionStorage.setItem(sessionKey, 'true');
+        }, 2000); // Show after 2 seconds for demo users
 
-      return () => clearTimeout(timer);
+        return () => clearTimeout(timer);
+      }
     } else {
       // For regular users, check localStorage
       const hasShown = localStorage.getItem('ai-sentinel-features-shown');
