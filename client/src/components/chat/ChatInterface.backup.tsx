@@ -3,11 +3,12 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+// import { isUnauthorizedError } from "@/lib/authUtils"; // Temporarily disabled
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Wifi, WifiOff, History, RotateCcw, Trash2, MessageSquare, Brain } from "lucide-react";
+import { Download, Wifi, WifiOff, Shield, Building2, RotateCcw, Trash2, History, Brain, MessageSquare, Star } from "lucide-react";
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
 import FeaturesBenefitsDialog from "@/components/FeaturesBenefitsDialog";
@@ -40,6 +41,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   // Fetch AI models
   const { data: aiModels, isLoading: modelsLoading } = useQuery<AiModel[]>({
     queryKey: ['/api/ai-models'],
+    // Removed authentication error handling
   });
   
   // Auto-select first available AI model (prioritize working models)
@@ -64,6 +66,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   // Fetch activity types
   const { data: activityTypes, isLoading: typesLoading } = useQuery<ActivityType[]>({
     queryKey: ['/api/activity-types'],
+    // Removed authentication error handling
   });
   
   // Auto-select first available activity type
@@ -73,11 +76,18 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
     }
   }, [activityTypes, selectedActivityType]);
 
+  // Fetch current company details
+  const { data: currentCompany, isLoading: companyLoading } = useQuery<Company>({
+    queryKey: ['/api/user/current-company'],
+    // Removed authentication error handling
+  });
+
   // Fetch chat messages when session changes
   const { data: chatMessages, isLoading: messagesLoading } = useQuery<ChatMessageType[]>({
     queryKey: ['/api/chat/session', currentSession, 'messages'],
     queryFn: () => apiRequest(`/api/chat/session/${currentSession}/messages`),
     enabled: !!currentSession,
+    // Authentication error handling removed
   });
 
   // Fetch previous chat sessions with message details
@@ -102,88 +112,140 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       });
       
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Session creation failed:', response.status, errorText);
-        throw new Error(`Failed to create chat session: ${response.status} ${errorText}`);
+        const errorData = await response.json().catch(() => ({ message: "Request failed" }));
+        throw new Error(errorData.message || "Failed to create session");
       }
       
-      const session = await response.json();
-      console.log('Session created successfully:', session);
-      return session;
+      const sessionData = await response.json();
+      console.log('Session created successfully:', sessionData);
+      return sessionData;
     },
     onSuccess: (session) => {
       console.log('Setting current session to:', session.id);
       setCurrentSession(session.id);
+      queryClient.invalidateQueries({ queryKey: ['/api/chat/session'] });
+      // Removed toast notification to prevent screen jumping
     },
     onError: (error) => {
-      console.error('Failed to create session:', error);
+      console.error('Session creation error:', error);
       toast({
-        title: "Failed to create chat session",
-        description: "Unable to start a new chat. Please try again.",
+        title: "Error",
+        description: "Failed to create chat session",
         variant: "destructive",
       });
-    }
+    },
   });
 
   // Send message mutation
   const sendMessageMutation = useMutation({
-    mutationFn: async (formData: FormData) => {
-      const response = await fetch("/api/chat/message", {
-        method: "POST",
-        body: formData,
-        credentials: "include"
-      });
+    mutationFn: async (data: FormData | { message: string; aiModelId: number; activityTypeId: number; sessionId: number }) => {
+      console.log('=== SEND MESSAGE DEBUG ===');
+      console.log('Message data type:', data instanceof FormData ? 'FormData' : 'Object');
+      console.log('Current session ID:', currentSession);
+      console.log('Selected AI Model:', selectedModel);
+      console.log('Selected Activity Type:', selectedActivityType);
       
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Message send failed:', response.status, errorText);
-        throw new Error(`Failed to send message: ${response.status}`);
+      if (data instanceof FormData) {
+        console.log('FormData entries:');
+        for (let [key, value] of data.entries()) {
+          console.log(`  ${key}:`, value);
+        }
+      } else {
+        console.log('Message object:', data);
       }
       
-      return response.json();
+      // Handle both FormData (with files) and regular object
+      if (data instanceof FormData) {
+        console.log('Sending FormData to /api/chat/message');
+        const response = await fetch("/api/chat/message", {
+          method: "POST",
+          body: data,
+          credentials: "include",
+        });
+
+        console.log('FormData response status:', response.status);
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({ message: "Request failed" }));
+          console.error('FormData request failed:', errorData);
+          
+          // Handle demo limit specifically
+          if (response.status === 429 && errorData.upgradeRequired) {
+            throw { ...errorData, isDemoLimit: true };
+          }
+          
+          throw new Error(errorData.message || `HTTP ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log('FormData response success:', result);
+        return result;
+      } else {
+        console.log('Sending object via apiRequest to /api/chat/message');
+        const response = await apiRequest("/api/chat/message", "POST", data);
+        console.log('Object response success:', response);
+        return response;
+      }
     },
-    onSuccess: (data) => {
-      console.log('Message sent successfully:', data);
-      if (data.userMessage) {
-        setMessages(prev => [...prev, data.userMessage]);
-        setLastMessage(data.userMessage.message);
+    onSuccess: (newMessage) => {
+      console.log('New message received:', newMessage);
+      // Add the new message to the current messages
+      setMessages(prev => [...prev, newMessage]);
+      // Also refresh the messages to get the most up-to-date view
+      queryClient.invalidateQueries({ queryKey: ['/api/chat/session', currentSession, 'messages'] });
+      // Invalidate chat sessions to update the history
+      queryClient.invalidateQueries({ queryKey: ['/api/chat/sessions'] });
+    },
+    onError: (error: any) => {
+      console.error('Send message error:', error);
+
+      // Check if this is a demo limit error
+      if (error && error.isDemoLimit) {
+        toast({
+          title: "Demo Limit Reached",
+          description: `You've used all ${error.maxQuestions} demo questions. Start your free trial to continue!`,
+          variant: "destructive",
+          action: {
+            altText: "Start Free Trial",
+            onClick: () => window.location.href = '/pricing'
+          }
+        });
+        return;
       }
-      if (data.assistantMessage) {
-        setMessages(prev => [...prev, data.assistantMessage]);
-      }
-      
-      // Refresh chat messages
-      queryClient.invalidateQueries({
-        queryKey: ['/api/chat/session', currentSession, 'messages']
-      });
-      
-      // Open Features & Benefits dialog after first message for demo users
-      if (isDemoMode && messages.length === 0) {
-        setTimeout(() => {
-          openDialog();
-        }, 2000);
+
+      // Check if this is actually an error (not an empty object from successful request)
+      if (error && Object.keys(error).length > 0 && error.message) {
+        // Authentication error handling removed
+
+        // Handle blocked messages
+        if (error.message.includes("403")) {
+          toast({
+            title: "Message Blocked",
+            description: "Your message was blocked by security policy",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Error",
+            description: "Failed to send message",
+            variant: "destructive",
+          });
+        }
       }
     },
-    onError: (error) => {
-      console.error('Failed to send message:', error);
-      toast({
-        title: "Failed to send message",
-        description: "Your message could not be sent. Please try again.",
-        variant: "destructive",
-      });
-    }
   });
 
-  // WebSocket connection for real-time updates
+  // Set default selections
   useEffect(() => {
-    console.log('✅ WebSocket connected successfully');
-    console.log('WebSocket readyState:', 1);
-    setIsConnected(true);
-    
-    return () => {
-      setIsConnected(false);
-    };
-  }, []);
+    if (aiModels && aiModels.length > 0 && !selectedModel) {
+      setSelectedModel(aiModels[0].id);
+    }
+  }, [aiModels, selectedModel]);
+
+  useEffect(() => {
+    if (activityTypes && activityTypes.length > 0 && !selectedActivityType) {
+      setSelectedActivityType(activityTypes[0].id);
+    }
+  }, [activityTypes, selectedActivityType]);
 
   // Create initial session
   useEffect(() => {
@@ -193,6 +255,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
     console.log('Should create session:', !currentSession && !createSessionMutation.isPending);
     console.log('AI Models loaded:', aiModels?.length || 0, 'models');
     console.log('Activity Types loaded:', activityTypes?.length || 0, 'types');
+    console.log('Company loaded:', !!currentCompany);
     console.log('=== END SESSION TRIGGER DEBUG ===');
     
     if (!currentSession && !createSessionMutation.isPending) {
@@ -210,33 +273,108 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   // Load messages when session changes
   useEffect(() => {
     if (currentSession) {
+      // Refetch messages for the selected session
       queryClient.invalidateQueries({
         queryKey: ['/api/chat/session', currentSession, 'messages']
       });
     }
   }, [currentSession, queryClient]);
 
-  // Auto-scroll to bottom when new messages arrive
+  // WebSocket connection
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    console.log('=== WEBSOCKET CONNECTION DEBUG ===');
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const wsUrl = `${protocol}//${window.location.host}/ws`;
+    console.log('WebSocket URL:', wsUrl);
+    console.log('Current protocol:', window.location.protocol);
+    console.log('Current host:', window.location.host);
+    console.log('Environment:', process.env.NODE_ENV);
+    
+    const ws = new WebSocket(wsUrl);
+    let pingInterval: NodeJS.Timeout | null = null;
+
+    ws.onopen = () => {
+      setIsConnected(true);
+      console.log('✅ WebSocket connected successfully');
+      console.log('WebSocket readyState:', ws.readyState);
+      
+      // Send ping every 30 seconds to keep connection alive
+      pingInterval = setInterval(() => {
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ type: 'ping' }));
+          console.log('📡 Sent WebSocket ping');
+        }
+      }, 30000);
+    };
+
+    ws.onclose = (event) => {
+      setIsConnected(false);
+      console.log('❌ WebSocket disconnected');
+      console.log('Close event code:', event.code);
+      console.log('Close event reason:', event.reason);
+      console.log('Close event was clean:', event.wasClean);
+      
+      if (pingInterval) {
+        clearInterval(pingInterval);
+      }
+    };
+
+    ws.onerror = (error) => {
+      console.error('❌ WebSocket error:', error);
+      console.log('WebSocket readyState on error:', ws.readyState);
+      console.log('Error type:', error.type);
+      setIsConnected(false);
+      
+      if (pingInterval) {
+        clearInterval(pingInterval);
+      }
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        console.log('WebSocket message:', data);
+        
+        if (data.type === 'pong') {
+          console.log('📡 Received WebSocket pong');
+        }
+      } catch (error) {
+        console.error('Error parsing WebSocket message:', error);
+      }
+    };
+
+    return () => {
+      if (pingInterval) {
+        clearInterval(pingInterval);
+      }
+      ws.close();
+    };
+  }, []);
+
+  // Scroll to bottom
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Handle message submission
   const handleSendMessage = (message: string, attachments?: File[]) => {
     if (!selectedModel || !selectedActivityType) {
       toast({
-        title: "Configuration Required",
-        description: "Please select an AI model and activity type",
+        title: "Error",
+        description: "Please select AI model and activity type",
         variant: "destructive",
       });
       return;
     }
 
+    setLastMessage(message);
+
+    // Create FormData for file upload
     const formData = new FormData();
     formData.append('message', message);
     formData.append('aiModelId', selectedModel.toString());
     formData.append('activityTypeId', selectedActivityType.toString());
     
+    // Session will be created automatically if not provided
     if (currentSession) {
       formData.append('sessionId', currentSession.toString());
     }
@@ -254,6 +392,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   const handleClearChat = () => {
     createSessionMutation.mutate();
     setMessages([]);
+    // Removed toast notification to prevent screen jumping
   };
 
   // Repeat last request - fill input field instead of submitting
@@ -267,33 +406,40 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       return;
     }
     setPrefillMessage(lastMessage);
+    // Clear the prefill message after a short delay to allow the effect to run
     setTimeout(() => setPrefillMessage(""), 100);
   };
 
+  const selectedModelData = aiModels?.find(m => m.id === selectedModel);
+  const selectedActivityTypeData = activityTypes?.find(t => t.id === selectedActivityType);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      {/* Compact Chat Controls - Essential controls only */}
+      {/* Chat Header - Fixed at top */}
       <div style={{ 
         backgroundColor: 'white', 
         borderBottom: '1px solid #e2e8f0', 
-        padding: '8px 16px', 
+        padding: '12px 16px', 
         flexShrink: 0 
       }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          {/* Left side - Connection Status */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            {isConnected ? (
-              <Wifi style={{ width: '16px', height: '16px', color: '#22c55e' }} />
-            ) : (
-              <WifiOff style={{ width: '16px', height: '16px', color: '#94a3b8' }} />
-            )}
-            <span style={{ fontSize: '14px', color: '#64748b' }}>
-              {isConnected ? 'Connected' : 'Disconnected'}
-            </span>
+          {/* Left side - AI Assistant and Status */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#374151' }}>AI Assistant</h2>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              {isConnected ? (
+                <Wifi style={{ width: '16px', height: '16px', color: '#22c55e' }} />
+              ) : (
+                <WifiOff style={{ width: '16px', height: '16px', color: '#94a3b8' }} />
+              )}
+              <span style={{ fontSize: '14px', color: '#64748b' }}>
+                {isConnected ? 'Connected' : 'Disconnected'}
+              </span>
+            </div>
           </div>
 
-          {/* Right side - Essential Controls */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {/* Center and Right - Controls spread evenly */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1, justifyContent: 'flex-end' }}>
             {/* AI Model Dropdown */}
             <Select
               value={selectedModel?.toString()}
@@ -306,7 +452,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
               }}
               disabled={modelsLoading}
             >
-              <SelectTrigger style={{ width: '160px', fontSize: '14px' }}>
+              <SelectTrigger style={{ width: '180px', fontWeight: 600 }}>
                 <SelectValue placeholder="Select AI Model" />
               </SelectTrigger>
               <SelectContent>
@@ -339,7 +485,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
               onValueChange={(value) => setSelectedActivityType(parseInt(value))}
               disabled={typesLoading}
             >
-              <SelectTrigger style={{ width: '160px', fontSize: '14px' }}>
+              <SelectTrigger style={{ width: '180px', fontWeight: 600 }}>
                 <SelectValue placeholder="Select Activity Type" />
               </SelectTrigger>
               <SelectContent>
@@ -351,8 +497,10 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
               </SelectContent>
             </Select>
 
+
+
             {/* Chat Management Buttons */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Button
                 variant={showPreviousChats ? "default" : "outline"}
                 size="sm"
@@ -360,12 +508,13 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                 style={{ 
                   display: 'flex', 
                   alignItems: 'center', 
-                  gap: '4px',
-                  padding: '6px 10px',
-                  fontSize: '12px'
+                  gap: '6px',
+                  padding: '8px 12px',
+                  fontSize: '14px',
+                  fontWeight: 600
                 }}
               >
-                <History style={{ width: '14px', height: '14px' }} />
+                <History style={{ width: '16px', height: '16px' }} />
                 History
               </Button>
               <Button
@@ -376,28 +525,29 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                 style={{ 
                   display: 'flex', 
                   alignItems: 'center', 
-                  gap: '4px',
-                  padding: '6px 10px',
-                  fontSize: '12px'
+                  gap: '6px',
+                  padding: '8px 12px',
+                  fontSize: '14px',
+                  fontWeight: 600
                 }}
               >
-                <RotateCcw style={{ width: '14px', height: '14px' }} />
+                <RotateCcw style={{ width: '16px', height: '16px' }} />
                 Repeat
               </Button>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleClearChat}
-                disabled={createSessionMutation.isPending}
                 style={{ 
                   display: 'flex', 
                   alignItems: 'center', 
-                  gap: '4px',
-                  padding: '6px 10px',
-                  fontSize: '12px'
+                  gap: '6px',
+                  padding: '8px 12px',
+                  fontSize: '14px',
+                  fontWeight: 600
                 }}
               >
-                <Trash2 style={{ width: '14px', height: '14px' }} />
+                <Trash2 style={{ width: '16px', height: '16px' }} />
                 Clear
               </Button>
             </div>
@@ -405,28 +555,23 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
         </div>
       </div>
 
-      {/* Previous Chat Sessions (when shown) */}
+      {/* Previous Chat Sessions - Collapsible */}
       {showPreviousChats && (
         <div style={{ 
           backgroundColor: '#f8fafc', 
           borderBottom: '1px solid #e2e8f0', 
-          padding: '16px',
-          maxHeight: '300px',
-          overflow: 'auto',
-          flexShrink: 0
+          padding: '16px', 
+          flexShrink: 0 
         }}>
-          <div style={{ fontSize: '14px', fontWeight: 600, marginBottom: '8px', color: '#374151' }}>
-            Previous Chat Sessions
-          </div>
-          <div style={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            gap: '8px',
-            maxHeight: '200px',
-            overflow: 'auto'
-          }}>
+          <div style={{ maxHeight: '192px', overflowY: 'auto' }}>
+            <h3 style={{ 
+              fontSize: '14px', 
+              fontWeight: 600, 
+              color: '#374151', 
+              marginBottom: '8px' 
+            }}>Previous Chat Sessions</h3>
             {sessionsLoading ? (
-              <div style={{ textAlign: 'center', padding: '16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', padding: '16px 0' }}>
                 <div style={{ 
                   width: '16px', 
                   height: '16px', 
@@ -490,25 +635,15 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       )}
 
       {/* Chat Messages - Scrollable middle section */}
-      <div style={{ 
-        flex: 1, 
-        display: 'flex', 
-        flexDirection: 'column',
-        overflowY: 'auto',
-        padding: '16px',
-        backgroundColor: '#f8fafc'
-      }}>
+      <div className="chat-main">
+      {/* Chat Messages Area */}
+      <div className="chat-messages-container">
+
+
         {/* Chat Messages */}
         {messagesLoading ? (
-          <div style={{ display: 'flex', justifyContent: 'center', padding: '32px' }}>
-            <div style={{ 
-              width: '32px', 
-              height: '32px', 
-              border: '3px solid #3b82f6', 
-              borderTopColor: 'transparent', 
-              borderRadius: '50%', 
-              animation: 'spin 1s linear infinite' 
-            }}></div>
+          <div className="flex justify-center">
+            <div className="loading-spinner" style={{ width: '32px', height: '32px' }}></div>
           </div>
         ) : messages.length === 0 ? (
           <div style={{ 
@@ -533,56 +668,51 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
             </div>
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {messages.map((message) => {
-              const messageAiModel = message.aiModel || aiModels?.find(m => m.id === message.aiModelId);
-              return (
-                <ChatMessage
-                  key={message.id}
-                  message={message}
-                  aiModel={messageAiModel}
-                  user={user}
-                />
-              );
-            })}
+          messages.map((message) => {
+            // Use the AI model data embedded in the message, or fall back to finding it
+            const messageAiModel = message.aiModel || aiModels?.find(m => m.id === message.aiModelId);
+            return (
+              <ChatMessage
+                key={message.id}
+                message={message}
+                aiModel={messageAiModel}
+                user={user}
+              />
+            );
+          })
+        )}
 
-            {/* Loading indicator */}
-            {sendMessageMutation.isPending && (
-              <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+        {/* Loading indicator */}
+        {sendMessageMutation.isPending && (
+          <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+            <div style={{ 
+              backgroundColor: 'white', 
+              border: '1px solid #e2e8f0', 
+              borderRadius: '8px', 
+              padding: '8px 16px',
+              maxWidth: '320px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <div style={{ 
-                  backgroundColor: 'white', 
-                  border: '1px solid #e2e8f0', 
-                  borderRadius: '8px', 
-                  padding: '8px 16px',
-                  maxWidth: '320px'
-                }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <div style={{ 
-                      width: '16px', 
-                      height: '16px', 
-                      border: '2px solid #3b82f6', 
-                      borderTopColor: 'transparent', 
-                      borderRadius: '50%', 
-                      animation: 'spin 1s linear infinite' 
-                    }}></div>
-                    <span style={{ fontSize: '14px', color: '#64748b' }}>AI is thinking...</span>
-                  </div>
-                </div>
+                  width: '16px', 
+                  height: '16px', 
+                  border: '2px solid #3b82f6', 
+                  borderTopColor: 'transparent', 
+                  borderRadius: '50%', 
+                  animation: 'spin 1s linear infinite' 
+                }}></div>
+                <span style={{ fontSize: '14px', color: '#64748b' }}>AI is thinking...</span>
               </div>
-            )}
-
-            <div ref={messagesEndRef} />
+            </div>
           </div>
         )}
+
+        <div ref={messagesEndRef} />
       </div>
+</div>
 
       {/* Chat Input - Fixed at bottom */}
-      <div style={{ 
-        backgroundColor: 'white', 
-        borderTop: '1px solid #e2e8f0', 
-        padding: '16px',
-        flexShrink: 0
-      }}>
+      <div className="chat-input-container">
         <ChatInput
           onSendMessage={handleSendMessage}
           disabled={!selectedModel || !selectedActivityType || !currentSession || sendMessageMutation.isPending}
