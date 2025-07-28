@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import Sidebar from "@/components/layout/Sidebar";
 import ChatInterface from "@/components/chat/ChatInterface";
 import { useQuery } from "@tanstack/react-query";
-import { Building2, LogOut, RotateCcw, Trash2, Star } from "lucide-react";
+import { Building2, LogOut, RotateCcw, Trash2, Star, ArrowLeft } from "lucide-react";
 import TutorialArrow from "@/components/tutorial/TutorialArrow";
 import { useTutorial } from "@/hooks/useTutorial";
 import { DemoUsageBanner } from "@/components/demo/DemoUsageBanner";
@@ -280,15 +280,25 @@ export default function Home() {
     enabled: isSuperUserLevel,
   });
 
-  // Clear cookies function for super-users
-  const handleClearCookies = () => {
-    console.log("Super-user clearing all cookies and session data");
+  // Clear cookies function with server logout
+  const handleClearCookies = async () => {
+    console.log("Clearing all session data and returning to landing page");
     
-    // Get current user email for tracking
     const currentEmail = user?.email || 'unknown';
     console.log(`Clearing session for user: ${currentEmail}`);
     
-    // Clear all cookies more thoroughly
+    try {
+      // Call server logout endpoint first
+      await fetch('/api/auth/logout', { 
+        method: 'POST',
+        credentials: 'include'
+      });
+      console.log('Server logout successful');
+    } catch (error) {
+      console.error('Server logout failed:', error);
+    }
+    
+    // Clear all cookies thoroughly
     const cookies = document.cookie.split(";");
     for (let cookie of cookies) {
       const eqPos = cookie.indexOf("=");
@@ -301,25 +311,14 @@ export default function Home() {
       console.log(`Cleared cookie: ${name}`);
     }
     
-    // Clear all storage with email tracking
-    const storageKeys = Object.keys(localStorage);
-    console.log(`Clearing ${storageKeys.length} localStorage items`);
+    // Clear all storage
     localStorage.clear();
     sessionStorage.clear();
     
-    // Store the email for future reference
-    localStorage.setItem('lastClearedUser', currentEmail);
-    localStorage.setItem('lastClearedTime', new Date().toISOString());
+    console.log('All data cleared, redirecting to landing page...');
     
-    toast({
-      title: "Session Reset Complete",
-      description: `All data cleared for ${currentEmail}. Returning to landing page...`,
-    });
-    
-    // Force complete page replacement to ensure clean state
-    setTimeout(() => {
-      window.location.replace('/');
-    }, 1500);
+    // Immediate redirect without delay
+    window.location.replace('/');
   };
 
   // Company switching function for super-users
@@ -550,26 +549,46 @@ export default function Home() {
               </>
             )}
             
-            {/* Development Testing Button - Always visible in development */}
+            {/* Development Testing Buttons - Always visible in development */}
             {process.env.NODE_ENV === 'development' && !isSuperUserLevel && !isDemoMode && (
-              <button
-                onClick={handleClearCookies}
-                style={{
-                  fontSize: '12px',
-                  color: '#dc2626',
-                  background: 'white',
-                  border: '1px solid #fca5a5',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  padding: '6px 12px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px'
-                }}
-              >
-                <Trash2 size={14} />
-                Dev Reset
-              </button>
+              <>
+                <button
+                  onClick={() => window.location.href = '/'}
+                  style={{
+                    fontSize: '12px',
+                    color: '#2563eb',
+                    background: 'white',
+                    border: '1px solid #3b82f6',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    padding: '6px 12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  <ArrowLeft size={14} />
+                  Landing
+                </button>
+                <button
+                  onClick={handleClearCookies}
+                  style={{
+                    fontSize: '12px',
+                    color: '#dc2626',
+                    background: 'white',
+                    border: '1px solid #fca5a5',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    padding: '6px 12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  <Trash2 size={14} />
+                  Dev Reset
+                </button>
+              </>
             )}
             
             {/* Features & Benefits button for demo users */}
