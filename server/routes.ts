@@ -611,12 +611,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // API key update endpoint
-  app.post('/api/admin/update-api-key', requireAuth, async (req: any, res) => {
+  app.post('/api/admin/update-api-key', isAuthenticated, async (req: any, res) => {
     try {
       const { provider, apiKey } = req.body;
-      console.log(`Update API key request from user: ${req.user.claims.sub}`);
+      console.log(`Update API key request from user: ${req.user.userId}`);
       
-      const user = await storage.getUser(req.user.claims.sub);
+      const user = await storage.getUser(req.user.userId);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
@@ -1591,7 +1591,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-              model: 'llama-3.1-sonar-small-128k-chat',
+              model: 'sonar',
               messages: [{ role: 'user', content: 'test' }],
               max_tokens: 5
             })
