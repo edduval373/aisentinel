@@ -899,21 +899,55 @@ export default function CompanySetup() {
                     {showCompanyLogo && (
                       <div style={{ position: 'relative', display: 'inline-block' }}>
                         {currentCompany?.logo ? (
-                          <img 
-                            src={currentCompany.logo} 
-                            alt={currentCompany.name}
-                            style={{ 
-                              maxWidth: `${logoSize}px`, 
-                              maxHeight: `${logoSize}px`, 
-                              height: 'auto',
-                              width: 'auto',
-                              objectFit: 'contain',
-                              borderRadius: '12px',
-                              border: '3px solid #9ca3af',
-                              transition: 'all 0.3s ease',
-                              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
-                            }}
-                          />
+                          <>
+                            <img 
+                              src={currentCompany.logo} 
+                              alt={currentCompany.name}
+                              onError={(e) => {
+                                // Fallback to company initial if logo fails to load
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = 'none';
+                                const fallbackDiv = target.parentElement?.querySelector('.logo-fallback') as HTMLElement;
+                                if (fallbackDiv) {
+                                  fallbackDiv.style.display = 'flex';
+                                }
+                              }}
+                              style={{ 
+                                maxWidth: `${logoSize}px`, 
+                                maxHeight: `${logoSize}px`, 
+                                height: 'auto',
+                                width: 'auto',
+                                objectFit: 'contain',
+                                borderRadius: '12px',
+                                border: '3px solid #9ca3af',
+                                transition: 'all 0.3s ease',
+                                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+                              }}
+                            />
+                            <div 
+                              className="logo-fallback"
+                              style={{ 
+                                width: `${logoSize}px`, 
+                                height: `${logoSize}px`, 
+                                backgroundColor: '#3b82f6', 
+                                borderRadius: '12px',
+                                display: 'none',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                color: 'white',
+                                fontSize: `${Math.floor(logoSize * 0.35)}px`,
+                                fontWeight: 700,
+                                transition: 'all 0.3s ease',
+                                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                border: '3px solid #9ca3af'
+                              }}
+                            >
+                              {currentCompany.name.charAt(0).toUpperCase()}
+                            </div>
+                          </>
                         ) : (
                           <div 
                             style={{ 

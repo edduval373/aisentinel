@@ -71,6 +71,15 @@ function CompanyInfoLarge() {
               <img 
                 src={currentCompany.logo} 
                 alt={currentCompany.name}
+                onError={(e) => {
+                  // Fallback to company initial if logo fails to load
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                  const fallbackDiv = target.parentElement?.querySelector('.logo-fallback') as HTMLElement;
+                  if (fallbackDiv) {
+                    fallbackDiv.style.display = 'flex';
+                  }
+                }}
                 style={{ 
                   maxWidth: `${headerLogoSize}px`, 
                   maxHeight: `${headerLogoSize}px`, 
@@ -81,6 +90,27 @@ function CompanyInfoLarge() {
                   display: 'block'
                 }}
               />
+              <div 
+                className="logo-fallback"
+                style={{ 
+                  width: `${headerLogoSize}px`, 
+                  height: `${headerLogoSize}px`, 
+                  backgroundColor: '#3b82f6', 
+                  borderRadius: '6px',
+                  display: 'none',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  fontSize: `${Math.floor(Math.min(headerLogoSize, 48) * 0.4)}px`,
+                  fontWeight: 700,
+                  border: '1px solid transparent',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0
+                }}
+              >
+                {currentCompany.name.charAt(0).toUpperCase()}
+              </div>
             </div>
           ) : (
             <div 
@@ -160,18 +190,49 @@ function CompanyInfo() {
       {showCompanyLogo && (
         <>
           {currentCompany.logo ? (
-            <img 
-              src={currentCompany.logo} 
-              alt={currentCompany.name}
-              style={{ 
-                maxWidth: `${headerLogoSize}px`, 
-                maxHeight: `${headerLogoSize}px`, 
-                height: 'auto',
-                width: 'auto',
-                objectFit: 'contain',
-                borderRadius: '6px'
-              }}
-            />
+            <div style={{ position: 'relative', display: 'inline-block' }}>
+              <img 
+                src={currentCompany.logo} 
+                alt={currentCompany.name}
+                onError={(e) => {
+                  // Fallback to company initial if logo fails to load
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                  const fallbackDiv = target.parentElement?.querySelector('.logo-fallback') as HTMLElement;
+                  if (fallbackDiv) {
+                    fallbackDiv.style.display = 'flex';
+                  }
+                }}
+                style={{ 
+                  maxWidth: `${headerLogoSize}px`, 
+                  maxHeight: `${headerLogoSize}px`, 
+                  height: 'auto',
+                  width: 'auto',
+                  objectFit: 'contain',
+                  borderRadius: '6px'
+                }}
+              />
+              <div 
+                className="logo-fallback"
+                style={{ 
+                  width: `${headerLogoSize}px`, 
+                  height: `${headerLogoSize}px`, 
+                  backgroundColor: '#3b82f6', 
+                  borderRadius: '6px',
+                  display: 'none',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  fontSize: '16px',
+                  fontWeight: 600,
+                  position: 'absolute',
+                  top: 0,
+                  left: 0
+                }}
+              >
+                {currentCompany.name.charAt(0).toUpperCase()}
+              </div>
+            </div>
           ) : (
             <div style={{ 
               width: `${headerLogoSize}px`, 
