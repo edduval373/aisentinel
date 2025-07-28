@@ -580,15 +580,43 @@ export default function Home() {
             {/* Sign Out/Sign Up Button with Demo indicator */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
               <button
-                onClick={() => {
+                onClick={async () => {
                   if (isDemoMode) {
                     // Demo users go to email verification screen
                     window.location.href = '/login';
                   } else {
                     // Regular users sign out and clear session
-                    fetch('/api/auth/logout', { method: 'POST' })
-                      .then(() => window.location.href = '/')
-                      .catch(() => window.location.href = '/');
+                    try {
+                      console.log('Signing out user...');
+                      await fetch('/api/auth/logout', { 
+                        method: 'POST',
+                        credentials: 'include'
+                      });
+                      
+                      // Clear all client-side data
+                      localStorage.clear();
+                      sessionStorage.clear();
+                      
+                      // Clear all cookies manually
+                      document.cookie.split(";").forEach(cookie => {
+                        const eqPos = cookie.indexOf("=");
+                        const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+                        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+                      });
+                      
+                      console.log('Session cleared, redirecting to landing page...');
+                      
+                      // Force redirect to landing page and reload
+                      window.location.href = '/';
+                      window.location.reload();
+                    } catch (error) {
+                      console.error('Sign out error:', error);
+                      // Force redirect even if logout fails
+                      localStorage.clear();
+                      sessionStorage.clear();
+                      window.location.href = '/';
+                      window.location.reload();
+                    }
                   }
                 }}
                 style={{
