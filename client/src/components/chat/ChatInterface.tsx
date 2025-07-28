@@ -308,9 +308,9 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
             >
               <SelectTrigger style={{ 
                 width: '160px', 
-                fontSize: '14px',
-                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-                fontWeight: '500',
+                fontSize: '12px',
+                fontFamily: 'inherit',
+                fontWeight: 'inherit',
                 borderRadius: '8px',
                 border: '1px solid #d1d5db',
                 backgroundColor: 'white'
