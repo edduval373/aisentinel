@@ -59,6 +59,16 @@ body {
 
 /* AI Sentinel Custom CSS - Pure CSS Implementation */
 
+/* Features & Benefits Dialog - Override z-index to be above tutorial arrow */
+.features-benefits-dialog {
+  z-index: 1100 !important;
+}
+
+/* Ensure the dialog overlay is also above the tutorial arrow */
+[data-radix-dialog-overlay] {
+  z-index: 1050 !important;
+}
+
 /* Features & Benefits Dialog - Hide default close buttons but show our custom X */
 .features-benefits-dialog [data-radix-dialog-close-button] {
   display: none !important;

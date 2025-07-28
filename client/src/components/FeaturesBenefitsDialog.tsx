@@ -174,7 +174,8 @@ export default function FeaturesBenefitsDialog({ open, onOpenChange }: FeaturesB
           background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
           borderRadius: '20px',
           boxShadow: '0 25px 50px rgba(0, 0, 0, 0.15)',
-          border: 'none'
+          border: 'none',
+          zIndex: 1100  // Higher than tutorial arrow (1000)
         }}>
         <div style={{ position: 'relative', height: '100%' }}>
           {/* Header */}
