@@ -306,19 +306,69 @@ Please provide a synthesized response that incorporates the best elements from a
 
   async generateGoogleResponse(message: string, modelId: string, systemPrompt: string): Promise<string> {
     try {
-      // For now, return a demo response since Google AI integration requires additional setup
-      return `**Demo Response from Google ${modelId}**
+      const apiKey = process.env.GOOGLE_AI_API_KEY;
+      if (!apiKey || apiKey === "default_key") {
+        throw new Error("Google AI API key not configured");
+      }
 
-You asked: "${message}"
+      // Google AI Gemini API endpoint
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelId}:generateContent?key=${apiKey}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                {
+                  text: `${systemPrompt}\n\nUser: ${message}`
+                }
+              ]
+            }
+          ],
+          generationConfig: {
+            temperature: 0.7,
+            topK: 40,
+            topP: 0.95,
+            maxOutputTokens: 1024,
+          },
+          safetySettings: [
+            {
+              category: "HARM_CATEGORY_HARASSMENT",
+              threshold: "BLOCK_MEDIUM_AND_ABOVE"
+            },
+            {
+              category: "HARM_CATEGORY_HATE_SPEECH",
+              threshold: "BLOCK_MEDIUM_AND_ABOVE"
+            },
+            {
+              category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+              threshold: "BLOCK_MEDIUM_AND_ABOVE"
+            },
+            {
+              category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+              threshold: "BLOCK_MEDIUM_AND_ABOVE"
+            }
+          ]
+        })
+      });
 
-This is a demonstration of AI Sentinel's Google AI integration. In the full version:
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`Google AI API error: ${response.status} - ${errorText}`);
+        throw new Error(`Google AI API error: ${response.status}`);
+      }
 
-🤖 **AI Model**: ${modelId} would process your request
-📋 **System Context**: ${systemPrompt.substring(0, 100)}...
-🔒 **Security**: Content filtering and compliance monitoring would be active
-📊 **Analytics**: All interactions would be logged and analyzed
+      const data = await response.json();
+      
+      if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+        console.error("Invalid response from Google AI:", data);
+        throw new Error("Invalid response format from Google AI");
+      }
 
-*Note: Google AI integration requires API key configuration in the admin panel.*`;
+      const content = data.candidates[0].content.parts[0].text;
+      return content || "I apologize, but I couldn't generate a response at this time.";
     } catch (error) {
       console.error("Google AI error:", error);
       throw new Error("Failed to get response from Google AI");
