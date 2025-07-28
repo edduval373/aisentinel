@@ -457,9 +457,9 @@ export default function SetupApiKeys() {
                         onClick={isDemoMode ? () => openDialog('save') : () => handleSaveApiKey(provider.id)}
                         disabled={isDemoMode || updateApiKeyMutation.isPending}
                         style={{
-                          backgroundColor: (isDemoMode || !isPlaceholder) ? 'transparent' : '#1e3a8a',
-                          color: (isDemoMode || !isPlaceholder) ? '#1e3a8a' : 'white',
-                          border: (isDemoMode || !isPlaceholder) ? '1px solid #1e3a8a' : 'none',
+                          backgroundColor: (isDemoMode || isPlaceholder) ? 'transparent' : '#1e3a8a',
+                          color: (isDemoMode || isPlaceholder) ? '#1e3a8a' : 'white',
+                          border: (isDemoMode || isPlaceholder) ? '1px solid #1e3a8a' : 'none',
                           borderRadius: '6px',
                           padding: '8px 16px',
                           display: 'flex',
