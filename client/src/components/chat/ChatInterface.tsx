@@ -546,7 +546,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
               );
             })}
 
-            {/* Loading indicator */}
+            {/* Loading indicator with AI Sentinel logo */}
             {sendMessageMutation.isPending && (
               <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
                 <div style={{ 
@@ -557,14 +557,16 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                   maxWidth: '320px'
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <div style={{ 
-                      width: '16px', 
-                      height: '16px', 
-                      border: '2px solid #3b82f6', 
-                      borderTopColor: 'transparent', 
-                      borderRadius: '50%', 
-                      animation: 'spin 1s linear infinite' 
-                    }}></div>
+                    <img 
+                      src="/ai-sentinel-logo.png" 
+                      alt="AI Sentinel" 
+                      style={{ 
+                        width: '16px', 
+                        height: '16px',
+                        animation: 'spin 2s linear infinite',
+                        filter: 'brightness(1.1) saturate(1.3) contrast(1.2)'
+                      }}
+                    />
                     <span style={{ fontSize: '14px', color: '#64748b' }}>AI is thinking...</span>
                   </div>
                 </div>
