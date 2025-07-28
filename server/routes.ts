@@ -609,6 +609,66 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to update AI model", error: error.message });
     }
   });
+
+  // API key update endpoint
+  app.post('/api/admin/update-api-key', requireAuth, async (req: any, res) => {
+    try {
+      const { provider, apiKey } = req.body;
+      console.log(`Update API key request from user: ${req.user.claims.sub}`);
+      
+      const user = await storage.getUser(req.user.claims.sub);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      console.log(`User found: ${user.email} Role level: ${user.roleLevel}`);
+      const userRoleLevel = user.roleLevel || 1;
+      if (userRoleLevel < 99) { // Must be owner (99) or super-user (100)
+        return res.status(403).json({ message: "Owner access required to update API keys" });
+      }
+
+      if (!provider || !apiKey) {
+        return res.status(400).json({ message: "Provider and API key are required" });
+      }
+
+      if (apiKey.startsWith('placeholder-') || apiKey.includes('$')) {
+        return res.status(400).json({ message: "Please enter a real API key, not a placeholder" });
+      }
+
+      // Basic format validation
+      if (provider === 'openai' && !apiKey.startsWith('sk-')) {
+        return res.status(400).json({ message: 'OpenAI API keys should start with sk-' });
+      }
+      if (provider === 'anthropic' && !apiKey.startsWith('sk-ant-')) {
+        return res.status(400).json({ message: 'Anthropic API keys should start with sk-ant-' });
+      }
+      if (provider === 'perplexity' && !apiKey.startsWith('pplx-')) {
+        return res.status(400).json({ message: 'Perplexity API keys should start with pplx-' });
+      }
+
+      // Update AI models for this provider
+      const models = await storage.getAiModels(user.companyId);
+      const updatedModels = [];
+
+      for (const model of models) {
+        if (model.provider.toLowerCase() === provider.toLowerCase()) {
+          const updatedModel = await storage.updateAiModel(model.id, { apiKey });
+          updatedModels.push(updatedModel);
+        }
+      }
+
+      console.log(`Updated ${updatedModels.length} models for provider: ${provider}`);
+      res.json({ 
+        success: true, 
+        message: `API key updated for ${updatedModels.length} ${provider} models`,
+        updatedModels: updatedModels.length 
+      });
+
+    } catch (error) {
+      console.error('Error updating API key:', error);
+      res.status(500).json({ message: 'Failed to update API key' });
+    }
+  });
   
   // Setup authentication routes
   setupAuthRoutes(app);
@@ -1531,7 +1591,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-              model: 'llama-3.1-sonar-small-128k-online',
+              model: 'llama-3.1-sonar-small-128k-chat',
               messages: [{ role: 'user', content: 'test' }],
               max_tokens: 5
             })
