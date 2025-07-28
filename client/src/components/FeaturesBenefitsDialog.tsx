@@ -416,7 +416,7 @@ export default function FeaturesBenefitsDialog({ open, onOpenChange }: FeaturesB
             <div style={{
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
+              justifyContent: 'space-between',
               gap: '16px'
             }}>
               <div style={{
@@ -433,6 +433,36 @@ export default function FeaturesBenefitsDialog({ open, onOpenChange }: FeaturesB
                 <CheckCircle2 style={{ width: '16px', height: '16px' }} />
                 Comprehensive AI governance solution for enterprise security and compliance
               </div>
+              
+              <button
+                onClick={() => onOpenChange(false)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+                  color: 'white',
+                  border: 'none',
+                  padding: '12px 24px',
+                  borderRadius: '12px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(59, 130, 246, 0.4)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0px)';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.3)';
+                }}
+              >
+                <ArrowRight style={{ width: '18px', height: '18px' }} />
+                Proceed to Chat
+              </button>
             </div>
           </div>
         </div>
