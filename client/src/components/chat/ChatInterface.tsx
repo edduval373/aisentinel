@@ -306,29 +306,70 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
               }}
               disabled={modelsLoading}
             >
-              <SelectTrigger style={{ width: '160px', fontSize: '14px' }}>
+              <SelectTrigger style={{ 
+                width: '160px', 
+                fontSize: '14px',
+                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                fontWeight: '500',
+                borderRadius: '8px',
+                border: '1px solid #d1d5db',
+                backgroundColor: 'white'
+              }}>
                 <SelectValue placeholder="Select AI Model" />
               </SelectTrigger>
               <SelectContent style={{ 
                 backgroundColor: '#eff6ff', 
                 border: '1px solid #93c5fd', 
-                borderRadius: '8px',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                zIndex: 1000
+                borderRadius: '12px',
+                boxShadow: '0 8px 25px rgba(59, 130, 246, 0.15)',
+                zIndex: 1000,
+                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                fontSize: '14px',
+                fontWeight: '500'
               }}>
                 {aiModels?.map((model: any) => (
-                  <SelectItem key={model.id} value={model.id.toString()}>
+                  <SelectItem 
+                    key={model.id} 
+                    value={model.id.toString()}
+                    style={{
+                      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      padding: '10px 12px',
+                      borderRadius: '6px',
+                      margin: '2px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
                     {model.name}
                     {model.hasValidApiKey === false ? ' ⚠️' : ''}
                   </SelectItem>
                 ))}
                 {modelFusionConfig?.isEnabled && (
                   <>
-                    <Separator style={{ margin: '4px 0' }} />
-                    <SelectItem value="model-fusion">
+                    <Separator style={{ margin: '8px 4px', backgroundColor: '#bfdbfe' }} />
+                    <SelectItem 
+                      value="model-fusion"
+                      style={{
+                        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                        fontSize: '14px',
+                        fontWeight: '500',
+                        padding: '10px 12px',
+                        borderRadius: '6px',
+                        margin: '2px',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         Model Fusion
-                        <Badge variant="default" style={{ backgroundColor: 'hsl(221, 83%, 53%)' }}>
+                        <Badge variant="default" style={{ 
+                          backgroundColor: 'hsl(221, 83%, 53%)',
+                          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                          fontSize: '11px',
+                          fontWeight: '600'
+                        }}>
                           <Brain style={{ width: '12px', height: '12px', marginRight: '4px' }} />
                           Multi-AI
                         </Badge>
@@ -345,18 +386,42 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
               onValueChange={(value) => setSelectedActivityType(parseInt(value))}
               disabled={typesLoading}
             >
-              <SelectTrigger style={{ width: '160px', fontSize: '14px' }}>
+              <SelectTrigger style={{ 
+                width: '160px', 
+                fontSize: '14px',
+                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                fontWeight: '500',
+                borderRadius: '8px',
+                border: '1px solid #d1d5db',
+                backgroundColor: 'white'
+              }}>
                 <SelectValue placeholder="Select Activity Type" />
               </SelectTrigger>
               <SelectContent style={{ 
                 backgroundColor: '#eff6ff', 
                 border: '1px solid #93c5fd', 
-                borderRadius: '8px',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                zIndex: 1000
+                borderRadius: '12px',
+                boxShadow: '0 8px 25px rgba(59, 130, 246, 0.15)',
+                zIndex: 1000,
+                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                fontSize: '14px',
+                fontWeight: '500'
               }}>
                 {activityTypes?.map((type) => (
-                  <SelectItem key={type.id} value={type.id.toString()}>
+                  <SelectItem 
+                    key={type.id} 
+                    value={type.id.toString()}
+                    style={{
+                      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      padding: '10px 12px',
+                      borderRadius: '6px',
+                      margin: '2px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
                     {type.name}
                   </SelectItem>
                 ))}
