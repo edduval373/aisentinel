@@ -308,9 +308,9 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
             >
               <SelectTrigger style={{ 
                 width: '160px', 
-                fontSize: '12px',
-                fontFamily: 'inherit',
-                fontWeight: 'inherit',
+                fontSize: '14px',
+                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                fontWeight: '500',
                 borderRadius: '8px',
                 border: '1px solid #d1d5db',
                 backgroundColor: 'white'
@@ -439,7 +439,9 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                   alignItems: 'center', 
                   gap: '4px',
                   padding: '6px 10px',
-                  fontSize: '12px'
+                  fontSize: '14px',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                  fontWeight: '500'
                 }}
               >
                 <History style={{ width: '14px', height: '14px' }} />
@@ -455,7 +457,9 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                   alignItems: 'center', 
                   gap: '4px',
                   padding: '6px 10px',
-                  fontSize: '12px'
+                  fontSize: '14px',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                  fontWeight: '500'
                 }}
               >
                 <RotateCcw style={{ width: '14px', height: '14px' }} />
@@ -471,7 +475,9 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                   alignItems: 'center', 
                   gap: '4px',
                   padding: '6px 10px',
-                  fontSize: '12px'
+                  fontSize: '14px',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                  fontWeight: '500'
                 }}
               >
                 <Trash2 style={{ width: '14px', height: '14px' }} />
