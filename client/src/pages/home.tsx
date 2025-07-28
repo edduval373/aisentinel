@@ -431,7 +431,8 @@ export default function Home() {
 
           {/* Right side - Super User Controls or Sign Out Button */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-            {isSuperUserLevel && !isDemoMode && userRoleLevel !== 0 && (
+            {/* Development Testing Controls - Enhanced for development workflow */}
+            {(isSuperUserLevel && !isDemoMode && userRoleLevel !== 0) && (
               <>
                 {/* Company Switcher */}
                 <div style={{ position: 'relative' }}>
@@ -544,9 +545,31 @@ export default function Home() {
                   }}
                 >
                   <Trash2 size={14} />
-                  Clear Cookies
+                  Reset Session
                 </button>
               </>
+            )}
+            
+            {/* Development Testing Button - Always visible in development */}
+            {process.env.NODE_ENV === 'development' && !isSuperUserLevel && !isDemoMode && (
+              <button
+                onClick={handleClearCookies}
+                style={{
+                  fontSize: '12px',
+                  color: '#dc2626',
+                  background: 'white',
+                  border: '1px solid #fca5a5',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  padding: '6px 12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}
+              >
+                <Trash2 size={14} />
+                Dev Reset
+              </button>
             )}
             
             {/* Features & Benefits button for demo users */}
@@ -585,38 +608,9 @@ export default function Home() {
                     // Demo users go to email verification screen
                     window.location.href = '/login';
                   } else {
-                    // Regular users sign out and clear session
-                    try {
-                      console.log('Signing out user...');
-                      await fetch('/api/auth/logout', { 
-                        method: 'POST',
-                        credentials: 'include'
-                      });
-                      
-                      // Clear all client-side data
-                      localStorage.clear();
-                      sessionStorage.clear();
-                      
-                      // Clear all cookies manually
-                      document.cookie.split(";").forEach(cookie => {
-                        const eqPos = cookie.indexOf("=");
-                        const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
-                        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
-                      });
-                      
-                      console.log('Session cleared, redirecting to landing page...');
-                      
-                      // Force redirect to landing page and reload
-                      window.location.href = '/';
-                      window.location.reload();
-                    } catch (error) {
-                      console.error('Sign out error:', error);
-                      // Force redirect even if logout fails
-                      localStorage.clear();
-                      sessionStorage.clear();
-                      window.location.href = '/';
-                      window.location.reload();
-                    }
+                    // Regular users sign out - use the same thorough approach as handleClearCookies
+                    console.log('Signing out user...');
+                    handleClearCookies();
                   }
                 }}
                 style={{
