@@ -232,6 +232,8 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       return;
     }
 
+    console.log('💬 Sending message - mutation will be pending:', message.substring(0, 50));
+
     const formData = new FormData();
     formData.append('message', message);
     formData.append('aiModelId', selectedModel.toString());
@@ -248,6 +250,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
     }
 
     sendMessageMutation.mutate(formData);
+    console.log('💬 Message mutation triggered - isPending should be true now');
   };
 
   // Clear current chat
@@ -276,7 +279,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       <div style={{ 
         backgroundColor: 'white', 
         borderBottom: '1px solid #e2e8f0', 
-        padding: '8px 16px', 
+        padding: '4px 16px', 
         flexShrink: 0 
       }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -547,31 +550,35 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
             })}
 
             {/* Loading indicator with AI Sentinel logo */}
-            {sendMessageMutation.isPending && (
-              <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
-                <div style={{ 
-                  backgroundColor: 'white', 
-                  border: '1px solid #e2e8f0', 
-                  borderRadius: '8px', 
-                  padding: '8px 16px',
-                  maxWidth: '320px'
-                }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <img 
-                      src="/ai-sentinel-logo.png" 
-                      alt="AI Sentinel" 
-                      style={{ 
-                        width: '16px', 
-                        height: '16px',
-                        animation: 'spin 2s linear infinite',
-                        filter: 'brightness(1.1) saturate(1.3) contrast(1.2)'
-                      }}
-                    />
-                    <span style={{ fontSize: '14px', color: '#64748b' }}>AI is thinking...</span>
+            {(() => {
+              console.log('🔄 Render check - sendMessageMutation.isPending:', sendMessageMutation.isPending);
+              return sendMessageMutation.isPending && (
+                <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '16px' }}>
+                  <div style={{ 
+                    backgroundColor: 'white', 
+                    border: '1px solid #e2e8f0', 
+                    borderRadius: '12px', 
+                    padding: '12px 16px',
+                    maxWidth: '320px',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <img 
+                        src="/ai-sentinel-logo.png" 
+                        alt="AI Sentinel" 
+                        style={{ 
+                          width: '20px', 
+                          height: '20px',
+                          animation: 'spin 2s linear infinite',
+                          filter: 'brightness(1.1) saturate(1.3) contrast(1.2)'
+                        }}
+                      />
+                      <span style={{ fontSize: '14px', color: '#64748b', fontWeight: '500' }}>AI is thinking...</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
 
             <div ref={messagesEndRef} />
           </div>

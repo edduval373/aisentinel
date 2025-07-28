@@ -369,12 +369,12 @@ export default function Home() {
         <div style={{ 
           backgroundColor: '#f1f5f9', 
           borderBottom: '1px solid #e2e8f0', 
-          padding: '8px 16px', 
+          padding: '2px 16px', 
           display: 'flex', 
           alignItems: 'center',
           justifyContent: 'space-between',
           flexShrink: 0,
-          minHeight: '54px'
+          minHeight: '48px'
         }}>
           {/* Left side - Menu Button */}
           <Button
