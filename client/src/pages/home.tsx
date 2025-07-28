@@ -551,46 +551,24 @@ export default function Home() {
             
             {/* Development Testing Buttons - Always visible in development for ALL users */}
             {process.env.NODE_ENV === 'development' && (
-              <>
-                <button
-                  onClick={() => window.location.href = '/'}
-                  style={{
-                    fontSize: '12px',
-                    color: '#2563eb',
-                    background: 'white',
-                    border: '1px solid #3b82f6',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    padding: '6px 12px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px'
-                  }}
-                >
-                  <ArrowLeft size={14} />
-                  Landing
-                </button>
-                {!isSuperUserLevel && (
-                  <button
-                    onClick={handleClearCookies}
-                    style={{
-                      fontSize: '12px',
-                      color: '#dc2626',
-                      background: 'white',
-                      border: '1px solid #fca5a5',
-                      borderRadius: '6px',
-                      cursor: 'pointer',
-                      padding: '6px 12px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '6px'
-                    }}
-                  >
-                    <Trash2 size={14} />
-                    Dev Reset
-                  </button>
-                )}
-              </>
+              <button
+                onClick={() => window.location.href = '/'}
+                style={{
+                  fontSize: '12px',
+                  color: '#2563eb',
+                  background: 'white',
+                  border: '1px solid #3b82f6',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  padding: '6px 12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}
+              >
+                <ArrowLeft size={14} />
+                Landing
+              </button>
             )}
             
             {/* Features & Benefits button for demo users */}
