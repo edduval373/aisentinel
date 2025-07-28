@@ -19,20 +19,9 @@ export function useFeaturesBenefits(isDemoMode: boolean = false) {
 
       return () => clearTimeout(timer);
     } else {
-      // For regular users, check localStorage
-      const hasShown = localStorage.getItem('ai-sentinel-features-shown');
-      if (hasShown === 'true') {
-        setHasShownOnce(true);
-      } else {
-        // Show automatically for first-time users
-        const timer = setTimeout(() => {
-          setShowDialog(true);
-          setHasShownOnce(true);
-          localStorage.setItem('ai-sentinel-features-shown', 'true');
-        }, 3000); // Show after 3 seconds
-
-        return () => clearTimeout(timer);
-      }
+      // For regular users, NEVER show automatically
+      // The dialog should only be shown manually via the button click
+      setHasShownOnce(true); // Mark as shown to prevent auto-display
     }
   }, [isDemoMode]);
 
