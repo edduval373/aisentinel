@@ -215,15 +215,15 @@ export default function Home() {
   const { showTutorial, completeTutorial } = useTutorial();
   const [showCompanySwitcher, setShowCompanySwitcher] = useState(false);
   
-  // Features & Benefits dialog for demo users
-  const { showDialog, openDialog, closeDialog } = useFeaturesBenefits();
-  
-  // Check if user is super-user (role level 100+)
-  const isSuperUserLevel = (user?.roleLevel ?? 0) >= 100;
-  
   // Check if we're in demo mode (role level 0)
   const userRoleLevel = user?.roleLevel || 0;
   const isDemoMode = userRoleLevel === 0;
+  
+  // Features & Benefits dialog for demo users
+  const { showDialog, openDialog, closeDialog } = useFeaturesBenefits(isDemoMode);
+  
+  // Check if user is super-user (role level 100+)
+  const isSuperUserLevel = (user?.roleLevel ?? 0) >= 100;
   
   // Determine if sidebar access is allowed (super users, owners, admins, and demo users - role level 0+)
   const canAccessSidebar = isAuthenticated && (isSuperUser || isOwner || isAdmin || isDemoMode || userRoleLevel >= 2);
