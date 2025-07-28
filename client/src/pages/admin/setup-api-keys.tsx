@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input-standard";
 import { Label } from "@/components/ui/label-standard";
 import { Badge } from "@/components/ui/badge-standard";
-import { Key, Shield, Zap, Globe, Save, TestTube, AlertCircle, Check, X } from "lucide-react";
+import { Key, Shield, Zap, Globe, Save, TestTube, AlertCircle, Check, X, Loader2 } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { hasAccessLevel, canViewAdminPage, ACCESS_REQUIREMENTS } from "@/utils/roleBasedAccess";
 import { useAuth } from "@/hooks/useAuth";
@@ -470,8 +470,12 @@ export default function SetupApiKeys() {
                           opacity: isDemoMode ? 0.6 : 1
                         }}
                       >
-                        <Save style={{ width: '16px', height: '16px' }} />
-                        Save
+                        {updateApiKeyMutation.isPending ? (
+                          <Loader2 style={{ width: '16px', height: '16px', animation: 'spin 1s linear infinite' }} />
+                        ) : (
+                          <Save style={{ width: '16px', height: '16px' }} />
+                        )}
+                        {updateApiKeyMutation.isPending ? 'Saving...' : 'Save'}
                       </Button>
                     </div>
                     <p style={{ fontSize: '12px', color: '#6b7280', margin: '0' }}>
