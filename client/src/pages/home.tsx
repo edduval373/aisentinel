@@ -14,6 +14,7 @@ import FeaturesBenefitsDialog from "@/components/FeaturesBenefitsDialog";
 import { useFeaturesBenefits } from "@/hooks/useFeaturesBenefits";
 
 import { useCompanyContext } from "@/hooks/useCompanyContext";
+import { validateAndFixBase64Image, getCompanyInitial, createFallbackImageStyle } from "../utils/imageUtils";
 
 
 
@@ -66,71 +67,61 @@ function CompanyInfoLarge() {
     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: '0', padding: '0' }}>
       {showCompanyLogo && (
         <>
-          {currentCompany.logo ? (
-            <div style={{ position: 'relative', display: 'inline-block', margin: '0', padding: '0' }}>
-              <img 
-                src={currentCompany.logo} 
-                alt={currentCompany.name}
-                onError={(e) => {
-                  // Fallback to company initial if logo fails to load
-                  const target = e.target as HTMLImageElement;
-                  target.style.display = 'none';
-                  const fallbackDiv = target.parentElement?.querySelector('.logo-fallback') as HTMLElement;
-                  if (fallbackDiv) {
-                    fallbackDiv.style.display = 'flex';
-                  }
-                }}
-                style={{ 
-                  maxWidth: `${headerLogoSize}px`, 
-                  maxHeight: `${headerLogoSize}px`, 
-                  height: 'auto',
-                  width: 'auto',
-                  objectFit: 'contain',
-                  borderRadius: '6px',
-                  display: 'block'
-                }}
-              />
-              <div 
-                className="logo-fallback"
-                style={{ 
-                  width: `${headerLogoSize}px`, 
-                  height: `${headerLogoSize}px`, 
-                  backgroundColor: '#3b82f6', 
-                  borderRadius: '6px',
-                  display: 'none',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'white',
-                  fontSize: `${Math.floor(Math.min(headerLogoSize, 48) * 0.4)}px`,
-                  fontWeight: 700,
-                  border: '1px solid transparent',
-                  position: 'absolute',
-                  top: 0,
-                  left: 0
-                }}
-              >
-                {currentCompany.name.charAt(0).toUpperCase()}
-              </div>
-            </div>
-          ) : (
-            <div 
-              style={{ 
-                width: `${headerLogoSize}px`, 
-                height: `${headerLogoSize}px`, 
-                backgroundColor: '#3b82f6', 
-                borderRadius: '8px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'white',
-                fontSize: `${Math.floor(Math.min(logoSize, 48) * 0.4)}px`,
-                fontWeight: 700,
-                border: '1px solid transparent'
-              }}
-            >
-              {currentCompany.name.charAt(0).toUpperCase()}
-            </div>
-          )}
+          {(() => {
+            const validImageUrl = validateAndFixBase64Image(currentCompany.logo || '');
+            const companyInitial = getCompanyInitial(currentCompany.name);
+            
+            if (validImageUrl) {
+              return (
+                <div style={{ position: 'relative', display: 'inline-block', margin: '0', padding: '0' }}>
+                  <img 
+                    src={validImageUrl} 
+                    alt={currentCompany.name}
+                    onError={(e) => {
+                      // Fallback to company initial if logo fails to load
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      const fallbackDiv = target.parentElement?.querySelector('.logo-fallback') as HTMLElement;
+                      if (fallbackDiv) {
+                        fallbackDiv.style.display = 'flex';
+                      }
+                    }}
+                    style={{ 
+                      maxWidth: `${headerLogoSize}px`, 
+                      maxHeight: `${headerLogoSize}px`, 
+                      height: 'auto',
+                      width: 'auto',
+                      objectFit: 'contain',
+                      borderRadius: '6px',
+                      display: 'block'
+                    }}
+                  />
+                  <div 
+                    className="logo-fallback"
+                    style={{ 
+                      ...createFallbackImageStyle(headerLogoSize, companyInitial),
+                      borderRadius: '6px',
+                      display: 'none',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0
+                    }}
+                  >
+                    {companyInitial}
+                  </div>
+                </div>
+              );
+            } else {
+              return (
+                <div style={{
+                  ...createFallbackImageStyle(headerLogoSize, companyInitial),
+                  borderRadius: '6px'
+                }}>
+                  {companyInitial}
+                </div>
+              );
+            }
+          })()}
         </>
       )}
       
@@ -189,66 +180,60 @@ function CompanyInfo() {
     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
       {showCompanyLogo && (
         <>
-          {currentCompany.logo ? (
-            <div style={{ position: 'relative', display: 'inline-block' }}>
-              <img 
-                src={currentCompany.logo} 
-                alt={currentCompany.name}
-                onError={(e) => {
-                  // Fallback to company initial if logo fails to load
-                  const target = e.target as HTMLImageElement;
-                  target.style.display = 'none';
-                  const fallbackDiv = target.parentElement?.querySelector('.logo-fallback') as HTMLElement;
-                  if (fallbackDiv) {
-                    fallbackDiv.style.display = 'flex';
-                  }
-                }}
-                style={{ 
-                  maxWidth: `${headerLogoSize}px`, 
-                  maxHeight: `${headerLogoSize}px`, 
-                  height: 'auto',
-                  width: 'auto',
-                  objectFit: 'contain',
+          {(() => {
+            const validImageUrl = validateAndFixBase64Image(currentCompany.logo || '');
+            const companyInitial = getCompanyInitial(currentCompany.name);
+            
+            if (validImageUrl) {
+              return (
+                <div style={{ position: 'relative', display: 'inline-block' }}>
+                  <img 
+                    src={validImageUrl} 
+                    alt={currentCompany.name}
+                    onError={(e) => {
+                      // Fallback to company initial if logo fails to load
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      const fallbackDiv = target.parentElement?.querySelector('.logo-fallback') as HTMLElement;
+                      if (fallbackDiv) {
+                        fallbackDiv.style.display = 'flex';
+                      }
+                    }}
+                    style={{ 
+                      maxWidth: `${headerLogoSize}px`, 
+                      maxHeight: `${headerLogoSize}px`, 
+                      height: 'auto',
+                      width: 'auto',
+                      objectFit: 'contain',
+                      borderRadius: '6px'
+                    }}
+                  />
+                  <div 
+                    className="logo-fallback"
+                    style={{ 
+                      ...createFallbackImageStyle(headerLogoSize, companyInitial),
+                      borderRadius: '6px',
+                      display: 'none',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0
+                    }}
+                  >
+                    {companyInitial}
+                  </div>
+                </div>
+              );
+            } else {
+              return (
+                <div style={{
+                  ...createFallbackImageStyle(headerLogoSize, companyInitial),
                   borderRadius: '6px'
-                }}
-              />
-              <div 
-                className="logo-fallback"
-                style={{ 
-                  width: `${headerLogoSize}px`, 
-                  height: `${headerLogoSize}px`, 
-                  backgroundColor: '#3b82f6', 
-                  borderRadius: '6px',
-                  display: 'none',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'white',
-                  fontSize: '16px',
-                  fontWeight: 600,
-                  position: 'absolute',
-                  top: 0,
-                  left: 0
-                }}
-              >
-                {currentCompany.name.charAt(0).toUpperCase()}
-              </div>
-            </div>
-          ) : (
-            <div style={{ 
-              width: `${headerLogoSize}px`, 
-              height: `${headerLogoSize}px`, 
-              backgroundColor: '#3b82f6', 
-              borderRadius: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-              fontSize: '16px',
-              fontWeight: 600
-            }}>
-              {currentCompany.name.charAt(0).toUpperCase()}
-            </div>
-          )}
+                }}>
+                  {companyInitial}
+                </div>
+              );
+            }
+          })()}
         </>
       )}
       {showCompanyName && (
