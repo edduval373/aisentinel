@@ -1542,7 +1542,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
           } else if (response.status === 401) {
             testResult = { success: false, message: 'Invalid Perplexity API key - authentication failed' };
           } else {
-            testResult = { success: false, message: `Perplexity API error: ${response.status}` };
+            // Get specific error details from response
+            let errorDetails = `${response.status}`;
+            try {
+              const errorData = await response.text();
+              console.log('Perplexity API error response:', errorData);
+              if (errorData) {
+                const parsed = JSON.parse(errorData);
+                if (parsed.error && parsed.error.message) {
+                  errorDetails = parsed.error.message;
+                } else if (parsed.message) {
+                  errorDetails = parsed.message;
+                } else {
+                  errorDetails = `${response.status}: ${errorData.slice(0, 100)}`;
+                }
+              }
+            } catch (parseError) {
+              console.log('Could not parse error response, using status:', response.status);
+            }
+            testResult = { success: false, message: `Perplexity API error: ${errorDetails}` };
           }
         } catch (error) {
           console.error('Perplexity API test error:', error);
