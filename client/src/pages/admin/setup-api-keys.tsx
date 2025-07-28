@@ -50,6 +50,7 @@ export default function SetupApiKeys() {
   const [testResults, setTestResults] = useState<Record<string, 'success' | 'error' | null>>({});
   const [errorMessages, setErrorMessages] = useState<Record<string, string>>({});
   const [apiKeys, setApiKeys] = useState<Record<string, string>>({});
+  const [selectedModels, setSelectedModels] = useState<Record<string, string>>({});
 
   // Fetch AI models to get current API keys
   const { data: aiModels, isLoading: modelsLoading, error: modelsError } = useQuery<AiModel[]>({
@@ -64,29 +65,48 @@ export default function SetupApiKeys() {
     userAuth: { isAuthenticated: !!user, roleLevel: user?.roleLevel, companyId: user?.companyId }
   });
 
-  // Initialize API keys from models
+  // Initialize API keys and default model selections
   useEffect(() => {
     if (aiModels) {
       console.log('SetupApiKeys: Loading AI models:', aiModels.length, 'models');
       const keys: Record<string, string> = {};
+      const defaultModels: Record<string, string> = {};
+      
+      // Group models by provider and set first as default
+      const providerModels: Record<string, any[]> = {};
+      aiModels.forEach(model => {
+        if (!providerModels[model.provider]) {
+          providerModels[model.provider] = [];
+        }
+        providerModels[model.provider].push(model);
+      });
+      
       aiModels.forEach(model => {
         console.log(`SetupApiKeys: Processing model:`, { provider: model.provider, hasKey: !!model.apiKey, keyLength: model.apiKey?.length });
         if (model.provider === 'openai' && !keys.openai) {
           keys.openai = model.apiKey || '';
+          if (!defaultModels.openai) defaultModels.openai = model.id.toString();
         } else if (model.provider === 'anthropic' && !keys.anthropic) {
           keys.anthropic = model.apiKey || '';
+          if (!defaultModels.anthropic) defaultModels.anthropic = model.id.toString();
         } else if (model.provider === 'perplexity' && !keys.perplexity) {
           keys.perplexity = model.apiKey || '';
+          if (!defaultModels.perplexity) defaultModels.perplexity = model.id.toString();
         } else if (model.provider === 'google' && !keys.google) {
           keys.google = model.apiKey || '';
+          if (!defaultModels.google) defaultModels.google = model.id.toString();
         } else if (model.provider === 'cohere' && !keys.cohere) {
           keys.cohere = model.apiKey || '';
+          if (!defaultModels.cohere) defaultModels.cohere = model.id.toString();
         } else if (model.provider === 'mistral' && !keys.mistral) {
           keys.mistral = model.apiKey || '';
+          if (!defaultModels.mistral) defaultModels.mistral = model.id.toString();
         }
       });
+      
       console.log('SetupApiKeys: Final API keys state:', Object.keys(keys).map(k => ({ provider: k, hasKey: !!keys[k], keyLength: keys[k]?.length })));
       setApiKeys(keys);
+      setSelectedModels(defaultModels);
     }
   }, [aiModels]);
 
