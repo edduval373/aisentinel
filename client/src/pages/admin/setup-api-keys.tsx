@@ -59,8 +59,10 @@ export default function SetupApiKeys() {
   // Initialize API keys from models
   useEffect(() => {
     if (aiModels) {
+      console.log('SetupApiKeys: Loading AI models:', aiModels.length, 'models');
       const keys: Record<string, string> = {};
       aiModels.forEach(model => {
+        console.log(`SetupApiKeys: Processing model:`, { provider: model.provider, hasKey: !!model.apiKey, keyLength: model.apiKey?.length });
         if (model.provider === 'openai' && !keys.openai) {
           keys.openai = model.apiKey || '';
         } else if (model.provider === 'anthropic' && !keys.anthropic) {
@@ -75,6 +77,7 @@ export default function SetupApiKeys() {
           keys.mistral = model.apiKey || '';
         }
       });
+      console.log('SetupApiKeys: Final API keys state:', Object.keys(keys).map(k => ({ provider: k, hasKey: !!keys[k], keyLength: keys[k]?.length })));
       setApiKeys(keys);
     }
   }, [aiModels]);
