@@ -95,17 +95,23 @@ export default function SetupApiKeys() {
     mutationFn: async ({ provider, apiKey }: { provider: string; apiKey: string }) => {
       return apiRequest(`/api/admin/update-api-key`, "POST", { provider, apiKey });
     },
-    onSuccess: () => {
+    onSuccess: (data, variables) => {
+      // Force refresh of AI models to get updated API keys
       queryClient.invalidateQueries({ queryKey: ['/api/ai-models'] });
+      
+      // Show success toast
       toast({
         title: "Success",
-        description: "API key updated successfully",
+        description: `${variables.provider} API key updated successfully`,
       });
+      
+      // Update local state immediately to show success visually
+      setApiKeys(prev => ({ ...prev, [variables.provider]: variables.apiKey }));
     },
-    onError: (error: any) => {
+    onError: (error: any, variables) => {
       toast({
         title: "Error",
-        description: error.message || "Failed to update API key",
+        description: error.message || `Failed to update ${variables.provider} API key`,
         variant: "destructive",
       });
     },
