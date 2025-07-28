@@ -48,9 +48,9 @@ export default function SetupApiKeys() {
   const hasOwnerAccess = canViewAdminPage(user?.roleLevel, ACCESS_REQUIREMENTS.SETUP_API_KEYS);
   const [isTestingConnection, setIsTestingConnection] = useState<string | null>(null);
   const [testResults, setTestResults] = useState<Record<string, 'success' | 'error' | null>>({});
+  const [modelTestResults, setModelTestResults] = useState<Record<string, 'success' | 'error' | null>>({});
   const [errorMessages, setErrorMessages] = useState<Record<string, string>>({});
   const [apiKeys, setApiKeys] = useState<Record<string, string>>({});
-  const [selectedModels, setSelectedModels] = useState<Record<string, string>>({});
 
   // Fetch AI models to get current API keys
   const { data: aiModels, isLoading: modelsLoading, error: modelsError } = useQuery<AiModel[]>({
@@ -65,48 +65,29 @@ export default function SetupApiKeys() {
     userAuth: { isAuthenticated: !!user, roleLevel: user?.roleLevel, companyId: user?.companyId }
   });
 
-  // Initialize API keys and default model selections
+  // Initialize API keys from models
   useEffect(() => {
     if (aiModels) {
       console.log('SetupApiKeys: Loading AI models:', aiModels.length, 'models');
       const keys: Record<string, string> = {};
-      const defaultModels: Record<string, string> = {};
-      
-      // Group models by provider and set first as default
-      const providerModels: Record<string, any[]> = {};
-      aiModels.forEach(model => {
-        if (!providerModels[model.provider]) {
-          providerModels[model.provider] = [];
-        }
-        providerModels[model.provider].push(model);
-      });
-      
       aiModels.forEach(model => {
         console.log(`SetupApiKeys: Processing model:`, { provider: model.provider, hasKey: !!model.apiKey, keyLength: model.apiKey?.length });
         if (model.provider === 'openai' && !keys.openai) {
           keys.openai = model.apiKey || '';
-          if (!defaultModels.openai) defaultModels.openai = model.id.toString();
         } else if (model.provider === 'anthropic' && !keys.anthropic) {
           keys.anthropic = model.apiKey || '';
-          if (!defaultModels.anthropic) defaultModels.anthropic = model.id.toString();
         } else if (model.provider === 'perplexity' && !keys.perplexity) {
           keys.perplexity = model.apiKey || '';
-          if (!defaultModels.perplexity) defaultModels.perplexity = model.id.toString();
         } else if (model.provider === 'google' && !keys.google) {
           keys.google = model.apiKey || '';
-          if (!defaultModels.google) defaultModels.google = model.id.toString();
         } else if (model.provider === 'cohere' && !keys.cohere) {
           keys.cohere = model.apiKey || '';
-          if (!defaultModels.cohere) defaultModels.cohere = model.id.toString();
         } else if (model.provider === 'mistral' && !keys.mistral) {
           keys.mistral = model.apiKey || '';
-          if (!defaultModels.mistral) defaultModels.mistral = model.id.toString();
         }
       });
-      
       console.log('SetupApiKeys: Final API keys state:', Object.keys(keys).map(k => ({ provider: k, hasKey: !!keys[k], keyLength: keys[k]?.length })));
       setApiKeys(keys);
-      setSelectedModels(defaultModels);
     }
   }, [aiModels]);
 
@@ -199,6 +180,14 @@ export default function SetupApiKeys() {
     // Reset test result and error message when API key changes
     setTestResults(prev => ({ ...prev, [provider]: null }));
     setErrorMessages(prev => ({ ...prev, [provider]: '' }));
+    
+    // Clear individual model test results for this provider
+    const providerModels = aiModels?.filter(m => m.provider === provider) || [];
+    const newModelResults = { ...modelTestResults };
+    providerModels.forEach(model => {
+      delete newModelResults[model.id.toString()];
+    });
+    setModelTestResults(newModelResults);
   };
 
   const handleSaveApiKey = (provider: string) => {
@@ -227,31 +216,65 @@ export default function SetupApiKeys() {
 
     console.log('Setting testing state for provider:', provider);
     setIsTestingConnection(provider);
+    setTestResults(prev => ({ ...prev, [provider]: null }));
+    setErrorMessages(prev => ({ ...prev, [provider]: '' }));
+    
+    // Get all models for this provider
+    const providerModels = aiModels?.filter(m => m.provider === provider) || [];
+    console.log(`Testing ${providerModels.length} models for provider: ${provider}`);
+    
+    // Clear previous model test results for this provider
+    const newModelResults = { ...modelTestResults };
+    providerModels.forEach(model => {
+      delete newModelResults[model.id.toString()];
+    });
+    setModelTestResults(newModelResults);
+    
+    let allSuccessful = true;
+    let errorCount = 0;
     
     try {
-      console.log(`Testing ${provider} API key connection...`);
-      const response = await apiRequest(`/api/admin/test-api-key`, "POST", { provider, apiKey });
-      console.log('Test connection response:', response);
+      // Test each model individually
+      for (const model of providerModels) {
+        console.log(`Testing model: ${model.name} (ID: ${model.id})`);
+        
+        try {
+          const response = await apiRequest(`/api/admin/test-api-key`, "POST", { 
+            provider, 
+            apiKey,
+            modelId: model.id.toString()
+          });
+          
+          console.log(`Model ${model.name} test result:`, response);
+          
+          if (response.success) {
+            setModelTestResults(prev => ({ ...prev, [model.id.toString()]: 'success' }));
+          } else {
+            setModelTestResults(prev => ({ ...prev, [model.id.toString()]: 'error' }));
+            allSuccessful = false;
+            errorCount++;
+          }
+        } catch (modelError: any) {
+          console.error(`Model ${model.name} test error:`, modelError);
+          setModelTestResults(prev => ({ ...prev, [model.id.toString()]: 'error' }));
+          allSuccessful = false;
+          errorCount++;
+        }
+      }
       
-      setTestResults(prev => ({ ...prev, [provider]: 'success' }));
-      setErrorMessages(prev => ({ ...prev, [provider]: `${provider.charAt(0).toUpperCase() + provider.slice(1)} API key format is valid` }));
+      // Set overall provider result
+      if (allSuccessful) {
+        setTestResults(prev => ({ ...prev, [provider]: 'success' }));
+        setErrorMessages(prev => ({ ...prev, [provider]: `All ${providerModels.length} models tested successfully` }));
+      } else {
+        setTestResults(prev => ({ ...prev, [provider]: 'error' }));
+        setErrorMessages(prev => ({ ...prev, [provider]: `${errorCount} of ${providerModels.length} models failed` }));
+      }
+      
     } catch (error: any) {
       console.error('Test connection error:', error);
       setTestResults(prev => ({ ...prev, [provider]: 'error' }));
-      
-      // More detailed error handling
-      let errorMessage = "Connection test failed";
-      if (error.message) {
-        errorMessage = error.message;
-      } else if (error.status === 401) {
-        errorMessage = "Authentication failed - insufficient permissions";
-      } else if (error.status === 400) {
-        errorMessage = "Invalid API key format";
-      } else if (error.status === 403) {
-        errorMessage = "Owner access required to test API keys";
-      }
-      
-      setErrorMessages(prev => ({ ...prev, [provider]: errorMessage }));
+      setErrorMessages(prev => ({ ...prev, [provider]: error.message || 'Connection test failed' }));
     } finally {
       console.log('Clearing testing state for provider:', provider);
       setIsTestingConnection(null);
@@ -466,21 +489,50 @@ export default function SetupApiKeys() {
                       <Label style={{ fontSize: '14px', fontWeight: '500', color: '#374151', display: 'block', marginBottom: '8px' }}>
                         Available Models
                       </Label>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                        {provider.models.map(model => (
-                          <Badge 
-                            key={model.id} 
-                            style={{ 
-                              backgroundColor: '#f3f4f6',
-                              color: '#374151',
-                              border: '1px solid #d1d5db',
-                              fontSize: '11px',
-                              padding: '2px 6px'
-                            }}
-                          >
-                            {model.name}
-                          </Badge>
-                        ))}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        {provider.models.map(model => {
+                          const modelResult = modelTestResults[model.id.toString()];
+                          return (
+                            <div
+                              key={model.id}
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                padding: '4px 8px',
+                                backgroundColor: '#f9fafb',
+                                border: '1px solid #e5e7eb',
+                                borderRadius: '4px'
+                              }}
+                            >
+                              <span style={{ fontSize: '12px', color: '#374151', flex: '1' }}>
+                                {model.name}
+                              </span>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                <Badge 
+                                  style={{ 
+                                    backgroundColor: '#f3f4f6',
+                                    color: '#6b7280',
+                                    border: '1px solid #d1d5db',
+                                    fontSize: '10px',
+                                    padding: '1px 4px'
+                                  }}
+                                >
+                                  {model.modelId}
+                                </Badge>
+                                {modelResult === 'success' && (
+                                  <Check style={{ width: '14px', height: '14px', color: '#16a34a' }} />
+                                )}
+                                {modelResult === 'error' && (
+                                  <X style={{ width: '14px', height: '14px', color: '#dc2626' }} />
+                                )}
+                                {modelResult === null && isTestingConnection === provider.id && (
+                                  <TestTube style={{ width: '14px', height: '14px', color: '#6b7280' }} />
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                     <button

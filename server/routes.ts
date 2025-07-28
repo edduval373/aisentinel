@@ -1503,7 +1503,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Owner or Super-User access required to test API keys" });
       }
 
-      const { provider, apiKey } = req.body;
+      const { provider, apiKey, modelId } = req.body;
       
       if (!provider || !apiKey) {
         return res.status(400).json({ message: "Provider and API key are required" });
@@ -1525,13 +1525,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: 'Perplexity API keys should start with pplx-' });
       }
 
-      console.log(`Testing ${provider} API key with actual API call`);
+      // Get model information if modelId is provided
+      let modelInfo = null;
+      if (modelId && user?.companyId) {
+        try {
+          const models = await storage.getAiModels(user.companyId);
+          modelInfo = models.find(m => m.id.toString() === modelId);
+          console.log('Found model info:', modelInfo);
+        } catch (error) {
+          console.error('Error fetching model info:', error);
+        }
+      }
+
+      console.log(`Testing ${provider} API key with actual API call${modelInfo ? ` for model: ${modelInfo.name}` : ''}`);
       
       // Perform actual API test based on provider
       let testResult;
       
       if (provider === 'anthropic') {
         try {
+          const testModel = modelInfo?.modelId || 'claude-3-haiku-20240307';
           const response = await fetch('https://api.anthropic.com/v1/messages', {
             method: 'POST',
             headers: {
@@ -1540,14 +1553,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
               'anthropic-version': '2023-06-01'
             },
             body: JSON.stringify({
-              model: 'claude-3-haiku-20240307',
+              model: testModel,
               max_tokens: 10,
               messages: [{ role: 'user', content: 'Test' }]
             })
           });
           
           if (response.ok) {
-            testResult = { success: true, message: 'Anthropic API key is valid and working' };
+            testResult = { success: true, message: `Anthropic API key is valid and working with model: ${testModel}` };
           } else if (response.status === 401) {
             testResult = { success: false, message: 'Invalid Anthropic API key - authentication failed' };
           } else if (response.status === 403) {
@@ -1561,16 +1574,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       } else if (provider === 'openai') {
         try {
-          const response = await fetch('https://api.openai.com/v1/models', {
-            method: 'GET',
+          const testModel = modelInfo?.modelId || 'gpt-3.5-turbo';
+          const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
             headers: {
               'Authorization': `Bearer ${apiKey}`,
               'Content-Type': 'application/json'
-            }
+            },
+            body: JSON.stringify({
+              model: testModel,
+              messages: [{ role: 'user', content: 'Test' }],
+              max_tokens: 10
+            })
           });
           
           if (response.ok) {
-            testResult = { success: true, message: 'OpenAI API key is valid and working' };
+            testResult = { success: true, message: `OpenAI API key is valid and working with model: ${testModel}` };
           } else if (response.status === 401) {
             testResult = { success: false, message: 'Invalid OpenAI API key - authentication failed' };
           } else {
@@ -1582,6 +1601,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       } else if (provider === 'perplexity') {
         try {
+          const testModel = modelInfo?.modelId || 'sonar';
           const response = await fetch('https://api.perplexity.ai/chat/completions', {
             method: 'POST',
             headers: {
@@ -1589,14 +1609,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-              model: 'sonar',
+              model: testModel,
               messages: [{ role: 'user', content: 'test' }],
               max_tokens: 5
             })
           });
           
           if (response.ok) {
-            testResult = { success: true, message: 'Perplexity API key is valid and working' };
+            testResult = { success: true, message: `Perplexity API key is valid and working with model: ${testModel}` };
           } else if (response.status === 401) {
             testResult = { success: false, message: 'Invalid Perplexity API key - authentication failed' };
           } else {
