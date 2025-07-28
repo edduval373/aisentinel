@@ -1441,14 +1441,109 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: 'Perplexity API keys should start with pplx-' });
       }
 
-      console.log(`Testing ${provider} API key format validation`);
+      console.log(`Testing ${provider} API key with actual API call`);
       
-      // For now, just validate format - actual API testing can be added later
-      return res.json({ 
-        success: true, 
-        message: `${provider} API key format is valid`,
-        provider: provider.charAt(0).toUpperCase() + provider.slice(1)
-      });
+      // Perform actual API test based on provider
+      let testResult;
+      
+      if (provider === 'anthropic') {
+        try {
+          const response = await fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-api-key': apiKey,
+              'anthropic-version': '2023-06-01'
+            },
+            body: JSON.stringify({
+              model: 'claude-3-haiku-20240307',
+              max_tokens: 10,
+              messages: [{ role: 'user', content: 'Test' }]
+            })
+          });
+          
+          if (response.ok) {
+            testResult = { success: true, message: 'Anthropic API key is valid and working' };
+          } else if (response.status === 401) {
+            testResult = { success: false, message: 'Invalid Anthropic API key - authentication failed' };
+          } else if (response.status === 403) {
+            testResult = { success: false, message: 'Anthropic API key lacks required permissions' };
+          } else {
+            testResult = { success: false, message: `Anthropic API error: ${response.status}` };
+          }
+        } catch (error) {
+          console.error('Anthropic API test error:', error);
+          testResult = { success: false, message: 'Failed to connect to Anthropic API' };
+        }
+      } else if (provider === 'openai') {
+        try {
+          const response = await fetch('https://api.openai.com/v1/models', {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${apiKey}`,
+              'Content-Type': 'application/json'
+            }
+          });
+          
+          if (response.ok) {
+            testResult = { success: true, message: 'OpenAI API key is valid and working' };
+          } else if (response.status === 401) {
+            testResult = { success: false, message: 'Invalid OpenAI API key - authentication failed' };
+          } else {
+            testResult = { success: false, message: `OpenAI API error: ${response.status}` };
+          }
+        } catch (error) {
+          console.error('OpenAI API test error:', error);
+          testResult = { success: false, message: 'Failed to connect to OpenAI API' };
+        }
+      } else if (provider === 'perplexity') {
+        try {
+          const response = await fetch('https://api.perplexity.ai/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${apiKey}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              model: 'llama-3.1-sonar-small-128k-online',
+              messages: [{ role: 'user', content: 'test' }],
+              max_tokens: 5
+            })
+          });
+          
+          if (response.ok) {
+            testResult = { success: true, message: 'Perplexity API key is valid and working' };
+          } else if (response.status === 401) {
+            testResult = { success: false, message: 'Invalid Perplexity API key - authentication failed' };
+          } else {
+            testResult = { success: false, message: `Perplexity API error: ${response.status}` };
+          }
+        } catch (error) {
+          console.error('Perplexity API test error:', error);
+          testResult = { success: false, message: 'Failed to connect to Perplexity API' };
+        }
+      } else {
+        // For other providers, just do format validation for now
+        testResult = { 
+          success: true, 
+          message: `${provider} API key format is valid (actual testing not implemented yet)`
+        };
+      }
+      
+      console.log(`${provider} API test result:`, testResult);
+      
+      if (testResult.success) {
+        return res.json({ 
+          success: true, 
+          message: testResult.message,
+          provider: provider.charAt(0).toUpperCase() + provider.slice(1)
+        });
+      } else {
+        return res.status(400).json({ 
+          success: false, 
+          message: testResult.message 
+        });
+      }
     } catch (error) {
       console.error('Error testing API key:', error);
       return res.status(500).json({ message: 'Failed to test API key' });
