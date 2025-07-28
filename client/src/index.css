@@ -74,6 +74,19 @@ body {
   bottom: 0 !important;
   width: 100vw !important;
   height: 100vh !important;
+  background-color: rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Additional overlay targeting for Features & Benefits dialog specifically */
+.features-benefits-dialog ~ [data-radix-dialog-overlay],
+[data-radix-dialog-overlay]:has(+ .features-benefits-dialog) {
+  z-index: 2050 !important;
+  background-color: rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Force overlay above admin menu button */
+[data-radix-dialog-overlay] {
+  pointer-events: auto !important;
 }
 
 /* Features & Benefits Dialog - Hide default close buttons but show our custom X */

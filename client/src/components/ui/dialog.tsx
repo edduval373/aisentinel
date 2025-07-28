@@ -23,8 +23,14 @@ const DialogOverlay = React.forwardRef<
     style={{
       position: 'fixed',
       inset: 0,
-      zIndex: 50,
+      zIndex: 2050,
       backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      width: '100vw',
+      height: '100vh',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
       ...style
     }}
     {...props}
@@ -44,7 +50,7 @@ const DialogContent = React.forwardRef<
         position: 'fixed',
         left: '50%',
         top: '50%',
-        zIndex: 50,
+        zIndex: 2100,
         display: 'grid',
         width: '100%',
         maxWidth: '32rem',
