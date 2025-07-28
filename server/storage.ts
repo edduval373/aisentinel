@@ -947,7 +947,7 @@ export class DatabaseStorage implements IStorage {
     // Get attachments for all messages
     const messageIds = messages.map(msg => msg.id);
     const attachments = messageIds.length > 0 
-      ? await db.select().from(chatAttachments).where(sql`${chatAttachments.messageId} IN (${messageIds.join(',')})`)
+      ? await db.select().from(chatAttachments).where(inArray(chatAttachments.messageId, messageIds))
       : [];
 
     return messages.map(msg => ({

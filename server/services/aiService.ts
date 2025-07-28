@@ -90,6 +90,8 @@ class AIService {
         return await this.generateAnthropicResponse(message, model.modelId, systemPrompt);
       } else if (model.provider === "perplexity") {
         return await this.generatePerplexityResponse(message, model.modelId, systemPrompt);
+      } else if (model.provider === "google") {
+        return await this.generateGoogleResponse(message, model.modelId, systemPrompt);
       } else {
         throw new Error(`Unsupported AI provider: ${model.provider}`);
       }
@@ -299,6 +301,27 @@ Please provide a synthesized response that incorporates the best elements from a
     } catch (error) {
       console.error("Perplexity API error:", error);
       throw new Error("Failed to get response from Perplexity");
+    }
+  }
+
+  async generateGoogleResponse(message: string, modelId: string, systemPrompt: string): Promise<string> {
+    try {
+      // For now, return a demo response since Google AI integration requires additional setup
+      return `**Demo Response from Google ${modelId}**
+
+You asked: "${message}"
+
+This is a demonstration of AI Sentinel's Google AI integration. In the full version:
+
+🤖 **AI Model**: ${modelId} would process your request
+📋 **System Context**: ${systemPrompt.substring(0, 100)}...
+🔒 **Security**: Content filtering and compliance monitoring would be active
+📊 **Analytics**: All interactions would be logged and analyzed
+
+*Note: Google AI integration requires API key configuration in the admin panel.*`;
+    } catch (error) {
+      console.error("Google AI error:", error);
+      throw new Error("Failed to get response from Google AI");
     }
   }
 }
