@@ -52,8 +52,16 @@ export default function SetupApiKeys() {
   const [apiKeys, setApiKeys] = useState<Record<string, string>>({});
 
   // Fetch AI models to get current API keys
-  const { data: aiModels, isLoading: modelsLoading } = useQuery<AiModel[]>({
+  const { data: aiModels, isLoading: modelsLoading, error: modelsError } = useQuery<AiModel[]>({
     queryKey: ['/api/ai-models'],
+  });
+
+  console.log('SetupApiKeys: Query state:', { 
+    isLoading: modelsLoading, 
+    hasData: !!aiModels, 
+    dataLength: aiModels?.length,
+    error: modelsError,
+    userAuth: { isAuthenticated: !!user, roleLevel: user?.roleLevel, companyId: user?.companyId }
   });
 
   // Initialize API keys from models
