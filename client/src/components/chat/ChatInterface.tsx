@@ -232,8 +232,6 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       return;
     }
 
-    console.log('💬 Sending message - mutation will be pending:', message.substring(0, 50));
-
     const formData = new FormData();
     formData.append('message', message);
     formData.append('aiModelId', selectedModel.toString());
@@ -250,7 +248,6 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
     }
 
     sendMessageMutation.mutate(formData);
-    console.log('💬 Message mutation triggered - isPending should be true now');
   };
 
   // Clear current chat
@@ -312,7 +309,13 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
               <SelectTrigger style={{ width: '160px', fontSize: '14px' }}>
                 <SelectValue placeholder="Select AI Model" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent style={{ 
+                backgroundColor: '#eff6ff', 
+                border: '1px solid #93c5fd', 
+                borderRadius: '8px',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                zIndex: 1000
+              }}>
                 {aiModels?.map((model: any) => (
                   <SelectItem key={model.id} value={model.id.toString()}>
                     {model.name}
@@ -345,7 +348,13 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
               <SelectTrigger style={{ width: '160px', fontSize: '14px' }}>
                 <SelectValue placeholder="Select Activity Type" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent style={{ 
+                backgroundColor: '#eff6ff', 
+                border: '1px solid #93c5fd', 
+                borderRadius: '8px',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                zIndex: 1000
+              }}>
                 {activityTypes?.map((type) => (
                   <SelectItem key={type.id} value={type.id.toString()}>
                     {type.name}
@@ -550,35 +559,32 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
             })}
 
             {/* Loading indicator with AI Sentinel logo */}
-            {(() => {
-              console.log('🔄 Render check - sendMessageMutation.isPending:', sendMessageMutation.isPending);
-              return sendMessageMutation.isPending && (
-                <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '16px' }}>
-                  <div style={{ 
-                    backgroundColor: 'white', 
-                    border: '1px solid #e2e8f0', 
-                    borderRadius: '12px', 
-                    padding: '12px 16px',
-                    maxWidth: '320px',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <img 
-                        src="/ai-sentinel-logo.png" 
-                        alt="AI Sentinel" 
-                        style={{ 
-                          width: '20px', 
-                          height: '20px',
-                          animation: 'spin 2s linear infinite',
-                          filter: 'brightness(1.1) saturate(1.3) contrast(1.2)'
-                        }}
-                      />
-                      <span style={{ fontSize: '14px', color: '#64748b', fontWeight: '500' }}>AI is thinking...</span>
-                    </div>
+            {sendMessageMutation.isPending && (
+              <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '16px' }}>
+                <div style={{ 
+                  backgroundColor: 'white', 
+                  border: '1px solid #e2e8f0', 
+                  borderRadius: '12px', 
+                  padding: '12px 16px',
+                  maxWidth: '320px',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <img 
+                      src="/ai-sentinel-logo.png" 
+                      alt="AI Sentinel" 
+                      style={{ 
+                        width: '20px', 
+                        height: '20px',
+                        animation: 'spin 2s linear infinite',
+                        filter: 'brightness(1.1) saturate(1.3) contrast(1.2)'
+                      }}
+                    />
+                    <span style={{ fontSize: '14px', color: '#64748b', fontWeight: '500' }}>AI is thinking...</span>
                   </div>
                 </div>
-              );
-            })()}
+              </div>
+            )}
 
             <div ref={messagesEndRef} />
           </div>
