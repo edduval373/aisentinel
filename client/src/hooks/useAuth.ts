@@ -96,10 +96,10 @@ export function useAuth() {
   // For demo mode, ensure roleLevel is 0, otherwise default to 1 for regular users
   const roleLevel = isDemoMode ? 0 : (user?.roleLevel ?? 1);
   
-  // Role level hierarchy: super-user (100), owner (99), admin (2), user (1)
+  // Role level hierarchy: super-user (1000), owner (999), administrator (998), admin (2), user (1)
   const isAdmin = roleLevel >= 2;
-  const isOwner = roleLevel >= 99;
-  const isSuperUser = roleLevel >= 100;
+  const isOwner = roleLevel >= 999;
+  const isSuperUser = roleLevel >= 1000;
   
   const hasRole = (requiredLevel: number) => {
     return roleLevel >= requiredLevel;

@@ -53,9 +53,9 @@ export class AuthService {
       switch (session.testRole) {
         case 'demo': return 0;
         case 'user': return 1;
-        case 'admin': return 98;
-        case 'owner': return 99;
-        case 'super-user': return 100;
+        case 'admin': return 998;
+        case 'owner': return 999;
+        case 'super-user': return 1000;
         default: return session.roleLevel;
       }
     }
@@ -368,10 +368,12 @@ export class AuthService {
   // Helper methods
   private getRoleLevelFromEmployeeRole(role: string): number {
     switch (role) {
+      case 'super-user':
+        return 1000;
       case 'owner':
-        return 99;
+        return 999;
       case 'admin':
-        return 2;
+        return 998;
       case 'employee':
       default:
         return 1;
@@ -379,8 +381,9 @@ export class AuthService {
   }
 
   private getRoleFromLevel(level: number): string {
-    if (level >= 100) return 'super-user';
-    if (level >= 99) return 'owner';
+    if (level >= 1000) return 'super-user';
+    if (level >= 999) return 'owner';
+    if (level >= 998) return 'admin';
     if (level >= 2) return 'admin';
     if (level >= 1) return 'user';
     return 'guest';
