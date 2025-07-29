@@ -1,6 +1,3 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { CheckCircle, CreditCard, Shield, Users, BarChart3, Lock, Star, Zap } from "lucide-react";
 import { Link } from "wouter";
 
@@ -93,42 +90,122 @@ export default function PricingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+    }}>
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+      <header style={{
+        backgroundColor: 'white',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+        borderBottom: '1px solid #e2e8f0'
+      }}>
+        <div style={{
+          maxWidth: '1280px',
+          margin: '0 auto',
+          padding: '0 16px'
+        }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            height: '64px'
+          }}>
             <Link href="/">
-              <div className="flex items-center space-x-2 cursor-pointer">
-                <div className="w-8 h-8 bg-sentinel-blue rounded-lg flex items-center justify-center">
-                  <Shield className="w-4 h-4 text-white" />
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                cursor: 'pointer'
+              }}>
+                <div style={{
+                  width: '32px',
+                  height: '32px',
+                  backgroundColor: 'hsl(221, 83%, 53%)',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <Shield style={{ width: '16px', height: '16px', color: 'white' }} />
                 </div>
-                <h1 className="text-xl font-bold text-slate-800">AI Sentinel</h1>
+                <h1 style={{
+                  fontSize: '20px',
+                  fontWeight: '700',
+                  color: '#1e293b',
+                  margin: 0
+                }}>AI Sentinel</h1>
               </div>
             </Link>
-            <Button 
-              onClick={() => window.location.href = "/login"} 
-              className="bg-sentinel-blue hover:bg-blue-600"
+            <button 
+              onClick={() => window.location.href = "/login"}
+              style={{
+                backgroundColor: 'hsl(221, 83%, 53%)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                padding: '8px 16px',
+                fontSize: '14px',
+                fontWeight: '500',
+                cursor: 'pointer',
+                transition: 'background-color 0.2s ease',
+                fontFamily: 'inherit'
+              }}
+              onMouseOver={(e) => e.target.style.backgroundColor = '#2563eb'}
+              onMouseOut={(e) => e.target.style.backgroundColor = 'hsl(221, 83%, 53%)'}
             >
               Sign In
-            </Button>
+            </button>
           </div>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-4">
+      <section style={{
+        padding: '64px 16px',
+        textAlign: 'center'
+      }}>
+        <div style={{
+          maxWidth: '1280px',
+          margin: '0 auto'
+        }}>
+          <h2 style={{
+            fontSize: '48px',
+            fontWeight: '700',
+            color: '#1e293b',
+            marginBottom: '16px',
+            lineHeight: '1.1'
+          }}>
             Choose Your AI Governance Plan
           </h2>
-          <p className="text-xl text-slate-600 mb-8 max-w-3xl mx-auto">
+          <p style={{
+            fontSize: '20px',
+            color: '#475569',
+            marginBottom: '32px',
+            maxWidth: '768px',
+            margin: '0 auto 32px auto',
+            lineHeight: '1.6'
+          }}>
             Secure, compliant AI access with transparent pricing. All plans include credit card validation for security.
           </p>
           
-          <div className="inline-flex items-center space-x-2 bg-blue-50 border border-blue-200 rounded-lg px-4 py-2 mb-8">
-            <CreditCard className="w-4 h-4 text-blue-600" />
-            <span className="text-sm font-medium text-blue-700">
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            backgroundColor: '#eff6ff',
+            border: '1px solid #bfdbfe',
+            borderRadius: '8px',
+            padding: '12px 16px',
+            marginBottom: '32px'
+          }}>
+            <CreditCard style={{ width: '16px', height: '16px', color: '#2563eb' }} />
+            <span style={{
+              fontSize: '14px',
+              fontWeight: '500',
+              color: '#1d4ed8'
+            }}>
               All plans require credit card validation to prevent abuse
             </span>
           </div>
@@ -136,126 +213,336 @@ export default function PricingPage() {
       </section>
 
       {/* Pricing Cards */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <section style={{
+        padding: '64px 16px'
+      }}>
+        <div style={{
+          maxWidth: '1280px',
+          margin: '0 auto'
+        }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+            gap: '32px'
+          }}>
             {plans.map((plan) => (
-              <Card 
+              <div 
                 key={plan.name} 
-                className={`relative border-2 hover:shadow-lg transition-all duration-200 ${
-                  plan.popular ? 'border-blue-500 shadow-lg' : 'border-slate-200'
-                }`}
+                style={{
+                  position: 'relative',
+                  backgroundColor: 'white',
+                  border: plan.popular ? '2px solid #3b82f6' : '2px solid #e2e8f0',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  boxShadow: plan.popular ? '0 10px 25px rgba(59, 130, 246, 0.1)' : '0 4px 12px rgba(0,0,0,0.05)',
+                  transition: 'all 0.3s ease',
+                  cursor: 'pointer'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-4px)';
+                  e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.1)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = plan.popular ? '0 10px 25px rgba(59, 130, 246, 0.1)' : '0 4px 12px rgba(0,0,0,0.05)';
+                }}
               >
                 {plan.popular && (
-                  <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white">
-                    <Star className="w-3 h-3 mr-1" />
+                  <div style={{
+                    position: 'absolute',
+                    top: '-12px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    backgroundColor: '#3b82f6',
+                    color: 'white',
+                    padding: '6px 16px',
+                    borderRadius: '20px',
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}>
+                    <Star style={{ width: '12px', height: '12px' }} />
                     Most Popular
-                  </Badge>
+                  </div>
                 )}
                 
-                <CardHeader className="text-center pb-4">
-                  <div className="flex items-center justify-center mb-4">
-                    {plan.name === 'trial' && <Zap className="w-8 h-8 text-blue-500" />}
-                    {plan.name === 'personal' && <Users className="w-8 h-8 text-blue-500" />}
-                    {plan.name === 'company' && <BarChart3 className="w-8 h-8 text-blue-500" />}
+                <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    marginBottom: '16px'
+                  }}>
+                    {plan.name === 'trial' && <Zap style={{ width: '32px', height: '32px', color: '#3b82f6' }} />}
+                    {plan.name === 'personal' && <Users style={{ width: '32px', height: '32px', color: '#3b82f6' }} />}
+                    {plan.name === 'company' && <BarChart3 style={{ width: '32px', height: '32px', color: '#3b82f6' }} />}
                   </div>
-                  <CardTitle className="text-2xl font-bold">{plan.displayName}</CardTitle>
-                  <CardDescription className="text-slate-600">{plan.description}</CardDescription>
+                  <h3 style={{
+                    fontSize: '24px',
+                    fontWeight: '700',
+                    color: '#1e293b',
+                    marginBottom: '8px'
+                  }}>{plan.displayName}</h3>
+                  <p style={{
+                    color: '#64748b',
+                    fontSize: '14px',
+                    lineHeight: '1.5',
+                    marginBottom: '16px'
+                  }}>{plan.description}</p>
                   
-                  <div className="mt-4">
-                    <span className="text-4xl font-bold text-slate-800">{plan.price}</span>
-                    <span className="text-slate-600">{plan.billing}</span>
+                  <div style={{ marginBottom: '16px' }}>
+                    <span style={{
+                      fontSize: '36px',
+                      fontWeight: '700',
+                      color: '#1e293b'
+                    }}>{plan.price}</span>
+                    <span style={{
+                      color: '#64748b',
+                      fontSize: '16px'
+                    }}>{plan.billing}</span>
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-2 mt-4 text-sm">
-                    <div className="text-center">
-                      <div className="font-semibold text-slate-800">{plan.maxUsers}</div>
-                      <div className="text-slate-600">Users</div>
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: '8px',
+                    fontSize: '14px'
+                  }}>
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{
+                        fontWeight: '600',
+                        color: '#1e293b',
+                        marginBottom: '2px'
+                      }}>{plan.maxUsers}</div>
+                      <div style={{ color: '#64748b' }}>Users</div>
                     </div>
-                    <div className="text-center">
-                      <div className="font-semibold text-slate-800">{plan.monthlyLimit}</div>
-                      <div className="text-slate-600">Monthly</div>
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{
+                        fontWeight: '600',
+                        color: '#1e293b',
+                        marginBottom: '2px'
+                      }}>{plan.monthlyLimit}</div>
+                      <div style={{ color: '#64748b' }}>Monthly</div>
                     </div>
                   </div>
-                </CardHeader>
+                </div>
                 
-                <CardContent className="pt-0">
-                  <Button 
-                    className={`w-full mb-6 ${
-                      plan.popular 
-                        ? 'bg-blue-600 hover:bg-blue-700 text-white' 
-                        : 'bg-slate-100 hover:bg-slate-200 text-slate-800'
-                    }`}
+                <div>
+                  <button 
+                    style={{
+                      width: '100%',
+                      backgroundColor: plan.popular ? '#3b82f6' : '#f1f5f9',
+                      color: plan.popular ? 'white' : '#1e293b',
+                      border: 'none',
+                      borderRadius: '12px',
+                      padding: '12px 16px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      marginBottom: '24px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      fontFamily: 'inherit'
+                    }}
                     onClick={() => handleSignUp(plan.name)}
+                    onMouseOver={(e) => {
+                      e.target.style.backgroundColor = plan.popular ? '#2563eb' : '#e2e8f0';
+                    }}
+                    onMouseOut={(e) => {
+                      e.target.style.backgroundColor = plan.popular ? '#3b82f6' : '#f1f5f9';
+                    }}
                   >
                     {plan.name === 'trial' ? 'Start Free Trial' : 'Get Started'}
-                    {plan.requiresCreditCard && <Lock className="ml-2 w-4 h-4" />}
-                  </Button>
+                    {plan.requiresCreditCard && <Lock style={{ width: '16px', height: '16px' }} />}
+                  </button>
                   
-                  <div className="space-y-3">
-                    <h4 className="font-semibold text-slate-800 border-b pb-2">Features Included:</h4>
+                  <div>
+                    <h4 style={{
+                      fontWeight: '600',
+                      color: '#1e293b',
+                      borderBottom: '1px solid #e2e8f0',
+                      paddingBottom: '8px',
+                      marginBottom: '16px',
+                      fontSize: '14px'
+                    }}>Features Included:</h4>
                     {plan.features.map((feature, idx) => (
-                      <div key={idx} className="flex items-start space-x-2">
-                        <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                        <span className="text-sm text-slate-700">{feature}</span>
+                      <div key={idx} style={{
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: '8px',
+                        marginBottom: '8px'
+                      }}>
+                        <CheckCircle style={{
+                          width: '16px',
+                          height: '16px',
+                          color: '#22c55e',
+                          marginTop: '2px',
+                          flexShrink: 0
+                        }} />
+                        <span style={{
+                          fontSize: '14px',
+                          color: '#374151',
+                          lineHeight: '1.4'
+                        }}>{feature}</span>
                       </div>
                     ))}
                     
                     {plan.restrictions.length > 0 && (
                       <>
-                        <h4 className="font-semibold text-slate-800 border-b pb-2 mt-6">Important Notes:</h4>
+                        <h4 style={{
+                          fontWeight: '600',
+                          color: '#1e293b',
+                          borderBottom: '1px solid #e2e8f0',
+                          paddingBottom: '8px',
+                          marginBottom: '16px',
+                          marginTop: '24px',
+                          fontSize: '14px'
+                        }}>Important Notes:</h4>
                         {plan.restrictions.map((restriction, idx) => (
-                          <div key={idx} className="flex items-start space-x-2">
-                            <CreditCard className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
-                            <span className="text-sm text-slate-600">{restriction}</span>
+                          <div key={idx} style={{
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            gap: '8px',
+                            marginBottom: '8px'
+                          }}>
+                            <CreditCard style={{
+                              width: '16px',
+                              height: '16px',
+                              color: '#3b82f6',
+                              marginTop: '2px',
+                              flexShrink: 0
+                            }} />
+                            <span style={{
+                              fontSize: '14px',
+                              color: '#64748b',
+                              lineHeight: '1.4'
+                            }}>{restriction}</span>
                           </div>
                         ))}
                       </>
                     )}
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
       {/* Security Notice */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-8">
-            <Shield className="w-12 h-12 text-blue-600 mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-slate-800 mb-4">
+      <section style={{
+        padding: '64px 16px',
+        backgroundColor: 'white'
+      }}>
+        <div style={{
+          maxWidth: '1024px',
+          margin: '0 auto',
+          textAlign: 'center'
+        }}>
+          <div style={{
+            backgroundColor: '#eff6ff',
+            border: '1px solid #bfdbfe',
+            borderRadius: '16px',
+            padding: '32px'
+          }}>
+            <Shield style={{
+              width: '48px',
+              height: '48px',
+              color: '#2563eb',
+              margin: '0 auto 16px auto'
+            }} />
+            <h3 style={{
+              fontSize: '28px',
+              fontWeight: '700',
+              color: '#1e293b',
+              marginBottom: '16px'
+            }}>
               Why We Require Credit Card Validation
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+              gap: '24px',
+              textAlign: 'left',
+              marginBottom: '24px'
+            }}>
               <div>
-                <h4 className="font-semibold text-slate-800 mb-2">Prevent Abuse</h4>
-                <p className="text-slate-600 text-sm">
+                <h4 style={{
+                  fontWeight: '600',
+                  color: '#1e293b',
+                  marginBottom: '8px',
+                  fontSize: '16px'
+                }}>Prevent Abuse</h4>
+                <p style={{
+                  color: '#64748b',
+                  fontSize: '14px',
+                  lineHeight: '1.5'
+                }}>
                   Credit card validation prevents automated abuse and ensures fair usage for all users.
                 </p>
               </div>
               <div>
-                <h4 className="font-semibold text-slate-800 mb-2">Service Quality</h4>
-                <p className="text-slate-600 text-sm">
+                <h4 style={{
+                  fontWeight: '600',
+                  color: '#1e293b',
+                  marginBottom: '8px',
+                  fontSize: '16px'
+                }}>Service Quality</h4>
+                <p style={{
+                  color: '#64748b',
+                  fontSize: '14px',
+                  lineHeight: '1.5'
+                }}>
                   Verified users help us maintain high-quality AI service and prevent system overload.
                 </p>
               </div>
               <div>
-                <h4 className="font-semibold text-slate-800 mb-2">Security Standards</h4>
-                <p className="text-slate-600 text-sm">
+                <h4 style={{
+                  fontWeight: '600',
+                  color: '#1e293b',
+                  marginBottom: '8px',
+                  fontSize: '16px'
+                }}>Security Standards</h4>
+                <p style={{
+                  color: '#64748b',
+                  fontSize: '14px',
+                  lineHeight: '1.5'
+                }}>
                   Enterprise-grade security requires identity verification for compliance and audit trails.
                 </p>
               </div>
               <div>
-                <h4 className="font-semibold text-slate-800 mb-2">No Hidden Charges</h4>
-                <p className="text-slate-600 text-sm">
+                <h4 style={{
+                  fontWeight: '600',
+                  color: '#1e293b',
+                  marginBottom: '8px',
+                  fontSize: '16px'
+                }}>No Hidden Charges</h4>
+                <p style={{
+                  color: '#64748b',
+                  fontSize: '14px',
+                  lineHeight: '1.5'
+                }}>
                   We never charge during trials. Cards are validated only and charged according to plan terms.
                 </p>
               </div>
             </div>
-            <div className="mt-6 p-4 bg-white border border-blue-200 rounded-lg">
-              <p className="text-sm text-slate-700">
+            <div style={{
+              backgroundColor: 'white',
+              border: '1px solid #bfdbfe',
+              borderRadius: '12px',
+              padding: '16px'
+            }}>
+              <p style={{
+                fontSize: '14px',
+                color: '#374151',
+                margin: 0,
+                lineHeight: '1.5'
+              }}>
                 <strong>🔒 Secure:</strong> All payment information is processed through Stripe. 
                 We never store your credit card details on our servers.
               </p>
@@ -265,10 +552,25 @@ export default function PricingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-800 text-white py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p>&copy; 2025 AI Sentinel. All rights reserved.</p>
-          <p className="text-slate-400 text-sm mt-2">
+      <footer style={{
+        backgroundColor: '#1e293b',
+        color: 'white',
+        padding: '32px 16px',
+        textAlign: 'center'
+      }}>
+        <div style={{
+          maxWidth: '1280px',
+          margin: '0 auto'
+        }}>
+          <p style={{
+            margin: '0 0 8px 0',
+            fontSize: '16px'
+          }}>&copy; 2025 AI Sentinel. All rights reserved.</p>
+          <p style={{
+            color: '#94a3b8',
+            fontSize: '14px',
+            margin: 0
+          }}>
             Enterprise AI governance with security and compliance built-in.
           </p>
         </div>
