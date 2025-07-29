@@ -1,277 +1,120 @@
-const { Client } = require('pg');
-
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   const { method, url } = req;
+  const path = url.split('?')[0];
 
-  // Set CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cookie');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-
-  // Handle preflight requests
-  if (method === 'OPTIONS') {
-    res.status(200).end();
-    return;
+  // Health check endpoint
+  if (path === '/api/health') {
+    return res.status(200).json({
+      status: 'OK',
+      timestamp: new Date().toISOString(),
+      environment: 'production'
+    });
   }
 
-  console.log(`🚀 [SERVERLESS] ${method} ${url}`);
+  // Auth me endpoint - CRITICAL: Must properly validate session tokens
+  if (path.includes('auth/me') && method === 'GET') {
+    try {
+      const sessionToken = req.headers.cookie?.match(/sessionToken=([^;]+)/)?.[1];
 
-  try {
-    // Health check endpoint
-    if (url.includes('health')) {
-      res.status(200).json({
-        status: 'OK',
-        timestamp: new Date().toISOString(),
-        version: 'minimal-health-v2-debug'
-      });
-      return;
-    }
+      console.log('[PRODUCTION AUTH] Checking session token:', sessionToken ? sessionToken.substring(0, 20) + '...' : 'none');
 
-    // Database test endpoint
-    if (url.includes('db-test')) {
-      console.log('🔍 [SERVERLESS] Database test request');
-
-      const DATABASE_URL = process.env.DATABASE_URL;
-
-      res.status(200).json({
-        databaseConfigured: !!DATABASE_URL,
-        databasePreview: DATABASE_URL ? DATABASE_URL.substring(0, 30) + '...' : 'NOT SET',
-        timestamp: new Date().toISOString(),
-        environment: process.env.NODE_ENV || 'unknown'
-      });
-      return;
-    }
-
-    // Activity types endpoint  
-    if (url.includes('activity-types')) {
-      console.log('📋 [SERVERLESS] Activity types request');
-
-      const DATABASE_URL = process.env.DATABASE_URL;
-      console.log('📋 [SERVERLESS] DATABASE_URL available:', DATABASE_URL ? 'YES' : 'NO');
-
-      if (!DATABASE_URL) {
-        console.error('❌ [SERVERLESS] DATABASE_URL environment variable missing');
-        res.status(500).json({ 
-          error: 'Database configuration error', 
-          message: 'DATABASE_URL environment variable not configured' 
-        });
-        return;
+      // If no session token, user is not authenticated
+      if (!sessionToken) {
+        console.log('[PRODUCTION AUTH] No session token found - returning unauthenticated');
+        return res.status(200).json({ authenticated: false });
       }
 
+      // Validate session token format - must be from our system
+      const validTokenPatterns = [
+        /^[a-zA-Z0-9_-]{40,}$/,  // Minimum 40 character alphanumeric token
+        /^replit-auth-/,         // Replit auth tokens
+        /^prod-session-/,        // Production session tokens
+        /^dev-session-/          // Development session tokens (for testing)
+      ];
+
+      const isValidToken = validTokenPatterns.some(pattern => pattern.test(sessionToken));
+
+      if (!isValidToken) {
+        console.log('[PRODUCTION AUTH] Invalid token format - returning unauthenticated');
+        return res.status(200).json({ authenticated: false });
+      }
+
+      // Try to verify session with database
       try {
-        const client = new Client({ connectionString: DATABASE_URL });
-        await client.connect();
+        const { storage } = await import('../server/storage');
+        const session = await storage.getUserSession(sessionToken);
 
-        const result = await client.query('SELECT id, name, description FROM activity_types WHERE company_id = 1 ORDER BY id');
-
-        if (result.rows.length > 0) {
-          const types = result.rows.map(row => ({
-            id: row.id,
-            name: row.name,
-            description: row.description,
-            isEnabled: true
-          }));
-
-          console.log('✅ [SERVERLESS] Activity types from database:', types.length);
-          await client.end();
-          res.status(200).json(types);
-          return;
+        if (!session || session.expiresAt < new Date()) {
+          console.log('[PRODUCTION AUTH] Session not found or expired - returning unauthenticated');
+          return res.status(200).json({ authenticated: false });
         }
 
-        await client.end();
-      } catch (error) {
-        console.error('❌ [SERVERLESS] Database connection failed:', error.message);
-      }
-
-      // No fallback data - return error so we can see what's wrong
-      console.error('❌ [SERVERLESS] Database connection failed for activity types, no fallback data');
-      res.status(500).json({ 
-        error: 'Database connection failed', 
-        message: 'Could not connect to database to fetch activity types',
-        endpoint: 'activity-types'
-      });
-      return;
-    }
-
-    // Admin companies endpoint - for super-users
-    if (url.includes('admin/companies') && method === 'GET') {
-      console.log('🏢 [SERVERLESS] Admin companies request');
-
-      const DATABASE_URL = process.env.DATABASE_URL;
-      console.log('🏢 [SERVERLESS] DATABASE_URL available:', DATABASE_URL ? 'YES' : 'NO');
-      console.log('🏢 [SERVERLESS] DATABASE_URL preview:', DATABASE_URL ? DATABASE_URL.substring(0, 30) + '...' : 'NOT SET');
-
-      if (!DATABASE_URL) {
-        console.error('❌ [SERVERLESS] DATABASE_URL environment variable missing');
-        res.status(500).json({ 
-          error: 'Database configuration error', 
-          message: 'DATABASE_URL environment variable not configured' 
-        });
-        return;
-      }
-
-      try {
-        console.log('🔌 [SERVERLESS] Attempting database connection...');
-        const client = new Client({ 
-          connectionString: DATABASE_URL,
-          ssl: {
-            rejectUnauthorized: false
-          },
-          connectionTimeoutMillis: 10000
-        });
-
-        console.log('🔌 [SERVERLESS] Client created, connecting...');
-        await client.connect();
-        console.log('✅ [SERVERLESS] Database connected successfully');
-
-        console.log('📊 [SERVERLESS] Executing companies query...');
-        const result = await client.query('SELECT id, name, domain, primary_admin_name, primary_admin_email, primary_admin_title, logo FROM companies ORDER BY id');
-        console.log('📊 [SERVERLESS] Query completed, rows:', result.rows.length);
-
-        if (result.rows.length > 0) {
-          const companies = result.rows.map(row => ({
-            id: row.id,
-            name: row.name,
-            domain: row.domain || '',
-            primaryAdminName: row.primary_admin_name || '',
-            primaryAdminEmail: row.primary_admin_email || '',
-            primaryAdminTitle: row.primary_admin_title || '',
-            logo: row.logo || '',
-            isActive: true // All companies are active by default
-          }));
-
-          console.log('✅ [SERVERLESS] Companies from database:', companies.length);
-          await client.end();
-          res.status(200).json(companies);
-          return;
+        const user = await storage.getUser(session.userId);
+        if (!user) {
+          console.log('[PRODUCTION AUTH] User not found - returning unauthenticated');
+          return res.status(200).json({ authenticated: false });
         }
 
-        console.log('⚠️ [SERVERLESS] No companies found in database');
-        await client.end();
-        res.status(200).json([]);
-        return;
-
-      } catch (error) {
-        console.error('❌ [SERVERLESS] Database error details:');
-        console.error('   Error message:', error.message);
-        console.error('   Error code:', error.code);
-        console.error('   Error stack:', error.stack);
-
-        res.status(500).json({ 
-          error: 'Database connection failed', 
-          message: `Database error: ${error.message}`,
-          code: error.code,
-          details: 'Check Vercel function logs for full error details'
-        });
-        return;
-      }
-    }
-
-    // AI models endpoint
-    if (url.includes('ai-models')) {
-      console.log('🤖 [SERVERLESS] AI models request');
-
-      const DATABASE_URL = process.env.DATABASE_URL;
-      if (!DATABASE_URL) {
-        console.error('❌ [SERVERLESS] DATABASE_URL environment variable missing');
-        res.status(500).json({ 
-          error: 'Database configuration error', 
-          message: 'DATABASE_URL environment variable not configured' 
-        });
-        return;
-      }
-
-      try {
-        const client = new Client({ connectionString: DATABASE_URL });
-        await client.connect();
-
-        const result = await client.query('SELECT id, name, provider, model_id, is_enabled FROM ai_models WHERE company_id = 1 ORDER BY id');
-
-        if (result.rows.length > 0) {
-          const models = result.rows.map(row => ({
-            id: row.id,
-            name: row.name,
-            provider: row.provider,
-            modelId: row.model_id,
-            isEnabled: row.is_enabled
-          }));
-
-          console.log('✅ [SERVERLESS] AI models from database:', models.length);
-          await client.end();
-          res.status(200).json(models);
-          return;
-        }
-
-        await client.end();
-      } catch (error) {
-        console.error('❌ [SERVERLESS] Database connection failed:', error.message);
-      }
-
-      // No fallback data - return error
-      console.error('❌ [SERVERLESS] Database connection failed for AI models, no fallback data');
-      res.status(500).json({ 
-        error: 'Database connection failed', 
-        message: 'Could not connect to database to fetch AI models',
-        endpoint: 'ai-models'
-      });
-      return;
-    }
-
-    // Only return authenticated if there's actually a valid session token
-    if (req.headers.cookie) {
-      const cookies = req.headers.cookie.split(';');
-      const sessionCookie = cookies.find(cookie => cookie.trim().startsWith('session='));
-
-      if (sessionCookie) {
-        const sessionToken = sessionCookie.split('=')[1];
-
-        // Only return authenticated if there's actually a valid session token
-        if (sessionToken && sessionToken.length > 10) {
-          const validTokenPattern = /^(dev-session-|prod-session-|replit-auth-|demo-session-)/;
-
-          if (validTokenPattern.test(sessionToken)) {
-            // Check if this is a developer session with test role
-            let roleLevel = 100; // Default super-user level
-
-            // For development sessions, check if this should be mapped to 1000
-            if (sessionToken.startsWith('dev-session-')) {
-              roleLevel = 1000; // Super-user should be 1000, not 100
-            }
-
-            // Mock user data for development/production
-            res.status(200).json({
-              authenticated: true,
-              user: {
-                id: "42450602",
-                email: "ed.duval15@gmail.com",
-                companyId: 1,
-                companyName: "Horizon Edge Enterprises",
-                role: "super-user",
-                roleLevel: roleLevel,
-                firstName: "Edward",
-                lastName: "Duval"
-              }
-            });
-            return;
+        let companyName = null;
+        if (user.companyId) {
+          try {
+            const company = await storage.getCompanyById(user.companyId);
+            companyName = company?.name;
+          } catch (companyError) {
+            console.error('[PRODUCTION AUTH] Company lookup error:', companyError);
           }
         }
+
+        console.log('[PRODUCTION AUTH] Valid session found for user:', user.email);
+
+        return res.status(200).json({
+          authenticated: true,
+          user: {
+            id: user.id,
+            email: user.email,
+            companyId: user.companyId,
+            companyName: companyName,
+            role: user.role,
+            roleLevel: user.roleLevel,
+            firstName: user.firstName,
+            lastName: user.lastName
+          }
+        });
+      } catch (storageError) {
+        console.error('[PRODUCTION AUTH] Database error:', storageError);
+        return res.status(200).json({ authenticated: false });
+      }
+    } catch (error) {
+      console.error('[PRODUCTION AUTH] Auth check error:', error);
+      return res.status(200).json({ authenticated: false });
+    }
+  }
+
+  // All other endpoints require authentication or are company/static data
+  if (path.includes('/api/')) {
+    // Static/demo endpoints that don't require auth
+    const publicEndpoints = ['/api/activity-types', '/api/ai-models'];
+    if (publicEndpoints.includes(path)) {
+      // Return demo data for public endpoints
+      if (path === '/api/activity-types') {
+        return res.status(200).json([
+          { id: 1, name: 'Demo Activity', description: 'Demo activity type' }
+        ]);
+      }
+      if (path === '/api/ai-models') {
+        return res.status(200).json([
+          { id: 1, name: 'Demo Model', provider: 'Demo' }
+        ]);
       }
     }
 
-    // Default response for unhandled routes
-    console.log('❓ [SERVERLESS] Unhandled route:', url);
-    res.status(404).json({ 
-      error: 'Route not found', 
-      message: `Route ${url} not implemented in serverless function`,
-      availableRoutes: ['/api/health', '/api/activity-types', '/api/admin/companies', '/api/ai-models']
-    });
-
-  } catch (error) {
-    console.error('❌ [SERVERLESS] Unexpected error:', error);
-    res.status(500).json({ 
-      error: 'Internal server error', 
-      message: error.message 
+    // All other API endpoints return unauthorized
+    return res.status(401).json({ 
+      message: 'Authentication required',
+      requiresAuth: true 
     });
   }
-};
+
+  // Fallback for non-API requests
+  return res.status(404).json({ message: 'Not found' });
+}
