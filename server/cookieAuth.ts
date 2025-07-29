@@ -36,7 +36,10 @@ export const cookieAuth = async (req: AuthenticatedRequest, res: Response, next:
 
     // Calculate effective role level for developers with test roles
     let effectiveRoleLevel = session.roleLevel;
+    console.log('🔍 CHECKPOINT G - CookieAuth: Initial role level from session:', session.roleLevel);
+    
     if (session.isDeveloper && session.testRole) {
+      console.log('🔍 CHECKPOINT H - CookieAuth: Developer with test role, calculating effective level');
       effectiveRoleLevel = authService.getEffectiveRoleLevel({
         userId: session.userId,
         email: session.email,
@@ -46,6 +49,9 @@ export const cookieAuth = async (req: AuthenticatedRequest, res: Response, next:
         isDeveloper: session.isDeveloper,
         testRole: session.testRole
       });
+      console.log('🔍 CHECKPOINT I - CookieAuth: Effective role level calculated:', effectiveRoleLevel);
+    } else {
+      console.log('🔍 CHECKPOINT J - CookieAuth: No test role, using original level:', effectiveRoleLevel);
     }
 
     req.user = {
@@ -58,7 +64,14 @@ export const cookieAuth = async (req: AuthenticatedRequest, res: Response, next:
       testRole: session.testRole || null,
     };
 
-    console.log('CookieAuth: Authentication successful -', req.user?.email, 'roleLevel:', req.user?.roleLevel);
+    console.log('🔍 CHECKPOINT K - CookieAuth: Final user object set on request:', {
+      email: req.user?.email,
+      roleLevel: req.user?.roleLevel,
+      actualRoleLevel: req.user?.actualRoleLevel,
+      isDeveloper: req.user?.isDeveloper,
+      testRole: req.user?.testRole,
+      timestamp: new Date().toISOString()
+    });
     next();
   } catch (error) {
     console.error('CookieAuth: Authentication error:', error);

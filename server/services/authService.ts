@@ -49,42 +49,57 @@ export class AuthService {
 
   // Get effective role level for developers (considering test role)
   getEffectiveRoleLevel(session: AuthSession): number {
-    console.log('getEffectiveRoleLevel called with:', {
+    console.log('🔍 CHECKPOINT 1 - getEffectiveRoleLevel called with:', {
+      userId: session.userId,
+      email: session.email,
       isDeveloper: session.isDeveloper,
       testRole: session.testRole,
-      originalRoleLevel: session.roleLevel
+      originalRoleLevel: session.roleLevel,
+      timestamp: new Date().toISOString()
     });
 
     if (session.isDeveloper && session.testRole) {
       let effectiveLevel: number;
+      console.log('🔍 CHECKPOINT 2 - Developer with test role detected');
+      
       switch (session.testRole) {
         case 'demo': 
           effectiveLevel = 0;
+          console.log('🔍 CHECKPOINT 3a - Test role "demo" -> level 0');
           break;
         case 'user': 
           effectiveLevel = 1;
+          console.log('🔍 CHECKPOINT 3b - Test role "user" -> level 1');
           break;
         case 'administrator': 
           effectiveLevel = 998;
+          console.log('🔍 CHECKPOINT 3c - Test role "administrator" -> level 998');
           break;
         case 'owner': 
           effectiveLevel = 999;
+          console.log('🔍 CHECKPOINT 3d - Test role "owner" -> level 999');
           break;
         case 'super-user': 
           effectiveLevel = 1000;
+          console.log('🔍 CHECKPOINT 3e - Test role "super-user" -> level 1000');
           break;
         default: 
           // Handle custom roles (custom-X format)
           if (session.testRole.startsWith('custom-')) {
             const level = parseInt(session.testRole.replace('custom-', ''));
             effectiveLevel = isNaN(level) ? session.roleLevel : level;
+            console.log('🔍 CHECKPOINT 3f - Custom role parsed:', session.testRole, '-> level', effectiveLevel);
           } else {
             effectiveLevel = session.roleLevel;
+            console.log('🔍 CHECKPOINT 3g - Unknown test role, using original level:', effectiveLevel);
           }
       }
-      console.log('Effective role level calculated:', effectiveLevel, 'for test role:', session.testRole);
+      
+      console.log('🔍 CHECKPOINT 4 - Final effective role level calculated:', effectiveLevel, 'for test role:', session.testRole);
       return effectiveLevel;
     }
+    
+    console.log('🔍 CHECKPOINT 5 - Not a developer or no test role, returning original level:', session.roleLevel);
     return session.roleLevel;
   }
 
@@ -348,20 +363,29 @@ export class AuthService {
   // Verify session token
   async verifySession(sessionToken: string): Promise<AuthSession | null> {
     try {
-      console.log('AuthService: verifying session token:', sessionToken.substring(0, 20) + '...');
+      console.log('🔍 CHECKPOINT A - AuthService: verifying session token:', sessionToken.substring(0, 20) + '...');
       const session = await storage.getUserSession(sessionToken);
-      console.log('AuthService: found session:', !!session);
+      console.log('🔍 CHECKPOINT B - AuthService: found session:', !!session);
 
       if (!session || session.expiresAt < new Date()) {
-        console.log('AuthService: session invalid or expired');
+        console.log('🔍 CHECKPOINT C - AuthService: session invalid or expired');
         return null;
       }
+
+      console.log('🔍 CHECKPOINT D - Raw session from database:', {
+        userId: session.userId,
+        email: session.email,
+        roleLevel: session.roleLevel,
+        testRole: session.testRole,
+        timestamp: new Date().toISOString()
+      });
 
       // Update last accessed time
       await storage.updateUserSessionLastAccessed(session.id);
 
       // Check if this is a developer email
       const isDeveloper = this.isDeveloperEmail(session.email);
+      console.log('🔍 CHECKPOINT E - Developer check result:', isDeveloper, 'for email:', session.email);
 
       const result = {
         userId: session.userId,
@@ -372,10 +396,18 @@ export class AuthService {
         isDeveloper,
         testRole: session.testRole || undefined,
       };
-      console.log('AuthService: returning session for user:', result.email, 'role level:', result.roleLevel, 'isDeveloper:', isDeveloper, 'testRole:', result.testRole);
+      
+      console.log('🔍 CHECKPOINT F - Final session result before return:', {
+        email: result.email,
+        roleLevel: result.roleLevel,
+        isDeveloper: result.isDeveloper,
+        testRole: result.testRole,
+        timestamp: new Date().toISOString()
+      });
+      
       return result;
     } catch (error) {
-      console.error('Error verifying session:', error);
+      console.error('🔍 CHECKPOINT ERROR - Error verifying session:', error);
       return null;
     }
   }
