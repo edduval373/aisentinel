@@ -39,14 +39,14 @@ export class SubscriptionService {
         displayName: 'Company Plan',
         price: '50.00',
         billingPeriod: 'monthly',
-        maxUsers: null, // Unlimited users
-        dailyApiLimit: 1000,
-        monthlyApiLimit: 20000,
+        maxUsers: 50, // Up to 50 users at base price
+        dailyApiLimit: 999999, // Unlimited since they use their own API keys
+        monthlyApiLimit: 999999, // Unlimited since they use their own API keys
         requiresCreditCard: true,
         requiresApiKey: true,
         features: [
-          '20,000 AI interactions/month',
-          'Unlimited users',
+          'Unlimited AI interactions (your API keys)',
+          'Up to 50 team members',
           'API key management',
           'Role-based access control',
           'Company branding',

@@ -65,13 +65,13 @@ export default function PricingPage() {
       billing: "/month",
       description: "Complete solution for teams and organizations",
       maxUsers: "Up to 50 employees",
-      dailyLimit: "1,000 requests/day",
-      monthlyLimit: "20,000 requests/month",
+      dailyLimit: "Unlimited requests/day",
+      monthlyLimit: "Unlimited requests/month",
       requiresCreditCard: true,
       popular: true,
       features: [
-        "20,000 AI interactions/month",
-        "Unlimited team members",
+        "Unlimited AI interactions (your API keys)",
+        "Up to 50 team members included",
         "Company branding and logo",
         "Role-based access control",
         "API key management",
@@ -83,8 +83,8 @@ export default function PricingPage() {
         "Model fusion capabilities"
       ],
       restrictions: [
-        "Requires company domain verification",
-        "Minimum 5 users for optimization"
+        "Requires company-provided API keys",
+        "Companies over 50 employees: $100/month"
       ]
     }
   ];
@@ -312,7 +312,7 @@ export default function PricingPage() {
                         marginTop: '4px',
                         fontWeight: '500'
                       }}>
-                        $100/month for over 50 employees
+                        $100/month for 51+ employees
                       </div>
                     )}
                   </div>

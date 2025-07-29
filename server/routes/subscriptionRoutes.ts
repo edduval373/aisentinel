@@ -54,12 +54,12 @@ router.get('/plans', async (req: Request, res: Response) => {
         displayName: 'Company Plan',
         price: '50.00',
         billingPeriod: 'monthly',
-        maxUsers: null,
-        dailyApiLimit: 1000,
-        monthlyApiLimit: 20000,
+        maxUsers: 50,
+        dailyApiLimit: 999999,
+        monthlyApiLimit: 999999,
         requiresCreditCard: true,
         requiresApiKey: true,
-        features: ['20,000 AI interactions/month', 'Unlimited users', 'Company branding', 'Admin dashboard', 'API management'],
+        features: ['Unlimited AI interactions (your API keys)', 'Up to 50 team members', 'Company branding', 'Admin dashboard', 'API management'],
         isActive: true,
       }
     ];
