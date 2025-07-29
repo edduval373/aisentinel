@@ -98,10 +98,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ success: false, message: 'Developer access required' });
       }
 
-      // Validate test role
-      const validRoles = ['demo', 'user', 'administrator', 'owner', 'super-user'];
-      if (!validRoles.includes(testRole)) {
-        return res.status(400).json({ success: false, message: 'Invalid test role' });
+      // Get company roles to validate test role
+      const companyId = session.companyId || 1; // Default to company 1 for developers
+      const companyRoles = await storage.getCompanyRoles(companyId);
+      const validRoleKeys = companyRoles.map(role => {
+        if (role.level === 1000) return 'super-user';
+        if (role.level === 999) return 'owner';
+        if (role.level === 998) return 'administrator';
+        if (role.level === 1) return 'user';
+        if (role.level === 0) return 'demo';
+        return `custom-${role.level}`;
+      });
+      
+      if (!validRoleKeys.includes(testRole)) {
+        return res.status(400).json({ 
+          success: false, 
+          message: `Invalid test role. Valid roles: ${validRoleKeys.join(', ')}` 
+        });
       }
 
       // Set the test role
@@ -806,15 +819,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "No session token" });
       }
 
+      // Get company roles to validate test role
+      const companyId = req.user.companyId || 1; // Default to company 1 for developers
+      const companyRoles = await storage.getCompanyRoles(companyId);
+      const validRoleKeys = companyRoles.map(role => {
+        if (role.level === 1000) return 'super-user';
+        if (role.level === 999) return 'owner';
+        if (role.level === 998) return 'administrator';
+        if (role.level === 1) return 'user';
+        if (role.level === 0) return 'demo';
+        return `custom-${role.level}`;
+      });
+      
+      if (!validRoleKeys.includes(testRole)) {
+        return res.status(400).json({ 
+          message: `Invalid test role. Valid roles: ${validRoleKeys.join(', ')}` 
+        });
+      }
+
       // Update the session with new test role
       await storage.updateUserSession(sessionToken, { testRole });
       
       console.log('Developer test role updated:', testRole);
+      
+      // Create proper session object for role level calculation
+      const sessionForRoleCheck = {
+        userId: req.user.userId,
+        email: req.user.email,
+        companyId: req.user.companyId,
+        roleLevel: req.user.roleLevel,
+        sessionToken,
+        isDeveloper: true,
+        testRole
+      };
+      
       res.json({ 
         success: true, 
         message: 'Test role updated',
         testRole,
-        effectiveRole: authService.getEffectiveRoleLevel(testRole)
+        effectiveRole: authService.getEffectiveRoleLevel(sessionForRoleCheck)
       });
     } catch (error) {
       console.error('Error setting developer test role:', error);

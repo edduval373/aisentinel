@@ -53,10 +53,16 @@ export class AuthService {
       switch (session.testRole) {
         case 'demo': return 0;
         case 'user': return 1;
-        case 'admin': return 998;
+        case 'administrator': return 998; // Fixed mapping
         case 'owner': return 999;
         case 'super-user': return 1000;
-        default: return session.roleLevel;
+        default: 
+          // Handle custom roles (custom-X format)
+          if (session.testRole.startsWith('custom-')) {
+            const level = parseInt(session.testRole.replace('custom-', ''));
+            return isNaN(level) ? session.roleLevel : level;
+          }
+          return session.roleLevel;
       }
     }
     return session.roleLevel;
