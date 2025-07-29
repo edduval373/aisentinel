@@ -966,6 +966,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Session endpoint for authentication checks
+  app.get('/api/auth/session', cookieAuth, async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      console.log("Session check successful:", {
+        userId: req.user.userId,
+        email: req.user.email,
+        roleLevel: req.user.roleLevel,
+        role: req.user.role
+      });
+
+      res.json({
+        authenticated: true,
+        user: {
+          id: req.user.userId,
+          email: req.user.email,
+          companyId: req.user.companyId,
+          companyName: req.user.companyName,
+          role: req.user.role,
+          roleLevel: req.user.roleLevel,
+          firstName: req.user.firstName,
+          lastName: req.user.lastName
+        }
+      });
+    } catch (error) {
+      console.error("Session check error:", error);
+      res.status(500).json({ message: "Session check failed" });
+    }
+  });
+
   // Current user route with proper authentication
   app.get('/api/user/current', requireAuth, async (req: any, res) => {
     try {

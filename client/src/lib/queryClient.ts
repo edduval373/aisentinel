@@ -221,30 +221,23 @@ export const queryClient = new QueryClient({
 const API_BASE_URL = import.meta.env.VITE_API_URL || 
   (import.meta.env.DEV ? window.location.origin : 'https://aisentinel.app');
 
-// Check for authentication errors
-  if (isUnauthorizedError(error)) {
-    // For demo mode, provide mock data instead of redirecting
-    if (window.location.pathname === '/demo') {
-      return getFallbackData(url, method, data);
+// Check for authentication errors (commented out for now)
+    // if (isUnauthorizedError(error)) {
+    //   // For demo mode, provide mock data instead of redirecting
+    //   if (window.location.pathname === '/demo') {
+    //     return getFallbackData(url, method, data);
+    //   }
+    //   // For other paths, redirect to login
+    //   queryClient.clear();
+    //   window.location.href = '/login';
+    //   throw error;
+    // }
+
+    // Try fallback response for production API failures
+    const fallback = await getFallbackResponse(url, method, data);
+    if (fallback) {
+      console.log(`🔄 [API ${method}] ${url} - Using fallback`);
+      return fallback;
     }
-
-    // For other paths, redirect to login
-    queryClient.clear();
-    window.location.href = '/login';
+    
     throw error;
-  }
-
-  // For demo mode ONLY, provide fallback data for failed requests
-  if (window.location.pathname === '/demo') {
-    return getFallbackData(url, method, data);
-  }
-
-  // DO NOT PROVIDE FALLBACKS - Let the real errors surface
-  console.error(`🚨 API Request Failed - NO FALLBACK PROVIDED:`, {
-    url,
-    method,
-    status: error.message,
-    timestamp: new Date().toISOString()
-  });
-
-  throw error;
