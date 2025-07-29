@@ -338,12 +338,49 @@ export default function PricingPage() {
                   </div>
                 </div>
                 
-                <div style={{ 
-                  flex: '1',
-                  display: 'flex',
-                  flexDirection: 'column'
-                }}>
-                  <div style={{ flex: '1' }}>
+                <div style={{ marginTop: 'auto' }}>
+                  <button 
+                    style={{
+                      width: '100%',
+                      backgroundColor: plan.popular ? '#3b82f6' : '#f1f5f9',
+                      color: plan.popular ? 'white' : '#1e293b',
+                      border: 'none',
+                      borderRadius: '12px',
+                      padding: '12px 16px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      marginBottom: '16px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      fontFamily: 'inherit'
+                    }}
+                    onClick={() => handleSignUp(plan.name)}
+                    onMouseOver={(e) => {
+                      const target = e.target as HTMLButtonElement;
+                      if (plan.popular) {
+                        target.style.backgroundColor = '#2563eb';
+                      } else {
+                        target.style.backgroundColor = '#e2e8f0';
+                      }
+                    }}
+                    onMouseOut={(e) => {
+                      const target = e.target as HTMLButtonElement;
+                      if (plan.popular) {
+                        target.style.backgroundColor = '#3b82f6';
+                      } else {
+                        target.style.backgroundColor = '#f1f5f9';
+                      }
+                    }}
+                  >
+                    {plan.name === 'trial' ? 'Start Free Trial' : 'Get Started'}
+                    {plan.requiresCreditCard && <Lock style={{ width: '16px', height: '16px' }} />}
+                  </button>
+                  
+                  <div>
                     <h4 style={{
                       fontWeight: '600',
                       color: '#1e293b',
@@ -409,47 +446,6 @@ export default function PricingPage() {
                       </>
                     )}
                   </div>
-                  
-                  <button 
-                    style={{
-                      width: '100%',
-                      backgroundColor: plan.popular ? '#3b82f6' : '#f1f5f9',
-                      color: plan.popular ? 'white' : '#1e293b',
-                      border: 'none',
-                      borderRadius: '12px',
-                      padding: '12px 16px',
-                      fontSize: '14px',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      marginTop: '20px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px',
-                      fontFamily: 'inherit'
-                    }}
-                    onClick={() => handleSignUp(plan.name)}
-                    onMouseOver={(e) => {
-                      const target = e.target as HTMLButtonElement;
-                      if (plan.popular) {
-                        target.style.backgroundColor = '#2563eb';
-                      } else {
-                        target.style.backgroundColor = '#e2e8f0';
-                      }
-                    }}
-                    onMouseOut={(e) => {
-                      const target = e.target as HTMLButtonElement;
-                      if (plan.popular) {
-                        target.style.backgroundColor = '#3b82f6';
-                      } else {
-                        target.style.backgroundColor = '#f1f5f9';
-                      }
-                    }}
-                  >
-                    {plan.name === 'trial' ? 'Start Free Trial' : 'Get Started'}
-                    {plan.requiresCreditCard && <Lock style={{ width: '16px', height: '16px' }} />}
-                  </button>
                   
                   <div>
                     <h4 style={{
