@@ -9,6 +9,7 @@ import {
   boolean,
   integer,
   real,
+  unique,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -87,18 +88,20 @@ export const companyEmployees = pgTable("company_employees", {
   index("idx_company_employee_company").on(table.companyId),
 ]);
 
-// Company roles table - allows companies to define their own role hierarchy
+// Company roles table - allows companies to define their own role hierarchy with support for 1000 levels
 export const companyRoles = pgTable("company_roles", {
   id: serial("id").primaryKey(),
   companyId: integer("company_id").references(() => companies.id).notNull(),
   name: varchar("name").notNull(), // e.g., "Manager", "Lead", "Senior", etc.
-  level: integer("level").notNull(), // 1=user, 2=admin, 99=owner, 100=super-user
+  level: integer("level").notNull(), // 0=demo, 1=user, 98=admin, 99=owner, 100-1000=custom levels
   description: text("description"),
   permissions: jsonb("permissions"), // customizable permissions
   isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
 }, (table) => [
   index("idx_company_role_level").on(table.companyId, table.level),
+  // Ensure unique role levels per company
+  unique("idx_company_role_unique_level").on(table.companyId, table.level),
 ]);
 
 // Demo users table - tracks temporary demo accounts with question limits

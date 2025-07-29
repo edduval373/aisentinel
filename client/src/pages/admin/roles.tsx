@@ -52,6 +52,7 @@ export default function AdminRoles() {
     description: '',
     permissions: [] as string[]
   });
+  const [expandedCompany, setExpandedCompany] = useState<number | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [roleToDelete, setRoleToDelete] = useState<CompanyRole | null>(null);
 
@@ -93,7 +94,9 @@ export default function AdminRoles() {
       if (response.ok) {
         const data = await response.json();
         console.log("Roles data received:", data);
-        setRoles(data);
+        // Sort by level in descending order (1000 → 0)
+        const sortedRoles = data.sort((a: CompanyRole, b: CompanyRole) => b.level - a.level);
+        setRoles(sortedRoles);
       } else {
         const errorText = await response.text();
         console.error("API error:", response.status, errorText);
@@ -116,17 +119,21 @@ export default function AdminRoles() {
   };
 
   const getRoleBadgeColor = (level: number) => {
-    if (level >= 1000) return "destructive"; // Super-user
-    if (level >= 999) return "default"; // Owner
-    if (level >= 998) return "secondary"; // Admin
-    return "outline"; // User
+    if (level === 1000) return "#dc2626"; // Super-user (Red)
+    if (level === 999) return "#8b5cf6"; // Owner (Purple)
+    if (level === 998) return "#3b82f6"; // Administrator (Blue)
+    if (level === 1) return "#10b981"; // User (Green)
+    if (level === 0) return "#f59e0b"; // Demo (Orange)
+    return "#6b7280"; // Custom levels (Gray)
   };
 
   const getRoleDisplayName = (level: number) => {
-    if (level >= 1000) return "Super-user";
-    if (level >= 999) return "Owner";
-    if (level >= 998) return "Admin";
-    return "User";
+    if (level === 1000) return "Super User";
+    if (level === 999) return "Owner";
+    if (level === 998) return "Administrator";
+    if (level === 1) return "User";
+    if (level === 0) return "Demo";
+    return "Custom Role";
   };
 
   const createRole = async () => {
@@ -486,7 +493,8 @@ export default function AdminRoles() {
                         <span style={{ fontSize: '14px', color: '#6b7280' }}>Level {role.level}</span>
                       </div>
                       <span style={{
-                        ...getRoleBadgeStyle(role.level),
+                        backgroundColor: getRoleBadgeColor(role.level),
+                        color: 'white',
                         fontSize: '12px',
                         fontWeight: '500',
                         padding: '4px 8px',
@@ -647,11 +655,11 @@ export default function AdminRoles() {
                   </label>
                   <input
                     type="number"
-                    placeholder="e.g., 500 (between 1-999 for custom roles)"
+                    placeholder="e.g., 500 (between 2-997 for custom roles)"
                     value={newRole.level}
                     onChange={(e) => setNewRole(prev => ({ ...prev, level: e.target.value }))}
-                    min="1"
-                    max="999"
+                    min="2"
+                    max="997"
                     style={{
                       width: '100%',
                       padding: '12px',
@@ -662,7 +670,7 @@ export default function AdminRoles() {
                     }}
                   />
                   <p style={{ fontSize: '12px', color: '#6b7280', margin: '4px 0 0 0' }}>
-                    100: Super User, 99: Owner, 98: Admin, 1: User. Use values between for custom roles.
+                    1000: Super User, 999: Owner, 998: Administrator, 1: User, 0: Demo. Use values 2-997 for custom roles.
                   </p>
                 </div>
                 
@@ -810,11 +818,11 @@ export default function AdminRoles() {
                   </label>
                   <input
                     type="number"
-                    placeholder="e.g., 500 (between 1-999 for custom roles)"
+                    placeholder="e.g., 500 (between 2-997 for custom roles)"
                     value={editRole.level}
                     onChange={(e) => setEditRole(prev => ({ ...prev, level: e.target.value }))}
-                    min="1"
-                    max="999"
+                    min="2"
+                    max="997"
                     style={{
                       width: '100%',
                       padding: '12px',
@@ -825,7 +833,7 @@ export default function AdminRoles() {
                     }}
                   />
                   <p style={{ fontSize: '12px', color: '#6b7280', margin: '4px 0 0 0' }}>
-                    100: Super User, 99: Owner, 98: Admin, 1: User. Use values between for custom roles.
+                    1000: Super User, 999: Owner, 998: Administrator, 1: User, 0: Demo. Use values 2-997 for custom roles.
                   </p>
                 </div>
                 
