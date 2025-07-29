@@ -23,7 +23,22 @@ module.exports = async (req, res) => {
       res.status(200).json({
         status: 'OK',
         timestamp: new Date().toISOString(),
-        version: 'minimal-health-v1'
+        version: 'minimal-health-v2-debug'
+      });
+      return;
+    }
+
+    // Database test endpoint
+    if (url.includes('db-test')) {
+      console.log('🔍 [SERVERLESS] Database test request');
+      
+      const DATABASE_URL = process.env.DATABASE_URL;
+      
+      res.status(200).json({
+        databaseConfigured: !!DATABASE_URL,
+        databasePreview: DATABASE_URL ? DATABASE_URL.substring(0, 30) + '...' : 'NOT SET',
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV || 'unknown'
       });
       return;
     }
@@ -85,6 +100,7 @@ module.exports = async (req, res) => {
       
       const DATABASE_URL = process.env.DATABASE_URL;
       console.log('🏢 [SERVERLESS] DATABASE_URL available:', DATABASE_URL ? 'YES' : 'NO');
+      console.log('🏢 [SERVERLESS] DATABASE_URL preview:', DATABASE_URL ? DATABASE_URL.substring(0, 30) + '...' : 'NOT SET');
       
       if (!DATABASE_URL) {
         console.error('❌ [SERVERLESS] DATABASE_URL environment variable missing');
@@ -96,10 +112,22 @@ module.exports = async (req, res) => {
       }
       
       try {
-        const client = new Client({ connectionString: DATABASE_URL });
-        await client.connect();
+        console.log('🔌 [SERVERLESS] Attempting database connection...');
+        const client = new Client({ 
+          connectionString: DATABASE_URL,
+          ssl: {
+            rejectUnauthorized: false
+          },
+          connectionTimeoutMillis: 10000
+        });
         
+        console.log('🔌 [SERVERLESS] Client created, connecting...');
+        await client.connect();
+        console.log('✅ [SERVERLESS] Database connected successfully');
+        
+        console.log('📊 [SERVERLESS] Executing companies query...');
         const result = await client.query('SELECT id, name, domain, primary_admin_name, primary_admin_email, primary_admin_title, logo FROM companies ORDER BY id');
+        console.log('📊 [SERVERLESS] Query completed, rows:', result.rows.length);
         
         if (result.rows.length > 0) {
           const companies = result.rows.map(row => ({
@@ -119,18 +147,25 @@ module.exports = async (req, res) => {
           return;
         }
         
+        console.log('⚠️ [SERVERLESS] No companies found in database');
         await client.end();
+        res.status(200).json([]);
+        return;
+        
       } catch (error) {
-        console.error('❌ [SERVERLESS] Database connection failed:', error.message);
+        console.error('❌ [SERVERLESS] Database error details:');
+        console.error('   Error message:', error.message);
+        console.error('   Error code:', error.code);
+        console.error('   Error stack:', error.stack);
+        
+        res.status(500).json({ 
+          error: 'Database connection failed', 
+          message: `Database error: ${error.message}`,
+          code: error.code,
+          details: 'Check Vercel function logs for full error details'
+        });
+        return;
       }
-      
-      // No fallback data - return error to see what's wrong
-      console.error('❌ [SERVERLESS] Database connection failed for companies, no fallback data');
-      res.status(500).json({ 
-        error: 'Database connection failed', 
-        message: 'Could not connect to database to fetch companies' 
-      });
-      return;
     }
 
     // AI models endpoint
