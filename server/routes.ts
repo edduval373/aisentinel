@@ -2564,6 +2564,39 @@ This is a demonstration of AI Sentinel's capabilities. In the full version:
   });
 
   // Company Role Management routes (Owner/Super-user only)
+  
+  // Get roles for current user's company (for developer modal)
+  app.get('/api/company/roles', cookieAuth, async (req: AuthenticatedRequest, res) => {
+    try {
+      console.log("Fetching roles for current user's company - userId:", req.user?.userId);
+      
+      // Get user from cookie authentication
+      const user = await storage.getUser(req.user!.userId);
+      const userRoleLevel = user?.roleLevel || 1;
+      
+      console.log("User role level:", userRoleLevel, "Company ID:", user?.companyId);
+      
+      // Must be administrator (98) or higher, OR developer for testing
+      const { authService } = await import('./services/authService');
+      const isDeveloper = authService.isDeveloperEmail(user?.email);
+      
+      if (userRoleLevel < 98 && !isDeveloper) {
+        return res.status(403).json({ message: "Administrator access required" });
+      }
+      
+      const companyId = user?.companyId || 1; // Default to company 1 for developers
+      
+      console.log("Fetching roles for company:", companyId);
+      const roles = await storage.getCompanyRoles(companyId);
+      console.log("Found roles:", roles.length);
+      
+      res.json(roles);
+    } catch (error) {
+      console.error("Error fetching company roles:", error);
+      res.status(500).json({ message: "Failed to fetch company roles" });
+    }
+  });
+
   app.get('/api/company/roles/:companyId', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
       console.log("Fetching company roles - userId:", req.user?.userId, "companyId param:", req.params.companyId);

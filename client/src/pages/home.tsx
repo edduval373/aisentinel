@@ -283,7 +283,7 @@ export default function Home() {
   
   // Features & Benefits dialog for demo users
   const { showDialog, openDialog, closeDialog } = useFeaturesBenefits(isDemoMode);
-  const { isDeveloperEmail } = useDeveloper();
+  const { isDeveloper } = useDeveloper();
   
   // Check if user is super-user (role level 1000+)
   const isSuperUserLevel = effectiveRoleLevel >= 1000;
@@ -294,13 +294,13 @@ export default function Home() {
   // Fetch all companies for super-user company switching
   const { data: allCompanies = [] } = useQuery<Array<{ id: number; name: string; description?: string }>>({
     queryKey: ['/api/admin/companies'],
-    enabled: isSuperUserLevel || isDeveloperEmail,
+    enabled: isSuperUserLevel || isDeveloper,
   });
 
   // Fetch company roles for developer testing
   const { data: companyRoles = [] } = useQuery<Array<{ id: number; name: string; level: number }>>({
     queryKey: ['/api/company/roles', currentCompanyId],
-    enabled: isDeveloperEmail && !!currentCompanyId
+    enabled: isDeveloper && !!currentCompanyId
   });
 
   // Clear cookies function with server logout
@@ -403,10 +403,10 @@ export default function Home() {
   // Initialize modal selections with current values
   useEffect(() => {
     if (showDeveloperModal) {
-      setSelectedRole(user?.testRole || '');
+      setSelectedRole('');
       setSelectedCompanyId(currentCompanyId);
     }
-  }, [showDeveloperModal, user?.testRole, currentCompanyId]);
+  }, [showDeveloperModal, currentCompanyId]);
 
   // Completely bypass authentication - always allow access
   useEffect(() => {
@@ -533,7 +533,7 @@ export default function Home() {
             )}
             
             {/* Developer Controls Icon */}
-            {isDeveloperEmail && (
+            {isDeveloper && (
               <button
                 onClick={() => setShowDeveloperModal(true)}
                 style={{
