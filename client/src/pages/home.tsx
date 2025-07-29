@@ -393,26 +393,30 @@ export default function Home() {
       else if (roleData.level === 0) testRole = 'demo';
       else testRole = `custom-${roleData.level}`;
 
-      // First switch company if different
-      if (selectedCompanyId !== currentCompanyId) {
-        await fetch('/api/auth/switch-company', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ companyId: selectedCompanyId }),
-          credentials: 'include'
-        });
-      }
+      // Note: Company switching will be handled after role switching with page refresh
 
       const response = await fetch('/api/auth/set-role', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ testRole }),
+        body: JSON.stringify({ 
+          testRole, 
+          companyId: selectedCompanyId !== currentCompanyId ? selectedCompanyId : undefined 
+        }),
         credentials: 'include'
       });
 
       if (response.ok) {
-        setCurrentCompanyId(selectedCompanyId);
+        const result = await response.json();
+        console.log('Developer role switch successful:', result);
+        
+        toast({ 
+          title: "Role & Company Updated", 
+          description: `Successfully switched to ${selectedRole}${selectedCompanyId !== currentCompanyId ? ` and company ${selectedCompanyId}` : ''}.` 
+        });
+        
         setShowDeveloperModal(false);
+        
+        // Refresh the page to update the UI
         setTimeout(() => window.location.reload(), 100);
       } else {
         throw new Error('Failed to switch role');
@@ -576,7 +580,7 @@ export default function Home() {
                   justifyContent: 'center',
                   width: '32px',
                   height: '32px',
-                  backgroundColor: '#1a1f3a',
+                  backgroundColor: '#1e2851',
                   color: 'white',
                   border: 'none',
                   borderRadius: '6px',
@@ -587,7 +591,7 @@ export default function Home() {
                   e.currentTarget.style.backgroundColor = '#1e3a5f';
                 }}
                 onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = '#1a1f3a';
+                  e.currentTarget.style.backgroundColor = '#1e2851';
                 }}
                 title="Developer Controls"
               >
@@ -678,7 +682,7 @@ export default function Home() {
         >
           <div 
             style={{
-              backgroundColor: '#1a1f3a',
+              backgroundColor: '#1e2851',
               borderRadius: '12px',
               padding: '24px',
               width: '400px',
@@ -786,7 +790,7 @@ export default function Home() {
                   borderRadius: '6px',
                   border: 'none',
                   backgroundColor: 'white',
-                  color: '#1a1f3a',
+                  color: '#1e2851',
                   cursor: 'pointer',
                   fontSize: '14px',
                   fontWeight: '600'
