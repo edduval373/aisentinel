@@ -971,6 +971,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (req.user && req.user.userId) {
         console.log("Authenticated user requesting current company:", req.user.userId);
         
+        // For developers, check if they have switched companies in their session
+        const sessionToken = req.cookies?.sessionToken;
+        if (sessionToken) {
+          const session = await authService.verifySession(sessionToken);
+          if (session && authService.isDeveloperEmail(session.email) && session.companyId) {
+            console.log("Developer session - using company ID from session:", session.companyId);
+            const company = await storage.getCompany(session.companyId);
+            if (company) {
+              console.log("Returning session company:", company.name, "ID:", company.id);
+              return res.json(company);
+            }
+          }
+        }
+        
+        // For regular users, use their profile company
         const user = await storage.getUser(req.user.userId);
         if (user && user.companyId) {
           const company = await storage.getCompany(user.companyId);
