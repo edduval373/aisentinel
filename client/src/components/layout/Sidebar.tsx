@@ -31,6 +31,7 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
+  // Cache-busting comment - force browser update
   const { user } = useAuth(); // Re-enabled to get Railway database user data
   const [location, navigate] = useLocation();
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
