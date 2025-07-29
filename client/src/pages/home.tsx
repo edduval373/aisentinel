@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import Sidebar from "@/components/layout/Sidebar";
 import ChatInterface from "@/components/chat/ChatInterface";
 import { useQuery } from "@tanstack/react-query";
-import { Building2, LogOut, RotateCcw, Trash2, Star, ArrowLeft, Settings } from "lucide-react";
+import { Building2, LogOut, RotateCcw, Trash2, Star, ArrowLeft } from "lucide-react";
 import TutorialArrow from "@/components/tutorial/TutorialArrow";
 import { useTutorial } from "@/hooks/useTutorial";
 import { DemoUsageBanner } from "@/components/demo/DemoUsageBanner";
@@ -595,7 +595,7 @@ export default function Home() {
                 }}
                 title="Developer Controls"
               >
-                <Settings size={16} />
+                <img src="/settings-icon-reversed.svg" alt="Settings" style={{ width: '16px', height: '16px' }} />
               </button>
             )}
 
