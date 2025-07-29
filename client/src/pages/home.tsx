@@ -382,7 +382,8 @@ export default function Home() {
           alignItems: 'center',
           justifyContent: 'space-between',
           flexShrink: 0,
-          minHeight: '48px'
+          minHeight: '48px',
+          position: 'relative'
         }}>
           {/* Left side - Menu Button */}
           <Button
@@ -407,7 +408,8 @@ export default function Home() {
               background: 'transparent',
               cursor: canAccessSidebar ? 'pointer' : 'default',
               opacity: canAccessSidebar ? 1 : 0.6,
-              flexShrink: 0
+              flexShrink: 0,
+              zIndex: 1
             }}
           >
             <img
@@ -423,21 +425,22 @@ export default function Home() {
             />
           </Button>
 
-          {/* Center - Company Branding */}
+          {/* Center - Company Branding - Absolutely positioned to center on entire screen */}
           <div style={{ 
+            position: 'absolute',
+            left: '50%',
+            top: '50%',
+            transform: 'translate(-50%, -50%)',
             display: 'flex', 
             alignItems: 'center', 
-            gap: '16px',
             justifyContent: 'center',
-            margin: '0',
-            padding: '0',
-            flex: 1
+            zIndex: 0
           }}>
             <CompanyInfoLarge />
           </div>
 
           {/* Right side - Super User Controls or Sign Out Button */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0, zIndex: 1 }}>
             {/* Development Testing Controls - Enhanced for development workflow */}
             {(isSuperUserLevel && !isDemoMode && userRoleLevel !== 0) && (
               <>
