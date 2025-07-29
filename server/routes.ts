@@ -47,7 +47,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Create session in database
       await storage.createUserSession({
-        userId: 42450602, // Existing developer user ID
+        userId: '42450602', // Existing developer user ID as string
         sessionToken,
         email: developerEmail,
         companyId: 1, // Default to company 1
