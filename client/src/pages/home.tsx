@@ -270,9 +270,9 @@ export default function Home() {
   const { showTutorial, completeTutorial } = useTutorial();
   const [showCompanySwitcher, setShowCompanySwitcher] = useState(false);
   
-  // Check if we're in demo mode (role level 0) - but exclude developer test mode
+  // Check if we're in demo mode (role level 0) - includes developer test mode
   const userRoleLevel = user?.roleLevel || 0;
-  const isDemoMode = userRoleLevel === 0 && user?.role === 'demo';
+  const isDemoMode = userRoleLevel === 0;
   
   // For developers: use effective role level that includes test role mapping
   const effectiveRoleLevel = userRoleLevel;
@@ -283,8 +283,8 @@ export default function Home() {
   // Check if user is super-user (role level 1000+)
   const isSuperUserLevel = effectiveRoleLevel >= 1000;
   
-  // Determine if sidebar access is allowed (authenticated users with role level 2+ or actual demo users)
-  const canAccessSidebar = (isAuthenticated && effectiveRoleLevel >= 2) || isDemoMode;
+  // Determine if sidebar access is allowed (authenticated users with role level 0+ for demo, 2+ for others)
+  const canAccessSidebar = isAuthenticated && (effectiveRoleLevel === 0 || effectiveRoleLevel >= 2);
 
   // Fetch all companies for super-user company switching
   const { data: allCompanies = [] } = useQuery<Array<{ id: number; name: string; description?: string }>>({
