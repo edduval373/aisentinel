@@ -339,7 +339,7 @@ export default function PricingPage() {
                 </div>
                 
                 <div style={{ 
-                  marginTop: plan.name === 'trial' ? '40px' : 'auto' 
+                  marginTop: plan.name === 'trial' ? '40px' : (plan.popular ? '-72px' : 'auto') 
                 }}>
                   <button 
                     style={{
