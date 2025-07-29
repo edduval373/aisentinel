@@ -26,7 +26,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const cookieParserModule = await import('cookie-parser');
   const cookieParser = cookieParserModule.default;
   app.use(cookieParser());
-  
+
   // Define authentication middleware
   const requireAuth = isAuthenticated;
   // Test API route first - highest priority
@@ -41,12 +41,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('Super-user login request');
       const { testRole } = req.body;
       console.log('Test role requested:', testRole);
-      
+
       // Create a proper session for developer testing
       const sessionToken = authService.generateSessionToken();
       const developerEmail = 'ed.duval15@gmail.com'; // Primary developer email
       const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
-      
+
       // Create session in database with test role
       await storage.createUserSession({
         userId: '42450602', // Existing developer user ID as string
@@ -57,7 +57,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         expiresAt,
         testRole: testRole || null, // Store test role if provided
       });
-      
+
       // Set the session cookie
       res.cookie('sessionToken', sessionToken, {
         httpOnly: true,
@@ -65,7 +65,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         sameSite: 'lax',
         maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       });
-      
+
       console.log('Developer session created with token:', sessionToken.substring(0, 20) + '...');
       console.log('Test role set to:', testRole);
       res.json({ 
@@ -88,7 +88,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/auth/developer-status', async (req: AuthenticatedRequest, res) => {
     try {
       const sessionToken = req.cookies?.sessionToken;
-      
+
       if (!sessionToken) {
         return res.json({ isDeveloper: false });
       }
@@ -99,7 +99,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const isDeveloper = authService.isDeveloperEmail(session.email);
-      
+
       res.json({ 
         isDeveloper,
         testRole: session.testRole || null,
@@ -130,7 +130,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/ai-models', optionalAuth, async (req: any, res) => {
     try {
       let companyId = 1; // Default to company 1 for demo users
-      
+
       // If user is authenticated and has a company, use their company
       if (req.user && req.user.companyId) {
         companyId = req.user.companyId;
@@ -138,15 +138,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } else {
         console.log("Demo mode AI models request");
       }
-      
+
       // Get working models first, fallback to all models if none are working
       let models = await storage.getWorkingAiModels(companyId);
-      
+
       // If no working models, return all models but with a warning flag
       if (models.length === 0) {
         console.log("No working AI models found, returning all models with demo fallback");
         const allModels = await storage.getEnabledAiModels(companyId);
-        
+
         // If still no models, create basic demo models
         if (allModels.length === 0) {
           console.log("No models found in database, providing demo models");
@@ -180,7 +180,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           hasValidApiKey: true
         }));
       }
-      
+
       console.log("Returning models for company", companyId + ":", models.length, "models");
       return res.json(models);
     } catch (error) {
@@ -193,7 +193,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/activity-types', optionalAuth, async (req: any, res) => {
     try {
       let companyId = 1; // Default to company 1 for demo users
-      
+
       // If user is authenticated and has a company, use their company
       if (req.user && req.user.companyId) {
         companyId = req.user.companyId;
@@ -201,9 +201,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } else {
         console.log("Demo mode activity types request");
       }
-      
+
       let activityTypes = await storage.getActivityTypes(companyId);
-      
+
       // If no activity types found, provide demo fallback
       if (activityTypes.length === 0) {
         console.log("No activity types found, providing demo fallback");
@@ -234,7 +234,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         ];
       }
-      
+
       console.log("Returning activity types for company", companyId + ":", activityTypes.length, "types");
       return res.json(activityTypes);
     } catch (error) {
@@ -247,7 +247,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/permissions', optionalAuth, async (req: any, res) => {
     try {
       let companyId = 1; // Default to company 1 for demo users
-      
+
       // If user is authenticated and has a company, use their company
       if (req.user && req.user.companyId) {
         companyId = req.user.companyId;
@@ -255,7 +255,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } else {
         console.log("Demo mode permissions request");
       }
-      
+
       const permissions = await storage.getPermissions(companyId);
       console.log("Returning permissions for company", companyId + ":", permissions.length, "permissions");
       return res.json(permissions);
@@ -318,15 +318,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
             isDemoUser: true
           }
         ];
-        
+
         console.log("Returning demo users:", demoUsers.length, "users");
         return res.json(demoUsers);
       }
-      
+
       // For authenticated users, return their company's users
       const companyId = req.user.companyId;
       console.log("Authenticated user requesting users:", { userId: req.user.userId, companyId });
-      
+
       const users = await storage.getCompanyUsers(companyId);
       console.log("Returning users for company", companyId + ":", users.length, "users");
       return res.json(users);
@@ -343,7 +343,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!req.user) {
         console.log("Demo mode user invite request");
         const { email, firstName, lastName, role, department } = req.body;
-        
+
         // Return a simulated new user
         const newUser = {
           id: `demo-user-${Date.now()}`,
@@ -360,17 +360,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
           profileImageUrl: null,
           isDemoUser: true
         };
-        
+
         console.log("Demo user invitation simulated:", newUser);
         return res.json({ message: "User invitation sent successfully (demo)", user: newUser });
       }
-      
+
       // For authenticated users, use real invitation logic
       const userRoleLevel = req.user?.roleLevel || 1;
       if (userRoleLevel < 98) {
         return res.status(403).json({ message: "Administrator access required" });
       }
-      
+
       const user = await storage.inviteUser(req.user.companyId, req.body);
       res.json(user);
     } catch (error) {
@@ -385,7 +385,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!req.user) {
         console.log("Demo mode user update request:", req.params.id);
         const { firstName, lastName, role, department } = req.body;
-        
+
         // Return a simulated updated user
         const updatedUser = {
           id: req.params.id,
@@ -404,17 +404,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
           profileImageUrl: null,
           isDemoUser: true
         };
-        
+
         console.log("Demo user update simulated:", updatedUser);
         return res.json({ message: "User updated successfully (demo)", user: updatedUser });
       }
-      
+
       // For authenticated users, use real update logic
       const userRoleLevel = req.user?.roleLevel || 1;
       if (userRoleLevel < 98) {
         return res.status(403).json({ message: "Administrator access required" });
       }
-      
+
       const user = await storage.updateUser(req.params.id, req.user.companyId, req.body);
       res.json(user);
     } catch (error) {
@@ -431,13 +431,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log("Demo user deletion simulated");
         return res.json({ message: "User deleted successfully (demo)" });
       }
-      
+
       // For authenticated users, use real deletion logic
       const userRoleLevel = req.user?.roleLevel || 1;
       if (userRoleLevel < 98) {
         return res.status(403).json({ message: "Administrator access required" });
       }
-      
+
       await storage.deleteUser(req.params.id, req.user.companyId);
       res.json({ message: "User deleted successfully" });
     } catch (error) {
@@ -509,15 +509,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
             isDemoRole: true
           }
         ];
-        
+
         console.log("Returning demo roles:", demoRoles.length, "roles");
         return res.json(demoRoles);
       }
-      
+
       // For authenticated users, return their company's roles
       const companyId = req.user.companyId;
       console.log("Authenticated user requesting roles:", { userId: req.user.userId, companyId });
-      
+
       const roles = await storage.getCompanyRoles(companyId);
       console.log("Returning roles for company", companyId + ":", roles.length, "roles");
       return res.json(roles);
@@ -534,7 +534,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!req.user) {
         console.log("Demo mode role creation request");
         const { name, level, description, permissions } = req.body;
-        
+
         // Return a simulated new role
         const newRole = {
           id: Date.now(),
@@ -547,17 +547,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
           createdAt: new Date().toISOString(),
           isDemoRole: true
         };
-        
+
         console.log("Demo role creation simulated:", newRole);
         return res.json({ message: "Role created successfully (demo)", role: newRole });
       }
-      
+
       // For authenticated users, use real creation logic
       const userRoleLevel = req.user?.roleLevel || 1;
       if (userRoleLevel < 98) {
         return res.status(403).json({ message: "Administrator access required" });
       }
-      
+
       const role = await storage.createCompanyRole(req.user.companyId, req.body);
       res.json(role);
     } catch (error) {
@@ -572,7 +572,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!req.user) {
         console.log("Demo mode role update request:", req.params.id);
         const { name, level, description, permissions } = req.body;
-        
+
         // Return a simulated updated role
         const updatedRole = {
           id: parseInt(req.params.id),
@@ -585,17 +585,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
           createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
           isDemoRole: true
         };
-        
+
         console.log("Demo role update simulated:", updatedRole);
         return res.json({ message: "Role updated successfully (demo)", role: updatedRole });
       }
-      
+
       // For authenticated users, use real update logic
       const userRoleLevel = req.user?.roleLevel || 1;
       if (userRoleLevel < 98) {
         return res.status(403).json({ message: "Administrator access required" });
       }
-      
+
       const role = await storage.updateCompanyRole(parseInt(req.params.id), req.body);
       res.json(role);
     } catch (error) {
@@ -612,13 +612,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log("Demo role deletion simulated");
         return res.json({ message: "Role deleted successfully (demo)" });
       }
-      
+
       // For authenticated users, use real deletion logic
       const userRoleLevel = req.user?.roleLevel || 1;
       if (userRoleLevel < 98) {
         return res.status(403).json({ message: "Administrator access required" });
       }
-      
+
       await storage.deleteCompanyRole(parseInt(req.params.id));
       res.json({ message: "Role deleted successfully" });
     } catch (error) {
@@ -632,18 +632,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const id = parseInt(req.params.id);
       const user = await storage.getUser(req.user.claims.sub);
-      
+
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
-      
+
       const userRoleLevel = user.roleLevel || 1;
       if (userRoleLevel < 99) { // Must be owner (99) or super-user (100)
         return res.status(403).json({ message: "Owner access required to update AI models" });
       }
-      
+
       console.log("Updating AI model for authenticated user:", user.email, "role level:", userRoleLevel);
-      
+
       // Auto-add missing fields
       const modelData = {
         ...req.body,
@@ -651,7 +651,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         authMethod: req.body.authMethod || "bearer", 
         requestHeaders: req.body.requestHeaders || '{"Content-Type": "application/json"}'
       };
-      
+
       console.log("Updating model ID:", id, "with data:", modelData);
       const updatedModel = await storage.updateAiModel(id, modelData);
       console.log("Model updated successfully:", updatedModel.id);
@@ -666,22 +666,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/admin/update-api-key', optionalAuth, async (req: any, res) => {
     try {
       console.log('Update API key request from user:', req.user?.userId);
-      
+
       // Check authentication first
       if (!req.user?.userId) {
         console.log('No authenticated user found');
         return res.status(401).json({ message: "Authentication required" });
       }
-      
+
       const user = await storage.getUser(req.user.userId);
       console.log('User found:', user?.email, 'Role level:', user?.roleLevel);
       const userRoleLevel = user?.roleLevel || 1;
-      
+
       if (userRoleLevel < 99) { // Must be owner (99) or super-user (100)
         console.log('Access denied - insufficient role level:', userRoleLevel);
         return res.status(403).json({ message: "Owner access required to update API keys" });
       }
-      
+
       if (!user?.companyId) {
         return res.status(400).json({ message: "No company associated with user" });
       }
@@ -763,7 +763,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('Current user companyId:', req.user?.companyId);
       console.log('Requested companyId:', companyId);
       console.log('CompanyId type:', typeof companyId);
-      
+
       console.log('Checking developer access for user:', req.user?.email);
       if (!req.user || !authService.isDeveloperEmail(req.user.email)) {
         console.log('Developer access denied for:', req.user?.email);
@@ -790,7 +790,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (role.level === 0) return 'demo';
         return `custom-${role.level}`;
       });
-      
+
       if (!validRoleKeys.includes(testRole)) {
         return res.status(400).json({ 
           message: `Invalid test role. Valid roles: ${validRoleKeys.join(', ')}` 
@@ -803,15 +803,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         sessionUpdate.companyId = parseInt(companyId);
         console.log('Developer company switching:', req.user.companyId, '->', parseInt(companyId));
       }
-      
+
       console.log('Updating session with:', sessionUpdate);
       const updatedSession = await storage.updateUserSession(sessionToken, sessionUpdate);
-      
+
       if (!updatedSession) {
         console.error('Session update failed - no session returned');
         return res.status(500).json({ message: 'Failed to update session' });
       }
-      
+
       console.log('Session updated successfully:', {
         sessionToken: sessionToken.substring(0, 10) + '...',
         updatedSession: {
@@ -820,7 +820,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           userId: updatedSession.userId
         }
       });
-      
+
       // Create proper session object for role level calculation
       const sessionForRoleCheck = {
         userId: req.user.userId,
@@ -831,7 +831,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         isDeveloper: true,
         testRole
       };
-      
+
       res.json({ 
         success: true, 
         message: companyId ? `Test role set to ${testRole} and company switched to ${companyId}` : `Test role set to ${testRole}`,
@@ -844,7 +844,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: 'Failed to set test role' });
     }
   });
-  
+
   // Setup authentication routes
   setupAuthRoutes(app);
 
@@ -853,7 +853,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { userId } = req.params;
       const trialUsage = await storage.getTrialUsageByUserId(userId);
-      
+
       if (!trialUsage) {
         return res.status(404).json({ message: "Trial usage not found" });
       }
@@ -878,7 +878,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { userId } = req.params;
       const success = await storage.incrementTrialUsage(userId);
-      
+
       if (success) {
         const trialUsage = await storage.getTrialUsageByUserId(userId);
         res.json({
@@ -899,7 +899,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/auth/external', async (req, res) => {
     try {
       const { email, externalUserId, ipAddress, deviceFingerprint } = req.body;
-      
+
       if (!email || !externalUserId) {
         return res.status(400).json({ message: "Email and external user ID required" });
       }
@@ -971,7 +971,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       const user = await storage.getUser(userId);
-      
+
       if (user) {
         console.log("Returning authenticated user:", user.email, "role:", user.role);
         return res.json(user);
@@ -990,7 +990,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Check if user is authenticated with cookie session
       if (req.user && req.user.userId) {
         console.log("Authenticated user requesting current company:", req.user.userId);
-        
+
         // For developers, check if they have switched companies in their session
         const sessionToken = req.cookies?.sessionToken;
         if (sessionToken) {
@@ -1004,7 +1004,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             }
           }
         }
-        
+
         // For regular users, use their profile company
         const user = await storage.getUser(req.user.userId);
         if (user && user.companyId) {
@@ -1013,9 +1013,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           return res.json(company);
         }
       }
-      
+
       console.log("Demo mode: Returning company ID 1");
-      
+
       // Always return company ID 1 for demo users
       const demoCompany = await storage.getCompany(1);
       if (demoCompany) {
@@ -1117,7 +1117,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
         return res.status(403).json({ message: "Super-user access required" });
       }
-      
+
       console.log("Fetching companies for super-user:", { userId: req.user?.userId, roleLevel: req.user.roleLevel });
       const companies = await storage.getCompanies();
       res.json(companies);
@@ -1137,10 +1137,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
         return res.status(403).json({ message: "Super-user access required" });
       }
-      
+
       const id = parseInt(req.params.id);
       console.log("Updating company:", { id, userId: req.user?.userId, roleLevel: req.user.roleLevel });
-      
+
       const company = await storage.updateCompany(id, req.body);
       res.json(company);
     } catch (error) {
@@ -1154,7 +1154,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const id = parseInt(req.params.id);
       console.log("🗑️ DEV DELETE: Deleting company:", { id });
-      
+
       await storage.deleteCompany(id);
       console.log("✅ DEV DELETE: Company deleted successfully:", id);
       res.json({ message: "Company deleted successfully" });
@@ -1169,28 +1169,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const companyId = parseInt(req.params.id);
       const { logoSize, companyNameSize, showCompanyName, showCompanyLogo } = req.body;
-      
+
       // Verify user has owner or super-user permissions for this company
       if (!req.user || (req.user.roleLevel < 99 && req.user.companyId !== companyId)) {
         return res.status(403).json({ error: "Owner permissions required" });
       }
-      
+
       // Validate logoSize is within acceptable range
       if (logoSize && (logoSize < 60 || logoSize > 200)) {
         return res.status(400).json({ error: "Logo size must be between 60 and 200 pixels" });
       }
-      
+
       // Validate companyNameSize is within acceptable range
       if (companyNameSize && (companyNameSize < 14 || companyNameSize > 24)) {
         return res.status(400).json({ error: "Company name size must be between 14 and 24 pixels" });
       }
-      
+
       const updateData: any = {};
       if (logoSize !== undefined) updateData.logoSize = logoSize;
       if (companyNameSize !== undefined) updateData.companyNameSize = companyNameSize;
       if (showCompanyName !== undefined) updateData.showCompanyName = showCompanyName;
       if (showCompanyLogo !== undefined) updateData.showCompanyLogo = showCompanyLogo;
-      
+
       console.log("Updating company display settings:", { companyId, updateData, user: req.user?.userId });
       const updatedCompany = await storage.updateCompany(companyId, updateData);
       res.json(updatedCompany);
@@ -1325,7 +1325,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!req.user?.companyId) {
         return res.status(400).json({ message: "No company associated with user" });
       }
-      
+
       console.log("Fetching activity types for admin:", { userId: req.user?.userId, companyId: req.user.companyId, roleLevel: userRoleLevel });
       const types = await storage.getActivityTypes(req.user.companyId);
       console.log("Retrieved activity types:", types.length, "types");
@@ -1405,7 +1405,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!req.user?.companyId) {
         return res.status(400).json({ message: "No company associated with user" });
       }
-      
+
       console.log("Fetching permissions for admin:", { userId: req.user?.userId, companyId: req.user.companyId, roleLevel: userRoleLevel });
       const permissions = await storage.getPermissions(req.user.companyId);
       console.log("Retrieved permissions:", permissions.length, "permissions");
@@ -1484,7 +1484,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!req.user?.companyId) {
         return res.status(400).json({ message: "No company associated with user" });
       }
-      
+
       console.log("Fetching users for admin:", { userId: req.user?.userId, companyId: req.user.companyId, roleLevel: userRoleLevel });
       const users = await storage.getCompanyUsers(req.user.companyId);
       console.log("Retrieved users:", users.length, "users");
@@ -1506,12 +1506,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const { email, firstName, lastName, role, department } = req.body;
-      
+
       // Determine role level based on role
       let roleLevel = 1; // default user
       if (role === 'admin') roleLevel = 2;
       if (role === 'owner') roleLevel = 99;
-      
+
       const userData = {
         email,
         firstName,
@@ -1539,15 +1539,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!req.user?.companyId) {
         return res.status(400).json({ message: "No company associated with user" });
       }
-      
+
       const userId = req.params.id;
       const { firstName, lastName, role, department } = req.body;
-      
+
       // Determine role level based on role
       let roleLevel = 1; // default user
       if (role === 'admin') roleLevel = 2;
       if (role === 'owner') roleLevel = 99;
-      
+
       const userData = {
         firstName,
         lastName,
@@ -1555,7 +1555,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         roleLevel,
         department
       };
-      
+
       console.log("Updating user:", { userId, userData, adminUserId: req.user?.userId, roleLevel: userRoleLevel });
       const updatedUser = await storage.updateUser(userId, req.user.companyId, userData);
       res.json(updatedUser);
@@ -1574,7 +1574,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!req.user?.companyId) {
         return res.status(400).json({ message: "No company associated with user" });
       }
-      
+
       const userId = req.params.id;
       console.log("Deleting user:", { userId, adminUserId: req.user?.userId, roleLevel: userRoleLevel });
       await storage.deleteUser(userId, req.user.companyId);
@@ -1664,472 +1664,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-
-
-  // Whisper API route
-  app.post('/api/transcribe', isAuthenticated, async (req: any, res) => {
+  // Get chat session by ID
+  app.get('/api/chat/session/:sessionId', optionalAuth, async (req: AuthenticatedRequest, res) => {
     try {
-      if (!req.files || !req.files.audio) {
-        return res.status(400).json({ message: "No audio file provided" });
-      }
+      const { sessionId } = req.params;
+      let userId: string | undefined;
+      let companyId: number | undefined;
 
-      const audioFile = req.files.audio;
-      const transcription = await aiService.transcribeAudio(audioFile.data, audioFile.name);
-
-      res.json({ transcription });
-    } catch (error) {
-      console.error("Error transcribing audio:", error);
-      res.status(500).json({ message: "Failed to transcribe audio" });
-    }
-  });
-
-  // API Key Testing endpoint  
-  app.post('/api/admin/test-api-key', optionalAuth, async (req: any, res) => {
-    try {
-      console.log('Test API key request from user:', req.user?.userId);
-      
-      // Check authentication first
-      if (!req.user?.userId) {
-        console.log('No authenticated user found');
-        return res.status(401).json({ message: "Authentication required" });
-      }
-      
-      const user = await storage.getUser(req.user.userId);
-      console.log('User found:', user?.email, 'Role level:', user?.roleLevel);
-      const userRoleLevel = user?.roleLevel || 1;
-      
-      if (userRoleLevel < 99) { // Must be owner (99) or super-user (100+)
-        console.log('Access denied - insufficient role level:', userRoleLevel);
-        return res.status(403).json({ message: "Owner or Super-User access required to test API keys" });
-      }
-
-      const { provider, apiKey, modelId } = req.body;
-      
-      if (!provider || !apiKey) {
-        return res.status(400).json({ message: "Provider and API key are required" });
-      }
-
-      // Simple validation for now
-      if (apiKey.startsWith('placeholder-') || apiKey.includes('$')) {
-        return res.status(400).json({ message: 'Please enter a real API key (not placeholder or environment variable)' });
-      }
-
-      // Basic format validation
-      if (provider === 'openai' && !apiKey.startsWith('sk-')) {
-        return res.status(400).json({ message: 'OpenAI API keys should start with sk-' });
-      }
-      if (provider === 'anthropic' && !apiKey.startsWith('sk-ant-')) {
-        return res.status(400).json({ message: 'Anthropic API keys should start with sk-ant-' });
-      }
-      if (provider === 'perplexity' && !apiKey.startsWith('pplx-')) {
-        return res.status(400).json({ message: 'Perplexity API keys should start with pplx-' });
-      }
-
-      // Get model information if modelId is provided
-      let modelInfo = null;
-      if (modelId && user?.companyId) {
-        try {
-          const models = await storage.getAiModels(user.companyId);
-          modelInfo = models.find(m => m.id.toString() === modelId);
-          console.log('Found model info:', modelInfo);
-        } catch (error) {
-          console.error('Error fetching model info:', error);
-        }
-      }
-
-      console.log(`Testing ${provider} API key with actual API call${modelInfo ? ` for model: ${modelInfo.name}` : ''}`);
-      
-      // Perform actual API test based on provider
-      let testResult;
-      
-      if (provider === 'anthropic') {
-        try {
-          const testModel = modelInfo?.modelId || 'claude-3-haiku-20240307';
-          const response = await fetch('https://api.anthropic.com/v1/messages', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'x-api-key': apiKey,
-              'anthropic-version': '2023-06-01'
-            },
-            body: JSON.stringify({
-              model: testModel,
-              max_tokens: 10,
-              messages: [{ role: 'user', content: 'Test' }]
-            })
-          });
-          
-          if (response.ok) {
-            testResult = { success: true, message: `Anthropic API key is valid and working with model: ${testModel}` };
-          } else if (response.status === 401) {
-            testResult = { success: false, message: 'Invalid Anthropic API key - authentication failed' };
-          } else if (response.status === 403) {
-            testResult = { success: false, message: 'Anthropic API key lacks required permissions' };
-          } else {
-            testResult = { success: false, message: `Anthropic API error: ${response.status}` };
-          }
-        } catch (error) {
-          console.error('Anthropic API test error:', error);
-          testResult = { success: false, message: 'Failed to connect to Anthropic API' };
-        }
-      } else if (provider === 'openai') {
-        try {
-          const testModel = modelInfo?.modelId || 'gpt-3.5-turbo';
-          const response = await fetch('https://api.openai.com/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${apiKey}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              model: testModel,
-              messages: [{ role: 'user', content: 'Test' }],
-              max_tokens: 10
-            })
-          });
-          
-          if (response.ok) {
-            testResult = { success: true, message: `OpenAI API key is valid and working with model: ${testModel}` };
-          } else if (response.status === 401) {
-            testResult = { success: false, message: 'Invalid OpenAI API key - authentication failed' };
-          } else {
-            testResult = { success: false, message: `OpenAI API error: ${response.status}` };
-          }
-        } catch (error) {
-          console.error('OpenAI API test error:', error);
-          testResult = { success: false, message: 'Failed to connect to OpenAI API' };
-        }
-      } else if (provider === 'perplexity') {
-        try {
-          const testModel = modelInfo?.modelId || 'sonar';
-          const response = await fetch('https://api.perplexity.ai/chat/completions', {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${apiKey}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              model: testModel,
-              messages: [{ role: 'user', content: 'test' }],
-              max_tokens: 5
-            })
-          });
-          
-          if (response.ok) {
-            testResult = { success: true, message: `Perplexity API key is valid and working with model: ${testModel}` };
-          } else if (response.status === 401) {
-            testResult = { success: false, message: 'Invalid Perplexity API key - authentication failed' };
-          } else {
-            // Get specific error details from response
-            let errorDetails = `${response.status}`;
-            try {
-              const errorData = await response.text();
-              console.log('Perplexity API error response:', errorData);
-              if (errorData) {
-                const parsed = JSON.parse(errorData);
-                if (parsed.error && parsed.error.message) {
-                  errorDetails = parsed.error.message;
-                } else if (parsed.message) {
-                  errorDetails = parsed.message;
-                } else {
-                  errorDetails = `${response.status}: ${errorData.slice(0, 100)}`;
-                }
-              }
-            } catch (parseError) {
-              console.log('Could not parse error response, using status:', response.status);
-            }
-            testResult = { success: false, message: `Perplexity API error: ${errorDetails}` };
-          }
-        } catch (error) {
-          console.error('Perplexity API test error:', error);
-          testResult = { success: false, message: 'Failed to connect to Perplexity API' };
-        }
-      } else {
-        // For other providers, just do format validation for now
-        testResult = { 
-          success: true, 
-          message: `${provider} API key format is valid (actual testing not implemented yet)`
-        };
-      }
-      
-      console.log(`${provider} API test result:`, testResult);
-      
-      if (testResult.success) {
-        return res.json({ 
-          success: true, 
-          message: testResult.message,
-          provider: provider.charAt(0).toUpperCase() + provider.slice(1)
-        });
-      } else {
-        return res.status(400).json({ 
-          success: false, 
-          message: testResult.message 
-        });
-      }
-    } catch (error) {
-      console.error('Error testing API key:', error);
-      return res.status(500).json({ message: 'Failed to test API key' });
-    }
-  });
-
-  // Context Document API routes
-  app.get("/api/context-documents", optionalAuth, async (req: any, res) => {
-    try {
-      // For demo mode, return empty array
-      if (!req.user) {
-        console.log("Demo mode context documents request");
-        return res.json([]);
-      }
-
-      const userId = req.user?.claims?.sub || req.user?.userId;
-      if (!userId) {
-        return res.status(400).json({ message: "User ID not found" });
-      }
-
-      const userRoleLevel = await storage.getUserRoleLevel(userId);
-      // Allow demo users (role level 0) read-only access to context documents
-      if (userRoleLevel < 0) {
-        return res.status(403).json({ message: "Insufficient permissions" });
-      }
-
-      const user = await storage.getUser(userId);
-      if (!user?.companyId) {
-        return res.status(400).json({ message: "No company associated with user" });
-      }
-
-      const documents = await storage.getContextDocuments(user.companyId);
-      res.json(documents);
-    } catch (error) {
-      console.error("Error fetching context documents:", error);
-      res.status(500).json({ message: "Failed to fetch context documents" });
-    }
-  });
-
-  app.post("/api/context-documents", isAuthenticated, async (req: any, res) => {
-    try {
-      const userRoleLevel = await storage.getUserRoleLevel(req.user.claims.sub);
-      if (userRoleLevel < 2) {
-        return res.status(403).json({ message: "Insufficient permissions" });
-      }
-
-      const user = await storage.getUser(req.user.claims.sub);
-      if (!user?.companyId) {
-        return res.status(400).json({ message: "No company associated with user" });
-      }
-
-      const file = req.files?.file;
-      if (!file) {
-        return res.status(400).json({ message: "No file uploaded" });
-      }
-
-      const { name, description, category, priority = 1 } = req.body;
-      if (!name || !category) {
-        return res.status(400).json({ message: "Name and category are required" });
-      }
-
-      // Extract text content from file
-      let content = '';
-      if (file.mimetype === 'text/plain' || file.mimetype === 'text/markdown') {
-        content = file.data.toString('utf-8');
-      } else if (file.mimetype === 'application/json') {
-        content = file.data.toString('utf-8');
-      } else {
-        // For other file types, store first 2000 characters as preview
-        content = `[File: ${file.name}]\n${file.data.toString('utf-8', 0, 2000)}...`;
-      }
-
-      const document = await storage.createContextDocument({
-        companyId: user.companyId,
-        name,
-        description,
-        category,
-        fileName: file.name,
-        fileSize: file.size,
-        content,
-        priority: parseInt(priority),
-        isEnabled: true
-      });
-
-      res.json(document);
-    } catch (error) {
-      console.error("Error creating context document:", error);
-      res.status(500).json({ message: "Failed to create context document" });
-    }
-  });
-
-  app.put("/api/context-documents/:id", isAuthenticated, async (req: any, res) => {
-    try {
-      const userRoleLevel = await storage.getUserRoleLevel(req.user.claims.sub);
-      if (userRoleLevel < 2) {
-        return res.status(403).json({ message: "Insufficient permissions" });
-      }
-
-      const documentId = parseInt(req.params.id);
-      const updateData = req.body;
-
-      const document = await storage.updateContextDocument(documentId, updateData);
-      res.json(document);
-    } catch (error) {
-      console.error("Error updating context document:", error);
-      res.status(500).json({ message: "Failed to update context document" });
-    }
-  });
-
-  app.delete("/api/context-documents/:id", isAuthenticated, async (req: any, res) => {
-    try {
-      const userRoleLevel = await storage.getUserRoleLevel(req.user.claims.sub);
-      if (userRoleLevel < 2) {
-        return res.status(403).json({ message: "Insufficient permissions" });
-      }
-
-      const documentId = parseInt(req.params.id);
-      await storage.deleteContextDocument(documentId);
-      res.json({ message: "Context document deleted successfully" });
-    } catch (error) {
-      console.error("Error deleting context document:", error);
-      res.status(500).json({ message: "Failed to delete context document" });
-    }
-  });
-
-  // Activity Context Links API routes
-  app.get("/api/activity-types/:id/context-links", isAuthenticated, async (req: any, res) => {
-    try {
-      const userRoleLevel = await storage.getUserRoleLevel(req.user.claims.sub);
-      if (userRoleLevel < 2) {
-        return res.status(403).json({ message: "Insufficient permissions" });
-      }
-
-      const activityTypeId = parseInt(req.params.id);
-      const links = await storage.getActivityContextLinks(activityTypeId);
-      res.json(links);
-    } catch (error) {
-      console.error("Error fetching activity context links:", error);
-      res.status(500).json({ message: "Failed to fetch activity context links" });
-    }
-  });
-
-  app.post("/api/activity-types/:id/context-links", isAuthenticated, async (req: any, res) => {
-    try {
-      const userRoleLevel = await storage.getUserRoleLevel(req.user.claims.sub);
-      if (userRoleLevel < 2) {
-        return res.status(403).json({ message: "Insufficient permissions" });
-      }
-
-      const activityTypeId = parseInt(req.params.id);
-      const { documentId, usageType = "optional" } = req.body;
-
-      const link = await storage.createActivityContextLink({
-        activityTypeId,
-        documentId,
-        usageType
-      });
-
-      res.json(link);
-    } catch (error) {
-      console.error("Error creating activity context link:", error);
-      res.status(500).json({ message: "Failed to create activity context link" });
-    }
-  });
-
-  app.delete("/api/activity-types/:activityId/context-links/:documentId", isAuthenticated, async (req: any, res) => {
-    try {
-      const userRoleLevel = await storage.getUserRoleLevel(req.user.claims.sub);
-      if (userRoleLevel < 2) {
-        return res.status(403).json({ message: "Insufficient permissions" });
-      }
-
-      const activityTypeId = parseInt(req.params.activityId);
-      const documentId = parseInt(req.params.documentId);
-
-      await storage.deleteActivityContextLink(activityTypeId, documentId);
-      res.json({ message: "Activity context link deleted successfully" });
-    } catch (error) {
-      console.error("Error deleting activity context link:", error);
-      res.status(500).json({ message: "Failed to delete activity context link" });
-    }
-  });
-
-  // Chat routes with demo and authenticated user support
-  app.post('/api/chat/session', async (req: any, res) => {
-    try {
-      let userId = null;
-      let companyId = null;
-      let roleLevel = 1; // Default user level
-
-      // Try cookie auth first
-      if (req.cookies?.sessionToken) {
-        const authService = await import('./services/authService');
-        const session = await authService.authService.verifySession(req.cookies.sessionToken);
-        if (session) {
-          userId = session.userId;
-          companyId = session.companyId || 1; // Default to company 1 if no company
-          const user = await storage.getUser(userId);
-          roleLevel = user?.roleLevel || 0; // Get actual role level
-          console.log('Cookie authentication successful:', { userId, companyId, roleLevel });
-        }
-      }
-
-      // Fallback to Replit Auth (only if enabled)
-      if (!userId && process.env.ENABLE_REPLIT_AUTH === 'true' && req.user?.claims?.sub) {
-        userId = req.user.claims.sub;
-        const user = await storage.getUser(userId);
-        companyId = user?.companyId || 1; // Default to company 1
-        roleLevel = user?.roleLevel || 1;
-        console.log('Replit authentication successful:', { userId, companyId, roleLevel });
-      }
-      
-      // For demo users or unauthenticated users, use company ID 1 with demo role
-      if (!userId) {
-        userId = 'demo@aisentinel.com';
-        companyId = 1;
-        roleLevel = 0; // Demo level for read-only access
-        console.log('Demo user session creation:', { userId, companyId, roleLevel });
-      }
-
-      const session = await storage.createChatSession({ 
-        companyId: companyId, 
-        userId: userId,
-        title: "New Chat",
-        aiModel: "Default",
-        activityType: "general"
-      });
-      
-      console.log('Chat session created successfully:', { sessionId: session.id, userId, companyId, roleLevel });
-      res.json(session);
-    } catch (error) {
-      console.error("Error creating chat session:", error);
-      res.status(500).json({ message: "Failed to create chat session" });
-    }
-  });
-
-  app.get('/api/chat/sessions', requireAuth, async (req: any, res) => {
-    try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-
-      const sessions = await storage.getUserChatSessions(userId, user.companyId);
-      res.json(sessions);
-    } catch (error) {
-      console.error("Error fetching chat sessions:", error);
-      res.status(500).json({ message: "Failed to fetch chat sessions" });
-    }
-  });
-
-  app.get('/api/chat/session/:id/messages', async (req: any, res) => {
-    try {
-      const sessionId = parseInt(req.params.id);
-      
-      // Validate session ID is a valid number
-      if (isNaN(sessionId)) {
-        return res.status(400).json({ message: "Invalid session ID" });
-      }
-      
-      let userId = null;
-      let companyId = null;
+      console.log(`🔍 GET /api/chat/session/${sessionId} - Auth check starting`);
 
       // Try cookie auth first
       if (req.cookies?.sessionToken) {
@@ -2138,7 +1680,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (session) {
           userId = session.userId;
           companyId = session.companyId;
+          console.log(`✅ Cookie auth successful: userId=${userId}, companyId=${companyId}`);
+        } else {
+          console.log(`❌ Cookie auth failed for token: ${req.cookies.sessionToken.substring(0, 20)}...`);
         }
+      } else {
+        console.log(`❌ No session token found in cookies`);
       }
 
       // Fallback to Replit Auth (only if enabled)
@@ -2146,21 +1693,89 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userId = req.user.claims.sub;
         const user = await storage.getUser(userId);
         companyId = user?.companyId;
+        console.log(`✅ Replit auth fallback: userId=${userId}, companyId=${companyId}`);
       }
 
       if (!userId || !companyId) {
-        // For demo users, use company ID 1 and demo user
-        companyId = 1;
-        userId = 'demo@aisentinel.com';
-        console.log('Using demo user for messages:', { userId, companyId });
+        console.log(`❌ No valid authentication found, returning 401`);
+        return res.status(401).json({ 
+          message: "Authentication required",
+          details: "No valid session token or user authentication found"
+        });
       }
 
-      // Remove company check since we're allowing anonymous access
+      console.log(`🔍 Looking for session ${sessionId} in company ${companyId}`);
+      const session = await storage.getChatSession(parseInt(sessionId), companyId);
+
+      if (!session) {
+        console.error(`❌ Session ${sessionId} not found for company ${companyId}`);
+        return res.status(404).json({ 
+          message: "Session not found",
+          details: `Session ${sessionId} does not exist or does not belong to company ${companyId}`
+        });
+      }
+
+      console.log(`✅ Session ${sessionId} found and returned`);
+      res.json(session);
+    } catch (error) {
+      console.error("❌ Error fetching chat session:", error);
+      res.status(500).json({ 
+        message: "Failed to fetch chat session",
+        error: error.message
+      });
+    }
+  });
+
+  // Get messages for a specific chat session
+  app.get('/api/chat/session/:sessionId/messages', optionalAuth, async (req: AuthenticatedRequest, res) => {
+    try {
+      const { sessionId } = req.params;
+      let userId: string | undefined;
+      let companyId: number | undefined;
+
+      console.log(`🔍 GET /api/chat/session/${sessionId}/messages - Auth check starting`);
+
+      // Try cookie auth first
+      if (req.cookies?.sessionToken) {
+        const authService = await import('./services/authService');
+        const session = await authService.authService.verifySession(req.cookies.sessionToken);
+        if (session) {
+          userId = session.userId;
+          companyId = session.companyId;
+          console.log(`✅ Cookie auth successful: userId=${userId}, companyId=${companyId}`);
+        } else {
+          console.log(`❌ Cookie auth failed for token: ${req.cookies.sessionToken.substring(0, 20)}...`);
+        }
+      } else {
+        console.log(`❌ No session token found in cookies`);
+      }
+
+      // Fallback to Replit Auth (only if enabled)
+      if (!userId && process.env.ENABLE_REPLIT_AUTH === 'true' && req.user?.claims?.sub) {
+        userId = req.user.claims.sub;
+        const user = await storage.getUser(userId);
+        companyId = user?.companyId;
+        console.log(`✅ Replit auth fallback: userId=${userId}, companyId=${companyId}`);
+      }
+
+      if (!userId || !companyId) {
+        console.log(`❌ No valid authentication - returning 401`);
+        return res.status(401).json({ 
+          message: "Authentication required",
+          details: "No valid session token or user authentication found"
+        });
+      }
+
+      console.log(`🔍 Fetching messages for session ${sessionId} in company ${companyId}`);
       const messages = await storage.getChatMessages(sessionId, companyId);
+      console.log(`✅ Found ${messages.length} messages for session ${sessionId}`);
       res.json(messages);
     } catch (error) {
-      console.error("Error fetching chat messages:", error);
-      res.status(500).json({ message: "Failed to fetch chat messages" });
+      console.error("❌ Error fetching chat messages:", error);
+      res.status(500).json({ 
+        message: "Failed to fetch chat messages",
+        error: error.message
+      });
     }
   });
 
@@ -2168,7 +1783,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/demo/usage', async (req, res) => {
     try {
       const sessionToken = req.cookies?.sessionToken;
-      
+
       if (!sessionToken || !sessionToken.startsWith('demo-session-')) {
         return res.status(401).json({ error: "Demo session required" });
       }
@@ -2195,21 +1810,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       // Extract data from FormData fields
       const { message, aiModelId, activityTypeId, sessionId } = req.body;
-      
+
       console.log('Chat message request:', { message, sessionId, aiModelId, activityTypeId });
-      
+
       // Validate required fields
       if (!message || message.trim() === '') {
         return res.status(400).json({ message: "Message is required" });
       }
-      
+
       // Check if this is a demo user and handle question limits
       if (req.cookies?.sessionToken?.startsWith('demo-session-')) {
         const demoUser = await storage.getDemoUser(req.cookies.sessionToken);
         if (!demoUser || demoUser.expiresAt < new Date()) {
           return res.status(401).json({ error: "Demo session expired" });
         }
-        
+
         if (demoUser.questionsUsed >= demoUser.maxQuestions) {
           return res.status(429).json({ 
             error: "Demo question limit reached", 
@@ -2219,15 +1834,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
         }
       }
-      
+
       // Handle Model Fusion special case
       const isModelFusion = aiModelId === "model-fusion";
-      
+
       // Parse string values to numbers (FormData sends everything as strings)
       const parsedAiModelId = isModelFusion ? null : (aiModelId ? parseInt(aiModelId) : 1); // Default to model 1
       const parsedActivityTypeId = activityTypeId ? parseInt(activityTypeId) : 1; // Default to activity type 1
       const parsedSessionId = sessionId && !isNaN(parseInt(sessionId)) ? parseInt(sessionId) : null;
-      
+
       let userId = null;
       let companyId = null;
       let isDemoUser = false;
@@ -2280,7 +1895,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (user && user.isTrialUser) {
         const { authService } = await import('./services/authService');
         const trialStatus = await authService.checkTrialUsage(userId);
-        
+
         if (trialStatus && !trialStatus.hasActionsRemaining) {
           return res.status(403).json({ 
             message: trialStatus.isTrialExpired 
@@ -2305,7 +1920,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           status: 'blocked',
           metadata: { originalMessage: message, flags: filterResult.flags }
         });
-        
+
         return res.status(400).json({ 
           message: "Content blocked by security filter", 
           reason: filterResult.reason 
@@ -2338,7 +1953,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Handle file uploads
       if (req.files) {
         const files = Array.isArray(req.files.attachments) ? req.files.attachments : [req.files.attachments].filter(Boolean);
-        
+
         for (const file of files) {
           if (file) {
             // Validate file type and size
@@ -2358,11 +1973,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Add file context to message
         if (fileAttachments.length > 0) {
           contextMessage += `\n\n[User has attached ${fileAttachments.length} file(s): ${fileAttachments.map(f => f.name).join(', ')}]`;
-          
+
           // Extract content from files for AI processing
           for (const file of fileAttachments) {
             let fileContent = '';
-            
+
             if (file.mimetype.startsWith('text/') || file.mimetype === 'application/json') {
               // For text files, include full content
               fileContent = file.data.toString('utf-8');
@@ -2381,19 +1996,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
               try {
                 const workbook = XLSX.read(file.data, { type: 'buffer' });
                 let excelContent = '';
-                
+
                 // Process all sheets
                 workbook.SheetNames.forEach((sheetName, index) => {
                   const worksheet = workbook.Sheets[sheetName];
                   const csvData = XLSX.utils.sheet_to_csv(worksheet);
-                  
+
                   if (index === 0) {
                     excelContent += `Sheet: ${sheetName}\n${csvData}\n`;
                   } else {
                     excelContent += `\n--- Sheet: ${sheetName} ---\n${csvData}\n`;
                   }
                 });
-                
+
                 fileContent = excelContent.length > 3000 ? excelContent.substring(0, 3000) + '...' : excelContent;
               } catch (error) {
                 console.error('Error extracting data from Excel file:', error);
@@ -2406,7 +2021,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               // For other files, provide metadata
               fileContent = `[File: ${file.name} - ${file.mimetype} - ${file.size} bytes]`;
             }
-            
+
             if (fileContent) {
               contextMessage += `\n\n--- Content of ${file.name} ---\n${fileContent}\n--- End of ${file.name} ---`;
             }
@@ -2429,7 +2044,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             // Generate demo response explaining the functionality
             const selectedModel = await storage.getAiModels(companyId).then(models => models.find(m => m.id === parsedAiModelId));
             const activityType = await storage.getActivityTypes(companyId).then(types => types.find(t => t.id === parsedActivityTypeId));
-            
+
             aiResponse = `**Demo Response from AI Sentinel**
 
 You asked: "${message}"
@@ -2448,7 +2063,7 @@ This is a demonstration of AI Sentinel's capabilities. In the full version:
         console.error('AI response generation failed:', error);
         aiResponse = "I apologize, but I'm currently experiencing technical difficulties. Please try again later or contact support if the issue persists.";
       }
-      
+
       // Create chat message with company isolation
       const chatMessage = await storage.createChatMessage({
         companyId: companyId,
@@ -2530,7 +2145,7 @@ This is a demonstration of AI Sentinel's capabilities. In the full version:
   app.get('/api/trial/usage/:userId?', async (req: any, res) => {
     try {
       let userId = req.params.userId;
-      
+
       // If no userId provided, try to get from authentication
       if (!userId) {
         // Try cookie auth first
@@ -2541,12 +2156,12 @@ This is a demonstration of AI Sentinel's capabilities. In the full version:
             userId = session.userId;
           }
         }
-        
+
         // Fallback to Replit Auth (only if enabled)
         if (!userId && process.env.ENABLE_REPLIT_AUTH === 'true' && req.user?.claims?.sub) {
           userId = req.user.claims.sub;
         }
-        
+
         if (!userId) {
           return res.status(401).json({ message: "Authentication required" });
         }
@@ -2554,11 +2169,11 @@ This is a demonstration of AI Sentinel's capabilities. In the full version:
 
       const { authService } = await import('./services/authService');
       const trialStatus = await authService.checkTrialUsage(userId);
-      
+
       if (!trialStatus) {
         return res.status(404).json({ message: "Trial status not found" });
       }
-      
+
       res.json(trialStatus);
     } catch (error) {
       console.error("Error fetching trial usage:", error);
@@ -2567,32 +2182,32 @@ This is a demonstration of AI Sentinel's capabilities. In the full version:
   });
 
   // Company Role Management routes (Owner/Super-user only)
-  
+
   // Get roles for current user's company (for developer modal)
   app.get('/api/company/roles', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
       console.log("Fetching roles for current user's company - userId:", req.user?.userId);
-      
+
       // Get user from cookie authentication
       const user = await storage.getUser(req.user!.userId);
       const userRoleLevel = user?.roleLevel || 1;
-      
+
       console.log("User role level:", userRoleLevel, "Company ID:", user?.companyId);
-      
+
       // Must be administrator (98) or higher, OR developer for testing
       const { authService } = await import('./services/authService');
       const isDeveloper = authService.isDeveloperEmail(user?.email);
-      
+
       if (userRoleLevel < 98 && !isDeveloper) {
         return res.status(403).json({ message: "Administrator access required" });
       }
-      
+
       const companyId = user?.companyId || 1; // Default to company 1 for developers
-      
+
       console.log("Fetching roles for company:", companyId);
       const roles = await storage.getCompanyRolesWithAutoInit(companyId);
       console.log("Found roles:", roles.length);
-      
+
       res.json(roles);
     } catch (error) {
       console.error("Error fetching company roles:", error);
@@ -2603,18 +2218,18 @@ This is a demonstration of AI Sentinel's capabilities. In the full version:
   app.get('/api/company/roles/:companyId', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
       console.log("Fetching company roles - userId:", req.user?.userId, "companyId param:", req.params.companyId);
-      
+
       // Get user from cookie authentication
       const user = await storage.getUser(req.user!.userId);
       const userRoleLevel = user?.roleLevel || 1;
-      
+
       console.log("User role level:", userRoleLevel, "Required: 998+");
-      
+
       // Must be administrator (998) or higher
       if (userRoleLevel < 998) {
         return res.status(403).json({ message: "Administrator access required" });
       }
-      
+
       const companyId = parseInt(req.params.companyId);
 
       // Ensure user can only access their own company (unless super-user)
@@ -2625,7 +2240,7 @@ This is a demonstration of AI Sentinel's capabilities. In the full version:
       console.log("Fetching roles for company:", companyId);
       const roles = await storage.getCompanyRolesWithAutoInit(companyId);
       console.log("Found roles:", roles.length);
-      
+
       res.json(roles);
     } catch (error) {
       console.error("Error fetching company roles:", error);
@@ -2699,19 +2314,19 @@ This is a demonstration of AI Sentinel's capabilities. In the full version:
     try {
       let companyId = 1; // Default to company 1 for demo users
       let userRoleLevel = 0; // Default to demo role level
-      
+
       // If user is authenticated, get their company and role level
       if (req.user && req.user.companyId) {
         companyId = req.user.companyId;
         const user = await storage.getUser(req.user.userId);
         userRoleLevel = user?.roleLevel || 1;
-        
+
         // Only authenticated users with owner level need role check
         if (userRoleLevel < 99) {
           return res.status(403).json({ message: "Owner or super-user access required" });
         }
       }
-      
+
       const config = await storage.getModelFusionConfig(companyId);
       res.json(config);
     } catch (error) {
@@ -2727,16 +2342,16 @@ This is a demonstration of AI Sentinel's capabilities. In the full version:
       if (userRoleLevel < 99) { // Must be owner (99) or higher
         return res.status(403).json({ message: "Owner or super-user access required" });
       }
-      
+
       if (!user?.companyId) {
         return res.status(400).json({ message: "No company associated with user" });
       }
-      
+
       const configData = insertModelFusionConfigSchema.parse({
         ...req.body,
         companyId: user.companyId
       });
-      
+
       const config = await storage.createModelFusionConfig(configData);
       res.json(config);
     } catch (error) {
@@ -2752,10 +2367,10 @@ This is a demonstration of AI Sentinel's capabilities. In the full version:
       if (userRoleLevel < 99) { // Must be owner (99) or higher
         return res.status(403).json({ message: "Owner or super-user access required" });
       }
-      
+
       const configId = parseInt(req.params.id);
       const configData = insertModelFusionConfigSchema.partial().parse(req.body);
-      
+
       const config = await storage.updateModelFusionConfig(configId, configData);
       res.json(config);
     } catch (error) {
@@ -2770,14 +2385,14 @@ This is a demonstration of AI Sentinel's capabilities. In the full version:
       const attachmentId = parseInt(req.params.attachmentId);
       const userId = req.user.claims.sub;
       const user = await storage.getUser(userId);
-      
+
       if (!user?.companyId) {
         return res.status(400).json({ message: "No company associated with user" });
       }
 
       // Get file info from database and verify access
       const attachment = await db.select().from(chatAttachments).where(eq(chatAttachments.id, attachmentId)).limit(1);
-      
+
       if (attachment.length === 0 || attachment[0].companyId !== user.companyId) {
         return res.status(404).json({ message: "File not found" });
       }
@@ -2798,20 +2413,20 @@ This is a demonstration of AI Sentinel's capabilities. In the full version:
     try {
       const multer = require('multer');
       const upload = multer({ storage: multer.memoryStorage() });
-      
+
       upload.single('audio')(req, res, async (err) => {
         if (err) {
           return res.status(400).json({ message: "File upload error" });
         }
-        
+
         if (!req.file) {
           return res.status(400).json({ message: "No audio file provided" });
         }
-        
+
         const formData = new FormData();
         formData.append('file', new Blob([req.file.buffer], { type: 'audio/wav' }), 'audio.wav');
         formData.append('model', 'whisper-1');
-        
+
         const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
           method: 'POST',
           headers: {
@@ -2819,11 +2434,11 @@ This is a demonstration of AI Sentinel's capabilities. In the full version:
           },
           body: formData,
         });
-        
+
         if (!response.ok) {
           throw new Error('OpenAI transcription failed');
         }
-        
+
         const data = await response.json();
         res.json({ transcription: data.text });
       });
