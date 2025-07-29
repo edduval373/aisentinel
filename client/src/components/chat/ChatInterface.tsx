@@ -280,16 +280,21 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
         flexShrink: 0 
       }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          {/* Left side - Connection Status */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            {isConnected ? (
-              <Wifi style={{ width: '16px', height: '16px', color: '#22c55e' }} />
-            ) : (
-              <WifiOff style={{ width: '16px', height: '16px', color: '#94a3b8' }} />
-            )}
-            <span style={{ fontSize: '14px', color: '#64748b' }}>
-              {isConnected ? 'Connected' : 'Disconnected'}
+          {/* Left side - AI Sentinel Chat and Connection Status */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span style={{ fontSize: '16px', fontWeight: '600', color: '#374151' }}>
+              AI Sentinel Chat
             </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              {isConnected ? (
+                <Wifi style={{ width: '16px', height: '16px', color: '#22c55e' }} />
+              ) : (
+                <WifiOff style={{ width: '16px', height: '16px', color: '#94a3b8' }} />
+              )}
+              <span style={{ fontSize: '14px', color: '#64748b' }}>
+                {isConnected ? 'Connected' : 'Disconnected'}
+              </span>
+            </div>
           </div>
 
           {/* Right side - Essential Controls */}
