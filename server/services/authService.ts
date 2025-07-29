@@ -422,24 +422,6 @@ export class AuthService {
   getEmailDomain(email: string): string {
     return email.split('@')[1].toLowerCase();
   }
-
-  // Check if email is a developer email
-  isDeveloperEmail(email: string): boolean {
-    const developerEmails = ['ed.duval15@gmail.com'];
-    return developerEmails.includes(email.toLowerCase());
-  }
-
-  // Get effective role level for developers with test roles
-  getEffectiveRoleLevel(testRole: string): number {
-    switch (testRole) {
-      case 'demo': return 0;
-      case 'user': return 1;
-      case 'admin': return 2;
-      case 'owner': return 99;
-      case 'super-user': return 100;
-      default: return 1;
-    }
-  }
 }
 
 export const authService = new AuthService();
