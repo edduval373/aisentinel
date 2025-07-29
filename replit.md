@@ -141,6 +141,15 @@ The application is configured for deployment on Vercel with the following setup:
 
 ```
 Recent Updates:
+- July 29, 2025. Dynamic Role Loading from Database - Enhanced Developer Testing System:
+  * IMPLEMENTED: DeveloperRolePicker and DeveloperRoleSwitcher now load roles dynamically from company's roles table
+  * ENHANCED: Role hierarchy now reflects actual company-specific database roles instead of hardcoded values
+  * ADDED: Database-driven role fetching with fallback to system roles if API fails
+  * IMPROVED: Color-coded role display based on level (1000: Red, 999: Purple, 998: Blue, 1: Green, 0: Orange)
+  * VERIFIED: Both components sort roles by level in descending order (1000 → 0) for proper hierarchy display
+  * SECURED: Role selection now uses company ID to fetch only company-specific roles for isolated testing
+  * ENHANCED: Custom roles (levels 2-997) display with gray color coding to distinguish from system roles
+  * COMPLETED: Full dynamic role management system with real-time database integration for developer testing
 - July 29, 2025. Enhanced Developer Testing System with Smart Role Detection and Hierarchical Permissions:
   * IMPLEMENTED: Complete developer authentication system with smart role testing and database integration
   * FIXED: AuthSession type compatibility issues (testRole field null vs undefined handling)

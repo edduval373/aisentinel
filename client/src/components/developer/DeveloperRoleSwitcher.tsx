@@ -1,23 +1,88 @@
 import { useDeveloper } from '@/hooks/useDeveloper';
+import { useAuth } from '@/hooks/useAuth';
+import { useEffect, useState } from 'react';
 
 interface DeveloperRoleSwitcherProps {
   className?: string;
 }
 
+interface CompanyRole {
+  id: number;
+  name: string;
+  level: number;
+  description: string;
+}
+
+const getRoleColor = (level: number) => {
+  if (level === 1000) return '#dc2626'; // Super User (Red)
+  if (level === 999) return '#8b5cf6'; // Owner (Purple)  
+  if (level === 998) return '#3b82f6'; // Administrator (Blue)
+  if (level === 1) return '#10b981'; // User (Green)
+  if (level === 0) return '#f59e0b'; // Demo (Orange)
+  return '#6b7280'; // Custom levels (Gray)
+};
+
+const getRoleKey = (level: number) => {
+  if (level === 1000) return 'super-user';
+  if (level === 999) return 'owner';
+  if (level === 998) return 'admin';
+  if (level === 1) return 'user';
+  if (level === 0) return 'demo';
+  return `custom-${level}`;
+};
+
 export function DeveloperRoleSwitcher({ className = '' }: DeveloperRoleSwitcherProps) {
   const { isDeveloper, testRole, actualRole, effectiveRole, switchRole, isSwitchingRole } = useDeveloper();
+  const { user } = useAuth();
+  const [companyRoles, setCompanyRoles] = useState<CompanyRole[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (isDeveloper) {
+      fetchCompanyRoles();
+    }
+  }, [isDeveloper, user]);
+
+  const fetchCompanyRoles = async () => {
+    try {
+      setLoading(true);
+      const companyId = user?.companyId || 1; // Default to company 1
+      const response = await fetch(`/api/company/roles/${companyId}`, {
+        credentials: 'include'
+      });
+      
+      if (response.ok) {
+        const roles = await response.json();
+        // Sort by level in descending order (1000 → 0)
+        const sortedRoles = roles.sort((a: CompanyRole, b: CompanyRole) => b.level - a.level);
+        setCompanyRoles(sortedRoles);
+      }
+    } catch (error) {
+      console.error('Error fetching company roles:', error);
+      // Fallback to basic roles if API fails
+      setCompanyRoles([
+        { id: 1, name: 'Super User', level: 1000, description: 'Full system access and company management' },
+        { id: 2, name: 'Owner', level: 999, description: 'Company setup and configuration access' },
+        { id: 3, name: 'Administrator', level: 998, description: 'Security settings, user management' },
+        { id: 4, name: 'User', level: 1, description: 'Basic chat interface access' },
+        { id: 5, name: 'Demo User', level: 0, description: 'Limited demo access with read-only features' }
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (!isDeveloper) {
     return null;
   }
 
-  const roles = [
-    { value: 'super-user', label: 'Super User', level: 100, color: '#dc2626' },
-    { value: 'owner', label: 'Owner', level: 99, color: '#8b5cf6' },
-    { value: 'admin', label: 'Administrator', level: 98, color: '#3b82f6' },
-    { value: 'user', label: 'User', level: 1, color: '#10b981' },
-    { value: 'demo', label: 'Demo User', level: 0, color: '#f59e0b' },
-  ];
+  // Convert database roles to switcher format
+  const roles = companyRoles.map(role => ({
+    value: getRoleKey(role.level),
+    label: role.name,
+    level: role.level,
+    color: getRoleColor(role.level)
+  }));
 
   const currentRole = roles.find(r => r.value === testRole) || roles.find(r => r.level === actualRole);
 
