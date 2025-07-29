@@ -53,7 +53,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         sessionToken,
         email: developerEmail,
         companyId: 1, // Default to company 1
-        roleLevel: 100, // Super-user level (actual role)
+        roleLevel: 1000, // Super-user level (updated to 1000-level system)
         expiresAt,
         testRole: testRole || null, // Store test role if provided
       });

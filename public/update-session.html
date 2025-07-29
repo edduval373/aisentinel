@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Update Session - AI Sentinel Production</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            background: rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        h1 {
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        .button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 10px;
+            transition: background 0.3s;
+        }
+        .button:hover {
+            background: #2563eb;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background: rgba(0,0,0,0.2);
+        }
+        .success {
+            background: rgba(34, 197, 94, 0.3);
+            border: 1px solid rgba(34, 197, 94, 0.5);
+        }
+        .error {
+            background: rgba(239, 68, 68, 0.3);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+        }
+        .info {
+            background: rgba(59, 130, 246, 0.3);
+            border: 1px solid rgba(59, 130, 246, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 AI Sentinel Production Session</h1>
+        <p>Clear your browser session and use developer login to get Super-User access.</p>
+        
+        <button class="button" onclick="clearSession()">
+            🗑️ Clear Session & Cookies
+        </button>
+        
+        <button class="button" onclick="createDevSession()">
+            🚀 Create Super-User Session
+        </button>
+        
+        <button class="button" onclick="goToApp()">
+            📱 Go to AI Sentinel
+        </button>
+        
+        <div id="status" class="status info">
+            <div id="statusText">Click "Clear Session & Cookies" first, then "Create Super-User Session"</div>
+        </div>
+    </div>
+
+    <script>
+        function clearSession() {
+            // Clear all cookies
+            const cookies = document.cookie.split(";");
+            for (let cookie of cookies) {
+                const eqPos = cookie.indexOf("=");
+                const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+                document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+                document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=.aisentinel.app`;
+                document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=${window.location.hostname}`;
+            }
+            
+            // Clear storage
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            showStatus('✅ Session and cookies cleared!', 'success');
+        }
+        
+        async function createDevSession() {
+            try {
+                // First check current domain
+                const isProduction = window.location.hostname.includes('aisentinel.app');
+                
+                if (!isProduction) {
+                    showStatus('❌ This is for production only. You are on: ' + window.location.hostname, 'error');
+                    return;
+                }
+                
+                showStatus('🔄 Creating Super-User session...', 'info');
+                
+                // Create a session using the production super-login endpoint
+                const response = await fetch('/api/auth/super-login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: 'ed.duval15@gmail.com',
+                        targetRole: 'super-user'
+                    }),
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    showStatus('✅ Super-User session created successfully! Role Level: ' + (data.user?.roleLevel || '1000'), 'success');
+                    
+                    // Auto-redirect after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 2000);
+                } else {
+                    const errorText = await response.text();
+                    showStatus('❌ Failed to create session: ' + errorText, 'error');
+                }
+            } catch (error) {
+                showStatus('❌ Error: ' + error.message, 'error');
+            }
+        }
+        
+        function goToApp() {
+            window.location.href = '/';
+        }
+        
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            const statusText = document.getElementById('statusText');
+            statusText.innerHTML = message;
+            status.className = 'status ' + type;
+            status.style.display = 'block';
+        }
+        
+        // Check current environment on load
+        window.onload = function() {
+            const isProduction = window.location.hostname.includes('aisentinel.app');
+            if (!isProduction) {
+                showStatus('⚠️ This page is for production (aisentinel.app) only. Current: ' + window.location.hostname, 'error');
+            } else {
+                showStatus('📍 Production environment detected. Ready to update session.', 'info');
+            }
+        }
+    </script>
+</body>
+</html>

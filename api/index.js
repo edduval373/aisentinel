@@ -92,7 +92,7 @@ export default async function handler(req, res) {
               companyId: 1,
               companyName: 'Duval AI Solutions',
               role: 'super-user',
-              roleLevel: 100,
+              roleLevel: 1000,
               firstName: 'Ed',
               lastName: 'Duval'
             }
@@ -106,6 +106,44 @@ export default async function handler(req, res) {
       console.log('❌ [SERVERLESS] No valid session token, user not authenticated');
       res.status(200).json({ authenticated: false });
       return;
+    }
+
+    // Super-login endpoint for production session creation
+    if (url.includes('auth/super-login') && method === 'POST') {
+      console.log('🚀 [SERVERLESS] Super-login request');
+      
+      try {
+        const body = req.body || {};
+        const { email, targetRole } = body;
+        
+        console.log('🚀 [SERVERLESS] Super-login for:', email, 'as', targetRole);
+        
+        // Generate a production session token
+        const sessionToken = 'prod-session-' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        
+        // Set the session cookie
+        res.setHeader('Set-Cookie', `sessionToken=${sessionToken}; HttpOnly; Path=/; Max-Age=${30 * 24 * 60 * 60}; SameSite=Lax`);
+        
+        console.log('✅ [SERVERLESS] Session token created:', sessionToken.substring(0, 20) + '...');
+        
+        const response = {
+          success: true,
+          message: 'Production session created',
+          user: {
+            email: email || 'ed.duval15@gmail.com',
+            roleLevel: 1000,
+            role: 'super-user',
+            companyId: 1
+          }
+        };
+        
+        res.status(200).json(response);
+        return;
+      } catch (error) {
+        console.error('❌ [SERVERLESS] Super-login error:', error);
+        res.status(500).json({ message: 'Failed to create session' });
+        return;
+      }
     }
 
     // AI Models endpoint - enhanced with fallback logic
