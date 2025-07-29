@@ -136,7 +136,7 @@ export default function CompanyManagement() {
   const updateCompanyMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: z.infer<typeof companySchema> }) => {
       console.log("🔄 Updating company:", id, "with data:", data);
-      return apiRequest(`/api/admin/companies/${id}`, "PATCH", data);
+      return apiRequest(`/api/admin/companies/${id}`, "PUT", data);
     },
     onSuccess: (response) => {
       console.log("✅ Company update successful:", response);
