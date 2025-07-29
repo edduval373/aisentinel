@@ -777,10 +777,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "No session token" });
       }
 
-      // Get company roles to validate test role
-      const currentCompanyId = req.user.companyId || 1; // Default to company 1 for developers
-      console.log('Fetching company roles for company:', currentCompanyId);
-      const companyRoles = await storage.getCompanyRoles(currentCompanyId);
+      // Get company roles to validate test role - always use company 1 which has the standard roles
+      const roleValidationCompanyId = 1; // Always use company 1 for role validation since it has the standard roles
+      console.log('Fetching company roles for validation from company:', roleValidationCompanyId);
+      const companyRoles = await storage.getCompanyRoles(roleValidationCompanyId);
       console.log('Company roles retrieved:', companyRoles.length, 'roles');
       const validRoleKeys = companyRoles.map(role => {
         if (role.level === 1000) return 'super-user';
