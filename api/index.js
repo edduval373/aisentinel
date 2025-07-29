@@ -95,66 +95,82 @@ export default async function handler(req, res) {
     try {
       console.log('📧 Email verification request received');
 
+      // Better body parsing for serverless environments
       let body = '';
-      req.on('data', chunk => {
-        body += chunk.toString();
-      });
-
-      req.on('end', async () => {
-        try {
-          const { email } = JSON.parse(body);
-
-          if (!email) {
-            res.status(400).json({ success: false, message: "Email is required" });
-            return;
-          }
-
-          console.log(`📧 Processing verification request for: ${email}`);
-
-          // Import auth service and send verification email
-          const { authService } = await import('../server/services/authService');
-          const success = await authService.initiateEmailVerification(email);
-
-          if (success) {
-            console.log(`✅ Verification email sent successfully to ${email}`);
-            res.status(200).json({ 
-              success: true, 
-              message: "Verification email sent successfully" 
-            });
-          } else {
-            console.log(`❌ Failed to send verification email to ${email}`);
-            
-            // Get detailed error information
-            try {
-              const { emailService } = await import('../server/services/emailService');
-              const debugInfo = await emailService.testSendGridConnection();
-              console.log('SendGrid debug info:', JSON.stringify(debugInfo, null, 2));
-            } catch (debugError) {
-              console.error('Failed to get debug info:', debugError);
-            }
-            
-            res.status(400).json({ 
-              success: false, 
-              message: "Failed to send verification email. Check console logs for details." 
-            });
-          }
-        } catch (parseError) {
-          console.error('❌ Error parsing request body:', parseError);
-          res.status(400).json({ 
-            success: false, 
-            message: "Invalid request format" 
+      
+      // Handle different body parsing scenarios
+      if (req.body) {
+        // Body already parsed by Vercel
+        body = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
+      } else {
+        // Manual parsing needed
+        const chunks = [];
+        req.on('data', chunk => chunks.push(chunk));
+        await new Promise((resolve, reject) => {
+          req.on('end', () => {
+            body = Buffer.concat(chunks).toString();
+            resolve();
           });
-        }
-      });
+          req.on('error', reject);
+        });
+      }
 
-      return; // Prevent falling through to 404
+      console.log('📧 Raw body received:', body);
+
+      let email;
+      try {
+        const parsed = JSON.parse(body);
+        email = parsed.email;
+      } catch (parseError) {
+        console.error('❌ JSON parse error:', parseError);
+        return res.status(400).json({ 
+          success: false, 
+          message: "Invalid JSON format" 
+        });
+      }
+
+      if (!email) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Email is required" 
+        });
+      }
+
+      console.log(`📧 Processing verification request for: ${email}`);
+
+      // Import auth service and send verification email
+      const { authService } = await import('../server/services/authService');
+      const success = await authService.initiateEmailVerification(email);
+
+      if (success) {
+        console.log(`✅ Verification email sent successfully to ${email}`);
+        return res.status(200).json({ 
+          success: true, 
+          message: "Verification email sent successfully" 
+        });
+      } else {
+        console.log(`❌ Failed to send verification email to ${email}`);
+        
+        // Get detailed error information
+        try {
+          const { emailService } = await import('../server/services/emailService');
+          const debugInfo = await emailService.testSendGridConnection();
+          console.log('SendGrid debug info:', JSON.stringify(debugInfo, null, 2));
+        } catch (debugError) {
+          console.error('Failed to get debug info:', debugError);
+        }
+        
+        return res.status(400).json({ 
+          success: false, 
+          message: "Failed to send verification email. Check console logs for details." 
+        });
+      }
     } catch (error) {
       console.error('❌ Email verification error:', error);
-      res.status(500).json({ 
+      return res.status(500).json({ 
         success: false, 
         message: "Internal server error" 
       });
-      return;
     }
   }
 
