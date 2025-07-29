@@ -156,14 +156,30 @@ export default async function handler(req, res) {
           const { emailService } = await import('../server/services/emailService');
           const debugInfo = await emailService.testSendGridConnection();
           console.log('SendGrid debug info:', JSON.stringify(debugInfo, null, 2));
+          
+          return res.status(500).json({ 
+            success: false, 
+            message: "SendGrid configuration error",
+            debug: {
+              apiKeyConfigured: !!process.env.SENDGRID_API_KEY,
+              apiKeyLength: process.env.SENDGRID_API_KEY?.length || 0,
+              fromEmail: 'ed.duval@duvalsolutions.net',
+              errors: debugInfo.errors
+            }
+          });
         } catch (debugError) {
           console.error('Failed to get debug info:', debugError);
+          
+          return res.status(500).json({ 
+            success: false, 
+            message: "Email service error",
+            debug: {
+              apiKeyConfigured: !!process.env.SENDGRID_API_KEY,
+              apiKeyLength: process.env.SENDGRID_API_KEY?.length || 0,
+              error: debugError.message
+            }
+          });
         }
-        
-        return res.status(400).json({ 
-          success: false, 
-          message: "Failed to send verification email. Check console logs for details." 
-        });
       }
     } catch (error) {
       console.error('❌ Email verification error:', error);

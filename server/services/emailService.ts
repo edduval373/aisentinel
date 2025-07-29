@@ -7,8 +7,20 @@ if (!process.env.SENDGRID_API_KEY) {
   throw new Error("SENDGRID_API_KEY environment variable must be set");
 }
 
-mailService.setApiKey(process.env.SENDGRID_API_KEY);
-console.log(`SendGrid API key configured successfully (using environment variable)`);
+// Validate API key format
+const apiKey = process.env.SENDGRID_API_KEY;
+if (!apiKey.startsWith('SG.')) {
+  console.error('Invalid SendGrid API key format - must start with SG.');
+  throw new Error("Invalid SendGrid API key format");
+}
+
+if (apiKey.length !== 69) {
+  console.error(`Invalid SendGrid API key length: ${apiKey.length} (expected 69)`);
+  throw new Error("Invalid SendGrid API key length");
+}
+
+mailService.setApiKey(apiKey);
+console.log(`SendGrid API key configured successfully (${apiKey.length} chars, format: ${apiKey.substring(0, 8)}...)`);
 
 interface EmailParams {
   to: string;
