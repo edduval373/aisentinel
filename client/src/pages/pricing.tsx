@@ -342,7 +342,8 @@ export default function PricingPage() {
                   marginTop: 'auto',
                   display: 'flex',
                   flexDirection: 'column',
-                  justifyContent: 'flex-end'
+                  justifyContent: 'flex-end',
+                  minHeight: '280px'
                 }}>
                   <button 
                     style={{
