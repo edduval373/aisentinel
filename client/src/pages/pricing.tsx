@@ -344,8 +344,8 @@ export default function PricingPage() {
                   <button 
                     style={{
                       width: '100%',
-                      backgroundColor: plan.name === 'trial' ? '#3b82f6' : (plan.popular ? '#3b82f6' : '#f1f5f9'),
-                      color: plan.name === 'trial' ? 'white' : (plan.popular ? 'white' : '#1e293b'),
+                      backgroundColor: '#3b82f6',
+                      color: 'white',
                       border: 'none',
                       borderRadius: '12px',
                       padding: '12px 16px',
@@ -363,19 +363,11 @@ export default function PricingPage() {
                     onClick={() => handleSignUp(plan.name)}
                     onMouseOver={(e) => {
                       const target = e.target as HTMLButtonElement;
-                      if (plan.name === 'trial' || plan.popular) {
-                        target.style.backgroundColor = '#2563eb';
-                      } else {
-                        target.style.backgroundColor = '#e2e8f0';
-                      }
+                      target.style.backgroundColor = '#2563eb';
                     }}
                     onMouseOut={(e) => {
                       const target = e.target as HTMLButtonElement;
-                      if (plan.name === 'trial' || plan.popular) {
-                        target.style.backgroundColor = '#3b82f6';
-                      } else {
-                        target.style.backgroundColor = '#f1f5f9';
-                      }
+                      target.style.backgroundColor = '#3b82f6';
                     }}
                   >
                     {plan.name === 'trial' ? 'Start Free Trial' : 'Get Started'}
