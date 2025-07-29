@@ -939,9 +939,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Enable Replit Auth for production authentication
-  process.env.ENABLE_REPLIT_AUTH = 'true';
-  await setupAuth(app);
+  // Enable Replit Auth for production authentication (conditional)
+  if (process.env.ENABLE_REPLIT_AUTH === 'true') {
+    try {
+      await setupAuth(app);
+      console.log('Replit Auth setup successful');
+    } catch (error) {
+      console.error('Replit Auth setup failed, continuing without it:', error.message);
+    }
+  } else {
+    console.log('Replit Auth disabled, using cookie-based authentication only');
+  }
 
   // Initialize default AI models and activity types
   await initializeDefaultData();
