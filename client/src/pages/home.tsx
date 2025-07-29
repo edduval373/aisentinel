@@ -64,7 +64,15 @@ function CompanyInfoLarge() {
   const headerNameSize = Math.min(companyNameSize, 18); // Cap at 18px for header
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: '0', padding: '0' }}>
+    <div style={{ 
+      display: 'flex', 
+      alignItems: 'center', 
+      justifyContent: 'center',
+      gap: '12px', 
+      margin: '0', 
+      padding: '0',
+      width: '100%'
+    }}>
       {showCompanyLogo && (
         <>
           {(() => {
@@ -131,7 +139,7 @@ function CompanyInfoLarge() {
             fontSize: `${headerNameSize}px`, 
             fontWeight: 700, 
             color: '#1e293b', 
-            textAlign: 'left',
+            textAlign: 'center',
             lineHeight: '1.1',
             margin: '0',
             padding: '0'
@@ -139,7 +147,7 @@ function CompanyInfoLarge() {
             {currentCompany.name}
           </div>
           {currentCompany.description && (
-            <div style={{ fontSize: '12px', color: '#64748b', textAlign: 'left', marginTop: '2px', margin: '2px 0 0 0' }}>
+            <div style={{ fontSize: '12px', color: '#64748b', textAlign: 'center', marginTop: '2px', margin: '2px 0 0 0' }}>
               {currentCompany.description}
             </div>
           )}
