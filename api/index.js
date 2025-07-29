@@ -90,6 +90,101 @@ export default async function handler(req, res) {
     }
   }
 
+  // Email verification request endpoint
+  if (req.url.includes('/api/auth/request-verification') && req.method === 'POST') {
+    try {
+      console.log('📧 Email verification request received');
+
+      let body = '';
+      req.on('data', chunk => {
+        body += chunk.toString();
+      });
+
+      req.on('end', async () => {
+        try {
+          const { email } = JSON.parse(body);
+
+          if (!email) {
+            res.status(400).json({ success: false, message: "Email is required" });
+            return;
+          }
+
+          console.log(`📧 Processing verification request for: ${email}`);
+
+          // Import auth service and send verification email
+          const { authService } = await import('../server/services/authService');
+          const success = await authService.initiateEmailVerification(email);
+
+          if (success) {
+            console.log(`✅ Verification email sent successfully to ${email}`);
+            res.status(200).json({ 
+              success: true, 
+              message: "Verification email sent successfully" 
+            });
+          } else {
+            console.log(`❌ Failed to send verification email to ${email}`);
+            res.status(500).json({ 
+              success: false, 
+              message: "Failed to send verification email. Please check your email settings." 
+            });
+          }
+        } catch (parseError) {
+          console.error('❌ Error parsing request body:', parseError);
+          res.status(400).json({ 
+            success: false, 
+            message: "Invalid request format" 
+          });
+        }
+      });
+
+      return; // Prevent falling through to 404
+    } catch (error) {
+      console.error('❌ Email verification error:', error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Internal server error" 
+      });
+      return;
+    }
+  }
+
+  // Health check endpoint
+  if (req.url === '/api/health' && req.method === 'GET') {
+    res.setHeader('Content-Type', 'application/json');
+    res.status(200).json({
+      status: 'OK',
+      timestamp: new Date().toISOString(),
+      environment: 'production'
+    });
+    return;
+  }
+
+  // Debug endpoint for environment check
+  if (req.url === '/api/auth/debug/environment' && req.method === 'GET') {
+    try {
+      res.setHeader('Content-Type', 'application/json');
+      res.status(200).json({
+        success: true,
+        environment: {
+          NODE_ENV: process.env.NODE_ENV,
+          APP_URL: process.env.APP_URL,
+          SENDGRID_API_KEY_CONFIGURED: !!process.env.SENDGRID_API_KEY,
+          SENDGRID_API_KEY_LENGTH: process.env.SENDGRID_API_KEY?.length || 0,
+          DATABASE_URL_CONFIGURED: !!process.env.DATABASE_URL
+        },
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('Debug environment error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to get environment info',
+        error: error.message
+      });
+    }
+    return;
+  }
+
   // All other endpoints require authentication or are company/static data
   if (path.includes('/api/')) {
     // Static/demo endpoints that don't require auth
