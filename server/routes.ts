@@ -800,6 +800,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log('Updating session with:', sessionUpdate);
       const updatedSession = await storage.updateUserSession(sessionToken, sessionUpdate);
+      
+      if (!updatedSession) {
+        console.error('Session update failed - no session returned');
+        return res.status(500).json({ message: 'Failed to update session' });
+      }
+      
       console.log('Session updated successfully:', {
         sessionToken: sessionToken.substring(0, 10) + '...',
         updatedSession: {
