@@ -543,7 +543,7 @@ export default async function handler(req, res) {
     }
 
     // Save API Key endpoint
-    if (url.includes('admin/api-keys') && method === 'POST') {
+    if (url.includes('admin/update-api-key') && method === 'POST') {
       console.log('🔑 [SERVERLESS] Save API Key request');
       
       try {
