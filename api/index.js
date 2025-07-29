@@ -549,10 +549,31 @@ export default async function handler(req, res) {
           );
           
           console.log('✅ [SERVERLESS] Company updated, rows affected:', result.rowCount);
-          await client.end();
           
-          res.status(200).json({ success: true, message: 'Company updated successfully' });
-          return;
+          // Return the updated company data
+          const updatedResult = await client.query(`
+            SELECT id, name, domain, primary_admin_name, primary_admin_email, primary_admin_title, logo 
+            FROM companies WHERE id = $1
+          `, [companyId]);
+          
+          if (updatedResult.rows.length > 0) {
+            const company = {
+              id: updatedResult.rows[0].id,
+              name: updatedResult.rows[0].name,
+              domain: updatedResult.rows[0].domain || '',
+              primaryAdminName: updatedResult.rows[0].primary_admin_name || '',
+              primaryAdminEmail: updatedResult.rows[0].primary_admin_email || '',
+              primaryAdminTitle: updatedResult.rows[0].primary_admin_title || '',
+              logo: updatedResult.rows[0].logo || '',
+              isActive: true
+            };
+            
+            await client.end();
+            res.status(200).json(company);
+            return;
+          }
+          
+          await client.end();
         }
       } catch (error) {
         console.error('❌ [SERVERLESS] Error updating company:', error.message);
