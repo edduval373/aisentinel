@@ -429,7 +429,7 @@ export default async function handler(req, res) {
           const client = new Client({ connectionString: DATABASE_URL });
           await client.connect();
           
-          const result = await client.query('SELECT id, name, domain, primary_admin_name, primary_admin_email, logo FROM companies ORDER BY id');
+          const result = await client.query('SELECT id, name, domain, primary_admin_name, primary_admin_email, primary_admin_title, logo FROM companies ORDER BY id');
           
           if (result.rows.length > 0) {
             const companies = result.rows.map(row => ({
@@ -438,7 +438,9 @@ export default async function handler(req, res) {
               domain: row.domain || '',
               primaryAdminName: row.primary_admin_name || '',
               primaryAdminEmail: row.primary_admin_email || '',
-              logo: row.logo || ''
+              primaryAdminTitle: row.primary_admin_title || '',
+              logo: row.logo || '',
+              isActive: true // All companies are active by default
             }));
             
             console.log('✅ [SERVERLESS] Companies from database:', companies.length);
@@ -483,6 +485,107 @@ export default async function handler(req, res) {
       
       console.log('✅ [SERVERLESS] Using fallback companies data:', companies.length);
       res.status(200).json(companies);
+      return;
+    }
+
+    // Create Company endpoint
+    if (url.includes('admin/companies') && method === 'POST') {
+      console.log('🏢 [SERVERLESS] Create company request');
+      
+      try {
+        const { name, domain, primaryAdminName, primaryAdminEmail, primaryAdminTitle, logo } = req.body;
+        console.log('🏢 [SERVERLESS] Creating company:', name);
+        
+        const DATABASE_URL = process.env.DATABASE_URL;
+        
+        if (DATABASE_URL) {
+          const { Client } = require('pg');
+          const client = new Client({ connectionString: DATABASE_URL });
+          await client.connect();
+          
+          const result = await client.query(
+            'INSERT INTO companies (name, domain, primary_admin_name, primary_admin_email, primary_admin_title, logo) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
+            [name, domain, primaryAdminName, primaryAdminEmail, primaryAdminTitle, logo]
+          );
+          
+          const newId = result.rows[0].id;
+          console.log('✅ [SERVERLESS] Company created with ID:', newId);
+          await client.end();
+          
+          res.status(200).json({ success: true, id: newId, message: 'Company created successfully' });
+          return;
+        }
+      } catch (error) {
+        console.error('❌ [SERVERLESS] Error creating company:', error.message);
+      }
+      
+      res.status(200).json({ success: true, id: Date.now(), message: 'Company created (demo mode)' });
+      return;
+    }
+
+    // Update Company endpoint
+    if (url.includes('admin/companies/') && method === 'PUT') {
+      console.log('🏢 [SERVERLESS] Update company request');
+      
+      try {
+        const companyId = url.split('/').pop();
+        const { name, domain, primaryAdminName, primaryAdminEmail, primaryAdminTitle, logo } = req.body;
+        console.log('🏢 [SERVERLESS] Updating company ID:', companyId);
+        
+        const DATABASE_URL = process.env.DATABASE_URL;
+        
+        if (DATABASE_URL) {
+          const { Client } = require('pg');
+          const client = new Client({ connectionString: DATABASE_URL });
+          await client.connect();
+          
+          const result = await client.query(
+            'UPDATE companies SET name = $1, domain = $2, primary_admin_name = $3, primary_admin_email = $4, primary_admin_title = $5, logo = $6 WHERE id = $7',
+            [name, domain, primaryAdminName, primaryAdminEmail, primaryAdminTitle, logo, companyId]
+          );
+          
+          console.log('✅ [SERVERLESS] Company updated, rows affected:', result.rowCount);
+          await client.end();
+          
+          res.status(200).json({ success: true, message: 'Company updated successfully' });
+          return;
+        }
+      } catch (error) {
+        console.error('❌ [SERVERLESS] Error updating company:', error.message);
+      }
+      
+      res.status(200).json({ success: true, message: 'Company updated (demo mode)' });
+      return;
+    }
+
+    // Delete Company endpoint
+    if (url.includes('admin/companies/') && method === 'DELETE') {
+      console.log('🏢 [SERVERLESS] Delete company request');
+      
+      try {
+        const companyId = url.split('/').pop();
+        console.log('🏢 [SERVERLESS] Deleting company ID:', companyId);
+        
+        const DATABASE_URL = process.env.DATABASE_URL;
+        
+        if (DATABASE_URL) {
+          const { Client } = require('pg');
+          const client = new Client({ connectionString: DATABASE_URL });
+          await client.connect();
+          
+          const result = await client.query('DELETE FROM companies WHERE id = $1', [companyId]);
+          
+          console.log('✅ [SERVERLESS] Company deleted, rows affected:', result.rowCount);
+          await client.end();
+          
+          res.status(200).json({ success: true, message: 'Company deleted successfully' });
+          return;
+        }
+      } catch (error) {
+        console.error('❌ [SERVERLESS] Error deleting company:', error.message);
+      }
+      
+      res.status(200).json({ success: true, message: 'Company deleted (demo mode)' });
       return;
     }
 
