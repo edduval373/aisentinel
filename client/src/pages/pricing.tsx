@@ -338,12 +338,14 @@ export default function PricingPage() {
                   </div>
                 </div>
                 
-                <div style={{ marginTop: 'auto' }}>
+                <div style={{ 
+                  marginTop: plan.name === 'trial' ? '-144px' : 'auto' 
+                }}>
                   <button 
                     style={{
                       width: '100%',
-                      backgroundColor: plan.popular ? '#3b82f6' : '#f1f5f9',
-                      color: plan.popular ? 'white' : '#1e293b',
+                      backgroundColor: plan.name === 'trial' ? '#3b82f6' : (plan.popular ? '#3b82f6' : '#f1f5f9'),
+                      color: plan.name === 'trial' ? 'white' : (plan.popular ? 'white' : '#1e293b'),
                       border: 'none',
                       borderRadius: '12px',
                       padding: '12px 16px',
@@ -361,7 +363,7 @@ export default function PricingPage() {
                     onClick={() => handleSignUp(plan.name)}
                     onMouseOver={(e) => {
                       const target = e.target as HTMLButtonElement;
-                      if (plan.popular) {
+                      if (plan.name === 'trial' || plan.popular) {
                         target.style.backgroundColor = '#2563eb';
                       } else {
                         target.style.backgroundColor = '#e2e8f0';
@@ -369,7 +371,7 @@ export default function PricingPage() {
                     }}
                     onMouseOut={(e) => {
                       const target = e.target as HTMLButtonElement;
-                      if (plan.popular) {
+                      if (plan.name === 'trial' || plan.popular) {
                         target.style.backgroundColor = '#3b82f6';
                       } else {
                         target.style.backgroundColor = '#f1f5f9';
