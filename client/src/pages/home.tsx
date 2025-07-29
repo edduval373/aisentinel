@@ -542,7 +542,7 @@ export default function Home() {
                   justifyContent: 'center',
                   width: '32px',
                   height: '32px',
-                  backgroundColor: '#3b82f6',
+                  backgroundColor: '#1e2851',
                   color: 'white',
                   border: 'none',
                   borderRadius: '6px',
@@ -550,10 +550,10 @@ export default function Home() {
                   transition: 'all 0.2s ease'
                 }}
                 onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor = '#2563eb';
+                  e.currentTarget.style.backgroundColor = '#1e3a5f';
                 }}
                 onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = '#3b82f6';
+                  e.currentTarget.style.backgroundColor = '#1e2851';
                 }}
                 title="Developer Controls"
               >
