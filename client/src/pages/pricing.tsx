@@ -338,7 +338,12 @@ export default function PricingPage() {
                   </div>
                 </div>
                 
-                <div style={{ marginTop: 'auto' }}>
+                <div style={{ 
+                  marginTop: 'auto',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'flex-end'
+                }}>
                   <button 
                     style={{
                       width: '100%',
