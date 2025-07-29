@@ -377,12 +377,12 @@ export default function Home() {
         <div style={{ 
           backgroundColor: '#f1f5f9', 
           borderBottom: '1px solid #e2e8f0', 
-          padding: '2px 16px', 
+          padding: '8px 16px', 
           display: 'flex', 
           alignItems: 'center',
           justifyContent: 'space-between',
           flexShrink: 0,
-          minHeight: '48px',
+          minHeight: '80px',
           position: 'relative'
         }}>
           {/* Left side - Menu Button */}
