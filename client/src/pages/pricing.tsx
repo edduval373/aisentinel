@@ -64,7 +64,7 @@ export default function PricingPage() {
       price: "$50",
       billing: "/month",
       description: "Complete solution for teams and organizations",
-      maxUsers: "Unlimited users",
+      maxUsers: "Up to 50 employees",
       dailyLimit: "1,000 requests/day",
       monthlyLimit: "20,000 requests/month",
       requiresCreditCard: true,
@@ -305,6 +305,16 @@ export default function PricingPage() {
                       color: '#64748b',
                       fontSize: '16px'
                     }}>{plan.billing}</span>
+                    {plan.name === 'company' && (
+                      <div style={{
+                        fontSize: '14px',
+                        color: '#64748b',
+                        marginTop: '4px',
+                        fontWeight: '500'
+                      }}>
+                        $100/month for over 50 employees
+                      </div>
+                    )}
                   </div>
                   
                   <div style={{
