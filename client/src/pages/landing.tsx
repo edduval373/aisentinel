@@ -67,37 +67,52 @@ export default function Landing() {
     const demoUserEmail = getCookie('demoUser');
     const sessionToken = getCookie('sessionToken');
 
-    // Developer detection - check if we have a session and try to match developer
-    if (sessionToken && !sessionToken.startsWith('demo-session-')) {
-      console.log("[DEVELOPER] Session token detected, checking for developer status...");
+    // Always check for developer authentication status
+    console.log("[DEVELOPER] Checking authentication status...");
+    fetch('/api/auth/me', {
+      credentials: 'include',
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log("[DEVELOPER] Auth check result:", data);
       
-      // Check if current user is a developer
-      fetch('/api/auth/me', {
-        credentials: 'include',
-      })
-      .then(response => response.json())
-      .then(data => {
-        console.log("[DEVELOPER] Auth check result:", data);
+      // If developer is authenticated, show role picker
+      if (data.authenticated && data.user && data.user.email === 'ed.duval15@gmail.com') {
+        console.log("[DEVELOPER] Developer detected:", data.user.email);
+        setDeveloperEmail(data.user.email);
+        setShowDeveloperPicker(true);
+        return;
+      }
+      
+      // If authenticated but not developer, redirect to chat
+      if (data.authenticated) {
+        console.log("[LANDING DEBUG] Authenticated user detected, redirecting to chat");
+        window.location.href = '/chat';
+        return;
+      }
+      
+      // If not authenticated, check if this is a known developer based on recent usage
+      // For now, we'll show developer picker if no session but have specific cookie pattern
+      const isDeveloperContext = demoUserEmail || sessionToken || window.location.search.includes('dev=true');
+      
+      if (!data.authenticated && !isDeveloperContext) {
+        // Check if we should show developer picker for ed.duval15@gmail.com
+        // This is a temporary approach - in production you'd have a more secure method
+        console.log("[DEVELOPER] No session, checking for developer context...");
         
-        if (data.authenticated && data.user && data.user.email === 'ed.duval15@gmail.com') {
-          console.log("[DEVELOPER] Developer detected:", data.user.email);
-          setDeveloperEmail(data.user.email);
+        // Show developer picker if URL has dev parameter or if accessing from known developer context
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('dev') === 'true' || window.location.hostname.includes('replit.dev')) {
+          console.log("[DEVELOPER] Developer context detected, showing role picker");
+          setDeveloperEmail('ed.duval15@gmail.com');
           setShowDeveloperPicker(true);
           return;
         }
-        
-        // If authenticated but not developer, redirect to chat
-        if (data.authenticated) {
-          console.log("[LANDING DEBUG] Authenticated user detected, redirecting to chat");
-          window.location.href = '/chat';
-        }
-      })
-      .catch(error => {
-        console.log("[DEVELOPER] Auth check failed:", error);
-      });
-      
-      return; // Exit early to prevent other checks
-    }
+      }
+    })
+    .catch(error => {
+      console.log("[DEVELOPER] Auth check failed:", error);
+    });
     
     if (demoUserEmail && sessionToken && sessionToken.startsWith('demo-session-')) {
       console.log("[LANDING DEBUG] Returning demo user detected:", demoUserEmail);
