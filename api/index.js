@@ -471,7 +471,9 @@ export default async function handler(req, res) {
           domain: 'testcompany.com',
           primaryAdminName: 'Test Admin',
           primaryAdminEmail: 'admin@testcompany.com',
-          logo: ''
+          primaryAdminTitle: 'Administrator',
+          logo: '',
+          isActive: true
         },
         {
           id: 6,
@@ -479,7 +481,9 @@ export default async function handler(req, res) {
           domain: 'quickfix.com',
           primaryAdminName: 'Quick Admin',
           primaryAdminEmail: 'admin@quickfix.com',
-          logo: ''
+          primaryAdminTitle: 'Administrator',
+          logo: '',
+          isActive: true
         }
       ];
       
