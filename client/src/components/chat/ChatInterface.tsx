@@ -282,7 +282,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           {/* Left side - AI Sentinel Chat and Connection Status */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span style={{ fontSize: '16px', fontWeight: '600', color: '#374151' }}>
+            <span style={{ fontSize: '22px', fontWeight: '600', color: '#374151' }}>
               AI Sentinel Chat
             </span>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
