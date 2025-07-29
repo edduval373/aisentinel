@@ -274,14 +274,17 @@ export default function Home() {
   const userRoleLevel = user?.roleLevel || 0;
   const isDemoMode = userRoleLevel === 0 && user?.role === 'demo';
   
+  // For developers: use effective role level that includes test role mapping
+  const effectiveRoleLevel = userRoleLevel;
+  
   // Features & Benefits dialog for demo users
   const { showDialog, openDialog, closeDialog } = useFeaturesBenefits(isDemoMode);
   
   // Check if user is super-user (role level 1000+)
-  const isSuperUserLevel = (user?.roleLevel ?? 0) >= 1000;
+  const isSuperUserLevel = effectiveRoleLevel >= 1000;
   
   // Determine if sidebar access is allowed (authenticated users with role level 2+ or actual demo users)
-  const canAccessSidebar = (isAuthenticated && (isSuperUser || isOwner || isAdmin || userRoleLevel >= 2)) || isDemoMode;
+  const canAccessSidebar = (isAuthenticated && effectiveRoleLevel >= 2) || isDemoMode;
 
   // Fetch all companies for super-user company switching
   const { data: allCompanies = [] } = useQuery<Array<{ id: number; name: string; description?: string }>>({
