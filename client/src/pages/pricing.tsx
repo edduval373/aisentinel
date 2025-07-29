@@ -1,4 +1,4 @@
-import { CheckCircle, CreditCard, Shield, Users, BarChart3, Lock, Star, Zap } from "lucide-react";
+import { CheckCircle, CreditCard, Shield, Users, BarChart3, Lock, Star, Zap, AlertCircle } from "lucide-react";
 import { Link } from "wouter";
 
 export default function PricingPage() {
@@ -158,8 +158,8 @@ export default function PricingPage() {
                 transition: 'background-color 0.2s ease',
                 fontFamily: 'inherit'
               }}
-              onMouseOver={(e) => e.target.style.backgroundColor = '#2563eb'}
-              onMouseOut={(e) => e.target.style.backgroundColor = 'hsl(221, 83%, 53%)'}
+              onMouseOver={(e) => (e.target as HTMLButtonElement).style.backgroundColor = '#2563eb'}
+              onMouseOut={(e) => (e.target as HTMLButtonElement).style.backgroundColor = 'hsl(221, 83%, 53%)'}
             >
               Sign In
             </button>
@@ -339,17 +339,82 @@ export default function PricingPage() {
                 </div>
                 
                 <div style={{ 
-                  marginTop: 'auto',
+                  flex: '1',
                   display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'flex-end',
-                  minHeight: '280px'
+                  flexDirection: 'column'
                 }}>
+                  <div style={{ flex: '1' }}>
+                    <h4 style={{
+                      fontWeight: '600',
+                      color: '#1e293b',
+                      borderBottom: '1px solid #e2e8f0',
+                      paddingBottom: '6px',
+                      marginBottom: '12px',
+                      fontSize: '14px'
+                    }}>Features Included:</h4>
+                    {plan.features.map((feature, idx) => (
+                      <div key={idx} style={{
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: '8px',
+                        marginBottom: '6px'
+                      }}>
+                        <CheckCircle style={{
+                          width: '16px',
+                          height: '16px',
+                          color: '#10b981',
+                          marginTop: '2px',
+                          flexShrink: 0
+                        }} />
+                        <span style={{
+                          fontSize: '14px',
+                          color: '#1e293b',
+                          lineHeight: '1.4'
+                        }}>{feature}</span>
+                      </div>
+                    ))}
+                    
+                    {plan.restrictions.length > 0 && (
+                      <>
+                        <h4 style={{
+                          fontWeight: '600',
+                          color: '#1e293b',
+                          borderBottom: '1px solid #e2e8f0',
+                          paddingBottom: '6px',
+                          marginBottom: '12px',
+                          marginTop: '16px',
+                          fontSize: '14px'
+                        }}>Important Notes:</h4>
+                        {plan.restrictions.map((restriction, idx) => (
+                          <div key={idx} style={{
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            gap: '8px',
+                            marginBottom: '6px'
+                          }}>
+                            <AlertCircle style={{
+                              width: '16px',
+                              height: '16px',
+                              color: '#f59e0b',
+                              marginTop: '2px',
+                              flexShrink: 0
+                            }} />
+                            <span style={{
+                              fontSize: '14px',
+                              color: '#64748b',
+                              lineHeight: '1.4'
+                            }}>{restriction}</span>
+                          </div>
+                        ))}
+                      </>
+                    )}
+                  </div>
+                  
                   <button 
                     style={{
                       width: '100%',
-                      backgroundColor: '#3b82f6',
-                      color: 'white',
+                      backgroundColor: plan.popular ? '#3b82f6' : '#f1f5f9',
+                      color: plan.popular ? 'white' : '#1e293b',
                       border: 'none',
                       borderRadius: '12px',
                       padding: '12px 16px',
@@ -357,7 +422,7 @@ export default function PricingPage() {
                       fontWeight: '600',
                       cursor: 'pointer',
                       transition: 'all 0.2s ease',
-                      marginBottom: '16px',
+                      marginTop: '20px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -366,10 +431,20 @@ export default function PricingPage() {
                     }}
                     onClick={() => handleSignUp(plan.name)}
                     onMouseOver={(e) => {
-                      e.target.style.backgroundColor = '#2563eb';
+                      const target = e.target as HTMLButtonElement;
+                      if (plan.popular) {
+                        target.style.backgroundColor = '#2563eb';
+                      } else {
+                        target.style.backgroundColor = '#e2e8f0';
+                      }
                     }}
                     onMouseOut={(e) => {
-                      e.target.style.backgroundColor = '#3b82f6';
+                      const target = e.target as HTMLButtonElement;
+                      if (plan.popular) {
+                        target.style.backgroundColor = '#3b82f6';
+                      } else {
+                        target.style.backgroundColor = '#f1f5f9';
+                      }
                     }}
                   >
                     {plan.name === 'trial' ? 'Start Free Trial' : 'Get Started'}
