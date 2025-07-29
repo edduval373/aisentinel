@@ -185,6 +185,44 @@ export default async function handler(req, res) {
     return;
   }
 
+  // SendGrid debug endpoint
+  if (req.url === '/api/auth/debug/sendgrid' && req.method === 'GET') {
+    try {
+      res.setHeader('Content-Type', 'application/json');
+      
+      const result = {
+        success: true,
+        config: {
+          environment: process.env.NODE_ENV || 'development',
+          apiKeyConfigured: !!process.env.SENDGRID_API_KEY,
+          apiKeyLength: process.env.SENDGRID_API_KEY?.length || 0,
+          fromEmail: 'ed.duval@duvalsolutions.net',
+          appUrl: process.env.APP_URL || 'https://aisentinel.app'
+        },
+        timestamp: new Date().toISOString()
+      };
+
+      // Basic validation
+      if (!process.env.SENDGRID_API_KEY) {
+        result.config.error = 'SENDGRID_API_KEY not configured';
+      } else if (!process.env.SENDGRID_API_KEY.startsWith('SG.')) {
+        result.config.error = 'Invalid API key format';
+      } else if (process.env.SENDGRID_API_KEY.length !== 69) {
+        result.config.error = `Invalid API key length: ${process.env.SENDGRID_API_KEY.length} (expected 69)`;
+      }
+
+      res.status(200).json(result);
+    } catch (error) {
+      console.error('SendGrid debug error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to get SendGrid info',
+        error: error.message
+      });
+    }
+    return;
+  }
+
   // All other endpoints require authentication or are company/static data
   if (path.includes('/api/')) {
     // Static/demo endpoints that don't require auth
