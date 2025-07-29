@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import Sidebar from "@/components/layout/Sidebar";
 import ChatInterface from "@/components/chat/ChatInterface";
 import { useQuery } from "@tanstack/react-query";
-import { Building2, LogOut, RotateCcw, Trash2, Star, ArrowLeft } from "lucide-react";
+import { Building2, LogOut, RotateCcw, Trash2, Star, ArrowLeft, Settings } from "lucide-react";
 import TutorialArrow from "@/components/tutorial/TutorialArrow";
 import { useTutorial } from "@/hooks/useTutorial";
 import { DemoUsageBanner } from "@/components/demo/DemoUsageBanner";
@@ -580,22 +580,22 @@ export default function Home() {
                   justifyContent: 'center',
                   width: '32px',
                   height: '32px',
-                  backgroundColor: '#1e2851',
-                  color: 'white',
+                  backgroundColor: 'white',
+                  color: '#1e2851',
                   border: 'none',
                   borderRadius: '6px',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease'
                 }}
                 onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor = '#1e3a5f';
+                  e.currentTarget.style.backgroundColor = '#f8f9fa';
                 }}
                 onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = '#1e2851';
+                  e.currentTarget.style.backgroundColor = 'white';
                 }}
                 title="Developer Controls"
               >
-                <img src="/settings-icon-reversed.svg" alt="Settings" style={{ width: '16px', height: '16px' }} />
+                <Settings size={16} color="#1e2851" />
               </button>
             )}
 
