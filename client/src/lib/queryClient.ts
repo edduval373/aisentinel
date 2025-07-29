@@ -1,4 +1,3 @@
-
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
 async function throwIfResNotOk(res: Response) {
@@ -151,7 +150,7 @@ export async function apiRequest(
       console.log(`🔄 [API ${method}] ${url} - Using production fallback`);
       return fallback;
     }
-    
+
     throw error;
   }
 }
