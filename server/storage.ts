@@ -1373,31 +1373,7 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  // User update method
-  async updateUser(id: string, userData: Partial<UpsertUser>): Promise<User> {
-    const [updated] = await db
-      .update(users)
-      .set({
-        ...userData,
-        updatedAt: new Date(),
-      })
-      .where(eq(users.id, id))
-      .returning();
-    return updated;
-  }
 
-  // User session management
-  async updateUserSession(sessionToken: string, updates: Partial<InsertUserSession>): Promise<UserSession> {
-    const [updated] = await db
-      .update(userSessions)
-      .set({
-        ...updates,
-        lastAccessedAt: new Date(),
-      })
-      .where(eq(userSessions.sessionToken, sessionToken))
-      .returning();
-    return updated;
-  }
 
   // Initialize default company roles if none exist
   async initializeCompanyRoles(companyId: number): Promise<CompanyRole[]> {
