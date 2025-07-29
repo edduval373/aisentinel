@@ -6,12 +6,12 @@ interface DeveloperRolePickerProps {
 }
 
 const roles = [
-  { key: 'new-user', label: 'New User', description: 'Experience the landing page and sign-up flow', color: '#6b7280' },
-  { key: 'demo', label: 'Demo User', description: 'Limited demo access with read-only features', color: '#f59e0b' },
-  { key: 'user', label: 'Regular User', description: 'Basic chat interface access', color: '#10b981' },
+  { key: 'super-user', label: 'Super User', description: 'Full system access and company management (level 100)', color: '#dc2626' },
+  { key: 'owner', label: 'Owner', description: 'Company setup and configuration access (level 99)', color: '#8b5cf6' },
   { key: 'admin', label: 'Administrator', description: 'Security settings, user management (level 98)', color: '#3b82f6' },
-  { key: 'owner', label: 'Owner', description: 'Company setup and configuration access', color: '#8b5cf6' },
-  { key: 'super-user', label: 'Super User', description: 'Full system access and company management', color: '#dc2626' },
+  { key: 'user', label: 'Regular User', description: 'Basic chat interface access (level 1)', color: '#10b981' },
+  { key: 'demo', label: 'Demo User', description: 'Limited demo access with read-only features (level 0)', color: '#f59e0b' },
+  { key: 'new-user', label: 'New User', description: 'Experience the landing page and sign-up flow', color: '#6b7280' },
 ];
 
 export default function DeveloperRolePicker({ email, onRoleSelect }: DeveloperRolePickerProps) {

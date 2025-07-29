@@ -148,11 +148,12 @@ Recent Updates:
   * ADDED: Developer API endpoints (/api/developer/status, /api/developer/switch-role) with comprehensive session management
   * UPDATED: Storage service with updateUserSession method for seamless role switching capabilities
   * ENHANCED: authService with isDeveloperEmail and getEffectiveRoleLevel methods for proper role calculation
-  * CREATED: DeveloperRolePicker component with role selection (Demo 0, User 1, Admin 2, Administrator 98, Owner 99, Super-User 100)
+  * CREATED: DeveloperRolePicker component with role selection in descending order (Super-User 100, Owner 99, Administrator 98, User 1, Demo 0)
   * IMPLEMENTED: useDeveloper hook for comprehensive role management functionality throughout application
   * FIXED: Landing page developer detection logic to work without existing session tokens (checks demoUser cookie and replit.dev domain)
   * SECURED: Developer Login button only visible on development domains (replit.dev, localhost, or ?dev=true parameter)
-  * CORRECTED: Role hierarchy - Admin (level 2) vs Administrator (level 98) with proper access control distinctions
+  * CORRECTED: Role hierarchy - Eliminated duplicate admin roles, keeping only Administrator (level 98) with proper access control
+  * UPDATED: Both DeveloperRolePicker and DeveloperRoleSwitcher components to show unified role hierarchy in descending order
   * VERIFIED: Complete testing environment for all role levels with proper company assignment and session management
 - July 29, 2025. Company Branding Header Centering and Layout Fixed:
   * FIXED: Company logo/branding now properly centered across entire screen width in header

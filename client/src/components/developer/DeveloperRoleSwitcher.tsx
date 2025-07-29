@@ -5,17 +5,18 @@ interface DeveloperRoleSwitcherProps {
 }
 
 export function DeveloperRoleSwitcher({ className = '' }: DeveloperRoleSwitcherProps) {
-  const { isDeveloper, testRole, actualRole, effectiveRole, setTestRole, isSettingRole } = useDeveloper();
+  const { isDeveloper, testRole, actualRole, effectiveRole, switchRole, isSwitchingRole } = useDeveloper();
 
   if (!isDeveloper) {
     return null;
   }
 
   const roles = [
-    { value: 'demo', label: 'Demo User', level: 0, color: '#f59e0b' },
-    { value: 'user', label: 'User', level: 1, color: '#10b981' },
-    { value: 'admin', label: 'Admin', level: 2, color: '#3b82f6' },
+    { value: 'super-user', label: 'Super User', level: 100, color: '#dc2626' },
     { value: 'owner', label: 'Owner', level: 99, color: '#8b5cf6' },
+    { value: 'admin', label: 'Administrator', level: 98, color: '#3b82f6' },
+    { value: 'user', label: 'User', level: 1, color: '#10b981' },
+    { value: 'demo', label: 'Demo User', level: 0, color: '#f59e0b' },
   ];
 
   const currentRole = roles.find(r => r.value === testRole) || roles.find(r => r.level === actualRole);
@@ -43,13 +44,13 @@ export function DeveloperRoleSwitcher({ className = '' }: DeveloperRoleSwitcherP
         value={testRole || 'actual'}
         onChange={(e) => {
           if (e.target.value === 'actual') {
-            // Clear test role by setting it to empty string
-            setTestRole('');
+            // Clear test role by switching to empty string
+            switchRole('');
           } else {
-            setTestRole(e.target.value);
+            switchRole(e.target.value);
           }
         }}
-        disabled={isSettingRole}
+        disabled={isSwitchingRole}
         style={{
           backgroundColor: '#374151',
           border: '1px solid #4b5563',
@@ -58,8 +59,8 @@ export function DeveloperRoleSwitcher({ className = '' }: DeveloperRoleSwitcherP
           color: currentRole?.color || '#e5e7eb',
           fontSize: '13px',
           fontWeight: '500',
-          cursor: isSettingRole ? 'not-allowed' : 'pointer',
-          opacity: isSettingRole ? 0.6 : 1
+          cursor: isSwitchingRole ? 'not-allowed' : 'pointer',
+          opacity: isSwitchingRole ? 0.6 : 1
         }}
       >
         <option value="actual" style={{ color: '#e5e7eb' }}>
@@ -82,7 +83,7 @@ export function DeveloperRoleSwitcher({ className = '' }: DeveloperRoleSwitcherP
         </span>
       )}
 
-      {isSettingRole && (
+      {isSwitchingRole && (
         <span style={{ color: '#9ca3af', fontSize: '12px' }}>
           Switching...
         </span>
