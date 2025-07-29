@@ -895,7 +895,6 @@ Role-based access control: Hierarchical security levels with equal-or-above acce
   - Super-User (100): Full system access, company management
   - Owner (99): Company configuration, API keys, AI models, model fusion
   - Administrator (98): Security settings, user management, activity management, monitoring
-  - Admin (2): Standard admin features (AI management, content policies, activity logs)
   - User (1): Chat interface access only
   - Demo (0): Limited demo access with orange "DEMO" badge
 Security model: Level X grants access to all features requiring level X or below

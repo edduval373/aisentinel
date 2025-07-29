@@ -53,8 +53,7 @@ export class AuthService {
       switch (session.testRole) {
         case 'demo': return 0;
         case 'user': return 1;
-        case 'admin': return 2;
-        case 'administrator': return 98;
+        case 'admin': return 98;
         case 'owner': return 99;
         case 'super-user': return 100;
         default: return session.roleLevel;
