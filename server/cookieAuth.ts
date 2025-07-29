@@ -19,7 +19,7 @@ export const cookieAuth = async (req: AuthenticatedRequest, res: Response, next:
     console.log('CookieAuth: cookies =', req.cookies);
     console.log('CookieAuth: sessionToken =', sessionToken ? sessionToken.substring(0, 30) + '...' : 'missing');
     console.log('CookieAuth: request path =', req.path);
-    
+
     if (!sessionToken) {
       console.log('CookieAuth: No session token - returning 401');
       return res.status(401).json({ message: 'Unauthorized' });
@@ -27,7 +27,7 @@ export const cookieAuth = async (req: AuthenticatedRequest, res: Response, next:
 
     const session = await authService.verifySession(sessionToken);
     console.log('CookieAuth: session verification result =', !!session, session ? `roleLevel: ${session.roleLevel}` : 'null');
-    
+
     if (!session) {
       console.log('CookieAuth: Invalid/expired session - clearing cookie and returning 401');
       res.clearCookie('sessionToken');
@@ -64,11 +64,11 @@ export const optionalAuth = async (req: AuthenticatedRequest, res: Response, nex
     const sessionToken = req.cookies?.sessionToken;
     console.log('OptionalAuth: cookies =', req.cookies);
     console.log('OptionalAuth: sessionToken =', sessionToken ? 'exists (' + sessionToken.substring(0, 10) + '...)' : 'missing');
-    
+
     if (sessionToken) {
       const session = await authService.verifySession(sessionToken);
       console.log('OptionalAuth: session verified =', !!session);
-      
+
       if (session) {
         // Calculate effective role level for developers with test roles
         let effectiveRoleLevel = session.roleLevel;
