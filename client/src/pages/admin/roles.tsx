@@ -362,36 +362,8 @@ export default function AdminRoles() {
       subtitle="Manage user roles and access permissions"
       rightContent={isDemoMode && <DemoBanner message="Demo Mode - Read Only View" />}
     >
-      <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '1200px', margin: '0 auto' }}>
+      <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '1200px', margin: '0 auto' }}>
         
-        {/* Header with Add Role Button - Only show for full access users */}
-        {hasAdminAccess && (
-          <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-            <button
-              onClick={() => isDemoMode ? showDemoDialog('role-create') : setIsCreateDialogOpen(true)}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                backgroundColor: '#3b82f6',
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                padding: '12px 20px',
-                fontSize: '14px',
-                fontWeight: '500',
-                cursor: 'pointer',
-                transition: 'background-color 0.2s'
-              }}
-              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
-              onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#3b82f6'}
-            >
-              <Plus size={16} />
-              Add Role
-            </button>
-          </div>
-        )}
-
         {/* Roles Grid */}
         <div style={{
           backgroundColor: 'white',
@@ -400,9 +372,35 @@ export default function AdminRoles() {
           overflow: 'hidden',
           boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)'
         }}>
-          <div style={{ padding: '20px', borderBottom: '1px solid #e5e7eb' }}>
-            <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#1f2937', margin: 0 }}>Company Roles</h3>
-            <p style={{ fontSize: '14px', color: '#6b7280', margin: '4px 0 0 0' }}>Manage role hierarchy and permissions</p>
+          <div style={{ padding: '20px', borderBottom: '1px solid #e5e7eb', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div>
+              <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#1f2937', margin: 0 }}>Company Roles</h3>
+              <p style={{ fontSize: '14px', color: '#6b7280', margin: '4px 0 0 0' }}>Manage role hierarchy and permissions</p>
+            </div>
+            {hasAdminAccess && (
+              <button
+                onClick={() => isDemoMode ? showDemoDialog('role-create') : setIsCreateDialogOpen(true)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  backgroundColor: '#3b82f6',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 20px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#3b82f6'}
+              >
+                <Plus size={16} />
+                Add Role
+              </button>
+            )}
           </div>
           
           <div style={{ padding: '20px' }}>
