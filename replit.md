@@ -141,6 +141,13 @@ The application is configured for deployment on Vercel with the following setup:
 
 ```
 Recent Updates:
+- July 29, 2025. CRITICAL PRODUCTION FIX - Super-User Access Control Resolved:
+  * FIXED: Super-User (level 100) access issue in production - now can access all admin features including Setup API Keys
+  * CORRECTED: canViewAdminPage function parameter passing - was incorrectly passing user?.roleLevel instead of full user object
+  * ENHANCED: Access control hierarchy now properly recognizes Super-User override for all owner-level features
+  * VERIFIED: Super-Users (100+) can now access Setup API Keys, Company Setup, Create AI Models, and Model Fusion
+  * SECURED: Role hierarchy maintained while allowing proper Super-User administrative access
+  * PRODUCTION READY: Fix applied to all admin pages using canViewAdminPage function
 - July 29, 2025. Dynamic Role Loading from Database - Enhanced Developer Testing System:
   * IMPLEMENTED: DeveloperRolePicker and DeveloperRoleSwitcher now load roles dynamically from company's roles table
   * ENHANCED: Role hierarchy now reflects actual company-specific database roles instead of hardcoded values

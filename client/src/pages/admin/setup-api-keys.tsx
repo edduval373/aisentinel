@@ -45,7 +45,7 @@ export default function SetupApiKeys() {
   };
   
   // Check if user has owner level access (99 or above)
-  const hasOwnerAccess = canViewAdminPage(user?.roleLevel, ACCESS_REQUIREMENTS.SETUP_API_KEYS);
+  const hasOwnerAccess = canViewAdminPage(user, ACCESS_REQUIREMENTS.SETUP_API_KEYS);
   const [isTestingConnection, setIsTestingConnection] = useState<string | null>(null);
   const [testResults, setTestResults] = useState<Record<string, 'success' | 'error' | null>>({});
   const [modelTestResults, setModelTestResults] = useState<Record<string, 'success' | 'error' | null>>({});
