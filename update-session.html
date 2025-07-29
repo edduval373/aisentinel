@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Update Session - AI Sentinel</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            background: rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        h1 {
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        .button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 10px;
+            transition: background 0.3s;
+        }
+        .button:hover {
+            background: #2563eb;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background: rgba(0,0,0,0.2);
+        }
+        .success {
+            background: rgba(34, 197, 94, 0.3);
+            border: 1px solid rgba(34, 197, 94, 0.5);
+        }
+        .error {
+            background: rgba(239, 68, 68, 0.3);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Update AI Sentinel Session</h1>
+        <p>Click the button below to update your session with Super-User (Level 1000) privileges.</p>
+        
+        <button class="button" onclick="updateSession()">
+            🚀 Update to Super-User Session
+        </button>
+        
+        <button class="button" onclick="goToApp()">
+            📱 Go to AI Sentinel
+        </button>
+        
+        <div id="status" class="status" style="display: none;">
+            <div id="statusText"></div>
+        </div>
+    </div>
+
+    <script>
+        function updateSession() {
+            // Set the new session token
+            document.cookie = 'sessionToken=dev-session-1753792426946-t9if4tw36; path=/; domain=' + window.location.hostname + '; max-age=2592000';
+            
+            // Clear any old demo cookies
+            document.cookie = 'demoUser=; path=/; domain=' + window.location.hostname + '; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+            
+            showStatus('✅ Session updated! You now have Super-User (Level 1000) access.', 'success');
+            
+            // Auto-redirect after 2 seconds
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 2000);
+        }
+        
+        function goToApp() {
+            window.location.href = '/';
+        }
+        
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            const statusText = document.getElementById('statusText');
+            statusText.innerHTML = message;
+            status.className = 'status ' + type;
+            status.style.display = 'block';
+        }
+        
+        // Check current session on load
+        window.onload = function() {
+            const cookies = document.cookie.split(';');
+            const sessionCookie = cookies.find(c => c.trim().startsWith('sessionToken='));
+            if (sessionCookie && sessionCookie.includes('dev-session-1753792426946')) {
+                showStatus('✅ Current session is already up to date (Super-User Level 1000)', 'success');
+            } else {
+                showStatus('ℹ️ Click "Update to Super-User Session" to get Level 1000 access', 'info');
+            }
+        }
+    </script>
+</body>
+</html>
