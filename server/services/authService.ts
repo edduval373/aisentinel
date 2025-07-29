@@ -398,8 +398,10 @@ export class AuthService {
         return 1000;
       case 'owner':
         return 999;
-      case 'admin':
+      case 'administrator':
         return 998;
+      case 'admin':
+        return 2;
       case 'employee':
       default:
         return 1;
