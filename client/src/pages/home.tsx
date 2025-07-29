@@ -576,7 +576,7 @@ export default function Home() {
                   justifyContent: 'center',
                   width: '32px',
                   height: '32px',
-                  backgroundColor: '#1e2851',
+                  backgroundColor: '#1a1f3a',
                   color: 'white',
                   border: 'none',
                   borderRadius: '6px',
@@ -587,7 +587,7 @@ export default function Home() {
                   e.currentTarget.style.backgroundColor = '#1e3a5f';
                 }}
                 onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = '#1e2851';
+                  e.currentTarget.style.backgroundColor = '#1a1f3a';
                 }}
                 title="Developer Controls"
               >
@@ -678,7 +678,7 @@ export default function Home() {
         >
           <div 
             style={{
-              backgroundColor: '#1e2851',
+              backgroundColor: '#1a1f3a',
               borderRadius: '12px',
               padding: '24px',
               width: '400px',
@@ -786,7 +786,7 @@ export default function Home() {
                   borderRadius: '6px',
                   border: 'none',
                   backgroundColor: 'white',
-                  color: '#1e2851',
+                  color: '#1a1f3a',
                   cursor: 'pointer',
                   fontSize: '14px',
                   fontWeight: '600'
