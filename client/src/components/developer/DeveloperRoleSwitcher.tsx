@@ -25,7 +25,7 @@ const getRoleColor = (level: number) => {
 const getRoleKey = (level: number) => {
   if (level === 1000) return 'super-user';
   if (level === 999) return 'owner';
-  if (level === 998) return 'admin';
+  if (level === 998) return 'administrator';
   if (level === 1) return 'user';
   if (level === 0) return 'demo';
   return `custom-${level}`;
@@ -106,14 +106,9 @@ export function DeveloperRoleSwitcher({ className = '' }: DeveloperRoleSwitcherP
       </span>
       
       <select
-        value={testRole || 'current'}
+        value={testRole || (currentRole ? currentRole.value : 'user')}
         onChange={(e) => {
-          if (e.target.value === 'current') {
-            // Clear test role by switching to empty string
-            switchRole('');
-          } else {
-            switchRole(e.target.value);
-          }
+          switchRole(e.target.value);
         }}
         disabled={isSwitchingRole}
         style={{
@@ -128,9 +123,6 @@ export function DeveloperRoleSwitcher({ className = '' }: DeveloperRoleSwitcherP
           opacity: isSwitchingRole ? 0.6 : 1
         }}
       >
-        <option value="current" style={{ color: '#e5e7eb' }}>
-          Current Role (Level {actualRole})
-        </option>
         {roles.map(role => (
           <option key={role.value} value={role.value} style={{ color: role.color }}>
             {role.label} (Level {role.level})

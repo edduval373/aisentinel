@@ -99,7 +99,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Validate test role
-      const validRoles = ['demo', 'user', 'admin', 'owner'];
+      const validRoles = ['demo', 'user', 'administrator', 'owner', 'super-user'];
       if (!validRoles.includes(testRole)) {
         return res.status(400).json({ success: false, message: 'Invalid test role' });
       }
