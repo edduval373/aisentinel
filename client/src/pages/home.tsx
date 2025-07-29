@@ -373,13 +373,40 @@ export default function Home() {
     }
 
     try {
-      const response = await fetch('/api/developer/switch-role', {
+      // Find the selected role to get its level
+      const roleData = companyRoles.find(role => role.name.toLowerCase() === selectedRole);
+      if (!roleData) {
+        toast({ 
+          title: "Invalid Role", 
+          description: "Selected role not found.", 
+          variant: "destructive" 
+        });
+        return;
+      }
+
+      // Map role level to testRole format expected by backend
+      let testRole;
+      if (roleData.level === 1000) testRole = 'super-user';
+      else if (roleData.level === 999) testRole = 'owner';
+      else if (roleData.level === 998) testRole = 'administrator';
+      else if (roleData.level === 1) testRole = 'user';
+      else if (roleData.level === 0) testRole = 'demo';
+      else testRole = `custom-${roleData.level}`;
+
+      // First switch company if different
+      if (selectedCompanyId !== currentCompanyId) {
+        await fetch('/api/auth/switch-company', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ companyId: selectedCompanyId }),
+          credentials: 'include'
+        });
+      }
+
+      const response = await fetch('/api/auth/set-role', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          role: selectedRole, 
-          companyId: selectedCompanyId 
-        }),
+        body: JSON.stringify({ testRole }),
         credentials: 'include'
       });
 
@@ -403,10 +430,17 @@ export default function Home() {
   // Initialize modal selections with current values
   useEffect(() => {
     if (showDeveloperModal) {
-      setSelectedRole('');
+      // Set current role based on user's effective role level
+      const currentRoleLevel = userRoleLevel;
+      const currentRole = companyRoles.find(role => role.level === currentRoleLevel);
+      if (currentRole) {
+        setSelectedRole(currentRole.name.toLowerCase());
+      } else {
+        setSelectedRole('');
+      }
       setSelectedCompanyId(currentCompanyId);
     }
-  }, [showDeveloperModal, currentCompanyId]);
+  }, [showDeveloperModal, currentCompanyId, userRoleLevel, companyRoles]);
 
   // Completely bypass authentication - always allow access
   useEffect(() => {
@@ -644,7 +678,7 @@ export default function Home() {
         >
           <div 
             style={{
-              backgroundColor: '#1e40af',
+              backgroundColor: '#1e2851',
               borderRadius: '12px',
               padding: '24px',
               width: '400px',
@@ -752,7 +786,7 @@ export default function Home() {
                   borderRadius: '6px',
                   border: 'none',
                   backgroundColor: 'white',
-                  color: '#1e40af',
+                  color: '#1e2851',
                   cursor: 'pointer',
                   fontSize: '14px',
                   fontWeight: '600'
