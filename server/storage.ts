@@ -1398,6 +1398,75 @@ export class DatabaseStorage implements IStorage {
       .returning();
     return updated;
   }
+
+  // Initialize default company roles if none exist
+  async initializeCompanyRoles(companyId: number): Promise<CompanyRole[]> {
+    console.log(`Initializing default roles for company ${companyId}`);
+    
+    const defaultRoles = [
+      {
+        companyId,
+        name: "Super-User",
+        level: 1000,
+        description: "System administrator with full platform access",
+        permissions: ["full_system_access", "manage_companies", "manage_super_users"],
+        isActive: true
+      },
+      {
+        companyId,
+        name: "Owner", 
+        level: 999,
+        description: "Company owner with full administrative control over their company",
+        permissions: ["manage_company", "manage_users", "manage_roles", "manage_settings", "view_analytics"],
+        isActive: true
+      },
+      {
+        companyId,
+        name: "Administrator",
+        level: 998,
+        description: "Administrative access with user and content management capabilities", 
+        permissions: ["manage_users", "manage_content", "view_analytics", "manage_ai_models", "manage_activity_types"],
+        isActive: true
+      },
+      {
+        companyId,
+        name: "User",
+        level: 1,
+        description: "Standard user with basic access to chat and personal features",
+        permissions: ["use_chat", "view_personal_data", "use_ai_models"],
+        isActive: true
+      },
+      {
+        companyId,
+        name: "Demo User",
+        level: 0,
+        description: "Limited demo access with read-only features",
+        permissions: ["demo_access"],
+        isActive: true
+      }
+    ];
+
+    const createdRoles: CompanyRole[] = [];
+    for (const roleData of defaultRoles) {
+      const created = await this.createCompanyRole(roleData);
+      createdRoles.push(created);
+    }
+
+    console.log(`Created ${createdRoles.length} default roles for company ${companyId}`);
+    return createdRoles;
+  }
+
+  // Enhanced getCompanyRoles that auto-initializes if no roles exist
+  async getCompanyRolesWithAutoInit(companyId: number): Promise<CompanyRole[]> {
+    let roles = await this.getCompanyRoles(companyId);
+    
+    if (roles.length === 0) {
+      console.log(`No roles found for company ${companyId}, initializing defaults`);
+      roles = await this.initializeCompanyRoles(companyId);
+    }
+    
+    return roles;
+  }
 }
 
 export const storage = new DatabaseStorage();
