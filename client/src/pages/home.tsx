@@ -6,13 +6,14 @@ import { Button } from "@/components/ui/button";
 import Sidebar from "@/components/layout/Sidebar";
 import ChatInterface from "@/components/chat/ChatInterface";
 import { useQuery } from "@tanstack/react-query";
-import { Building2, LogOut, RotateCcw, Trash2, Star, ArrowLeft } from "lucide-react";
+import { Building2, LogOut, RotateCcw, Trash2, Star, ArrowLeft, Settings } from "lucide-react";
 import TutorialArrow from "@/components/tutorial/TutorialArrow";
 import { useTutorial } from "@/hooks/useTutorial";
 import { DemoUsageBanner } from "@/components/demo/DemoUsageBanner";
 import FeaturesBenefitsDialog from "@/components/FeaturesBenefitsDialog";
 import { DeveloperRoleSwitcher } from "@/components/developer/DeveloperRoleSwitcher";
 import { useFeaturesBenefits } from "@/hooks/useFeaturesBenefits";
+import { useDeveloper } from "@/hooks/useDeveloper";
 
 import { useCompanyContext } from "@/hooks/useCompanyContext";
 import { validateAndFixBase64Image, getCompanyInitial, createFallbackImageStyle } from "../utils/imageUtils";
@@ -269,6 +270,9 @@ export default function Home() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { showTutorial, completeTutorial } = useTutorial();
   const [showCompanySwitcher, setShowCompanySwitcher] = useState(false);
+  const [showDeveloperModal, setShowDeveloperModal] = useState(false);
+  const [selectedRole, setSelectedRole] = useState('');
+  const [selectedCompanyId, setSelectedCompanyId] = useState<number | null>(null);
   
   // Check if we're in demo mode (role level 0) - includes developer test mode
   const userRoleLevel = user?.roleLevel || 0;
@@ -279,6 +283,7 @@ export default function Home() {
   
   // Features & Benefits dialog for demo users
   const { showDialog, openDialog, closeDialog } = useFeaturesBenefits(isDemoMode);
+  const { isDeveloperEmail } = useDeveloper();
   
   // Check if user is super-user (role level 1000+)
   const isSuperUserLevel = effectiveRoleLevel >= 1000;
@@ -289,7 +294,13 @@ export default function Home() {
   // Fetch all companies for super-user company switching
   const { data: allCompanies = [] } = useQuery<Array<{ id: number; name: string; description?: string }>>({
     queryKey: ['/api/admin/companies'],
-    enabled: isSuperUserLevel,
+    enabled: isSuperUserLevel || isDeveloperEmail,
+  });
+
+  // Fetch company roles for developer testing
+  const { data: companyRoles = [] } = useQuery<Array<{ id: number; name: string; level: number }>>({
+    queryKey: ['/api/company/roles', currentCompanyId],
+    enabled: isDeveloperEmail && !!currentCompanyId
   });
 
   // Clear cookies function with server logout
@@ -349,6 +360,53 @@ export default function Home() {
       window.location.reload();
     }, 1000);
   };
+
+  // Handle developer modal submission
+  const handleDeveloperSubmit = async () => {
+    if (!selectedRole || !selectedCompanyId) {
+      toast({ 
+        title: "Missing Selection", 
+        description: "Please select both a role and company.", 
+        variant: "destructive" 
+      });
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/developer/switch-role', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          role: selectedRole, 
+          companyId: selectedCompanyId 
+        }),
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        setCurrentCompanyId(selectedCompanyId);
+        setShowDeveloperModal(false);
+        setTimeout(() => window.location.reload(), 100);
+      } else {
+        throw new Error('Failed to switch role');
+      }
+    } catch (error) {
+      console.error('Error switching role:', error);
+      toast({ 
+        title: "Error", 
+        description: "Failed to switch role and company.", 
+        variant: "destructive" 
+      });
+    }
+  };
+
+  // Initialize modal selections with current values
+  useEffect(() => {
+    if (showDeveloperModal) {
+      setSelectedRole(user?.testRole || '');
+      setSelectedCompanyId(currentCompanyId);
+    }
+  }, [showDeveloperModal, user?.testRole, currentCompanyId]);
 
   // Completely bypass authentication - always allow access
   useEffect(() => {
@@ -443,151 +501,8 @@ export default function Home() {
             <CompanyInfoLarge />
           </div>
 
-          {/* Right side - Developer Controls, Super User Controls or Sign Out Button */}
+          {/* Right side - Developer Controls or Sign Out Button */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0, zIndex: 1 }}>
-            {/* Developer Role Switcher - Always visible for developers */}
-            <DeveloperRoleSwitcher />
-            
-            {/* Development Testing Controls - Enhanced for development workflow */}
-            {(isSuperUserLevel && !isDemoMode && userRoleLevel !== 0) && (
-              <>
-                {/* Company Switcher */}
-                <div style={{ position: 'relative' }}>
-                  <button
-                    onClick={() => setShowCompanySwitcher(!showCompanySwitcher)}
-                    style={{
-                      fontSize: '12px',
-                      color: '#3b82f6',
-                      background: 'white',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '6px',
-                      cursor: 'pointer',
-                      padding: '6px 12px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '6px'
-                    }}
-                  >
-                    <Building2 size={14} />
-                    Switch Company
-                  </button>
-                  
-                  {showCompanySwitcher && (
-                    <div style={{
-                      position: 'absolute',
-                      top: '100%',
-                      right: 0,
-                      marginTop: '4px',
-                      backgroundColor: 'white',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '8px',
-                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                      zIndex: 1000,
-                      minWidth: '200px',
-                      maxHeight: '300px',
-                      overflow: 'auto'
-                    }}>
-                      <div style={{ padding: '8px', borderBottom: '1px solid #e5e7eb' }}>
-                        <div style={{ fontSize: '12px', fontWeight: '600', color: '#374151' }}>
-                          Select Company (Current: {currentCompanyId})
-                        </div>
-                      </div>
-                      {allCompanies.map((company) => (
-                        <button
-                          key={company.id}
-                          onClick={() => handleCompanySwitch(company.id)}
-                          style={{
-                            width: '100%',
-                            textAlign: 'left',
-                            padding: '12px',
-                            fontSize: '14px',
-                            color: company.id === currentCompanyId ? '#3b82f6' : '#374151',
-                            backgroundColor: company.id === currentCompanyId ? '#f0f9ff' : 'transparent',
-                            border: 'none',
-                            cursor: 'pointer',
-                            transition: 'background-color 0.2s',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '8px'
-                          }}
-                          onMouseOver={(e) => {
-                            if (company.id !== currentCompanyId) {
-                              e.currentTarget.style.backgroundColor = '#f9fafb';
-                            }
-                          }}
-                          onMouseOut={(e) => {
-                            if (company.id !== currentCompanyId) {
-                              e.currentTarget.style.backgroundColor = 'transparent';
-                            }
-                          }}
-                        >
-                          <div style={{
-                            width: '24px',
-                            height: '24px',
-                            backgroundColor: '#3b82f6',
-                            borderRadius: '4px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            color: 'white',
-                            fontSize: '10px',
-                            fontWeight: '600'
-                          }}>
-                            {company.name.charAt(0).toUpperCase()}
-                          </div>
-                          <div>
-                            <div style={{ fontWeight: '500' }}>{company.name}</div>
-                            <div style={{ fontSize: '12px', color: '#6b7280' }}>ID: {company.id}</div>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* Clear Cookies Button */}
-                <button
-                  onClick={handleClearCookies}
-                  style={{
-                    fontSize: '12px',
-                    color: '#dc2626',
-                    background: 'white',
-                    border: '1px solid #fca5a5',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    padding: '6px 12px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px'
-                  }}
-                >
-                  <Trash2 size={14} />
-                  Reset Session
-                </button>
-              </>
-            )}
-            
-            {/* Development Testing Buttons - Always visible in development for ALL users */}
-            {process.env.NODE_ENV === 'development' && (
-              <button
-                onClick={() => window.location.href = '/'}
-                style={{
-                  fontSize: '12px',
-                  color: '#2563eb',
-                  background: 'white',
-                  border: '1px solid #3b82f6',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  padding: '6px 12px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px'
-                }}
-              >
-                <ArrowLeft size={14} />
-                Landing
-              </button>
-            )}
             
             {/* Features & Benefits button for demo users */}
             {isDemoMode && (
@@ -617,6 +532,35 @@ export default function Home() {
               </Button>
             )}
             
+            {/* Developer Controls Icon */}
+            {isDeveloperEmail && (
+              <button
+                onClick={() => setShowDeveloperModal(true)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '32px',
+                  height: '32px',
+                  backgroundColor: '#3b82f6',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = '#2563eb';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = '#3b82f6';
+                }}
+                title="Developer Controls"
+              >
+                <Settings size={16} />
+              </button>
+            )}
+
             {/* Sign Out/Sign Up Button with Demo indicator */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
               <button
@@ -680,6 +624,146 @@ export default function Home() {
 
       {/* Features & Benefits Dialog */}
       <FeaturesBenefitsDialog open={showDialog} onOpenChange={(open) => !open && closeDialog()} />
+
+      {/* Developer Controls Modal */}
+      {showDeveloperModal && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2000
+          }}
+          onClick={() => setShowDeveloperModal(false)}
+        >
+          <div 
+            style={{
+              backgroundColor: '#1e40af',
+              borderRadius: '12px',
+              padding: '24px',
+              width: '400px',
+              maxWidth: '90vw',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 style={{
+              color: 'white',
+              fontSize: '20px',
+              fontWeight: '600',
+              marginBottom: '20px',
+              textAlign: 'center'
+            }}>
+              Developer Controls
+            </h2>
+
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{
+                color: 'white',
+                fontSize: '14px',
+                fontWeight: '500',
+                display: 'block',
+                marginBottom: '8px'
+              }}>
+                Select Role
+              </label>
+              <select
+                value={selectedRole}
+                onChange={(e) => setSelectedRole(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  fontSize: '14px',
+                  backgroundColor: 'white',
+                  color: '#374151'
+                }}
+              >
+                <option value="">Choose a role...</option>
+                {companyRoles
+                  .sort((a, b) => b.level - a.level)
+                  .map((role) => (
+                    <option key={role.id} value={role.name.toLowerCase()}>
+                      {role.name} (Level {role.level})
+                    </option>
+                  ))}
+              </select>
+            </div>
+
+            <div style={{ marginBottom: '24px' }}>
+              <label style={{
+                color: 'white',
+                fontSize: '14px',
+                fontWeight: '500',
+                display: 'block',
+                marginBottom: '8px'
+              }}>
+                Select Company
+              </label>
+              <select
+                value={selectedCompanyId || ''}
+                onChange={(e) => setSelectedCompanyId(Number(e.target.value))}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  fontSize: '14px',
+                  backgroundColor: 'white',
+                  color: '#374151'
+                }}
+              >
+                <option value="">Choose a company...</option>
+                {allCompanies.map((company) => (
+                  <option key={company.id} value={company.id}>
+                    {company.name} (ID: {company.id})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => setShowDeveloperModal(false)}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: '6px',
+                  border: '1px solid rgba(255, 255, 255, 0.3)',
+                  backgroundColor: 'transparent',
+                  color: 'white',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontWeight: '500'
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeveloperSubmit}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  backgroundColor: 'white',
+                  color: '#1e40af',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontWeight: '600'
+                }}
+              >
+                Apply Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
