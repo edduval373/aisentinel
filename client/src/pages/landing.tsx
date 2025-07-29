@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield, Users, BarChart3, Lock, CheckCircle, AlertTriangle, Settings } from "lucide-react";
+import DeveloperRolePicker from "@/components/developer/DeveloperRolePicker";
 
 export default function Landing() {
   console.log("[LANDING DEBUG] Landing component rendering...");
+  
+  const [showDeveloperPicker, setShowDeveloperPicker] = useState(false);
+  const [developerEmail, setDeveloperEmail] = useState<string | null>(null);
   
   const handleLogin = () => {
     console.log("[LANDING DEBUG] Login button clicked");
@@ -16,6 +20,43 @@ export default function Landing() {
     window.location.href = "/demo-signup";
   };
 
+  // Helper function to get cookie value
+  const getCookie = (name: string) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop()?.split(';').shift();
+    return null;
+  };
+
+  // Handle developer role selection
+  const handleRoleSelect = async (role: string) => {
+    console.log("[DEVELOPER] Role selected:", role);
+    
+    try {
+      // Authenticate as developer with selected test role
+      const response = await fetch('/api/auth/super-login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ testRole: role }),
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log('[DEVELOPER] Session created with role:', role, data);
+        
+        // Redirect to chat interface
+        window.location.href = '/chat';
+      } else {
+        console.error('[DEVELOPER] Failed to create session with role:', role);
+      }
+    } catch (error) {
+      console.error('[DEVELOPER] Role selection error:', error);
+    }
+  };
+
   console.log("[LANDING DEBUG] About to return JSX");
   
   // Check for verification success and redirect authenticated users
@@ -23,16 +64,40 @@ export default function Landing() {
     console.log("[LANDING DEBUG] Landing component mounted successfully");
     document.title = "AI Sentinel - Landing Page (React Working)";
     
-    // Check for returning demo user
-    const getCookie = (name: string) => {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop()?.split(';').shift();
-      return null;
-    };
-
     const demoUserEmail = getCookie('demoUser');
     const sessionToken = getCookie('sessionToken');
+
+    // Developer detection - check if we have a session and try to match developer
+    if (sessionToken && !sessionToken.startsWith('demo-session-')) {
+      console.log("[DEVELOPER] Session token detected, checking for developer status...");
+      
+      // Check if current user is a developer
+      fetch('/api/auth/me', {
+        credentials: 'include',
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log("[DEVELOPER] Auth check result:", data);
+        
+        if (data.authenticated && data.user && data.user.email === 'ed.duval15@gmail.com') {
+          console.log("[DEVELOPER] Developer detected:", data.user.email);
+          setDeveloperEmail(data.user.email);
+          setShowDeveloperPicker(true);
+          return;
+        }
+        
+        // If authenticated but not developer, redirect to chat
+        if (data.authenticated) {
+          console.log("[LANDING DEBUG] Authenticated user detected, redirecting to chat");
+          window.location.href = '/chat';
+        }
+      })
+      .catch(error => {
+        console.log("[DEVELOPER] Auth check failed:", error);
+      });
+      
+      return; // Exit early to prevent other checks
+    }
     
     if (demoUserEmail && sessionToken && sessionToken.startsWith('demo-session-')) {
       console.log("[LANDING DEBUG] Returning demo user detected:", demoUserEmail);
@@ -91,6 +156,13 @@ export default function Landing() {
       lineHeight: '1.6',
       color: '#1e293b'
     }}>
+      {/* Developer Role Picker */}
+      {showDeveloperPicker && developerEmail && (
+        <DeveloperRolePicker
+          email={developerEmail}
+          onRoleSelect={handleRoleSelect}
+        />
+      )}
       {/* Header */}
       <header style={{ 
         position: 'relative', 

@@ -11,52 +11,44 @@ interface DeveloperStatus {
 export function useDeveloper() {
   const queryClient = useQueryClient();
 
-  // Query developer status
-  const { data: status, isLoading } = useQuery<DeveloperStatus>({
+  // Check if user is a developer
+  const { data: developerStatus, isLoading } = useQuery<DeveloperStatus>({
     queryKey: ['/api/auth/developer-status'],
-    staleTime: 0, // Always fetch fresh data
-    gcTime: 0, // Don't cache
+    retry: false,
+    refetchOnWindowFocus: false,
   });
 
-  // Mutation to set test role
-  const setRoleMutation = useMutation({
+  // Mutation to switch test roles
+  const switchRoleMutation = useMutation({
     mutationFn: async (testRole: string) => {
       const response = await fetch('/api/auth/set-role', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ testRole }),
+        body: JSON.stringify({ testRole })
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to set test role');
+        throw new Error('Failed to switch role');
       }
 
       return response.json();
     },
     onSuccess: () => {
-      // Invalidate auth and developer status queries
-      queryClient.invalidateQueries({ queryKey: ['/api/auth/me'] });
+      // Invalidate developer status query to refresh
       queryClient.invalidateQueries({ queryKey: ['/api/auth/developer-status'] });
-      
-      // Refresh the page to update all UI state
+      // Refresh the page to apply new role
       window.location.reload();
-    },
-    onError: (error: Error) => {
-      console.error('Failed to set developer test role:', error);
     },
   });
 
   return {
-    isDeveloper: status?.isDeveloper || false,
-    testRole: status?.testRole || null,
-    actualRole: status?.actualRole || 1,
-    effectiveRole: status?.effectiveRole || 1,
+    isDeveloper: developerStatus?.isDeveloper ?? false,
+    testRole: developerStatus?.testRole ?? null,
+    actualRole: developerStatus?.actualRole ?? 1,
+    effectiveRole: developerStatus?.effectiveRole ?? 1,
     isLoading,
-    setTestRole: setRoleMutation.mutate,
-    isSettingRole: setRoleMutation.isPending,
+    switchRole: switchRoleMutation.mutate,
+    isSwitchingRole: switchRoleMutation.isPending,
   };
 }

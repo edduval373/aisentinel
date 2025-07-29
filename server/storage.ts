@@ -1385,6 +1385,19 @@ export class DatabaseStorage implements IStorage {
       .returning();
     return updated;
   }
+
+  // User session management
+  async updateUserSession(sessionToken: string, updates: Partial<InsertUserSession>): Promise<UserSession> {
+    const [updated] = await db
+      .update(userSessions)
+      .set({
+        ...updates,
+        lastAccessedAt: new Date(),
+      })
+      .where(eq(userSessions.sessionToken, sessionToken))
+      .returning();
+    return updated;
+  }
 }
 
 export const storage = new DatabaseStorage();

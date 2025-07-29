@@ -39,20 +39,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/auth/super-login', async (req, res) => {
     try {
       console.log('Super-user login request');
+      const { testRole } = req.body;
+      console.log('Test role requested:', testRole);
       
       // Create a proper session for developer testing
       const sessionToken = authService.generateSessionToken();
       const developerEmail = 'ed.duval15@gmail.com'; // Primary developer email
       const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
       
-      // Create session in database
+      // Create session in database with test role
       await storage.createUserSession({
         userId: '42450602', // Existing developer user ID as string
         sessionToken,
         email: developerEmail,
         companyId: 1, // Default to company 1
-        roleLevel: 100, // Super-user level
+        roleLevel: 100, // Super-user level (actual role)
         expiresAt,
+        testRole: testRole || null, // Store test role if provided
       });
       
       // Set the session cookie
@@ -64,12 +67,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       
       console.log('Developer session created with token:', sessionToken.substring(0, 20) + '...');
+      console.log('Test role set to:', testRole);
       res.json({ 
         success: true, 
         message: 'Developer session created',
         sessionToken: sessionToken.substring(0, 20) + '...',
         email: developerEmail,
-        isDeveloper: true
+        isDeveloper: true,
+        testRole: testRole || null
       });
     } catch (error) {
       console.error('Super-user login error:', error);
@@ -761,6 +766,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Error updating API key:', error);
       res.status(500).json({ message: 'Failed to update API key' });
+    }
+  });
+
+  // Developer endpoints for role testing
+  app.get('/api/auth/developer-status', cookieAuth, async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.user || !authService.isDeveloperEmail(req.user.email)) {
+        return res.status(403).json({ message: "Developer access required" });
+      }
+
+      const session = await storage.getUserSession(req.cookies?.sessionToken);
+      if (!session) {
+        return res.status(401).json({ message: "Invalid session" });
+      }
+
+      res.json({
+        isDeveloper: true,
+        testRole: session.testRole || null,
+        actualRole: session.roleLevel,
+        effectiveRole: req.user.roleLevel, // This comes from middleware calculation
+      });
+    } catch (error) {
+      console.error('Error getting developer status:', error);
+      res.status(500).json({ message: 'Failed to get developer status' });
+    }
+  });
+
+  app.post('/api/auth/set-role', cookieAuth, async (req: AuthenticatedRequest, res) => {
+    try {
+      const { testRole } = req.body;
+      
+      if (!req.user || !authService.isDeveloperEmail(req.user.email)) {
+        return res.status(403).json({ message: "Developer access required" });
+      }
+
+      const sessionToken = req.cookies?.sessionToken;
+      if (!sessionToken) {
+        return res.status(401).json({ message: "No session token" });
+      }
+
+      // Update the session with new test role
+      await storage.updateUserSession(sessionToken, { testRole });
+      
+      console.log('Developer test role updated:', testRole);
+      res.json({ 
+        success: true, 
+        message: 'Test role updated',
+        testRole,
+        effectiveRole: authService.getEffectiveRoleLevel(testRole)
+      });
+    } catch (error) {
+      console.error('Error setting developer test role:', error);
+      res.status(500).json({ message: 'Failed to set test role' });
     }
   });
   
