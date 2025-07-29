@@ -337,6 +337,18 @@ export function setupAuthRoutes(app: Express) {
         companyName = company?.name;
       }
 
+      // Get effective role level for developers (considering test role)
+      const sessionForRoleCheck = {
+        userId: req.user.userId,
+        email: req.user.email,
+        companyId: req.user.companyId,
+        roleLevel: req.user.roleLevel,
+        sessionToken: 'temp', // Not needed for role calculation
+        isDeveloper: req.user.isDeveloper,
+        testRole: req.user.testRole
+      };
+      const effectiveRoleLevel = authService.getEffectiveRoleLevel(sessionForRoleCheck);
+
       res.json({
         authenticated: true,
         user: {
@@ -345,7 +357,7 @@ export function setupAuthRoutes(app: Express) {
           companyId: req.user.companyId,
           companyName,
           role: user?.role || 'user',
-          roleLevel: req.user.roleLevel,
+          roleLevel: effectiveRoleLevel,
           firstName: user?.firstName,
           lastName: user?.lastName,
         },
