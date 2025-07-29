@@ -123,9 +123,19 @@ export default async function handler(req, res) {
             });
           } else {
             console.log(`❌ Failed to send verification email to ${email}`);
-            res.status(500).json({ 
+            
+            // Get detailed error information
+            try {
+              const { emailService } = await import('../server/services/emailService');
+              const debugInfo = await emailService.testSendGridConnection();
+              console.log('SendGrid debug info:', JSON.stringify(debugInfo, null, 2));
+            } catch (debugError) {
+              console.error('Failed to get debug info:', debugError);
+            }
+            
+            res.status(400).json({ 
               success: false, 
-              message: "Failed to send verification email. Please check your email settings." 
+              message: "Failed to send verification email. Check console logs for details." 
             });
           }
         } catch (parseError) {
