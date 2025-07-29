@@ -91,18 +91,19 @@ export default function Landing() {
         return;
       }
       
-      // If not authenticated, check if this is a known developer based on recent usage
-      // For now, we'll show developer picker if no session but have specific cookie pattern
-      const isDeveloperContext = demoUserEmail || sessionToken || window.location.search.includes('dev=true');
-      
-      if (!data.authenticated && !isDeveloperContext) {
-        // Check if we should show developer picker for ed.duval15@gmail.com
-        // This is a temporary approach - in production you'd have a more secure method
+      // If not authenticated, check if this is a known developer environment
+      if (!data.authenticated) {
         console.log("[DEVELOPER] No session, checking for developer context...");
         
-        // Show developer picker if URL has dev parameter or if accessing from known developer context
+        // Show developer picker if on replit.dev or has dev parameter
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('dev') === 'true' || window.location.hostname.includes('replit.dev')) {
+        const isReplit = window.location.hostname.includes('replit.dev');
+        const hasDevParam = urlParams.get('dev') === 'true';
+        const hasDemoUserCookie = !!demoUserEmail;
+        
+        console.log("[DEVELOPER] Environment check:", { isReplit, hasDevParam, hasDemoUserCookie });
+        
+        if (isReplit || hasDevParam || hasDemoUserCookie) {
           console.log("[DEVELOPER] Developer context detected, showing role picker");
           setDeveloperEmail('ed.duval15@gmail.com');
           setShowDeveloperPicker(true);
