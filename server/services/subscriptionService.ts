@@ -22,26 +22,13 @@ export class SubscriptionService {
         isActive: true,
       },
       {
-        name: 'personal',
-        displayName: 'Personal Plan',
-        price: '9.99',
-        billingPeriod: 'monthly',
-        maxUsers: 1,
-        dailyApiLimit: 100,
-        monthlyApiLimit: 2000,
-        requiresCreditCard: true,
-        requiresApiKey: false,
-        features: ['2,000 AI interactions/month', 'All AI models', 'File uploads', 'Priority support'],
-        isActive: true,
-      },
-      {
         name: 'company',
         displayName: 'Company Plan',
         price: '50.00',
         billingPeriod: 'monthly',
-        maxUsers: 50, // Up to 50 users at base price
-        dailyApiLimit: 999999, // Unlimited since they use their own API keys
-        monthlyApiLimit: 999999, // Unlimited since they use their own API keys
+        maxUsers: 50,
+        dailyApiLimit: 999999,
+        monthlyApiLimit: 999999,
         requiresCreditCard: true,
         requiresApiKey: true,
         features: [
@@ -52,6 +39,29 @@ export class SubscriptionService {
           'Company branding',
           'Priority support',
           'Admin dashboard'
+        ],
+        isActive: true,
+      },
+      {
+        name: 'enterprise',
+        displayName: 'Enterprise Plan',
+        price: '100.00',
+        billingPeriod: 'monthly',
+        maxUsers: null, // Unlimited users
+        dailyApiLimit: 999999,
+        monthlyApiLimit: 999999,
+        requiresCreditCard: true,
+        requiresApiKey: true,
+        features: [
+          'Unlimited AI interactions (your API keys)',
+          'Unlimited team members',
+          'Advanced API key management',
+          'Advanced role-based access control',
+          'Company branding',
+          'Priority support with SLA',
+          'Advanced admin dashboard',
+          'Custom integrations',
+          'Dedicated account manager'
         ],
         isActive: true,
       }

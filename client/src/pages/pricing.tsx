@@ -34,36 +34,11 @@ export default function PricingPage() {
       ]
     },
     {
-      name: "personal",
-      displayName: "Personal Plan",
-      price: "$9.99",
-      billing: "/month",
-      description: "Ideal for individual professionals and consultants",
-      maxUsers: "1 user",
-      dailyLimit: "100 requests/day",
-      monthlyLimit: "2,000 requests/month",
-      requiresCreditCard: true,
-      popular: false,
-      features: [
-        "2,000 AI interactions/month",
-        "All AI models and features",
-        "Advanced file processing",
-        "Priority email support",
-        "Usage analytics",
-        "API access"
-      ],
-      restrictions: [
-        "Single user only",
-        "No admin dashboard",
-        "Limited to personal use"
-      ]
-    },
-    {
       name: "company",
       displayName: "Company Plan",
       price: "$50",
       billing: "/month",
-      description: "Complete solution for teams and organizations",
+      description: "Complete solution for teams up to 50 employees",
       maxUsers: "Up to 50 employees",
       dailyLimit: "Unlimited requests/day",
       monthlyLimit: "Unlimited requests/month",
@@ -84,7 +59,38 @@ export default function PricingPage() {
       ],
       restrictions: [
         "Requires company-provided API keys",
-        "Companies over 50 employees: $100/month"
+        "Domain verification required"
+      ]
+    },
+    {
+      name: "enterprise",
+      displayName: "Enterprise Plan",
+      price: "$100",
+      billing: "/month",
+      description: "Scalable solution for large organizations",
+      maxUsers: "51+ employees",
+      dailyLimit: "Unlimited requests/day",
+      monthlyLimit: "Unlimited requests/month",
+      requiresCreditCard: true,
+      popular: false,
+      features: [
+        "Unlimited AI interactions (your API keys)",
+        "Unlimited team members",
+        "Company branding and logo",
+        "Advanced role-based access control",
+        "API key management",
+        "Admin dashboard and monitoring",
+        "Advanced content filtering and security",
+        "Priority support with SLA",
+        "Advanced usage analytics and reporting",
+        "Custom activity types",
+        "Model fusion capabilities",
+        "Custom integrations",
+        "Dedicated account manager"
+      ],
+      restrictions: [
+        "Requires company-provided API keys",
+        "Domain verification required"
       ]
     }
   ];
@@ -279,8 +285,8 @@ export default function PricingPage() {
                     marginBottom: '12px'
                   }}>
                     {plan.name === 'trial' && <Zap style={{ width: '32px', height: '32px', color: '#3b82f6' }} />}
-                    {plan.name === 'personal' && <Users style={{ width: '32px', height: '32px', color: '#3b82f6' }} />}
-                    {plan.name === 'company' && <BarChart3 style={{ width: '32px', height: '32px', color: '#3b82f6' }} />}
+                    {plan.name === 'company' && <Users style={{ width: '32px', height: '32px', color: '#3b82f6' }} />}
+                    {plan.name === 'enterprise' && <BarChart3 style={{ width: '32px', height: '32px', color: '#3b82f6' }} />}
                   </div>
                   <h3 style={{
                     fontSize: '22px',
@@ -305,16 +311,6 @@ export default function PricingPage() {
                       color: '#64748b',
                       fontSize: '16px'
                     }}>{plan.billing}</span>
-                    {plan.name === 'company' && (
-                      <div style={{
-                        fontSize: '14px',
-                        color: '#64748b',
-                        marginTop: '4px',
-                        fontWeight: '500'
-                      }}>
-                        $100/month for 51+ employees
-                      </div>
-                    )}
                   </div>
                   
                   <div style={{
