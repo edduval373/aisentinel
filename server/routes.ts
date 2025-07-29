@@ -2615,7 +2615,7 @@ This is a demonstration of AI Sentinel's capabilities. In the full version:
       }
 
       console.log("Fetching roles for company:", companyId);
-      const roles = await storage.getCompanyRoles(companyId);
+      const roles = await storage.getCompanyRolesWithAutoInit(companyId);
       console.log("Found roles:", roles.length);
       
       res.json(roles);
