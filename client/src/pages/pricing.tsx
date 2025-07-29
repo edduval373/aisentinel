@@ -43,7 +43,7 @@ export default function PricingPage() {
       dailyLimit: "100 requests/day",
       monthlyLimit: "2,000 requests/month",
       requiresCreditCard: true,
-      popular: true,
+      popular: false,
       features: [
         "2,000 AI interactions/month",
         "All AI models and features",
@@ -68,7 +68,7 @@ export default function PricingPage() {
       dailyLimit: "1,000 requests/day",
       monthlyLimit: "20,000 requests/month",
       requiresCreditCard: true,
-      popular: false,
+      popular: true,
       features: [
         "20,000 AI interactions/month",
         "Unlimited team members",
