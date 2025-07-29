@@ -764,18 +764,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('Requested companyId:', companyId);
       console.log('CompanyId type:', typeof companyId);
       
+      console.log('Checking developer access for user:', req.user?.email);
       if (!req.user || !authService.isDeveloperEmail(req.user.email)) {
+        console.log('Developer access denied for:', req.user?.email);
         return res.status(403).json({ message: "Developer access required" });
       }
 
       const sessionToken = req.cookies?.sessionToken;
+      console.log('Session token found:', !!sessionToken);
       if (!sessionToken) {
+        console.log('No session token in cookies');
         return res.status(401).json({ message: "No session token" });
       }
 
       // Get company roles to validate test role
       const currentCompanyId = req.user.companyId || 1; // Default to company 1 for developers
+      console.log('Fetching company roles for company:', currentCompanyId);
       const companyRoles = await storage.getCompanyRoles(currentCompanyId);
+      console.log('Company roles retrieved:', companyRoles.length, 'roles');
       const validRoleKeys = companyRoles.map(role => {
         if (role.level === 1000) return 'super-user';
         if (role.level === 999) return 'owner';
