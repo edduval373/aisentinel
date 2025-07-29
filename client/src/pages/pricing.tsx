@@ -222,8 +222,9 @@ export default function PricingPage() {
         }}>
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-            gap: '32px'
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: '24px',
+            minHeight: '600px'
           }}>
             {plans.map((plan) => (
               <div 
@@ -236,7 +237,10 @@ export default function PricingPage() {
                   padding: '24px',
                   boxShadow: plan.popular ? '0 10px 25px rgba(59, 130, 246, 0.1)' : '0 4px 12px rgba(0,0,0,0.05)',
                   transition: 'all 0.3s ease',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  height: '100%'
                 }}
                 onMouseOver={(e) => {
                   e.currentTarget.style.transform = 'translateY(-4px)';
@@ -328,7 +332,7 @@ export default function PricingPage() {
                   </div>
                 </div>
                 
-                <div>
+                <div style={{ marginTop: 'auto' }}>
                   <button 
                     style={{
                       width: '100%',
