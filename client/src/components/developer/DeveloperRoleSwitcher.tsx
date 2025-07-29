@@ -106,9 +106,9 @@ export function DeveloperRoleSwitcher({ className = '' }: DeveloperRoleSwitcherP
       </span>
       
       <select
-        value={testRole || 'actual'}
+        value={testRole || 'current'}
         onChange={(e) => {
-          if (e.target.value === 'actual') {
+          if (e.target.value === 'current') {
             // Clear test role by switching to empty string
             switchRole('');
           } else {
@@ -128,8 +128,8 @@ export function DeveloperRoleSwitcher({ className = '' }: DeveloperRoleSwitcherP
           opacity: isSwitchingRole ? 0.6 : 1
         }}
       >
-        <option value="actual" style={{ color: '#e5e7eb' }}>
-          Actual Role (Level {actualRole})
+        <option value="current" style={{ color: '#e5e7eb' }}>
+          Current Role (Level {actualRole})
         </option>
         {roles.map(role => (
           <option key={role.value} value={role.value} style={{ color: role.color }}>
