@@ -1,0 +1,72 @@
+[16:34:18.947] Running build in Washington, D.C., USA (East) – iad1
+[16:34:18.948] Build machine configuration: 2 cores, 8 GB
+[16:34:18.964] Cloning github.com/edduval373/aisentinel (Branch: main, Commit: 16f4483)
+[16:34:20.366] Cloning completed: 1.401s
+[16:34:20.619] Found .vercelignore
+[16:34:20.703] Removed 676 ignored files defined in .vercelignore
+[16:34:20.703]   /.git/config
+[16:34:20.703]   /.git/description
+[16:34:20.703]   /.git/FETCH_HEAD
+[16:34:20.703]   /.git/HEAD
+[16:34:20.703]   /.git/hooks/applypatch-msg.sample
+[16:34:20.703]   /.git/hooks/commit-msg.sample
+[16:34:20.703]   /.git/hooks/fsmonitor-watchman.sample
+[16:34:20.703]   /.git/hooks/post-update.sample
+[16:34:20.704]   /.git/hooks/pre-applypatch.sample
+[16:34:20.704]   /.git/hooks/pre-commit.sample
+[16:34:21.134] Restored build cache from previous deployment (4RVVk4k4v6oDaMaBmN9FtBYvgZmh)
+[16:34:23.980] Running "vercel build"
+[16:34:24.456] Vercel CLI 44.6.4
+[16:34:25.250] Running "install" command: `npm install`...
+[16:34:27.915] 
+[16:34:27.915] up to date, audited 741 packages in 2s
+[16:34:27.916] 
+[16:34:27.916] 166 packages are looking for funding
+[16:34:27.916]   run `npm fund` for details
+[16:34:27.933] 
+[16:34:27.933] 12 vulnerabilities (3 low, 5 moderate, 3 high, 1 critical)
+[16:34:27.933] 
+[16:34:27.933] To address issues that do not require attention, run:
+[16:34:27.934]   npm audit fix
+[16:34:27.934] 
+[16:34:27.934] To address all issues possible (including breaking changes), run:
+[16:34:27.934]   npm audit fix --force
+[16:34:27.934] 
+[16:34:27.934] Some issues need review, and may require choosing
+[16:34:27.934] a different dependency.
+[16:34:27.934] 
+[16:34:27.934] Run `npm audit` for details.
+[16:34:28.428] 
+[16:34:28.429] > rest-express@1.0.0 build
+[16:34:28.429] > vite build --config vite.config.production.ts && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist --external:../vite.config --external:vite
+[16:34:28.429] 
+[16:34:28.726] [36mvite v5.4.19 [32mbuilding for production...[36m[39m
+[16:34:28.782] transforming...
+[16:34:28.941] [32m✓[39m 11 modules transformed.
+[16:34:28.944] [31mx[39m Build failed in 192ms
+[16:34:28.951] [31merror during build:
+[16:34:28.951] [31m[vite:esbuild] Transform failed with 1 error:
+[16:34:28.951] /vercel/path0/client/src/lib/queryClient.ts:240:6: ERROR: Top-level return cannot be used inside an ECMAScript module[31m
+[16:34:28.951] file: [36m/vercel/path0/client/src/lib/queryClient.ts:240:6[31m
+[16:34:28.951] [33m
+[16:34:28.952] [33mTop-level return cannot be used inside an ECMAScript module[33m
+[16:34:28.952] 238|      if (fallback) {
+[16:34:28.952] 239|        console.log(`🔄 [API ${method}] ${url} - Using fallback`);
+[16:34:28.952] 240|        return fallback;
+[16:34:28.952]    |        ^
+[16:34:28.952] 241|      }
+[16:34:28.952] 242|      
+[16:34:28.952] [31m
+[16:34:28.952]     at failureErrorWithLog (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:1472:15)
+[16:34:28.952]     at /vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:755:50
+[16:34:28.952]     at responseCallbacks.<computed> (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:622:9)
+[16:34:28.952]     at handleIncomingPacket (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:677:12)
+[16:34:28.953]     at Socket.readFromStdout (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:600:7)
+[16:34:28.953]     at Socket.emit (node:events:518:28)
+[16:34:28.953]     at addChunk (node:internal/streams/readable:561:12)
+[16:34:28.953]     at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+[16:34:28.953]     at Readable.push (node:internal/streams/readable:392:5)
+[16:34:28.953]     at Pipe.onStreamRead (node:internal/stream_base_commons:189:23)[39m
+[16:34:28.974] Error: Command "rm -f public/index.html && npm run build" exited with 1
+[16:34:29.244] 
+[16:34:32.403] Exiting build container
