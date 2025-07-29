@@ -402,16 +402,13 @@ export default async function handler(req, res) {
         console.error('❌ [SERVERLESS] Database connection failed:', error.message);
       }
       
-      // Fallback demo activity types for production when database unavailable
-      const types = [
-        { id: 1, name: 'General Chat (Demo)', description: 'General purpose AI conversation', isEnabled: true },
-        { id: 2, name: 'Code Review (Demo)', description: 'Code analysis and improvement suggestions', isEnabled: true },
-        { id: 3, name: 'Business Analysis (Demo)', description: 'Business strategy and analysis', isEnabled: true },
-        { id: 4, name: 'Document Review (Demo)', description: 'Document analysis and summarization', isEnabled: true }
-      ];
-      
-      console.log('✅ [SERVERLESS] Using fallback activity types:', types.length);
-      res.status(200).json(types);
+      // No fallback data - return error so we can see what's wrong
+      console.error('❌ [SERVERLESS] Database connection failed for activity types, no fallback data');
+      res.status(500).json({ 
+        error: 'Database connection failed', 
+        message: 'Could not connect to database to fetch activity types',
+        endpoint: 'activity-types'
+      });
       return;
     }
 
@@ -487,8 +484,11 @@ export default async function handler(req, res) {
         }
       ];
       
-      console.log('✅ [SERVERLESS] Using fallback companies data:', companies.length);
-      res.status(200).json(companies);
+      console.error('❌ [SERVERLESS] Database connection failed, no fallback data');
+      res.status(500).json({ 
+        error: 'Database connection failed', 
+        message: 'Could not connect to database to fetch companies' 
+      });
       return;
     }
 
