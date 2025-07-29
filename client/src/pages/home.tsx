@@ -33,9 +33,9 @@ interface Company {
 function CompanyInfoLarge() {
   const { user } = useAuth();
   
-  // Check if we're in demo mode (role level 0)
+  // Check if we're in demo mode (role level 0) - but exclude developer test mode
   const userRoleLevel = user?.roleLevel || 0;
-  const isDemoMode = userRoleLevel === 0;
+  const isDemoMode = userRoleLevel === 0 && user?.role === 'demo';
   
   const { data: currentCompany } = useQuery<Company>({
     queryKey: ['/api/user/current-company'],
@@ -161,9 +161,9 @@ function CompanyInfoLarge() {
 function CompanyInfo() {
   const { user } = useAuth();
   
-  // Check if we're in demo mode (role level 0)
+  // Check if we're in demo mode (role level 0) - but exclude developer test mode
   const userRoleLevel = user?.roleLevel || 0;
-  const isDemoMode = userRoleLevel === 0;
+  const isDemoMode = userRoleLevel === 0 && user?.role === 'demo';
   
   const { data: currentCompany } = useQuery<Company>({
     queryKey: ['/api/user/current-company'],
@@ -270,9 +270,9 @@ export default function Home() {
   const { showTutorial, completeTutorial } = useTutorial();
   const [showCompanySwitcher, setShowCompanySwitcher] = useState(false);
   
-  // Check if we're in demo mode (role level 0)
+  // Check if we're in demo mode (role level 0) - but exclude developer test mode
   const userRoleLevel = user?.roleLevel || 0;
-  const isDemoMode = userRoleLevel === 0;
+  const isDemoMode = userRoleLevel === 0 && user?.role === 'demo';
   
   // Features & Benefits dialog for demo users
   const { showDialog, openDialog, closeDialog } = useFeaturesBenefits(isDemoMode);
