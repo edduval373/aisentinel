@@ -39,22 +39,37 @@ export default function DeveloperRolePicker({ email, onRoleSelect }: DeveloperRo
 
   useEffect(() => {
     fetchCompanyRoles();
-  }, [user]);
+  }, []);
 
   const fetchCompanyRoles = async () => {
     try {
       setLoading(true);
       const companyId = user?.companyId || 1; // Default to company 1
-      const response = await fetch(`/api/company/roles/${companyId}`, {
-        credentials: 'include'
-      });
       
-      if (response.ok) {
-        const roles = await response.json();
-        // Sort by level in descending order (1000 → 0)
-        const sortedRoles = roles.sort((a: CompanyRole, b: CompanyRole) => b.level - a.level);
-        setCompanyRoles(sortedRoles);
+      // Try to fetch from API if authenticated, otherwise use fallback
+      if (user?.companyId) {
+        const response = await fetch(`/api/company/roles/${companyId}`, {
+          credentials: 'include'
+        });
+        
+        if (response.ok) {
+          const roles = await response.json();
+          // Sort by level in descending order (1000 → 0)
+          const sortedRoles = roles.sort((a: CompanyRole, b: CompanyRole) => b.level - a.level);
+          setCompanyRoles(sortedRoles);
+          return;
+        }
       }
+      
+      // Fallback to default company roles for developer testing
+      console.log('Using fallback roles for developer testing');
+      setCompanyRoles([
+        { id: 1, name: 'Super User', level: 1000, description: 'Full system access and company management' },
+        { id: 2, name: 'Owner', level: 999, description: 'Company setup and configuration access' },
+        { id: 3, name: 'Administrator', level: 998, description: 'Security settings, user management' },
+        { id: 4, name: 'User', level: 1, description: 'Basic chat interface access' },
+        { id: 5, name: 'Demo User', level: 0, description: 'Limited demo access with read-only features' }
+      ]);
     } catch (error) {
       console.error('Error fetching company roles:', error);
       // Fallback to basic roles if API fails
