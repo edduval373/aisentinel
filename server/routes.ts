@@ -82,58 +82,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Developer role switching endpoint
-  app.post('/api/auth/set-role', async (req: AuthenticatedRequest, res) => {
-    try {
-      const sessionToken = req.cookies?.sessionToken;
-      const { testRole } = req.body;
 
-      if (!sessionToken) {
-        return res.status(401).json({ success: false, message: 'No session token' });
-      }
-
-      // Verify this is a developer
-      const session = await authService.verifySession(sessionToken);
-      if (!session || !authService.isDeveloperEmail(session.email)) {
-        return res.status(403).json({ success: false, message: 'Developer access required' });
-      }
-
-      // Get company roles to validate test role
-      const companyId = session.companyId || 1; // Default to company 1 for developers
-      const companyRoles = await storage.getCompanyRoles(companyId);
-      const validRoleKeys = companyRoles.map(role => {
-        if (role.level === 1000) return 'super-user';
-        if (role.level === 999) return 'owner';
-        if (role.level === 998) return 'administrator';
-        if (role.level === 1) return 'user';
-        if (role.level === 0) return 'demo';
-        return `custom-${role.level}`;
-      });
-      
-      if (!validRoleKeys.includes(testRole)) {
-        return res.status(400).json({ 
-          success: false, 
-          message: `Invalid test role. Valid roles: ${validRoleKeys.join(', ')}` 
-        });
-      }
-
-      // Set the test role
-      const success = await authService.setDeveloperTestRole(sessionToken, testRole);
-      
-      if (success) {
-        res.json({ 
-          success: true, 
-          message: `Test role set to ${testRole}`,
-          testRole 
-        });
-      } else {
-        res.status(500).json({ success: false, message: 'Failed to set test role' });
-      }
-    } catch (error) {
-      console.error('Set role error:', error);
-      res.status(500).json({ success: false, message: 'Internal server error' });
-    }
-  });
 
   // Get developer status and current test role
   app.get('/api/auth/developer-status', async (req: AuthenticatedRequest, res) => {
@@ -809,6 +758,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/auth/set-role', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
       const { testRole, companyId } = req.body;
+      console.log('=== DEVELOPER ROLE/COMPANY SWITCH ===');
+      console.log('Request body:', req.body);
+      console.log('Current user companyId:', req.user?.companyId);
+      console.log('Requested companyId:', companyId);
+      console.log('CompanyId type:', typeof companyId);
       
       if (!req.user || !authService.isDeveloperEmail(req.user.email)) {
         return res.status(403).json({ message: "Developer access required" });
@@ -841,12 +795,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const sessionUpdate: any = { testRole };
       if (companyId && companyId !== req.user.companyId) {
         sessionUpdate.companyId = parseInt(companyId);
-        console.log('Developer company switched:', req.user.companyId, '->', companyId);
+        console.log('Developer company switching:', req.user.companyId, '->', parseInt(companyId));
       }
       
-      await storage.updateUserSession(sessionToken, sessionUpdate);
-      
-      console.log('Developer test role updated:', testRole, companyId ? `company: ${companyId}` : '');
+      console.log('Updating session with:', sessionUpdate);
+      const updatedSession = await storage.updateUserSession(sessionToken, sessionUpdate);
+      console.log('Session updated successfully:', {
+        sessionToken: sessionToken.substring(0, 10) + '...',
+        updatedSession: {
+          companyId: updatedSession.companyId,
+          testRole: updatedSession.testRole,
+          userId: updatedSession.userId
+        }
+      });
       
       // Create proper session object for role level calculation
       const sessionForRoleCheck = {
@@ -861,7 +822,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json({ 
         success: true, 
-        message: companyId ? 'Test role and company updated' : 'Test role updated',
+        message: companyId ? `Test role set to ${testRole} and company switched to ${companyId}` : `Test role set to ${testRole}`,
         testRole,
         companyId: companyId || req.user.companyId,
         effectiveRole: authService.getEffectiveRoleLevel(sessionForRoleCheck)
