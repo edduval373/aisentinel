@@ -163,7 +163,7 @@ export default function PricingPage() {
 
       {/* Hero Section */}
       <section style={{
-        padding: '64px 16px',
+        padding: '32px 16px',
         textAlign: 'center'
       }}>
         <div style={{
@@ -171,21 +171,21 @@ export default function PricingPage() {
           margin: '0 auto'
         }}>
           <h2 style={{
-            fontSize: '48px',
+            fontSize: '40px',
             fontWeight: '700',
             color: '#1e293b',
-            marginBottom: '16px',
+            marginBottom: '12px',
             lineHeight: '1.1'
           }}>
             Choose Your AI Governance Plan
           </h2>
           <p style={{
-            fontSize: '20px',
+            fontSize: '18px',
             color: '#475569',
-            marginBottom: '32px',
+            marginBottom: '20px',
             maxWidth: '768px',
-            margin: '0 auto 32px auto',
-            lineHeight: '1.6'
+            margin: '0 auto 20px auto',
+            lineHeight: '1.5'
           }}>
             Secure, compliant AI access with transparent pricing. All plans include credit card validation for security.
           </p>
@@ -197,8 +197,8 @@ export default function PricingPage() {
             backgroundColor: '#eff6ff',
             border: '1px solid #bfdbfe',
             borderRadius: '8px',
-            padding: '12px 16px',
-            marginBottom: '32px'
+            padding: '10px 14px',
+            marginBottom: '16px'
           }}>
             <CreditCard style={{ width: '16px', height: '16px', color: '#2563eb' }} />
             <span style={{
@@ -214,7 +214,7 @@ export default function PricingPage() {
 
       {/* Pricing Cards */}
       <section style={{
-        padding: '64px 16px'
+        padding: '24px 16px'
       }}>
         <div style={{
           maxWidth: '1280px',
@@ -223,8 +223,8 @@ export default function PricingPage() {
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '24px',
-            minHeight: '600px'
+            gap: '20px',
+            minHeight: '550px'
           }}>
             {plans.map((plan) => (
               <div 
@@ -234,7 +234,7 @@ export default function PricingPage() {
                   backgroundColor: 'white',
                   border: plan.popular ? '2px solid #3b82f6' : '2px solid #e2e8f0',
                   borderRadius: '16px',
-                  padding: '24px',
+                  padding: '20px',
                   boxShadow: plan.popular ? '0 10px 25px rgba(59, 130, 246, 0.1)' : '0 4px 12px rgba(0,0,0,0.05)',
                   transition: 'all 0.3s ease',
                   cursor: 'pointer',
@@ -272,32 +272,32 @@ export default function PricingPage() {
                   </div>
                 )}
                 
-                <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+                <div style={{ textAlign: 'center', marginBottom: '20px' }}>
                   <div style={{
                     display: 'flex',
                     justifyContent: 'center',
-                    marginBottom: '16px'
+                    marginBottom: '12px'
                   }}>
                     {plan.name === 'trial' && <Zap style={{ width: '32px', height: '32px', color: '#3b82f6' }} />}
                     {plan.name === 'personal' && <Users style={{ width: '32px', height: '32px', color: '#3b82f6' }} />}
                     {plan.name === 'company' && <BarChart3 style={{ width: '32px', height: '32px', color: '#3b82f6' }} />}
                   </div>
                   <h3 style={{
-                    fontSize: '24px',
+                    fontSize: '22px',
                     fontWeight: '700',
                     color: '#1e293b',
-                    marginBottom: '8px'
+                    marginBottom: '6px'
                   }}>{plan.displayName}</h3>
                   <p style={{
                     color: '#64748b',
                     fontSize: '14px',
-                    lineHeight: '1.5',
-                    marginBottom: '16px'
+                    lineHeight: '1.4',
+                    marginBottom: '12px'
                   }}>{plan.description}</p>
                   
-                  <div style={{ marginBottom: '16px' }}>
+                  <div style={{ marginBottom: '12px' }}>
                     <span style={{
-                      fontSize: '36px',
+                      fontSize: '32px',
                       fontWeight: '700',
                       color: '#1e293b'
                     }}>{plan.price}</span>
@@ -345,7 +345,7 @@ export default function PricingPage() {
                       fontWeight: '600',
                       cursor: 'pointer',
                       transition: 'all 0.2s ease',
-                      marginBottom: '24px',
+                      marginBottom: '16px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -369,8 +369,8 @@ export default function PricingPage() {
                       fontWeight: '600',
                       color: '#1e293b',
                       borderBottom: '1px solid #e2e8f0',
-                      paddingBottom: '8px',
-                      marginBottom: '16px',
+                      paddingBottom: '6px',
+                      marginBottom: '12px',
                       fontSize: '14px'
                     }}>Features Included:</h4>
                     {plan.features.map((feature, idx) => (
@@ -378,7 +378,7 @@ export default function PricingPage() {
                         display: 'flex',
                         alignItems: 'flex-start',
                         gap: '8px',
-                        marginBottom: '8px'
+                        marginBottom: '6px'
                       }}>
                         <CheckCircle style={{
                           width: '16px',
@@ -401,9 +401,9 @@ export default function PricingPage() {
                           fontWeight: '600',
                           color: '#1e293b',
                           borderBottom: '1px solid #e2e8f0',
-                          paddingBottom: '8px',
-                          marginBottom: '16px',
-                          marginTop: '24px',
+                          paddingBottom: '6px',
+                          marginBottom: '12px',
+                          marginTop: '16px',
                           fontSize: '14px'
                         }}>Important Notes:</h4>
                         {plan.restrictions.map((restriction, idx) => (
@@ -411,7 +411,7 @@ export default function PricingPage() {
                             display: 'flex',
                             alignItems: 'flex-start',
                             gap: '8px',
-                            marginBottom: '8px'
+                            marginBottom: '6px'
                           }}>
                             <CreditCard style={{
                               width: '16px',
@@ -439,7 +439,7 @@ export default function PricingPage() {
 
       {/* Security Notice */}
       <section style={{
-        padding: '64px 16px',
+        padding: '32px 16px',
         backgroundColor: 'white'
       }}>
         <div style={{
@@ -451,7 +451,7 @@ export default function PricingPage() {
             backgroundColor: '#eff6ff',
             border: '1px solid #bfdbfe',
             borderRadius: '16px',
-            padding: '32px'
+            padding: '24px'
           }}>
             <Shield style={{
               width: '48px',
@@ -460,19 +460,19 @@ export default function PricingPage() {
               margin: '0 auto 16px auto'
             }} />
             <h3 style={{
-              fontSize: '28px',
+              fontSize: '24px',
               fontWeight: '700',
               color: '#1e293b',
-              marginBottom: '16px'
+              marginBottom: '12px'
             }}>
               Why We Require Credit Card Validation
             </h3>
             <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-              gap: '24px',
+              gap: '16px',
               textAlign: 'left',
-              marginBottom: '24px'
+              marginBottom: '16px'
             }}>
               <div>
                 <h4 style={{
@@ -559,7 +559,7 @@ export default function PricingPage() {
       <footer style={{
         backgroundColor: '#1e293b',
         color: 'white',
-        padding: '32px 16px',
+        padding: '24px 16px',
         textAlign: 'center'
       }}>
         <div style={{
