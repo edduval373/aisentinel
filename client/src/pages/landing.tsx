@@ -225,52 +225,39 @@ export default function Landing() {
               Sign In
             </Button>
             
-            {/* Developer Authentication - Bypass Email Verification */}
-            <button
-              onClick={async () => {
-                try {
-                  console.log('Attempting developer authentication...');
-                  const response = await fetch('/api/auth/super-login', {
-                    method: 'POST',
-                    credentials: 'include',
-                  });
-                  
-                  if (response.ok) {
-                    const data = await response.json();
-                    console.log('Developer session created:', data);
-                    console.log('Redirecting to chat interface...');
-                    // Force redirect to chat interface
-                    window.location.href = '/chat';
-                  } else {
-                    const error = await response.text();
-                    console.error('Developer authentication failed:', error);
-                  }
-                } catch (error) {
-                  console.error('Developer authentication error:', error);
-                }
-              }}
-              style={{
-                fontSize: '12px',
-                color: '#dc2626',
-                backgroundColor: '#fee2e2',
-                border: '1px solid #dc2626',
-                borderRadius: '6px',
-                padding: '8px 16px',
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-                fontWeight: '500'
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.backgroundColor = '#dc2626';
-                e.currentTarget.style.color = 'white';
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.backgroundColor = '#fee2e2';
-                e.currentTarget.style.color = '#dc2626';
-              }}
-            >
-              Developer Login
-            </button>
+            {/* Developer Authentication - Only show in development environment */}
+            {(window.location.hostname.includes('replit.dev') || 
+              window.location.hostname === 'localhost' || 
+              new URLSearchParams(window.location.search).get('dev') === 'true') && (
+              <button
+                onClick={async () => {
+                  console.log('[DEVELOPER] Showing role picker for developer authentication...');
+                  setDeveloperEmail('ed.duval15@gmail.com');
+                  setShowDeveloperPicker(true);
+                }}
+                style={{
+                  fontSize: '12px',
+                  color: '#dc2626',
+                  backgroundColor: '#fee2e2',
+                  border: '1px solid #dc2626',
+                  borderRadius: '6px',
+                  padding: '8px 16px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  fontWeight: '500'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = '#dc2626';
+                  e.currentTarget.style.color = 'white';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = '#fee2e2';
+                  e.currentTarget.style.color = '#dc2626';
+                }}
+              >
+                Developer Login
+              </button>
+            )}
           </div>
         </div>
       </header>
