@@ -9,7 +9,8 @@ const roles = [
   { key: 'new-user', label: 'New User', description: 'Experience the landing page and sign-up flow', color: '#6b7280' },
   { key: 'demo', label: 'Demo User', description: 'Limited demo access with read-only features', color: '#f59e0b' },
   { key: 'user', label: 'Regular User', description: 'Basic chat interface access', color: '#10b981' },
-  { key: 'admin', label: 'Admin', description: 'Administrative features and user management', color: '#3b82f6' },
+  { key: 'admin', label: 'Admin', description: 'Standard admin features (level 2)', color: '#0ea5e9' },
+  { key: 'administrator', label: 'Administrator', description: 'Security settings, user management (level 98)', color: '#3b82f6' },
   { key: 'owner', label: 'Owner', description: 'Company setup and configuration access', color: '#8b5cf6' },
   { key: 'super-user', label: 'Super User', description: 'Full system access and company management', color: '#dc2626' },
 ];
