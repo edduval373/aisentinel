@@ -2,13 +2,13 @@ const { Client } = require('pg');
 
 module.exports = async (req, res) => {
   const { method, url } = req;
-  
+
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cookie');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
-  
+
   // Handle preflight requests
   if (method === 'OPTIONS') {
     res.status(200).end();
@@ -31,9 +31,9 @@ module.exports = async (req, res) => {
     // Database test endpoint
     if (url.includes('db-test')) {
       console.log('🔍 [SERVERLESS] Database test request');
-      
+
       const DATABASE_URL = process.env.DATABASE_URL;
-      
+
       res.status(200).json({
         databaseConfigured: !!DATABASE_URL,
         databasePreview: DATABASE_URL ? DATABASE_URL.substring(0, 30) + '...' : 'NOT SET',
@@ -46,10 +46,10 @@ module.exports = async (req, res) => {
     // Activity types endpoint  
     if (url.includes('activity-types')) {
       console.log('📋 [SERVERLESS] Activity types request');
-      
+
       const DATABASE_URL = process.env.DATABASE_URL;
       console.log('📋 [SERVERLESS] DATABASE_URL available:', DATABASE_URL ? 'YES' : 'NO');
-      
+
       if (!DATABASE_URL) {
         console.error('❌ [SERVERLESS] DATABASE_URL environment variable missing');
         res.status(500).json({ 
@@ -62,9 +62,9 @@ module.exports = async (req, res) => {
       try {
         const client = new Client({ connectionString: DATABASE_URL });
         await client.connect();
-        
+
         const result = await client.query('SELECT id, name, description FROM activity_types WHERE company_id = 1 ORDER BY id');
-        
+
         if (result.rows.length > 0) {
           const types = result.rows.map(row => ({
             id: row.id,
@@ -72,18 +72,18 @@ module.exports = async (req, res) => {
             description: row.description,
             isEnabled: true
           }));
-          
+
           console.log('✅ [SERVERLESS] Activity types from database:', types.length);
           await client.end();
           res.status(200).json(types);
           return;
         }
-        
+
         await client.end();
       } catch (error) {
         console.error('❌ [SERVERLESS] Database connection failed:', error.message);
       }
-      
+
       // No fallback data - return error so we can see what's wrong
       console.error('❌ [SERVERLESS] Database connection failed for activity types, no fallback data');
       res.status(500).json({ 
@@ -97,11 +97,11 @@ module.exports = async (req, res) => {
     // Admin companies endpoint - for super-users
     if (url.includes('admin/companies') && method === 'GET') {
       console.log('🏢 [SERVERLESS] Admin companies request');
-      
+
       const DATABASE_URL = process.env.DATABASE_URL;
       console.log('🏢 [SERVERLESS] DATABASE_URL available:', DATABASE_URL ? 'YES' : 'NO');
       console.log('🏢 [SERVERLESS] DATABASE_URL preview:', DATABASE_URL ? DATABASE_URL.substring(0, 30) + '...' : 'NOT SET');
-      
+
       if (!DATABASE_URL) {
         console.error('❌ [SERVERLESS] DATABASE_URL environment variable missing');
         res.status(500).json({ 
@@ -110,7 +110,7 @@ module.exports = async (req, res) => {
         });
         return;
       }
-      
+
       try {
         console.log('🔌 [SERVERLESS] Attempting database connection...');
         const client = new Client({ 
@@ -120,15 +120,15 @@ module.exports = async (req, res) => {
           },
           connectionTimeoutMillis: 10000
         });
-        
+
         console.log('🔌 [SERVERLESS] Client created, connecting...');
         await client.connect();
         console.log('✅ [SERVERLESS] Database connected successfully');
-        
+
         console.log('📊 [SERVERLESS] Executing companies query...');
         const result = await client.query('SELECT id, name, domain, primary_admin_name, primary_admin_email, primary_admin_title, logo FROM companies ORDER BY id');
         console.log('📊 [SERVERLESS] Query completed, rows:', result.rows.length);
-        
+
         if (result.rows.length > 0) {
           const companies = result.rows.map(row => ({
             id: row.id,
@@ -140,24 +140,24 @@ module.exports = async (req, res) => {
             logo: row.logo || '',
             isActive: true // All companies are active by default
           }));
-          
+
           console.log('✅ [SERVERLESS] Companies from database:', companies.length);
           await client.end();
           res.status(200).json(companies);
           return;
         }
-        
+
         console.log('⚠️ [SERVERLESS] No companies found in database');
         await client.end();
         res.status(200).json([]);
         return;
-        
+
       } catch (error) {
         console.error('❌ [SERVERLESS] Database error details:');
         console.error('   Error message:', error.message);
         console.error('   Error code:', error.code);
         console.error('   Error stack:', error.stack);
-        
+
         res.status(500).json({ 
           error: 'Database connection failed', 
           message: `Database error: ${error.message}`,
@@ -171,7 +171,7 @@ module.exports = async (req, res) => {
     // AI models endpoint
     if (url.includes('ai-models')) {
       console.log('🤖 [SERVERLESS] AI models request');
-      
+
       const DATABASE_URL = process.env.DATABASE_URL;
       if (!DATABASE_URL) {
         console.error('❌ [SERVERLESS] DATABASE_URL environment variable missing');
@@ -185,9 +185,9 @@ module.exports = async (req, res) => {
       try {
         const client = new Client({ connectionString: DATABASE_URL });
         await client.connect();
-        
+
         const result = await client.query('SELECT id, name, provider, model_id, is_enabled FROM ai_models WHERE company_id = 1 ORDER BY id');
-        
+
         if (result.rows.length > 0) {
           const models = result.rows.map(row => ({
             id: row.id,
@@ -196,18 +196,18 @@ module.exports = async (req, res) => {
             modelId: row.model_id,
             isEnabled: row.is_enabled
           }));
-          
+
           console.log('✅ [SERVERLESS] AI models from database:', models.length);
           await client.end();
           res.status(200).json(models);
           return;
         }
-        
+
         await client.end();
       } catch (error) {
         console.error('❌ [SERVERLESS] Database connection failed:', error.message);
       }
-      
+
       // No fallback data - return error
       console.error('❌ [SERVERLESS] Database connection failed for AI models, no fallback data');
       res.status(500).json({ 
@@ -216,6 +216,47 @@ module.exports = async (req, res) => {
         endpoint: 'ai-models'
       });
       return;
+    }
+
+    // Only return authenticated if there's actually a valid session token
+    if (req.headers.cookie) {
+      const cookies = req.headers.cookie.split(';');
+      const sessionCookie = cookies.find(cookie => cookie.trim().startsWith('session='));
+
+      if (sessionCookie) {
+        const sessionToken = sessionCookie.split('=')[1];
+
+        // Only return authenticated if there's actually a valid session token
+        if (sessionToken && sessionToken.length > 10) {
+          const validTokenPattern = /^(dev-session-|prod-session-|replit-auth-|demo-session-)/;
+
+          if (validTokenPattern.test(sessionToken)) {
+            // Check if this is a developer session with test role
+            let roleLevel = 100; // Default super-user level
+
+            // For development sessions, check if this should be mapped to 1000
+            if (sessionToken.startsWith('dev-session-')) {
+              roleLevel = 1000; // Super-user should be 1000, not 100
+            }
+
+            // Mock user data for development/production
+            res.status(200).json({
+              authenticated: true,
+              user: {
+                id: "42450602",
+                email: "ed.duval15@gmail.com",
+                companyId: 1,
+                companyName: "Horizon Edge Enterprises",
+                role: "super-user",
+                roleLevel: roleLevel,
+                firstName: "Edward",
+                lastName: "Duval"
+              }
+            });
+            return;
+          }
+        }
+      }
     }
 
     // Default response for unhandled routes

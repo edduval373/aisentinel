@@ -49,21 +49,41 @@ export class AuthService {
 
   // Get effective role level for developers (considering test role)
   getEffectiveRoleLevel(session: AuthSession): number {
+    console.log('getEffectiveRoleLevel called with:', {
+      isDeveloper: session.isDeveloper,
+      testRole: session.testRole,
+      originalRoleLevel: session.roleLevel
+    });
+    
     if (session.isDeveloper && session.testRole) {
+      let effectiveLevel: number;
       switch (session.testRole) {
-        case 'demo': return 0;
-        case 'user': return 1;
-        case 'administrator': return 998; // Fixed mapping
-        case 'owner': return 999;
-        case 'super-user': return 1000;
+        case 'demo': 
+          effectiveLevel = 0;
+          break;
+        case 'user': 
+          effectiveLevel = 1;
+          break;
+        case 'administrator': 
+          effectiveLevel = 998;
+          break;
+        case 'owner': 
+          effectiveLevel = 999;
+          break;
+        case 'super-user': 
+          effectiveLevel = 1000;
+          break;
         default: 
           // Handle custom roles (custom-X format)
           if (session.testRole.startsWith('custom-')) {
             const level = parseInt(session.testRole.replace('custom-', ''));
-            return isNaN(level) ? session.roleLevel : level;
+            effectiveLevel = isNaN(level) ? session.roleLevel : level;
+          } else {
+            effectiveLevel = session.roleLevel;
           }
-          return session.roleLevel;
       }
+      console.log('Effective role level calculated:', effectiveLevel, 'for test role:', session.testRole);
+      return effectiveLevel;
     }
     return session.roleLevel;
   }

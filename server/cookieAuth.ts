@@ -37,7 +37,15 @@ export const cookieAuth = async (req: AuthenticatedRequest, res: Response, next:
     // Calculate effective role level for developers with test roles
     let effectiveRoleLevel = session.roleLevel;
     if (session.isDeveloper && session.testRole) {
-      effectiveRoleLevel = authService.getEffectiveRoleLevel(session.testRole);
+      effectiveRoleLevel = authService.getEffectiveRoleLevel({
+        userId: session.userId,
+        email: session.email,
+        companyId: session.companyId,
+        roleLevel: session.roleLevel,
+        sessionToken: session.sessionToken,
+        isDeveloper: session.isDeveloper,
+        testRole: session.testRole
+      });
     }
 
     req.user = {
@@ -73,7 +81,15 @@ export const optionalAuth = async (req: AuthenticatedRequest, res: Response, nex
         // Calculate effective role level for developers with test roles
         let effectiveRoleLevel = session.roleLevel;
         if (session.isDeveloper && session.testRole) {
-          effectiveRoleLevel = authService.getEffectiveRoleLevel(session.testRole);
+          effectiveRoleLevel = authService.getEffectiveRoleLevel({
+            userId: session.userId,
+            email: session.email,
+            companyId: session.companyId,
+            roleLevel: session.roleLevel,
+            sessionToken: session.sessionToken,
+            isDeveloper: session.isDeveloper,
+            testRole: session.testRole
+          });
         }
 
         req.user = {
