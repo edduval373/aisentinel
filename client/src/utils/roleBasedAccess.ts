@@ -42,6 +42,9 @@ export function canViewAdminPage(user: any, requiredLevel: number): boolean {
   // Demo users can view all admin pages in read-only mode
   if (isDemoUser) return true;
   
+  // Super-Users (100+) can access everything
+  if (roleLevel >= ROLE_LEVELS.SUPER_USER) return true;
+  
   // Other users need proper access level
   return roleLevel >= requiredLevel;
 }
