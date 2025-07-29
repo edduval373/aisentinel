@@ -46,6 +46,7 @@ export const userSessions = pgTable("user_sessions", {
   email: varchar("email").notNull(),
   companyId: integer("company_id").references(() => companies.id),
   roleLevel: integer("role_level").default(1),
+  testRole: varchar("test_role"), // For developer testing: demo, user, admin, owner
   expiresAt: timestamp("expires_at").notNull(),
   lastAccessedAt: timestamp("last_accessed_at").defaultNow(),
   createdAt: timestamp("created_at").defaultNow(),

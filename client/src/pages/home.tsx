@@ -11,6 +11,7 @@ import TutorialArrow from "@/components/tutorial/TutorialArrow";
 import { useTutorial } from "@/hooks/useTutorial";
 import { DemoUsageBanner } from "@/components/demo/DemoUsageBanner";
 import FeaturesBenefitsDialog from "@/components/FeaturesBenefitsDialog";
+import { DeveloperRoleSwitcher } from "@/components/developer/DeveloperRoleSwitcher";
 import { useFeaturesBenefits } from "@/hooks/useFeaturesBenefits";
 
 import { useCompanyContext } from "@/hooks/useCompanyContext";
@@ -439,8 +440,11 @@ export default function Home() {
             <CompanyInfoLarge />
           </div>
 
-          {/* Right side - Super User Controls or Sign Out Button */}
+          {/* Right side - Developer Controls, Super User Controls or Sign Out Button */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0, zIndex: 1 }}>
+            {/* Developer Role Switcher - Always visible for developers */}
+            <DeveloperRoleSwitcher />
+            
             {/* Development Testing Controls - Enhanced for development workflow */}
             {(isSuperUserLevel && !isDemoMode && userRoleLevel !== 0) && (
               <>

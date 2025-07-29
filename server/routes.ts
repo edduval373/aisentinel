@@ -5,6 +5,7 @@ import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import { cookieAuth, optionalAuth, AuthenticatedRequest } from "./cookieAuth";
 import { setupAuthRoutes } from "./authRoutes";
+import { authService } from "./services/authService";
 import { aiService } from "./services/aiService";
 import { contentFilter } from "./services/contentFilter";
 import { fileStorageService } from "./services/fileStorageService";
@@ -34,11 +35,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ status: 'OK', timestamp: new Date().toISOString() });
   });
 
-  // Super-user authentication endpoint - for manual login
+  // Super-user authentication endpoint - for manual login (developer testing)
   app.post('/api/auth/super-login', async (req, res) => {
     try {
       console.log('Super-user login request');
-      const sessionToken = 'super-session-1753717122.508464-7b89b05c';
+      
+      // Create a proper session for developer testing
+      const sessionToken = authService.generateSessionToken();
+      const developerEmail = 'ed.duval15@gmail.com'; // Primary developer email
+      const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+      
+      // Create session in database
+      await storage.createUserSession({
+        userId: 42450602, // Existing developer user ID
+        sessionToken,
+        email: developerEmail,
+        companyId: 1, // Default to company 1
+        roleLevel: 100, // Super-user level
+        expiresAt,
+      });
       
       // Set the session cookie
       res.cookie('sessionToken', sessionToken, {
@@ -48,15 +63,85 @@ export async function registerRoutes(app: Express): Promise<Server> {
         maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       });
       
-      console.log('Super-user session cookie set');
+      console.log('Developer session created with token:', sessionToken.substring(0, 20) + '...');
       res.json({ 
         success: true, 
-        message: 'Super-user session created',
-        sessionToken: sessionToken.substring(0, 20) + '...'
+        message: 'Developer session created',
+        sessionToken: sessionToken.substring(0, 20) + '...',
+        email: developerEmail,
+        isDeveloper: true
       });
     } catch (error) {
       console.error('Super-user login error:', error);
       res.status(500).json({ success: false, message: 'Failed to create super-user session' });
+    }
+  });
+
+  // Developer role switching endpoint
+  app.post('/api/auth/set-role', async (req: AuthenticatedRequest, res) => {
+    try {
+      const sessionToken = req.cookies?.sessionToken;
+      const { testRole } = req.body;
+
+      if (!sessionToken) {
+        return res.status(401).json({ success: false, message: 'No session token' });
+      }
+
+      // Verify this is a developer
+      const session = await authService.verifySession(sessionToken);
+      if (!session || !authService.isDeveloperEmail(session.email)) {
+        return res.status(403).json({ success: false, message: 'Developer access required' });
+      }
+
+      // Validate test role
+      const validRoles = ['demo', 'user', 'admin', 'owner'];
+      if (!validRoles.includes(testRole)) {
+        return res.status(400).json({ success: false, message: 'Invalid test role' });
+      }
+
+      // Set the test role
+      const success = await authService.setDeveloperTestRole(sessionToken, testRole);
+      
+      if (success) {
+        res.json({ 
+          success: true, 
+          message: `Test role set to ${testRole}`,
+          testRole 
+        });
+      } else {
+        res.status(500).json({ success: false, message: 'Failed to set test role' });
+      }
+    } catch (error) {
+      console.error('Set role error:', error);
+      res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+  });
+
+  // Get developer status and current test role
+  app.get('/api/auth/developer-status', async (req: AuthenticatedRequest, res) => {
+    try {
+      const sessionToken = req.cookies?.sessionToken;
+      
+      if (!sessionToken) {
+        return res.json({ isDeveloper: false });
+      }
+
+      const session = await authService.verifySession(sessionToken);
+      if (!session) {
+        return res.json({ isDeveloper: false });
+      }
+
+      const isDeveloper = authService.isDeveloperEmail(session.email);
+      
+      res.json({ 
+        isDeveloper,
+        testRole: session.testRole || null,
+        actualRole: session.roleLevel,
+        effectiveRole: authService.getEffectiveRoleLevel(session)
+      });
+    } catch (error) {
+      console.error('Developer status error:', error);
+      res.json({ isDeveloper: false });
     }
   });
 

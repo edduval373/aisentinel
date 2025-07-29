@@ -2,18 +2,63 @@ import { nanoid } from 'nanoid';
 import { storage } from '../storage';
 import { emailService } from './emailService';
 
+// Developer email list - maintained on backend only
+const DEVELOPER_EMAILS = [
+  'ed.duval15@gmail.com',
+  'developer@duvalsolutions.net',
+  'test@developer.local'
+];
+
 export interface AuthSession {
   userId: string;
   email: string;
   companyId: number | null;
   roleLevel: number;
   sessionToken: string;
+  isDeveloper?: boolean;
+  testRole?: string;
 }
 
 export class AuthService {
+  // Check if email is in developer list
+  isDeveloperEmail(email: string): boolean {
+    return DEVELOPER_EMAILS.includes(email.toLowerCase());
+  }
+
   // Generate secure session token
   generateSessionToken(): string {
     return nanoid(64);
+  }
+
+  // Set developer test role in session
+  async setDeveloperTestRole(sessionToken: string, testRole: string): Promise<boolean> {
+    try {
+      const session = await storage.getUserSession(sessionToken);
+      if (!session || !this.isDeveloperEmail(session.email)) {
+        return false;
+      }
+
+      // Update session with test role
+      await storage.updateUserSession(sessionToken, { testRole });
+      return true;
+    } catch (error) {
+      console.error('Error setting developer test role:', error);
+      return false;
+    }
+  }
+
+  // Get effective role level for developers (considering test role)
+  getEffectiveRoleLevel(session: AuthSession): number {
+    if (session.isDeveloper && session.testRole) {
+      switch (session.testRole) {
+        case 'demo': return 0;
+        case 'user': return 1;
+        case 'admin': return 2;
+        case 'owner': return 99;
+        default: return session.roleLevel;
+      }
+    }
+    return session.roleLevel;
   }
 
   // Create verification token and send email
@@ -288,14 +333,19 @@ export class AuthService {
       // Update last accessed time
       await storage.updateUserSessionLastAccessed(session.id);
 
+      // Check if this is a developer email
+      const isDeveloper = this.isDeveloperEmail(session.email);
+
       const result = {
         userId: session.userId,
         email: session.email,
         companyId: session.companyId,
         roleLevel: session.roleLevel || 0,
         sessionToken: session.sessionToken,
+        isDeveloper,
+        testRole: session.testRole || null,
       };
-      console.log('AuthService: returning session for user:', result.email, 'role level:', result.roleLevel);
+      console.log('AuthService: returning session for user:', result.email, 'role level:', result.roleLevel, 'isDeveloper:', isDeveloper, 'testRole:', result.testRole);
       return result;
     } catch (error) {
       console.error('Error verifying session:', error);

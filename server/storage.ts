@@ -74,6 +74,7 @@ export interface IStorage {
   markEmailVerificationTokenAsUsed(id: number): Promise<void>;
   createUserSession(session: InsertUserSession): Promise<UserSession>;
   getUserSession(sessionToken: string): Promise<UserSession | undefined>;
+  updateUserSession(sessionToken: string, updates: Partial<UserSession>): Promise<void>;
   updateUserSessionLastAccessed(sessionId: number): Promise<void>;
   deleteUserSession(sessionToken: string): Promise<void>;
   
@@ -280,6 +281,13 @@ export class DatabaseStorage implements IStorage {
       .from(userSessions)
       .where(eq(userSessions.sessionToken, sessionToken));
     return session;
+  }
+
+  async updateUserSession(sessionToken: string, updates: Partial<UserSession>): Promise<void> {
+    await db
+      .update(userSessions)
+      .set(updates)
+      .where(eq(userSessions.sessionToken, sessionToken));
   }
 
   async updateUserSessionLastAccessed(sessionId: number): Promise<void> {
