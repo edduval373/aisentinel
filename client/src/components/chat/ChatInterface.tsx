@@ -602,9 +602,22 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
           <div style={{ 
             flex: 1, 
             display: 'flex', 
+            flexDirection: 'column',
             alignItems: 'center', 
-            justifyContent: 'center' 
+            justifyContent: 'center',
+            gap: '32px'
           }}>
+            {/* Company Branding - Centered in main chat area */}
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              marginBottom: '16px'
+            }}>
+              <CompanyInfoLarge />
+            </div>
+            
+            {/* No messages message */}
             <div style={{ textAlign: 'center', color: '#64748b' }}>
               <MessageSquare style={{ 
                 width: '48px', 
