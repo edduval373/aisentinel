@@ -19,7 +19,7 @@ async function throwIfResNotOk(res: Response) {
 // Production fallback for API failures
 async function getFallbackResponse(url: string, method: string, data?: unknown): Promise<any> {
   const isProduction = window.location.hostname.includes('aisentinel.app');
-  
+
   if (!isProduction) return null;
 
   // Authentication fallback for production
@@ -54,7 +54,7 @@ async function getFallbackResponse(url: string, method: string, data?: unknown):
       }
     ];
   }
-  
+
   // Chat session creation fallback
   if (url.includes('chat/session') && method === 'POST') {
     return {
@@ -65,14 +65,14 @@ async function getFallbackResponse(url: string, method: string, data?: unknown):
       updatedAt: new Date().toISOString()
     };
   }
-  
+
   // Chat message fallback
   if (url.includes('chat/message') && method === 'POST') {
     const body = data as any;
     const message = body?.message || 'Hello';
-    
+
     const demoResponse = `I'm a demo AI assistant. You asked: "${message}"\n\nThis is a preview of our enterprise AI governance platform. In the full version, I would process your request using the selected AI model and activity type with proper security monitoring and compliance tracking.`;
-    
+
     return {
       userMessage: {
         id: Math.floor(Math.random() * 1000000),
@@ -96,7 +96,7 @@ async function getFallbackResponse(url: string, method: string, data?: unknown):
       }
     };
   }
-  
+
   return null;
 }
 
@@ -106,12 +106,12 @@ export async function apiRequest(
   data?: unknown | undefined,
 ): Promise<any> {
   const startTime = Date.now();
-  
+
   console.log(`🔄 [API ${method}] ${url} - Start`);
   console.log(`🔄 [API ${method}] Full URL: ${window.location.origin}${url}`);
   console.log(`🔄 [API ${method}] Data:`, data);
   console.log(`🔄 [API ${method}] Environment: ${import.meta.env.MODE}`);
-  
+
   try {
     const res = await fetch(url, {
       method,
@@ -125,11 +125,11 @@ export async function apiRequest(
     console.log(`📊 [API ${method}] Headers:`, Object.fromEntries(res.headers.entries()));
 
     await throwIfResNotOk(res);
-    
+
     // Check content type and return appropriate response
     const contentType = res.headers.get("content-type");
     console.log(`📊 [API ${method}] Content-Type: ${contentType}`);
-    
+
     if (contentType?.includes("application/json")) {
       const data = await res.json();
       console.log(`✅ [API ${method}] ${url} - Success:`, data);
@@ -143,7 +143,7 @@ export async function apiRequest(
   } catch (error) {
     const duration = Date.now() - startTime;
     console.error(`❌ [API ${method}] ${url} - Failed (${duration}ms):`, error);
-    
+
     // Try fallback response for production API failures
     const fallback = await getFallbackResponse(url, method, data);
     if (fallback) {
@@ -162,10 +162,10 @@ export const getQueryFn: <T>(options: {
   async ({ queryKey }) => {
     const url = queryKey[0] as string;
     const startTime = Date.now();
-    
+
     console.log(`🔄 [QUERY] ${url} - Start`);
     console.log(`🔄 [QUERY] Full URL: ${window.location.origin}${url}`);
-    
+
     try {
       const res = await fetch(url, {
         credentials: "include",
@@ -181,17 +181,17 @@ export const getQueryFn: <T>(options: {
       }
 
       await throwIfResNotOk(res);
-      
+
       const contentType = res.headers.get("content-type");
       console.log(`📊 [QUERY] Content-Type: ${contentType}`);
-      
+
       if (!contentType?.includes("application/json")) {
         const text = await res.text();
         console.error(`❌ [QUERY] ${url} - Expected JSON but got ${contentType}`);
         console.error(`❌ [QUERY] Response preview:`, text.substring(0, 200));
         throw new Error(`Expected JSON response but got ${contentType}`);
       }
-      
+
       const data = await res.json();
       console.log(`✅ [QUERY] ${url} - Success:`, data);
       return data;
@@ -216,3 +216,7 @@ export const queryClient = new QueryClient({
     },
   },
 });
+
+// API base URL - automatically detects environment
+const API_BASE_URL = import.meta.env.VITE_API_URL || 
+  (import.meta.env.DEV ? window.location.origin : 'https://aisentinel.app');

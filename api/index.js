@@ -223,7 +223,7 @@ export default async function handler(req, res) {
           apiKeyConfigured: !!process.env.SENDGRID_API_KEY,
           apiKeyLength: process.env.SENDGRID_API_KEY?.length || 0,
           fromEmail: 'ed.duval@duvalsolutions.net',
-          appUrl: process.env.APP_URL || 'https://aisentinel.app'
+          appUrl: 'https://aisentinel.app'
         },
         timestamp: new Date().toISOString()
       };

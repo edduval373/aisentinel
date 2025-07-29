@@ -23,13 +23,13 @@ export class EmailService {
 
   async sendVerificationEmail(email: string, token: string): Promise<boolean> {
     console.log(`Sending verification email to ${email}`);
-    
-    // Always use production URL for email verification links - users access from anywhere
-    const baseUrl = process.env.APP_URL || 'https://aisentinel.app';
-    const verificationUrl = `${baseUrl}/api/auth/verify?token=${token}`;
-    
+
+    // Always use production URL for email verification links
+    const baseUrl = 'https://aisentinel.app';
+    const verificationUrl = `${baseUrl}/api/auth/verify?token=${token}&email=${encodeURIComponent(email)}`;
+
     console.log(`Email verification URL: ${verificationUrl}`);
-    
+
     try {
       const html = `
       <!DOCTYPE html>
@@ -75,17 +75,17 @@ export class EmailService {
 
     const text = `
       AI Sentinel - Verify Your Email Address
-      
+
       Hello,
-      
+
       Thank you for accessing AI Sentinel. To complete your login, please click the link below to verify your email address:
-      
+
       ${verificationUrl}
-      
+
       This link will expire in 1 hour for security reasons.
-      
+
       If you didn't request this verification, you can safely ignore this email.
-      
+
       AI Sentinel - Enterprise AI Governance Platform
     `;
 
@@ -150,11 +150,11 @@ export class EmailService {
       console.log('✓ SendGrid connection test successful');
     } catch (error: any) {
       result.errors.push(`Connection test failed: ${error.message || error}`);
-      
+
       if (error?.response) {
         const status = error.response.status;
         const body = error.response.body;
-        
+
         if (status === 401) {
           result.errors.push('Authentication failed - Invalid SendGrid API key');
         } else if (status === 403) {
@@ -170,7 +170,7 @@ export class EmailService {
           result.errors.push(`HTTP ${status}: ${JSON.stringify(body)}`);
         }
       }
-      
+
       console.error('SendGrid connection test failed:', error);
     }
 

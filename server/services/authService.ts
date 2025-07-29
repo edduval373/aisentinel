@@ -54,7 +54,7 @@ export class AuthService {
       testRole: session.testRole,
       originalRoleLevel: session.roleLevel
     });
-    
+
     if (session.isDeveloper && session.testRole) {
       let effectiveLevel: number;
       switch (session.testRole) {
@@ -112,7 +112,7 @@ export class AuthService {
   async verifyEmailToken(token: string, ipAddress?: string, deviceFingerprint?: string): Promise<AuthSession | null> {
     try {
       const verificationToken = await storage.getEmailVerificationToken(token);
-      
+
       if (!verificationToken || verificationToken.isUsed || verificationToken.expiresAt < new Date()) {
         return null;
       }
@@ -121,7 +121,7 @@ export class AuthService {
       await storage.markEmailVerificationTokenAsUsed(verificationToken.id);
 
       const email = verificationToken.email;
-      
+
       // Check if user exists
       let user = await storage.getUserByEmail(email);
       let companyId: number | null = null;
@@ -191,7 +191,7 @@ export class AuthService {
               companyId = company.id;
               roleLevel = this.getRoleLevelFromEmployeeRole(employee.role || 'employee');
               isTrialUser = false;
-              
+
               // Update user with company information
               await storage.updateUser(user.id, {
                 companyId,
@@ -200,7 +200,7 @@ export class AuthService {
                 isTrialUser,
                 lastLoginAt: new Date(),
               });
-              
+
               user.companyId = companyId;
               user.roleLevel = roleLevel;
               user.isTrialUser = isTrialUser;
@@ -294,7 +294,7 @@ export class AuthService {
               companyId = company.id;
               roleLevel = this.getRoleLevelFromEmployeeRole(employee.role || 'employee');
               isTrialUser = false;
-              
+
               // Update user with company information
               await storage.updateUser(user.id, {
                 companyId,
@@ -303,7 +303,7 @@ export class AuthService {
                 isTrialUser,
                 lastLoginAt: new Date(),
               });
-              
+
               user.companyId = companyId;
               user.roleLevel = roleLevel;
               user.isTrialUser = isTrialUser;
@@ -351,7 +351,7 @@ export class AuthService {
       console.log('AuthService: verifying session token:', sessionToken.substring(0, 20) + '...');
       const session = await storage.getUserSession(sessionToken);
       console.log('AuthService: found session:', !!session);
-      
+
       if (!session || session.expiresAt < new Date()) {
         console.log('AuthService: session invalid or expired');
         return null;
@@ -451,6 +451,11 @@ export class AuthService {
   // Extract email domain
   getEmailDomain(email: string): string {
     return email.split('@')[1].toLowerCase();
+  }
+
+  private getBaseUrl(): string {
+    // Always use production URL for consistency
+    return process.env.APP_URL || 'https://aisentinel.app';
   }
 }
 
