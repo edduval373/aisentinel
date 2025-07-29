@@ -1015,8 +1015,9 @@ export default function AdminRoles() {
 
 // Helper function for role badge styling
 const getRoleBadgeStyle = (level: number) => {
-  if (level >= 100) return { backgroundColor: '#dc2626', color: 'white' }; // Super-user
-  if (level >= 99) return { backgroundColor: '#7c3aed', color: 'white' }; // Owner
-  if (level >= 98) return { backgroundColor: '#ea580c', color: 'white' }; // Admin
-  return { backgroundColor: '#e5e7eb', color: '#374151' }; // User
+  if (level >= 1000) return { backgroundColor: '#dc2626', color: 'white' }; // Super-user
+  if (level >= 999) return { backgroundColor: '#7c3aed', color: 'white' }; // Owner
+  if (level >= 998) return { backgroundColor: '#ea580c', color: 'white' }; // Administrator
+  if (level >= 2) return { backgroundColor: '#16a34a', color: 'white' }; // Admin
+  return { backgroundColor: '#e5e7eb', color: '#374151' }; // User/Demo
 };

@@ -59,20 +59,20 @@ export const roleBasedAccess = {
    * Check if user can access administrator features
    */
   canAccessAdministrator(userLevel: number): boolean {
-    return userLevel >= 98;
+    return userLevel >= 998;
   },
 
   /**
    * Check if user can access owner features
    */
   canAccessOwner(userLevel: number): boolean {
-    return userLevel >= 99;
+    return userLevel >= 999;
   },
 
   /**
    * Check if user is super-user
    */
   isSuperUser(userLevel: number): boolean {
-    return userLevel >= 100;
+    return userLevel >= 1000;
   },
 };

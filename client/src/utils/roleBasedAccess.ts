@@ -9,14 +9,16 @@ export const ROLE_LEVELS = {
   DEMO: 0,
   USER: 1,
   ADMIN: 2,
-  OWNER: 99,
-  SUPER_USER: 100,
+  ADMINISTRATOR: 998,
+  OWNER: 999,
+  SUPER_USER: 1000,
 } as const;
 
 export const ROLE_NAMES = {
   [ROLE_LEVELS.DEMO]: 'demo',
   [ROLE_LEVELS.USER]: 'user', 
   [ROLE_LEVELS.ADMIN]: 'admin',
+  [ROLE_LEVELS.ADMINISTRATOR]: 'administrator',
   [ROLE_LEVELS.OWNER]: 'owner',
   [ROLE_LEVELS.SUPER_USER]: 'super-user',
 } as const;
@@ -42,7 +44,7 @@ export function canViewAdminPage(user: any, requiredLevel: number): boolean {
   // Demo users can view all admin pages in read-only mode
   if (isDemoUser) return true;
   
-  // Super-Users (100+) can access everything
+  // Super-Users (1000+) can access everything
   if (roleLevel >= ROLE_LEVELS.SUPER_USER) return true;
   
   // Other users need proper access level
@@ -75,27 +77,28 @@ export function getRoleName(roleLevel: number | undefined): string {
   const level = roleLevel ?? 0;
   if (level >= ROLE_LEVELS.SUPER_USER) return 'Super User';
   if (level >= ROLE_LEVELS.OWNER) return 'Owner';
-  if (level >= ROLE_LEVELS.ADMIN) return 'Administrator';
+  if (level >= ROLE_LEVELS.ADMINISTRATOR) return 'Administrator';
+  if (level >= ROLE_LEVELS.ADMIN) return 'Admin';
   if (level >= ROLE_LEVELS.USER) return 'User';
   return 'Demo User';
 }
 
 // Access level requirements for different admin screens
 export const ACCESS_REQUIREMENTS = {
-  // Super User only (100+)
+  // Super User only (1000+)
   COMPANY_MANAGEMENT: ROLE_LEVELS.SUPER_USER,
   
-  // Owner level (99+)
+  // Owner level (999+)
   SETUP_API_KEYS: ROLE_LEVELS.OWNER,
   SETUP_AI_MODELS: ROLE_LEVELS.OWNER,
   SETUP_MODEL_FUSION: ROLE_LEVELS.OWNER,
   COMPANY_SETUP: ROLE_LEVELS.OWNER,
   
-  // Administrator level (98+) - note: using 98 to be stricter than standard admin (2)
-  SECURITY_SETTINGS: 98,
-  USER_MANAGEMENT: 98,
-  ACTIVITY_MANAGEMENT: 98,
-  MONITORING_REPORTS: 98,
+  // Administrator level (998+)
+  SECURITY_SETTINGS: ROLE_LEVELS.ADMINISTRATOR,
+  USER_MANAGEMENT: ROLE_LEVELS.ADMINISTRATOR,
+  ACTIVITY_MANAGEMENT: ROLE_LEVELS.ADMINISTRATOR,
+  MONITORING_REPORTS: ROLE_LEVELS.ADMINISTRATOR,
   
   // Standard Admin level (2+)
   AI_MANAGEMENT: ROLE_LEVELS.ADMIN,

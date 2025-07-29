@@ -158,7 +158,7 @@ export class AuthService {
         isTrialUser = user.isTrialUser !== false; // Default to true unless explicitly false
 
         // Super-users and existing company users should not be trial users
-        if (roleLevel >= 99 || user.companyId) {
+        if (roleLevel >= 999 || user.companyId) {
           isTrialUser = false;
         }
 

@@ -2600,17 +2600,17 @@ This is a demonstration of AI Sentinel's capabilities. In the full version:
       const user = await storage.getUser(req.user!.userId);
       const userRoleLevel = user?.roleLevel || 1;
       
-      console.log("User role level:", userRoleLevel, "Required: 98+");
+      console.log("User role level:", userRoleLevel, "Required: 998+");
       
-      // Must be administrator (98) or higher
-      if (userRoleLevel < 98) {
+      // Must be administrator (998) or higher
+      if (userRoleLevel < 998) {
         return res.status(403).json({ message: "Administrator access required" });
       }
       
       const companyId = parseInt(req.params.companyId);
 
       // Ensure user can only access their own company (unless super-user)
-      if (userRoleLevel < 100 && user?.companyId !== companyId) {
+      if (userRoleLevel < 1000 && user?.companyId !== companyId) {
         return res.status(403).json({ message: "Access denied" });
       }
 
