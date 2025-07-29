@@ -144,7 +144,7 @@ export function setupAuthRoutes(app: Express) {
       // Define test accounts with their properties
       const testAccounts = {
         'ed.duval15@gmail.com': { 
-          roleLevel: 100, 
+          roleLevel: 1000, 
           role: 'super-user', 
           firstName: 'Ed', 
           lastName: 'Duval',
@@ -252,7 +252,7 @@ export function setupAuthRoutes(app: Express) {
   // Super-user endpoint to get all users for role management
   app.get('/api/admin/all-users', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
-      if (!req.user || req.user.roleLevel < 100) {
+      if (!req.user || req.user.roleLevel < 1000) {
         return res.status(403).json({ message: "Super-user access required" });
       }
 
@@ -267,14 +267,14 @@ export function setupAuthRoutes(app: Express) {
   // Super-user endpoint to update user roles
   app.patch('/api/admin/users/:userId/role', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
-      if (!req.user || req.user.roleLevel < 100) {
+      if (!req.user || req.user.roleLevel < 1000) {
         return res.status(403).json({ message: "Super-user access required" });
       }
 
       const { userId } = req.params;
       const { roleLevel } = req.body;
 
-      if (typeof roleLevel !== 'number' || roleLevel < 0 || roleLevel > 100) {
+      if (typeof roleLevel !== 'number' || roleLevel < 0 || roleLevel > 1000) {
         return res.status(400).json({ message: "Invalid role level" });
       }
 
@@ -283,7 +283,7 @@ export function setupAuthRoutes(app: Express) {
         2: 'admin',
         98: 'admin',
         99: 'owner',
-        100: 'super-user'
+        1000: 'super-user'
       };
 
       const role = roleMap[roleLevel] || 'user';
@@ -588,7 +588,7 @@ export function setupAuthRoutes(app: Express) {
         sessionToken,
         email,
         companyId: 1,
-        roleLevel: 100,
+        roleLevel: 1000,
         expiresAt,
       });
 
@@ -613,7 +613,7 @@ export function setupAuthRoutes(app: Express) {
           firstName: 'Ed',
           lastName: 'Duval',
           role: 'super-user',
-          roleLevel: 100,
+          roleLevel: 1000,
           companyId: 1,
           companyName: 'Horizon Edge Enterprises'
         }
@@ -640,7 +640,7 @@ export function setupAuthRoutes(app: Express) {
       (req as any).session.userId = testUserId;
       (req as any).session.email = email;
       (req as any).session.name = name;
-      (req as any).session.roleLevel = roleLevel || 100;
+      (req as any).session.roleLevel = roleLevel || 1000;
       (req as any).session.companyId = companyId || 1;
       (req as any).session.authenticated = true;
 
@@ -653,7 +653,7 @@ export function setupAuthRoutes(app: Express) {
           id: testUserId,
           email,
           name,
-          roleLevel: roleLevel || 100,
+          roleLevel: roleLevel || 1000,
           companyId: companyId || 1
         }
       });

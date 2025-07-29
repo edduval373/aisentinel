@@ -28,9 +28,9 @@ export const roleBasedAccess = {
     DEMO: 0,
     USER: 1,
     ADMIN: 2,
-    ADMINISTRATOR: 98,
-    OWNER: 99,
-    SUPER_USER: 100,
+    ADMINISTRATOR: 998,
+    OWNER: 999,
+    SUPER_USER: 1000,
   } as const,
 
   /**
