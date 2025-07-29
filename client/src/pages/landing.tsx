@@ -137,24 +137,28 @@ export default function Landing() {
               Sign In
             </Button>
             
-            {/* Development Super-User Login */}
+            {/* Developer Authentication - Bypass Email Verification */}
             <button
               onClick={async () => {
                 try {
-                  console.log('Attempting super-user login...');
+                  console.log('Attempting developer authentication...');
                   const response = await fetch('/api/auth/super-login', {
                     method: 'POST',
                     credentials: 'include',
                   });
                   
                   if (response.ok) {
-                    console.log('Super-user session created, refreshing page...');
-                    window.location.href = '/';
+                    const data = await response.json();
+                    console.log('Developer session created:', data);
+                    console.log('Redirecting to chat interface...');
+                    // Force redirect to chat interface
+                    window.location.href = '/chat';
                   } else {
-                    console.error('Super-user login failed');
+                    const error = await response.text();
+                    console.error('Developer authentication failed:', error);
                   }
                 } catch (error) {
-                  console.error('Super-user login error:', error);
+                  console.error('Developer authentication error:', error);
                 }
               }}
               style={{
@@ -177,7 +181,7 @@ export default function Landing() {
                 e.currentTarget.style.color = '#dc2626';
               }}
             >
-              Super-User Login
+              Developer Login
             </button>
           </div>
         </div>

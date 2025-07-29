@@ -7,6 +7,9 @@ export interface AuthenticatedRequest extends Request {
     email: string;
     companyId: number | null;
     roleLevel: number;
+    actualRoleLevel?: number;
+    isDeveloper?: boolean;
+    testRole?: string | null;
   };
 }
 
@@ -31,14 +34,23 @@ export const cookieAuth = async (req: AuthenticatedRequest, res: Response, next:
       return res.status(401).json({ message: 'Unauthorized' });
     }
 
+    // Calculate effective role level for developers with test roles
+    let effectiveRoleLevel = session.roleLevel;
+    if (session.isDeveloper && session.testRole) {
+      effectiveRoleLevel = authService.getEffectiveRoleLevel(session.testRole);
+    }
+
     req.user = {
       userId: session.userId,
       email: session.email,
       companyId: session.companyId,
-      roleLevel: session.roleLevel,
+      roleLevel: effectiveRoleLevel,
+      actualRoleLevel: session.roleLevel,
+      isDeveloper: session.isDeveloper || false,
+      testRole: session.testRole || null,
     };
 
-    console.log('CookieAuth: Authentication successful -', req.user.email, 'roleLevel:', req.user.roleLevel);
+    console.log('CookieAuth: Authentication successful -', req.user?.email, 'roleLevel:', req.user?.roleLevel);
     next();
   } catch (error) {
     console.error('CookieAuth: Authentication error:', error);
@@ -58,13 +70,22 @@ export const optionalAuth = async (req: AuthenticatedRequest, res: Response, nex
       console.log('OptionalAuth: session verified =', !!session);
       
       if (session) {
+        // Calculate effective role level for developers with test roles
+        let effectiveRoleLevel = session.roleLevel;
+        if (session.isDeveloper && session.testRole) {
+          effectiveRoleLevel = authService.getEffectiveRoleLevel(session.testRole);
+        }
+
         req.user = {
           userId: session.userId,
           email: session.email,
           companyId: session.companyId,
-          roleLevel: session.roleLevel,
+          roleLevel: effectiveRoleLevel,
+          actualRoleLevel: session.roleLevel,
+          isDeveloper: session.isDeveloper || false,
+          testRole: session.testRole || null,
         };
-        console.log('OptionalAuth: user set =', req.user.email, 'role level:', req.user.roleLevel);
+        console.log('OptionalAuth: user set =', req.user?.email, 'role level:', req.user?.roleLevel);
       }
     }
 
