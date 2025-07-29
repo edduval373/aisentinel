@@ -14,9 +14,9 @@ export function setupAuthRoutes(app: Express) {
   app.post('/api/auth/request-verification', async (req, res) => {
     try {
       const { email } = requestVerificationSchema.parse(req.body);
-      
+
       const success = await authService.initiateEmailVerification(email);
-      
+
       if (success) {
         res.json({ success: true, message: "Verification email sent successfully" });
       } else {
@@ -36,7 +36,7 @@ export function setupAuthRoutes(app: Express) {
   app.get('/api/auth/verify', async (req, res) => {
     try {
       const token = req.query.token as string;
-      
+
       if (!token) {
         return res.status(400).json({ success: false, message: "No verification token provided" });
       }
@@ -44,7 +44,7 @@ export function setupAuthRoutes(app: Express) {
       console.log("🔐 Email verification attempt for token:", token.substring(0, 10) + "...");
 
       const session = await authService.verifyEmailToken(token);
-      
+
       if (!session) {
         console.log("❌ Invalid or expired verification token");
         return res.status(400).json({ success: false, message: "Invalid or expired verification token" });
@@ -63,7 +63,7 @@ export function setupAuthRoutes(app: Express) {
       // Get user details for response
       const user = await storage.getUser(session.userId);
       let companyName = null;
-      
+
       if (session.companyId) {
         const company = await storage.getCompanyById(session.companyId);
         companyName = company?.name;
@@ -88,7 +88,7 @@ export function setupAuthRoutes(app: Express) {
   app.get('/api/auth/dev-verify', async (req, res) => {
     try {
       const token = req.query.token as string;
-      
+
       if (!token) {
         return res.status(400).json({ success: false, message: "No verification token provided" });
       }
@@ -97,7 +97,7 @@ export function setupAuthRoutes(app: Express) {
 
       // Check if the token exists in the database
       const verificationToken = await storage.getEmailVerificationToken(token);
-      
+
       if (!verificationToken || verificationToken.isUsed || verificationToken.expiresAt < new Date()) {
         console.log("❌ Invalid or expired verification token");
         return res.status(400).json({ success: false, message: "Invalid or expired verification token" });
@@ -105,12 +105,12 @@ export function setupAuthRoutes(app: Express) {
 
       // Mark token as used
       await storage.markEmailVerificationTokenAsUsed(verificationToken.id);
-      
+
       console.log("✅ Valid token found for:", verificationToken.email, "- Creating session with correct role level");
 
       // Create session using the authentication service
       const session = await authService.verifyEmailToken(token);
-      
+
       if (!session) {
         console.log("❌ Failed to create session");
         return res.status(400).json({ success: false, message: "Failed to create session" });
@@ -140,7 +140,7 @@ export function setupAuthRoutes(app: Express) {
   app.post('/api/auth/dev-login', async (req, res) => {
     try {
       const { email } = req.body;
-      
+
       // Define test accounts with their properties
       const testAccounts = {
         'ed.duval15@gmail.com': { 
@@ -179,7 +179,7 @@ export function setupAuthRoutes(app: Express) {
           companyId: 1 
         }
       };
-      
+
       if (!testAccounts[email]) {
         return res.status(403).json({ success: false, message: "Development login only available for test accounts" });
       }
@@ -188,14 +188,14 @@ export function setupAuthRoutes(app: Express) {
 
       // Get or create the user in the database
       let user = await storage.getUserByEmail(email);
-      
+
       if (!user) {
         // Create the test user if it doesn't exist
         const testAccount = testAccounts[email];
-        
+
         // Generate a unique ID for the test user
         const testUserId = `test-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-        
+
         user = await storage.upsertUser({
           id: testUserId,
           email,
@@ -289,7 +289,7 @@ export function setupAuthRoutes(app: Express) {
       const role = roleMap[roleLevel] || 'user';
 
       await storage.updateUser(userId, { roleLevel, role });
-      
+
       res.json({ success: true, message: "User role updated successfully" });
     } catch (error: any) {
       console.error("Update user role error:", error);
@@ -305,7 +305,7 @@ export function setupAuthRoutes(app: Express) {
         const sessionToken = req.cookies?.sessionToken;
         if (sessionToken && sessionToken.startsWith('dev-session-')) {
           console.log(`🔧 Development session detected: ${sessionToken.substring(0, 20)}...`);
-          
+
           // For development sessions, create a mock authenticated user
           const devUser = {
             id: 1,
@@ -317,13 +317,13 @@ export function setupAuthRoutes(app: Express) {
             companyId: 1,
             companyName: 'Duval AI Solutions'
           };
-          
+
           return res.json({
             authenticated: true,
             user: devUser
           });
         }
-        
+
         // NO COOKIES - Return not authenticated (should show landing page)
         console.log('🔒 No session token found, user not authenticated');
         return res.json({ authenticated: false });
@@ -331,7 +331,7 @@ export function setupAuthRoutes(app: Express) {
 
       const user = await storage.getUser(req.user.userId);
       let companyName = null;
-      
+
       if (req.user.companyId) {
         const company = await storage.getCompanyById(req.user.companyId);
         companyName = company?.name;
@@ -372,7 +372,7 @@ export function setupAuthRoutes(app: Express) {
   app.post('/api/auth/logout', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
       const sessionToken = req.cookies?.sessionToken;
-      
+
       if (sessionToken) {
         await authService.logout(sessionToken);
       }
@@ -399,10 +399,10 @@ export function setupAuthRoutes(app: Express) {
     try {
       // Direct access to emailService using existing import
       const { emailService } = await import('./services/emailService');
-      
+
       const configInfo = emailService.getConfigInfo();
       const connectionTest = await emailService.testSendGridConnection();
-      
+
       res.json({
         success: true,
         config: configInfo,
@@ -447,7 +447,7 @@ export function setupAuthRoutes(app: Express) {
   app.get('/api/dev/auth/verify', async (req, res) => {
     try {
       const token = req.query.token as string;
-      
+
       if (!token) {
         return res.status(400).json({ success: false, message: "No verification token provided" });
       }
@@ -455,7 +455,7 @@ export function setupAuthRoutes(app: Express) {
       console.log("🔧 Development email verification attempt for token:", token.substring(0, 10) + "...");
 
       const session = await authService.verifyEmailToken(token);
-      
+
       if (!session) {
         console.log("❌ Invalid or expired verification token");
         return res.status(400).json({ success: false, message: "Invalid or expired verification token" });
@@ -465,10 +465,10 @@ export function setupAuthRoutes(app: Express) {
 
       // Create development session token
       const devSessionToken = `dev-session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      
+
       // Store the session in database
       const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
-      
+
       await storage.createUserSession({
         userId: session.userId.toString(),
         sessionToken: devSessionToken,
@@ -500,7 +500,7 @@ export function setupAuthRoutes(app: Express) {
   app.post('/api/auth/demo-signup', async (req, res) => {
     try {
       const { email, ipAddress, userAgent } = req.body;
-      
+
       if (!email) {
         return res.status(400).json({ success: false, message: "Email is required" });
       }
@@ -509,13 +509,13 @@ export function setupAuthRoutes(app: Express) {
 
       // Create demo session token
       const sessionToken = `demo-session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      
+
       // Set expiration to 24 hours for demo accounts
       const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
-      
+
       // Check if demo user already exists
       let demoUser = await storage.getDemoUserByEmail(email);
-      
+
       if (demoUser) {
         // Update existing demo user with new session
         demoUser = await storage.updateDemoUserSession(email, sessionToken, expiresAt);
@@ -533,7 +533,7 @@ export function setupAuthRoutes(app: Express) {
         });
         console.log(`✅ DEMO SIGNUP: Created new demo user with ID ${demoUser.id}`);
       }
-      
+
       // Set session cookie
       res.cookie('sessionToken', sessionToken, {
         httpOnly: true,
@@ -570,7 +570,7 @@ export function setupAuthRoutes(app: Express) {
   app.post('/api/auth/dev-login', async (req, res) => {
     try {
       const { email } = req.body;
-      
+
       if (!email || email !== 'ed.duval15@gmail.com') {
         return res.status(400).json({ success: false, message: "Invalid email" });
       }
@@ -579,10 +579,10 @@ export function setupAuthRoutes(app: Express) {
 
       // Create development session AND store it in database
       const sessionToken = `dev-session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      
+
       // Store the session in database so authentication middleware can find it
       const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
-      
+
       await storage.createUserSession({
         userId: "42450602",
         sessionToken,
@@ -591,9 +591,9 @@ export function setupAuthRoutes(app: Express) {
         roleLevel: 100,
         expiresAt,
       });
-      
+
       console.log(`✅ DEV LOGIN: Created and stored development session in database`);
-      
+
       // Set session cookie
       res.cookie('sessionToken', sessionToken, {
         httpOnly: true,
@@ -632,10 +632,10 @@ export function setupAuthRoutes(app: Express) {
       }
 
       const { email, name, roleLevel, companyId } = req.body;
-      
+
       // Create a test session with the provided user data
       const testUserId = `test-${email}`;
-      
+
       // Store user data in session
       (req as any).session.userId = testUserId;
       (req as any).session.email = email;
@@ -643,9 +643,9 @@ export function setupAuthRoutes(app: Express) {
       (req as any).session.roleLevel = roleLevel || 100;
       (req as any).session.companyId = companyId || 1;
       (req as any).session.authenticated = true;
-      
+
       console.log(`Created test session for ${email} with role level ${roleLevel}`);
-      
+
       res.json({
         success: true,
         message: 'Test session created',

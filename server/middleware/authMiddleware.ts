@@ -120,6 +120,7 @@ export const optionalUnifiedAuth = async (req: AuthenticatedRequest, res: Respon
           companyId = session.companyId;
           // Get effective role level (considering developer test roles)
           const effectiveRoleLevel = authService.getEffectiveRoleLevel(session);
+          roleLevel = effectiveRoleLevel;
 
           // Set user information on the request
           req.user = {
