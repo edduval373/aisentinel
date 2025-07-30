@@ -150,6 +150,8 @@ Recent Updates:
     - /api/admin/api-keys - Returns API key configuration status for Setup API Keys page
   * RESTORED: Multi-company functionality in production matching development environment
   * RESOLVED: Company logo display issue by connecting to real database company records
+  * FIXED: Database column mapping (snake_case to camelCase) for proper frontend compatibility
+  * VERIFIED: Authentic company data confirmed in database: "Duval AI Solutions" with real base64 logo
   * VERIFIED: Super-user authentication working with role level 1000, sidebar sections displaying correctly
   * READY: Production deployment will show complete functionality with authentic company data and logos
 - July 30, 2025. PRODUCTION AUTHENTICATION FIX - Complete Environment Parity Achieved:

@@ -284,7 +284,27 @@ export default async function handler(req, res) {
             });
           }
           
-          return res.status(200).json(companyResult.rows[0]);
+          // Convert snake_case to camelCase for frontend compatibility
+          const company = companyResult.rows[0];
+          const responseData = {
+            id: company.id,
+            name: company.name,
+            domain: company.domain,
+            logo: company.logo,
+            primaryAdminName: company.primary_admin_name,
+            primaryAdminEmail: company.primary_admin_email,
+            primaryAdminTitle: company.primary_admin_title,
+            isActive: company.is_active,
+            createdAt: company.created_at,
+            updatedAt: company.updated_at,
+            logoSize: company.logo_size,
+            showCompanyName: company.show_company_name,
+            showCompanyLogo: company.show_company_logo,
+            companyNameSize: company.company_name_size,
+            environment: 'production-database'
+          };
+          
+          return res.status(200).json(responseData);
         } else {
           // Fallback demo data
           return res.status(200).json({
@@ -322,7 +342,26 @@ export default async function handler(req, res) {
           const result = await client.query('SELECT * FROM companies ORDER BY id');
           await client.end();
           
-          return res.status(200).json(result.rows);
+          // Convert snake_case to camelCase for frontend compatibility
+          const companies = result.rows.map(company => ({
+            id: company.id,
+            name: company.name,
+            domain: company.domain,
+            logo: company.logo,
+            primaryAdminName: company.primary_admin_name,
+            primaryAdminEmail: company.primary_admin_email,
+            primaryAdminTitle: company.primary_admin_title,
+            isActive: company.is_active,
+            createdAt: company.created_at,
+            updatedAt: company.updated_at,
+            logoSize: company.logo_size,
+            showCompanyName: company.show_company_name,
+            showCompanyLogo: company.show_company_logo,
+            companyNameSize: company.company_name_size,
+            employeeCount: 1 // Calculate this properly in real implementation
+          }));
+          
+          return res.status(200).json(companies);
         } else {
           // Fallback demo data for testing
           return res.status(200).json([
