@@ -69,15 +69,13 @@ export function setupAuthRoutes(app: Express) {
         companyName = company?.name;
       }
 
-      // For development, redirect to the development environment instead of production
-      if (process.env.NODE_ENV === 'development') {
-        const devUrl = `https://8b45f032-3543-41c9-9d7b-a06e3bbab484-00-2a5ekmx4eqmb5.worf.replit.dev/?verified=true&email=${encodeURIComponent(session.email)}`;
-        console.log("🔧 Development mode - redirecting to:", devUrl);
-        res.redirect(devUrl);
-      } else {
-        // Production redirect
-        res.redirect(`/?verified=true&email=${encodeURIComponent(session.email)}`);
-      }
+      // Get the current host from the request to redirect back to the same environment
+      const protocol = req.secure ? 'https' : 'http';
+      const host = req.get('host');
+      const redirectUrl = `${protocol}://${host}/?verified=true&email=${encodeURIComponent(session.email)}`;
+      
+      console.log("✅ Email verified successfully - redirecting to:", redirectUrl);
+      res.redirect(redirectUrl);
     } catch (error: any) {
       console.error("Verification error:", error);
       res.status(500).json({ success: false, message: "An error occurred during verification" });
