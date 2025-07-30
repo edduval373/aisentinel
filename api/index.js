@@ -585,23 +585,28 @@ export default async function handler(req, res) {
           // For demo mode, use company #1 API keys to provide real AI responses
           // but save as demo messages (not persistent)
           
-          // Get AI model info from database for company #1
+          // Get AI model info from database for company #1 with proper cleanup
           if (process.env.DATABASE_URL) {
-            const { Client } = await import('pg');
-            const client = new Client({
-              connectionString: process.env.DATABASE_URL,
-              ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
-            });
-            
-            await client.connect();
-            
-            // Get the selected AI model with API key from company #1
-            const modelResult = await client.query(
-              'SELECT * FROM "aiModels" WHERE id = $1 AND "companyId" = $2',
-              [aiModelId, 1]
-            );
-            
-            await client.end();
+            let client = null;
+            try {
+              const { Client } = await import('pg');
+              client = new Client({
+                connectionString: process.env.DATABASE_URL,
+                ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+                connectionTimeoutMillis: 3000,
+                query_timeout: 3000
+              });
+              
+              await Promise.race([
+                client.connect(),
+                new Promise((_, reject) => setTimeout(() => reject(new Error('Connection timeout')), 3000))
+              ]);
+              
+              // Get the selected AI model with API key from company #1
+              const modelResult = await client.query(
+                'SELECT * FROM "ai_models" WHERE id = $1 AND "company_id" = $2',
+                [aiModelId, 1]
+              );
             
             if (modelResult.rows.length > 0) {
               const model = modelResult.rows[0];
@@ -631,6 +636,19 @@ export default async function handler(req, res) {
 
               console.log('Demo response created using company #1 model:', model.name);
               return res.json({ userMessage, assistantMessage });
+            }
+            } catch (dbError) {
+              console.warn(`Chat message database connection failed: ${dbError.message}`);
+            } finally {
+              // Always close connection if it was opened
+              if (client) {
+                try {
+                  await client.end();
+                  console.log("Chat message database connection closed");
+                } catch (closeError) {
+                  console.warn("Error closing chat message connection:", closeError.message);
+                }
+              }
             }
           }
           
@@ -680,12 +698,13 @@ export default async function handler(req, res) {
       try {
         console.log("Production ai-models endpoint accessed");
         
-        // Try database connection with timeout, fallback to cached data if connection fails
+        // Try database connection with proper cleanup, fallback to cached data if connection fails
         if (process.env.DATABASE_URL) {
           console.log("Attempting database connection for AI models...");
+          let client = null;
           try {
             const { Client } = await import('pg');
-            const client = new Client({
+            client = new Client({
               connectionString: process.env.DATABASE_URL,
               ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
               connectionTimeoutMillis: 3000,
@@ -701,7 +720,6 @@ export default async function handler(req, res) {
             
             // Get all AI models for company 1 (Duval AI Solutions) 
             const modelsResult = await client.query('SELECT * FROM "ai_models" WHERE "company_id" = $1 ORDER BY id', [1]);
-            await client.end();
             
             console.log(`Found ${modelsResult.rows.length} AI models from database`);
             
@@ -714,6 +732,16 @@ export default async function handler(req, res) {
             return res.status(200).json(models);
           } catch (dbError) {
             console.warn(`Database connection failed: ${dbError.message}, using cached data`);
+          } finally {
+            // Always close connection if it was opened
+            if (client) {
+              try {
+                await client.end();
+                console.log("AI models database connection closed");
+              } catch (closeError) {
+                console.warn("Error closing AI models connection:", closeError.message);
+              }
+            }
           }
         }
         
@@ -836,11 +864,12 @@ export default async function handler(req, res) {
       try {
         console.log("Production activity-types endpoint accessed");
         
-        // Try database connection with timeout, fallback to cached data if connection fails  
+        // Try database connection with proper cleanup, fallback to cached data if connection fails  
         if (process.env.DATABASE_URL) {
+          let client = null;
           try {
             const { Client } = await import('pg');
-            const client = new Client({
+            client = new Client({
               connectionString: process.env.DATABASE_URL,
               ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
               connectionTimeoutMillis: 3000,
@@ -854,12 +883,21 @@ export default async function handler(req, res) {
             
             // Get all activity types for company 1 (Duval AI Solutions)
             const typesResult = await client.query('SELECT * FROM "activity_types" WHERE "company_id" = $1 ORDER BY id', [1]);
-            await client.end();
             
             console.log(`Found ${typesResult.rows.length} activity types from database`);
             return res.status(200).json(typesResult.rows);
           } catch (dbError) {
             console.warn(`Database connection failed: ${dbError.message}, using cached data`);
+          } finally {
+            // Always close connection if it was opened
+            if (client) {
+              try {
+                await client.end();
+                console.log("Activity types database connection closed");
+              } catch (closeError) {
+                console.warn("Error closing activity types connection:", closeError.message);
+              }
+            }
           }
         }
         
