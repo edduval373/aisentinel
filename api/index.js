@@ -484,20 +484,81 @@ export default async function handler(req, res) {
       }
     }
 
-    // Chat session creation endpoint
+    // Chat session creation endpoint - Connect to real database
     if (path === '/api/chat/session' && req.method === 'POST') {
       try {
-        // For production serverless, create a demo session
-        const sessionId = Math.floor(Math.random() * 10000) + 1000;
-        return res.status(200).json({
-          id: sessionId,
-          title: 'New Chat',
-          aiModel: 'General',
-          activityType: 'general',
-          createdAt: new Date().toISOString(),
-          environment: 'production-serverless'
-        });
+        console.log("Production chat session creation endpoint accessed");
+        
+        // Connect to the real Railway PostgreSQL database
+        if (process.env.DATABASE_URL) {
+          console.log("Connecting to Railway PostgreSQL database for session creation...");
+          const { Client } = await import('pg');
+          const client = new Client({
+            connectionString: process.env.DATABASE_URL,
+            ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+          });
+          
+          await client.connect();
+          console.log("Database connected successfully for session creation");
+          
+          // First, ensure there's a valid session token for the user
+          let sessionToken = req.headers.cookie?.match(/sessionToken=([^;]+)/)?.[1];
+          
+          if (!sessionToken || (!sessionToken.startsWith('prod-session-') && !sessionToken.startsWith('dev-session-'))) {
+            // Create a new session token if none exists or invalid
+            sessionToken = `prod-session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+            const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+            
+            // Create or update user session
+            await client.query(
+              'INSERT INTO "userSessions" ("userId", "sessionToken", "email", "companyId", "roleLevel", "expiresAt", "lastAccessed") VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT ("sessionToken") DO UPDATE SET "lastAccessed" = $7',
+              ['42450602', sessionToken, 'ed.duval15@gmail.com', 1, 1000, expiresAt, new Date()]
+            );
+            
+            console.log(`✅ Created user session token: ${sessionToken.substring(0, 20)}...`);
+          }
+          
+          // Create a real chat session in the database for company 1 (Duval AI Solutions)
+          const sessionResult = await client.query(
+            'INSERT INTO "chatSessions" ("companyId", "userId", "title", "aiModel", "activityType", "createdAt") VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+            [1, '42450602', 'New Chat', 'General', 'general', new Date()]
+          );
+          
+          await client.end();
+          
+          const session = sessionResult.rows[0];
+          console.log(`✅ Real chat session created successfully: ${session.id}`);
+          
+          // Set session cookie if we created a new one
+          if (!req.headers.cookie?.includes('sessionToken=')) {
+            res.setHeader('Set-Cookie', `sessionToken=${sessionToken}; HttpOnly; Secure; SameSite=Strict; Max-Age=${30 * 24 * 60 * 60}; Path=/`);
+          }
+          
+          return res.status(200).json({
+            id: session.id,
+            companyId: session.companyId,
+            userId: session.userId,
+            title: session.title,
+            aiModel: session.aiModel,
+            activityType: session.activityType,
+            createdAt: session.createdAt,
+            sessionToken: sessionToken,
+            environment: 'production-database'
+          });
+        } else {
+          console.log("No DATABASE_URL found, falling back to demo session");
+          const sessionId = Math.floor(Math.random() * 10000) + 1000;
+          return res.status(200).json({
+            id: sessionId,
+            title: 'New Chat',
+            aiModel: 'General',
+            activityType: 'general',
+            createdAt: new Date().toISOString(),
+            environment: 'production-fallback'
+          });
+        }
       } catch (error) {
+        console.error('Production session creation error:', error);
         return res.status(500).json({
           error: error.message,
           message: 'Failed to create chat session'
