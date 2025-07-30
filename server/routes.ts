@@ -1729,6 +1729,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Create new chat session
+  app.post('/api/chat/session', optionalAuth, async (req: AuthenticatedRequest, res) => {
+    try {
+      let userId: string | undefined;
+      let companyId: number | undefined;
+
+      console.log('🔍 POST /api/chat/session - Creating new session');
+
+      // Try cookie auth first
+      if (req.cookies?.sessionToken) {
+        const authService = await import('./services/authService');
+        const session = await authService.authService.verifySession(req.cookies.sessionToken);
+        if (session) {
+          userId = session.userId;
+          companyId = session.companyId;
+          console.log(`✅ Cookie auth successful: userId=${userId}, companyId=${companyId}`);
+        } else {
+          console.log(`❌ Cookie auth failed for token: ${req.cookies.sessionToken.substring(0, 20)}...`);
+        }
+      } else {
+        console.log(`❌ No session token found in cookies`);
+      }
+
+      // Fallback to Replit Auth (only if enabled)
+      if (!userId && process.env.ENABLE_REPLIT_AUTH === 'true' && req.user?.claims?.sub) {
+        userId = req.user.claims.sub;
+        const user = await storage.getUser(userId);
+        companyId = user?.companyId;
+        console.log(`✅ Replit auth fallback: userId=${userId}, companyId=${companyId}`);
+      }
+
+      if (!userId || !companyId) {
+        console.log(`❌ No valid authentication found, returning 401`);
+        return res.status(401).json({ message: "Authentication required" });
+      }
+
+      // Create new chat session
+      const session = await storage.createChatSession({
+        companyId: companyId,
+        userId: userId,
+        title: "New Chat",
+        aiModel: "General",
+        activityType: "general"
+      });
+
+      console.log('✅ Chat session created successfully:', session.id);
+      res.json(session);
+
+    } catch (error) {
+      console.error('Error creating chat session:', error);
+      res.status(500).json({ message: "Failed to create chat session" });
+    }
+  });
+
   // Get chat session by ID
   app.get('/api/chat/session/:sessionId', optionalAuth, async (req: AuthenticatedRequest, res) => {
     try {
