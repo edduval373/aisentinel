@@ -67,49 +67,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Emergency authentication route - for database connection issues
-  app.post('/api/auth/emergency-login', async (req, res) => {
-    try {
-      console.log('🚨 Emergency authentication requested due to database connection issues');
-      
-      // Create emergency session token
-      const sessionToken = `dev-session-${Date.now()}-${Math.random().toString(36).substring(7)}`;
-      
-      // Set session cookie
-      res.cookie('sessionToken', sessionToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
-      });
-      
-      console.log('🚨 Emergency session created:', sessionToken.substring(0, 20) + '...');
-      
-      res.json({
-        success: true,
-        message: 'Emergency session created - will connect to Railway database when available',
-        sessionToken: sessionToken,
-        user: {
-          userId: '42450602',
-          email: 'ed.duval15@gmail.com', 
-          firstName: 'Edward',
-          lastName: 'Duval',
-          role: 'super-user',
-          roleLevel: 1000,
-          companyId: 1,
-          companyName: 'Duval AI Solutions',
-          isDeveloper: true,
-          testRole: 'super-user'
-        }
-      });
-    } catch (error) {
-      console.error('Emergency login error:', error);
-      res.status(500).json({
-        error: error.message,
-        message: 'Failed to create emergency session'
-      });
-    }
-  });
+
 
   // Super-user authentication endpoint - for manual login (developer testing)
   app.post('/api/auth/super-login', async (req, res) => {
@@ -1869,7 +1827,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userId = req.user.claims.sub;
         const user = await storage.getUser(userId);
         companyId = user?.companyId;
-        console.log(`✅ Replit auth fallback: userId=${userId}, companyId=${companyId}`);
+        console.log(`✅ Replit auth: userId=${userId}, companyId=${companyId}`);
       }
 
       if (!userId || !companyId) {
@@ -1924,7 +1882,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userId = req.user.claims.sub;
         const user = await storage.getUser(userId);
         companyId = user?.companyId;
-        console.log(`✅ Replit auth fallback: userId=${userId}, companyId=${companyId}`);
+        console.log(`✅ Replit auth: userId=${userId}, companyId=${companyId}`);
       }
 
       if (!userId || !companyId) {
@@ -1986,7 +1944,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userId = req.user.claims.sub;
         const user = await storage.getUser(userId);
         companyId = user?.companyId;
-        console.log(`✅ Replit auth fallback: userId=${userId}, companyId=${companyId}`);
+        console.log(`✅ Replit auth: userId=${userId}, companyId=${companyId}`);
       }
 
       if (!userId || !companyId) {

@@ -395,28 +395,7 @@ export class AuthService {
       } catch (dbError) {
         console.warn('🔍 CHECKPOINT ERROR - Database session verification failed:', dbError.message);
         
-        // For known session tokens, provide fallback authentication during database issues
-        // Check for various session token formats including existing replit sessions
-        if (sessionToken.startsWith('dev-session-') || 
-            sessionToken.startsWith('prod-session-') || 
-            sessionToken.startsWith('replit-auth-') ||
-            sessionToken.length >= 20) { // Existing session token format
-          
-          console.log('🔍 CHECKPOINT B - Using fallback authentication for session during database connection issue');
-          console.log('🔍 CHECKPOINT B - Session token format:', sessionToken.substring(0, 10) + '...');
-          
-          return {
-            userId: '42450602',
-            email: 'ed.duval15@gmail.com',
-            companyId: 1,
-            roleLevel: 1000,
-            sessionToken: sessionToken,
-            isDeveloper: true,
-            testRole: 'super-user'
-          };
-        }
-        
-        // Database unavailable, cannot verify session
+        // Database unavailable, cannot verify session - authentication fails
         return null;
       }
 
