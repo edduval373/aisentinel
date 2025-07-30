@@ -225,20 +225,81 @@ export default async function handler(req, res) {
       }
     }
 
-    // Current company endpoint for sidebar
+    // Current company endpoint for sidebar - Connect to real database
     if (path === '/api/user/current-company' && req.method === 'GET') {
       try {
-        return res.status(200).json({
-          id: 1,
-          name: 'Duval AI Solutions',
-          logo: '/ai-sentinel-logo.png',
-          domain: 'duvalsolutions.net',
-          primaryAdminName: 'Edward Duval',
-          primaryAdminEmail: 'ed.duval15@gmail.com',
-          primaryAdminTitle: 'Chief Executive Officer',
-          environment: 'production-serverless'
-        });
+        // Extract session token from cookies
+        const sessionToken = req.headers.cookie?.match(/sessionToken=([^;]+)/)?.[1];
+        
+        if (!sessionToken) {
+          return res.status(401).json({
+            error: 'No session token found',
+            message: 'Authentication required'
+          });
+        }
+
+        // Try to connect to the real database if available
+        if (process.env.DATABASE_URL) {
+          const { Client } = await import('pg');
+          const client = new Client({
+            connectionString: process.env.DATABASE_URL,
+            ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+          });
+          
+          await client.connect();
+          
+          // Get user's company ID from session
+          const sessionResult = await client.query('SELECT * FROM sessions WHERE token = $1', [sessionToken]);
+          if (sessionResult.rows.length === 0) {
+            await client.end();
+            return res.status(401).json({
+              error: 'Invalid session',
+              message: 'Session not found'
+            });
+          }
+          
+          const session = sessionResult.rows[0];
+          const userId = session.userId || session.user_id;
+          
+          // Get user's company
+          const userResult = await client.query('SELECT company_id FROM users WHERE id = $1', [userId]);
+          if (userResult.rows.length === 0) {
+            await client.end();
+            return res.status(404).json({
+              error: 'User not found',
+              message: 'User record not found'
+            });
+          }
+          
+          const companyId = userResult.rows[0].company_id;
+          
+          // Get company details
+          const companyResult = await client.query('SELECT * FROM companies WHERE id = $1', [companyId]);
+          await client.end();
+          
+          if (companyResult.rows.length === 0) {
+            return res.status(404).json({
+              error: 'Company not found',
+              message: 'Company record not found'
+            });
+          }
+          
+          return res.status(200).json(companyResult.rows[0]);
+        } else {
+          // Fallback demo data
+          return res.status(200).json({
+            id: 1,
+            name: 'Duval AI Solutions',
+            logo: '/ai-sentinel-logo.png',
+            domain: 'duvalsolutions.net',
+            primaryAdminName: 'Edward Duval',
+            primaryAdminEmail: 'ed.duval15@gmail.com',
+            primaryAdminTitle: 'Chief Executive Officer',
+            environment: 'production-serverless-fallback'
+          });
+        }
       } catch (error) {
+        console.error('Current Company API Error:', error);
         return res.status(500).json({
           error: error.message,
           message: 'Failed to fetch current company'
@@ -246,23 +307,40 @@ export default async function handler(req, res) {
       }
     }
 
-    // Companies endpoint for Company Management
+    // Companies endpoint for Company Management - Connect to real database
     if (path === '/api/admin/companies' && req.method === 'GET') {
       try {
-        return res.status(200).json([
-          {
-            id: 1,
-            name: 'Duval AI Solutions',
-            primaryAdminTitle: 'Chief Executive Officer',
-            primaryAdminName: 'Edward Duval',
-            primaryAdminEmail: 'ed.duval15@gmail.com',
-            logo: '/ai-sentinel-logo.png',
-            isActive: true,
-            employeeCount: 1,
-            createdAt: '2025-07-10T00:00:00.000Z'
-          }
-        ]);
+        // Try to connect to the real database if available
+        if (process.env.DATABASE_URL) {
+          const { Client } = await import('pg');
+          const client = new Client({
+            connectionString: process.env.DATABASE_URL,
+            ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+          });
+          
+          await client.connect();
+          const result = await client.query('SELECT * FROM companies ORDER BY id');
+          await client.end();
+          
+          return res.status(200).json(result.rows);
+        } else {
+          // Fallback demo data for testing
+          return res.status(200).json([
+            {
+              id: 1,
+              name: 'Duval AI Solutions',
+              primaryAdminTitle: 'Chief Executive Officer',
+              primaryAdminName: 'Edward Duval',
+              primaryAdminEmail: 'ed.duval15@gmail.com',
+              logo: '/ai-sentinel-logo.png',
+              isActive: true,
+              employeeCount: 1,
+              createdAt: '2025-07-10T00:00:00.000Z'
+            }
+          ]);
+        }
       } catch (error) {
+        console.error('Companies API Error:', error);
         return res.status(500).json({
           success: false,
           message: 'Failed to fetch companies',
