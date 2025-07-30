@@ -47,6 +47,11 @@ function Router() {
     return null; // Let the HTML loading screen handle this
   }
 
+  // If authenticated, redirect to home/chat instead of landing page
+  if (isAuthenticated && window.location.pathname === '/') {
+    console.log("[APP DEBUG] Authenticated user on root path, staying on home");
+  }
+
   // Create role-based route guard
   const RoleGuard = ({ children, requiredRole }: { children: React.ReactNode; requiredRole: 'admin' | 'owner' | 'super-user' }) => {
     // Check if user is in demo mode (roleLevel 0)

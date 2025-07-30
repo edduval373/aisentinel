@@ -41,25 +41,28 @@ export default function Landing() {
     const demoUserEmail = getCookie('demoUser');
     const sessionToken = getCookie('sessionToken');
 
-    // Check if user is already authenticated and redirect to chat
-    console.log("[LANDING DEBUG] Checking authentication status...");
-    fetch('/api/auth/me', {
-      credentials: 'include',
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log("[LANDING DEBUG] Auth check result:", data);
+    // Check if user is already authenticated - immediate redirect for valid cookies
+    if (sessionToken && sessionToken.length > 10) {
+      console.log("[LANDING DEBUG] Session token detected, checking authentication...");
       
-      // If authenticated, redirect to chat
-      if (data.authenticated) {
-        console.log("[LANDING DEBUG] Authenticated user detected, redirecting to chat");
-        window.location.href = '/chat';
-        return;
-      }
-    })
-    .catch(error => {
-      console.log("[LANDING DEBUG] Auth check failed:", error);
-    });
+      fetch('/api/auth/me', {
+        method: 'GET',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(response => response.json())
+      .then(authData => {
+        console.log("[LANDING DEBUG] Auth response:", authData);
+        if (authData.authenticated && authData.user) {
+          console.log("[LANDING DEBUG] Authenticated user detected, redirecting to main app");
+          window.location.href = '/';
+          return;
+        }
+      })
+      .catch(error => {
+        console.log("[LANDING DEBUG] Auth check failed:", error);
+      });
+    }
     
     if (demoUserEmail && sessionToken && sessionToken.startsWith('demo-session-')) {
       console.log("[LANDING DEBUG] Returning demo user detected:", demoUserEmail);
