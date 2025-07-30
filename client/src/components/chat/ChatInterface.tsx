@@ -49,6 +49,8 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   console.log("AI Models loaded:", aiModels?.length || 0, "models");
   console.log("Selected Model ID:", selectedModel);
   console.log("Selected Model Object:", aiModels?.find(m => m.id === selectedModel));
+  console.log("Select Model Value (string):", selectedModel?.toString());
+  console.log("AI Models for Select:", aiModels?.map(m => ({ id: m.id, name: m.name, idString: m.id.toString() })));
   if (modelsError) {
     console.error("AI Models error:", modelsError);
   }
@@ -59,9 +61,11 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       // Prefer models with valid API keys
       const workingModel = aiModels.find((model: any) => model.hasValidApiKey !== false);
       if (workingModel) {
+        console.log("Auto-selecting working model:", workingModel.name, "ID:", workingModel.id);
         setSelectedModel(workingModel.id);
       } else {
         // Fallback to first model even if API key is not configured
+        console.log("Auto-selecting first model:", aiModels[0].name, "ID:", aiModels[0].id);
         setSelectedModel(aiModels[0].id);
       }
     }
@@ -81,6 +85,8 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   console.log("Activity Types loaded:", activityTypes?.length || 0, "types");
   console.log("Selected Activity Type ID:", selectedActivityType);
   console.log("Selected Activity Type Object:", activityTypes?.find(at => at.id === selectedActivityType));
+  console.log("Select Activity Type Value (string):", selectedActivityType?.toString());
+  console.log("Activity Types for Select:", activityTypes?.map(at => ({ id: at.id, name: at.name, idString: at.id.toString() })));
   if (typesError) {
     console.error("Activity Types error:", typesError);
   }
@@ -95,6 +101,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   // Auto-select first available activity type
   useEffect(() => {
     if (activityTypes && activityTypes.length > 0 && selectedActivityType === null) {
+      console.log("Auto-selecting activity type:", activityTypes[0].name, "ID:", activityTypes[0].id);
       setSelectedActivityType(activityTypes[0].id);
     }
   }, [activityTypes, selectedActivityType]);
@@ -328,6 +335,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
             <Select
               value={selectedModel?.toString()}
               onValueChange={(value) => {
+                console.log("AI Model selection changed to:", value);
                 if (value === "model-fusion") {
                   setSelectedModel("model-fusion" as any);
                 } else {
@@ -345,9 +353,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                 border: '1px solid #d1d5db',
                 backgroundColor: 'white'
               }}>
-                <SelectValue placeholder="Select AI Model">
-                  {selectedModel ? aiModels?.find(m => m.id === selectedModel)?.name || 'Select AI Model' : 'Select AI Model'}
-                </SelectValue>
+                <SelectValue placeholder="Select AI Model" />
               </SelectTrigger>
               <SelectContent style={{ 
                 backgroundColor: '#eff6ff', 
@@ -415,7 +421,10 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
             {/* Activity Type Dropdown */}
             <Select
               value={selectedActivityType?.toString()}
-              onValueChange={(value) => setSelectedActivityType(parseInt(value))}
+              onValueChange={(value) => {
+                console.log("Activity Type selection changed to:", value);
+                setSelectedActivityType(parseInt(value));
+              }}
               disabled={typesLoading}
             >
               <SelectTrigger style={{ 
@@ -427,9 +436,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                 border: '1px solid #d1d5db',
                 backgroundColor: 'white'
               }}>
-                <SelectValue placeholder="Select Activity Type">
-                  {selectedActivityType ? activityTypes?.find(at => at.id === selectedActivityType)?.name || 'Select Activity Type' : 'Select Activity Type'}
-                </SelectValue>
+                <SelectValue placeholder="Select Activity Type" />
               </SelectTrigger>
               <SelectContent style={{ 
                 backgroundColor: '#eff6ff', 
