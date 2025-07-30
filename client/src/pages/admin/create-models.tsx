@@ -100,7 +100,11 @@ export default function CreateModels() {
     models: models?.slice(0, 2), // First 2 models for debug
     rawModels: models, // Full models array
     queryDataType: typeof models,
-    isArray: Array.isArray(models)
+    isArray: Array.isArray(models),
+    modelsTestCondition: models && models.length > 0,
+    modelsUndefined: models === undefined,
+    modelsNull: models === null,
+    modelsEmpty: models?.length === 0
   });
 
   // Fetch debug status
@@ -484,6 +488,9 @@ export default function CreateModels() {
               <div>
                 <strong>Models Loading:</strong> {modelsLoading ? 'Yes' : 'No'}<br/>
                 <strong>Models Count:</strong> {models?.length || 0}<br/>
+                <strong>Models Type:</strong> {typeof models}<br/>
+                <strong>Is Array:</strong> {Array.isArray(models) ? 'Yes' : 'No'}<br/>
+                <strong>Models Defined:</strong> {models !== undefined ? 'Yes' : 'No'}<br/>
                 <strong>Has Error:</strong> {isError ? 'Yes' : 'No'}<br/>
                 <strong>Error Message:</strong> {error?.message || 'None'}
               </div>
@@ -491,7 +498,9 @@ export default function CreateModels() {
                 <strong>Debug Status:</strong> {debugStatus ? 'Loaded' : 'Not loaded'}<br/>
                 <strong>Environment:</strong> {(debugStatus as any)?.environment || 'Unknown'}<br/>
                 <strong>Database:</strong> {(debugStatus as any)?.databaseConnected ? 'Connected' : 'Disconnected'}<br/>
-                <strong>API Endpoint:</strong> /api/ai-models
+                <strong>API Endpoint:</strong> /api/ai-models<br/>
+                <strong>First Model Name:</strong> {models?.[0]?.name || 'None'}<br/>
+                <strong>Second Model Name:</strong> {models?.[1]?.name || 'None'}
               </div>
             </div>
           </div>
@@ -502,7 +511,7 @@ export default function CreateModels() {
           <div style={{ textAlign: 'center', padding: '40px' }}>
             <div>Loading AI models...</div>
           </div>
-        ) : models && models.length > 0 ? (
+        ) : (models && Array.isArray(models) && models.length > 0) ? (
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
