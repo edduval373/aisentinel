@@ -1054,31 +1054,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       console.log("Fetching API keys configuration status...");
       
-      // Check environment variables for API key configuration status
+      // Get user's company for database API keys
+      let companyApiKeys = {};
+      if (req.user?.userId) {
+        try {
+          const user = await storage.getUser(req.user.userId);
+          if (user?.companyId) {
+            const aiModels = await storage.getAiModels(user.companyId);
+            
+            // Extract actual API keys from database models
+            aiModels.forEach(model => {
+              const provider = model.provider.toLowerCase();
+              if (model.apiKey && !model.apiKey.startsWith('placeholder-') && !companyApiKeys[provider]) {
+                companyApiKeys[provider] = model.apiKey;
+              }
+            });
+          }
+        } catch (dbError) {
+          console.log("Could not fetch company API keys from database:", dbError.message);
+        }
+      }
+      
+      // Check both environment variables AND database for comprehensive status
       const apiKeyStatus = {
         openai: {
-          configured: !!process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your-openai-api-key-here',
-          status: !!process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your-openai-api-key-here' ? 'Configured' : 'Not configured'
+          configured: !!process.env.OPENAI_API_KEY || !!companyApiKeys['openai'],
+          status: (!!process.env.OPENAI_API_KEY || !!companyApiKeys['openai']) ? 'Configured' : 'Not configured',
+          source: !!process.env.OPENAI_API_KEY ? 'environment' : (!!companyApiKeys['openai'] ? 'database' : 'none')
         },
         anthropic: {
-          configured: !!process.env.ANTHROPIC_API_KEY && process.env.ANTHROPIC_API_KEY !== 'your-anthropic-api-key-here',
-          status: !!process.env.ANTHROPIC_API_KEY && process.env.ANTHROPIC_API_KEY !== 'your-anthropic-api-key-here' ? 'Configured' : 'Not configured'
+          configured: !!process.env.ANTHROPIC_API_KEY || !!companyApiKeys['anthropic'],
+          status: (!!process.env.ANTHROPIC_API_KEY || !!companyApiKeys['anthropic']) ? 'Configured' : 'Not configured',
+          source: !!process.env.ANTHROPIC_API_KEY ? 'environment' : (!!companyApiKeys['anthropic'] ? 'database' : 'none')
         },
         perplexity: {
-          configured: !!process.env.PERPLEXITY_API_KEY && process.env.PERPLEXITY_API_KEY !== 'your-perplexity-api-key-here',
-          status: !!process.env.PERPLEXITY_API_KEY && process.env.PERPLEXITY_API_KEY !== 'your-perplexity-api-key-here' ? 'Configured' : 'Not configured'
+          configured: !!process.env.PERPLEXITY_API_KEY || !!companyApiKeys['perplexity'],
+          status: (!!process.env.PERPLEXITY_API_KEY || !!companyApiKeys['perplexity']) ? 'Configured' : 'Not configured',
+          source: !!process.env.PERPLEXITY_API_KEY ? 'environment' : (!!companyApiKeys['perplexity'] ? 'database' : 'none')
         },
         google: {
-          configured: !!process.env.GOOGLE_AI_API_KEY && process.env.GOOGLE_AI_API_KEY !== 'your-google-api-key-here',
-          status: !!process.env.GOOGLE_AI_API_KEY && process.env.GOOGLE_AI_API_KEY !== 'your-google-api-key-here' ? 'Configured' : 'Not configured'
+          configured: !!process.env.GOOGLE_AI_API_KEY || !!companyApiKeys['google'],
+          status: (!!process.env.GOOGLE_AI_API_KEY || !!companyApiKeys['google']) ? 'Configured' : 'Not configured',
+          source: !!process.env.GOOGLE_AI_API_KEY ? 'environment' : (!!companyApiKeys['google'] ? 'database' : 'none')
         },
         cohere: {
-          configured: !!process.env.COHERE_API_KEY && process.env.COHERE_API_KEY !== 'your-cohere-api-key-here',
-          status: !!process.env.COHERE_API_KEY && process.env.COHERE_API_KEY !== 'your-cohere-api-key-here' ? 'Configured' : 'Not configured'
+          configured: !!process.env.COHERE_API_KEY || !!companyApiKeys['cohere'],
+          status: (!!process.env.COHERE_API_KEY || !!companyApiKeys['cohere']) ? 'Configured' : 'Not configured',
+          source: !!process.env.COHERE_API_KEY ? 'environment' : (!!companyApiKeys['cohere'] ? 'database' : 'none')
         },
         mistral: {
-          configured: !!process.env.MISTRAL_API_KEY && process.env.MISTRAL_API_KEY !== 'your-mistral-api-key-here',
-          status: !!process.env.MISTRAL_API_KEY && process.env.MISTRAL_API_KEY !== 'your-mistral-api-key-here' ? 'Configured' : 'Not configured'
+          configured: !!process.env.MISTRAL_API_KEY || !!companyApiKeys['mistral'],
+          status: (!!process.env.MISTRAL_API_KEY || !!companyApiKeys['mistral']) ? 'Configured' : 'Not configured',
+          source: !!process.env.MISTRAL_API_KEY ? 'environment' : (!!companyApiKeys['mistral'] ? 'database' : 'none')
         }
       };
 

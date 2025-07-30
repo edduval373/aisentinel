@@ -73,26 +73,37 @@ export default function SetupApiKeys() {
     userAuth: { isAuthenticated: !!user, roleLevel: user?.roleLevel, companyId: user?.companyId }
   });
 
-  // Initialize API keys from environment configuration
+  // Initialize API keys from models and environment configuration
   useEffect(() => {
-    if (apiKeyConfig) {
+    if (apiKeyConfig && aiModels) {
       console.log('SetupApiKeys: Loading API key config:', apiKeyConfig);
+      console.log('SetupApiKeys: Loading AI models:', aiModels.length, 'models');
+      
       const keys: Record<string, string> = {};
       
-      // Use environment configuration status to determine if keys are set
-      Object.entries(apiKeyConfig).forEach(([provider, config]: [string, any]) => {
-        if (config.configured && config.status === 'Configured') {
-          keys[provider] = `${provider.toUpperCase()}_API_KEY_CONFIGURED`;
-        } else {
-          keys[provider] = '';
+      // First, extract actual API keys from database models for input fields
+      aiModels.forEach(model => {
+        const provider = model.provider.toLowerCase();
+        if (model.apiKey && !model.apiKey.startsWith('placeholder-') && !keys[provider]) {
+          keys[provider] = model.apiKey;
+          console.log(`SetupApiKeys: Found database API key for ${provider}:`, model.apiKey.substring(0, 15) + '...');
         }
       });
       
-      console.log('SetupApiKeys: Final API keys state from environment:', 
-        Object.keys(keys).map(k => ({ provider: k, configured: !!keys[k] })));
+      // Then check configuration status for display
+      Object.entries(apiKeyConfig).forEach(([provider, config]: [string, any]) => {
+        if (!keys[provider]) {
+          // If no database key, use empty string for input field
+          keys[provider] = '';
+        }
+        console.log(`SetupApiKeys: Provider ${provider} - configured: ${config.configured}, source: ${config.source || 'none'}`);
+      });
+      
+      console.log('SetupApiKeys: Final API keys state:', 
+        Object.keys(keys).map(k => ({ provider: k, hasKey: !!keys[k], keyLength: keys[k]?.length })));
       setApiKeys(keys);
     }
-  }, [apiKeyConfig]);
+  }, [apiKeyConfig, aiModels]);
 
   // Update API key mutation
   const updateApiKeyMutation = useMutation({
@@ -100,8 +111,9 @@ export default function SetupApiKeys() {
       return apiRequest(`/api/admin/update-api-key`, "POST", { provider, apiKey });
     },
     onSuccess: (data, variables) => {
-      // Force refresh of AI models to get updated API keys
+      // Force refresh of AI models and API key configuration
       queryClient.invalidateQueries({ queryKey: ['/api/ai-models'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/api-keys'] });
       
       // Show success toast
       toast({
@@ -109,8 +121,8 @@ export default function SetupApiKeys() {
         description: `${variables.provider} API key updated successfully`,
       });
       
-      // Update local state immediately to show success visually
-      setApiKeys(prev => ({ ...prev, [variables.provider]: variables.apiKey }));
+      // Update local state immediately to show configured status
+      setApiKeys(prev => ({ ...prev, [variables.provider]: `${variables.provider.toUpperCase()}_API_KEY_CONFIGURED` }));
     },
     onError: (error: any, variables) => {
       toast({
