@@ -91,12 +91,22 @@ export default async function handler(req, res) {
     // Email verification endpoint
     if (path === '/api/auth/verify' && req.method === 'GET') {
       try {
-        const { token, email } = url.searchParams;
+        const token = url.searchParams.get('token');
+        const email = url.searchParams.get('email');
+        
+        console.log(`URL: ${req.url}`);
+        console.log(`Parsed token: ${token}, email: ${email}`);
         
         if (!token || !email) {
           return res.status(400).json({
             success: false,
-            message: 'Missing token or email parameter'
+            message: 'Missing token or email parameter',
+            debug: {
+              url: req.url,
+              searchParams: Object.fromEntries(url.searchParams.entries()),
+              token: token,
+              email: email
+            }
           });
         }
 
