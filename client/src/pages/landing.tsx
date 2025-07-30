@@ -2,13 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield, Users, BarChart3, Lock, CheckCircle, AlertTriangle, Settings } from "lucide-react";
-import DeveloperRolePicker from "@/components/developer/DeveloperRolePicker";
+
 
 export default function Landing() {
   console.log("[LANDING DEBUG] Landing component rendering...");
   
-  const [showDeveloperPicker, setShowDeveloperPicker] = useState(false);
-  const [developerEmail, setDeveloperEmail] = useState<string | null>(null);
+
   
   const handleLogin = () => {
     console.log("[LANDING DEBUG] Login button clicked");
@@ -28,34 +27,7 @@ export default function Landing() {
     return null;
   };
 
-  // Handle developer role selection
-  const handleRoleSelect = async (role: string) => {
-    console.log("[DEVELOPER] Role selected:", role);
-    
-    try {
-      // Authenticate as developer with selected test role
-      const response = await fetch('/api/auth/super-login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({ testRole: role }),
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        console.log('[DEVELOPER] Session created with role:', role, data);
-        
-        // Redirect to chat interface
-        window.location.href = '/chat';
-      } else {
-        console.error('[DEVELOPER] Failed to create session with role:', role);
-      }
-    } catch (error) {
-      console.error('[DEVELOPER] Role selection error:', error);
-    }
-  };
+
 
   console.log("[LANDING DEBUG] About to return JSX");
   
@@ -67,52 +39,24 @@ export default function Landing() {
     const demoUserEmail = getCookie('demoUser');
     const sessionToken = getCookie('sessionToken');
 
-    // Always check for developer authentication status
-    console.log("[DEVELOPER] Checking authentication status...");
+    // Check if user is already authenticated and redirect to chat
+    console.log("[LANDING DEBUG] Checking authentication status...");
     fetch('/api/auth/me', {
       credentials: 'include',
     })
     .then(response => response.json())
     .then(data => {
-      console.log("[DEVELOPER] Auth check result:", data);
+      console.log("[LANDING DEBUG] Auth check result:", data);
       
-      // If developer is authenticated, show role picker
-      if (data.authenticated && data.user && data.user.email === 'ed.duval15@gmail.com') {
-        console.log("[DEVELOPER] Developer detected:", data.user.email);
-        setDeveloperEmail(data.user.email);
-        setShowDeveloperPicker(true);
-        return;
-      }
-      
-      // If authenticated but not developer, redirect to chat
+      // If authenticated, redirect to chat
       if (data.authenticated) {
         console.log("[LANDING DEBUG] Authenticated user detected, redirecting to chat");
         window.location.href = '/chat';
         return;
       }
-      
-      // If not authenticated, check if this is a known developer environment
-      if (!data.authenticated) {
-        console.log("[DEVELOPER] No session, checking for developer context...");
-        
-        // Show developer picker if on replit.dev or has dev parameter
-        const urlParams = new URLSearchParams(window.location.search);
-        const isReplit = window.location.hostname.includes('replit.dev');
-        const hasDevParam = urlParams.get('dev') === 'true';
-        const hasDemoUserCookie = !!demoUserEmail;
-        
-        console.log("[DEVELOPER] Environment check:", { isReplit, hasDevParam, hasDemoUserCookie });
-        
-        if (isReplit || hasDevParam || hasDemoUserCookie) {
-          console.log("[DEVELOPER] Developer context detected, showing role picker");
-          setDeveloperEmail('ed.duval15@gmail.com');
-          setShowDeveloperPicker(true);
-          return;
-        }
-      }
     })
     .catch(error => {
-      console.log("[DEVELOPER] Auth check failed:", error);
+      console.log("[LANDING DEBUG] Auth check failed:", error);
     });
     
     if (demoUserEmail && sessionToken && sessionToken.startsWith('demo-session-')) {
@@ -440,152 +384,7 @@ export default function Landing() {
             </p>
           </div>
 
-          {/* Development Testing Section */}
-          <div style={{
-            backgroundColor: '#fef3c7',
-            border: '1px solid #fbbf24',
-            borderRadius: '8px',
-            padding: '16px',
-            marginTop: '24px',
-            maxWidth: '600px',
-            margin: '24px auto 0 auto'
-          }}>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              marginBottom: '12px'
-            }}>
-              <Settings style={{width: '16px', height: '16px', color: '#f59e0b'}} />
-              <span style={{
-                fontWeight: '600',
-                color: '#92400e',
-                fontSize: '14px'
-              }}>
-                Development Testing Accounts
-              </span>
-            </div>
-            <p style={{
-              fontSize: '14px',
-              color: '#92400e',
-              margin: '0 0 12px 0',
-              lineHeight: '1.5'
-            }}>
-              Quick login for testing role management functionality:
-            </p>
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-              <button
-                onClick={async () => {
-                  const response = await fetch('/api/auth/dev-login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({ email: 'ed.duval15@gmail.com' })
-                  });
-                  if (response.ok) window.location.href = '/chat';
-                }}
-                style={{
-                  padding: '6px 12px',
-                  backgroundColor: '#dc2626',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  fontSize: '12px',
-                  cursor: 'pointer'
-                }}
-              >
-                Super-User (100)
-              </button>
-              <button
-                onClick={async () => {
-                  const response = await fetch('/api/auth/dev-login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({ email: 'ed.duval+test3@gmail.com' })
-                  });
-                  if (response.ok) window.location.href = '/chat';
-                }}
-                style={{
-                  padding: '6px 12px',
-                  backgroundColor: '#7c3aed',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  fontSize: '12px',
-                  cursor: 'pointer'
-                }}
-              >
-                Owner (99)
-              </button>
-              <button
-                onClick={async () => {
-                  const response = await fetch('/api/auth/dev-login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({ email: 'ed.duval+test4@gmail.com' })
-                  });
-                  if (response.ok) window.location.href = '/chat';
-                }}
-                style={{
-                  padding: '6px 12px',
-                  backgroundColor: '#f59e0b',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  fontSize: '12px',
-                  cursor: 'pointer'
-                }}
-              >
-                Admin (98)
-              </button>
-              <button
-                onClick={async () => {
-                  const response = await fetch('/api/auth/dev-login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({ email: 'ed.duval+test2@gmail.com' })
-                  });
-                  if (response.ok) window.location.href = '/chat';
-                }}
-                style={{
-                  padding: '6px 12px',
-                  backgroundColor: '#16a34a',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  fontSize: '12px',
-                  cursor: 'pointer'
-                }}
-              >
-                Admin (2)
-              </button>
-              <button
-                onClick={async () => {
-                  const response = await fetch('/api/auth/dev-login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({ email: 'ed.duval+test1@gmail.com' })
-                  });
-                  if (response.ok) window.location.href = '/chat';
-                }}
-                style={{
-                  padding: '6px 12px',
-                  backgroundColor: '#10b981',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  fontSize: '12px',
-                  cursor: 'pointer'
-                }}
-              >
-                User (1)
-              </button>
-            </div>
-          </div>
+
         </div>
       </section>
 
