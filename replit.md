@@ -158,6 +158,10 @@ Recent Updates:
   * ENHANCED: API configuration endpoint now checks both environment variables AND database for comprehensive status
   * RESTORED: Full CRUD capability with hybrid approach - display from both sources, update to database
   * FIXED: Frontend authentication properly configured with credentials: "include" for session cookies
+  * RESOLVED: Create AI Models page loading issue - added missing /api/ai-models endpoint to production serverless function
+  * IMPLEMENTED: Production AI models endpoint connects to Railway database and returns all 9 models for company 1
+  * CONFIRMED: Company data loads correctly because /api/user/current-company endpoint was already implemented in production
+  * ADDED: Debug panel to Create AI Models page showing real-time API status and model loading information
 - July 30, 2025. PRODUCTION SIDEBAR AND API ENDPOINTS COMPLETELY FIXED:
   * FIXED: Super-user role detection logic updated from >= 100 to >= 1000 for proper 1000-level hierarchy
   * CORRECTED: Production API endpoints now connect to real PostgreSQL database instead of hardcoded data

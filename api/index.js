@@ -505,6 +505,49 @@ export default async function handler(req, res) {
       }
     }
 
+    // AI Models endpoint - Connect to real database 
+    if (path === '/api/ai-models' && req.method === 'GET') {
+      try {
+        console.log("Production ai-models endpoint accessed");
+        
+        // Connect to the real Railway PostgreSQL database
+        if (process.env.DATABASE_URL) {
+          console.log("Connecting to Railway PostgreSQL database for AI models...");
+          const { Client } = await import('pg');
+          const client = new Client({
+            connectionString: process.env.DATABASE_URL,
+            ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+          });
+          
+          await client.connect();
+          console.log("Database connected successfully for AI models");
+          
+          // Get all AI models for company 1 (Duval AI Solutions)
+          const modelsResult = await client.query('SELECT * FROM "aiModels" WHERE "companyId" = $1 ORDER BY id', [1]);
+          await client.end();
+          
+          console.log(`Found ${modelsResult.rows.length} AI models for company 1`);
+          
+          // Convert snake_case to camelCase where needed and add hasValidApiKey
+          const models = modelsResult.rows.map(model => ({
+            ...model,
+            hasValidApiKey: model.apiKey && model.apiKey.length > 10
+          }));
+          
+          return res.status(200).json(models);
+        } else {
+          console.log("No DATABASE_URL found, returning empty array");
+          return res.status(200).json([]);
+        }
+      } catch (error) {
+        console.error('AI Models API Error:', error);
+        return res.status(500).json({
+          error: error.message,
+          message: 'Failed to fetch AI models'
+        });
+      }
+    }
+
     // Default response for unmatched routes
     return res.status(404).json({
       success: false,
