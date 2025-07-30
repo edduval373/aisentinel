@@ -124,10 +124,12 @@ export function setupAuthRoutes(app: Express) {
         maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       });
 
-      // Redirect to development environment
-      const devUrl = `https://8b45f032-3543-41c9-9d7b-a06e3bbab484-00-2a5ekmx4eqmb5.worf.replit.dev/?verified=true&email=${encodeURIComponent(session.email)}`;
-      console.log("🔧 Development mode - redirecting to:", devUrl);
-      res.redirect(devUrl);
+      // Redirect to current environment (dynamic URL detection)
+      const currentHost = req.get('host') || 'localhost:5000';
+      const protocol = req.secure ? 'https' : 'http';
+      const redirectUrl = `${protocol}://${currentHost}/?verified=true&email=${encodeURIComponent(session.email)}`;
+      console.log("🔧 Redirecting to current environment:", redirectUrl);
+      res.redirect(redirectUrl);
     } catch (error: any) {
       console.error("Development verification error:", error);
       res.status(500).json({ success: false, message: "An error occurred during verification" });
