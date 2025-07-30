@@ -3,26 +3,25 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import { Bot, Plus, Edit, Trash2, Eye, EyeOff, TestTube } from "lucide-react";
+import { AdminLayout } from "@/components/layout/AdminLayout";
+import { Button } from "@/components/ui/button"; 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/hooks/useAuth";
-import { isDemoModeActive, isReadOnlyMode, getDemoModeMessage } from "@/utils/demoMode";
-import { Bot, Plus, Edit2, Trash2, Key, Settings, Eye, EyeOff, TestTube } from "lucide-react";
-import AdminLayout from "@/components/layout/AdminLayout";
-import DemoBanner from "@/components/DemoBanner";
 import { apiRequest } from "@/lib/queryClient";
-import { useDemoDialog, DEMO_DIALOGS } from "@/hooks/useDemoDialog";
+import { useAuth } from "@/hooks/useAuth";
+import { isDemoModeActive, isReadOnlyMode } from "@/utils/demoMode";
+import { useDemoDialog } from "@/hooks/useDemoDialog";
+import DemoBanner from "@/components/DemoBanner";
+import type { AiModel } from "@shared/schema";
 
-// Add spinning AI Sentinel logo keyframes
+// Animation keyframes for loading spinner
 const spinKeyframes = `
   @keyframes spin {
     from { transform: rotate(0deg); }
@@ -30,104 +29,38 @@ const spinKeyframes = `
   }
 `;
 
+// Model schema for form validation
 const modelSchema = z.object({
-  name: z.string().min(1, "Model name is required"),
+  name: z.string().min(1, "Name is required"),
   provider: z.string().min(1, "Provider is required"),
   modelId: z.string().min(1, "Model ID is required"),
   description: z.string().optional(),
-  contextWindow: z.number().min(1, "Context window must be at least 1"),
-  isEnabled: z.boolean().default(true),
-  capabilities: z.array(z.string()).default([]),
-  // API Configuration - simplified
+  contextWindow: z.number().min(1).max(2000000),
+  isEnabled: z.boolean(),
+  capabilities: z.array(z.string()),
   apiKey: z.string().min(1, "API key is required"),
-  apiEndpoint: z.string().url("Must be a valid URL"),
-  maxTokens: z.number().min(1, "Max tokens must be at least 1").default(1000),
-  temperature: z.number().min(0).max(2).default(0.7),
-  // Advanced settings
-  maxRetries: z.number().min(0).max(10).default(3),
-  timeout: z.number().min(1000).max(60000).default(30000),
-  rateLimit: z.number().min(1).max(1000).default(100),
+  apiEndpoint: z.string().optional(),
+  maxTokens: z.number().min(1).max(100000),
+  temperature: z.number().min(0).max(2),
+  maxRetries: z.number().min(0).max(10),
+  timeout: z.number().min(1000).max(120000),
+  rateLimit: z.number().min(1).max(10000),
 });
 
-interface AiModel {
-  id: number;
-  name: string;
-  provider: string;
-  modelId: string;
-  description?: string;
-  contextWindow: number;
-  isEnabled: boolean;
-  capabilities: string[];
-  // API Configuration - simplified
-  apiKey: string;
-  apiEndpoint: string;
-  maxTokens: number;
-  temperature: number;
-  // Advanced settings
-  maxRetries: number;
-  timeout: number;
-  rateLimit: number;
-  // Status
-  lastTested?: string;
-  isWorking?: boolean;
-}
-
+// Provider configurations
 const providers = [
-  { 
-    value: "openai", 
-    label: "OpenAI", 
-    defaultEndpoint: "https://api.openai.com/v1/chat/completions",
-    authMethod: "bearer",
-    defaultHeaders: '{"Content-Type": "application/json"}'
-  },
-  { 
-    value: "anthropic", 
-    label: "Anthropic", 
-    defaultEndpoint: "https://api.anthropic.com/v1/messages",
-    authMethod: "x-api-key",
-    defaultHeaders: '{"Content-Type": "application/json", "anthropic-version": "2023-06-01"}'
-  },
-  { 
-    value: "perplexity", 
-    label: "Perplexity", 
-    defaultEndpoint: "https://api.perplexity.ai/chat/completions",
-    authMethod: "bearer",
-    defaultHeaders: '{"Content-Type": "application/json"}'
-  },
-  { 
-    value: "google", 
-    label: "Google Gemini", 
-    defaultEndpoint: "https://generativelanguage.googleapis.com/v1/models",
-    authMethod: "api-key",
-    defaultHeaders: '{"Content-Type": "application/json"}'
-  },
-  { 
-    value: "cohere", 
-    label: "Cohere", 
-    defaultEndpoint: "https://api.cohere.ai/v1/generate",
-    authMethod: "bearer",
-    defaultHeaders: '{"Content-Type": "application/json"}'
-  },
-  { 
-    value: "custom", 
-    label: "Custom Provider", 
-    defaultEndpoint: "",
-    authMethod: "bearer",
-    defaultHeaders: '{"Content-Type": "application/json"}'
-  },
-];
-
-const authMethods = [
-  { value: "bearer", label: "Bearer Token" },
-  { value: "api-key", label: "API Key Header" },
-  { value: "x-api-key", label: "X-API-Key Header" },
-  { value: "basic", label: "Basic Auth" },
-  { value: "custom", label: "Custom Auth" },
+  { value: "openai", label: "OpenAI", defaultEndpoint: "https://api.openai.com/v1" },
+  { value: "anthropic", label: "Anthropic", defaultEndpoint: "https://api.anthropic.com/v1" },
+  { value: "google", label: "Google AI", defaultEndpoint: "https://generativelanguage.googleapis.com/v1" },
+  { value: "perplexity", label: "Perplexity", defaultEndpoint: "https://api.perplexity.ai" },
+  { value: "cohere", label: "Cohere", defaultEndpoint: "https://api.cohere.ai/v1" },
+  { value: "mistral", label: "Mistral AI", defaultEndpoint: "https://api.mistral.ai/v1" },
+  { value: "custom", label: "Custom Provider", defaultEndpoint: "" },
 ];
 
 const capabilities = [
   "text-generation",
-  "image-analysis",
+  "image-analysis", 
   "code-generation",
   "real-time-search",
   "function-calling",
@@ -151,7 +84,7 @@ export default function CreateModels() {
   const isReadOnly = isReadOnlyMode(user);
 
   // Fetch AI models
-  const { data: models = [], isLoading: modelsLoading, error, isError } = useQuery({
+  const { data: models = [], isLoading: modelsLoading, error, isError } = useQuery<AiModel[]>({
     queryKey: ["/api/ai-models"],
   });
 
@@ -197,59 +130,73 @@ export default function CreateModels() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/ai-models"] });
       setShowCreateDialog(false);
-      modelForm.reset();
-      toast({ title: "Success", description: "AI model created successfully" });
+      resetForm();
+      toast({ 
+        title: "Model Created", 
+        description: "AI model has been created successfully",
+        variant: "default"
+      });
     },
     onError: (error: any) => {
-      console.error("Model creation error:", error);
-      toast({ title: "Error", description: "Failed to create model", variant: "destructive" });
+      console.error("Create model error:", error);
+      toast({ 
+        title: "Creation Failed", 
+        description: "Failed to create AI model. Please try again.",
+        variant: "destructive"
+      });
     },
   });
 
   // Update model mutation
   const updateModelMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: z.infer<typeof modelSchema> }) =>
-      apiRequest(`/api/ai-models/${id}`, "PATCH", data),
+    mutationFn: ({ id, ...data }: { id: number } & z.infer<typeof modelSchema>) =>
+      apiRequest(`/api/ai-models/${id}`, "PUT", data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/ai-models"] });
       setShowEditDialog(false);
-      setEditingModel(null);
-      modelForm.reset();
-      toast({ title: "Success", description: "AI model updated successfully" });
+      resetForm();
+      toast({ 
+        title: "Model Updated", 
+        description: "AI model has been updated successfully",
+        variant: "default"
+      });
     },
     onError: (error: any) => {
-      console.error("Model update error:", error);
-      toast({ title: "Error", description: "Failed to update model", variant: "destructive" });
+      console.error("Update model error:", error);
+      toast({ 
+        title: "Update Failed", 
+        description: "Failed to update AI model. Please try again.",
+        variant: "destructive"
+      });
     },
   });
 
   // Delete model mutation
   const deleteModelMutation = useMutation({
-    mutationFn: (id: number) =>
-      apiRequest(`/api/ai-models/${id}`, "DELETE"),
+    mutationFn: (id: number) => apiRequest(`/api/ai-models/${id}`, "DELETE"),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/ai-models"] });
-      toast({ title: "Success", description: "AI model deleted successfully" });
+      toast({ 
+        title: "Model Deleted", 
+        description: "AI model has been deleted successfully",
+        variant: "default"
+      });
     },
     onError: (error: any) => {
-      console.error("Model deletion error:", error);
-      toast({ title: "Error", description: "Failed to delete model", variant: "destructive" });
+      console.error("Delete model error:", error);
+      toast({ 
+        title: "Deletion Failed", 
+        description: "Failed to delete AI model. Please try again.",
+        variant: "destructive"
+      });
     },
   });
 
   const onSubmitModel = (data: z.infer<typeof modelSchema>) => {
-    // Automatically add organizationId and requestHeaders
-    const enrichedData = {
-      ...data,
-      organizationId: "company-1", // Auto-set company ID
-      authMethod: "bearer", // Default auth method
-      requestHeaders: '{"Content-Type": "application/json"}' // Default headers
-    };
-    
     if (editingModel) {
-      updateModelMutation.mutate({ id: editingModel.id, data: enrichedData });
+      updateModelMutation.mutate({ id: editingModel.id, ...data });
     } else {
-      createModelMutation.mutate(enrichedData);
+      createModelMutation.mutate(data);
     }
   };
 
@@ -262,14 +209,14 @@ export default function CreateModels() {
       description: model.description || "",
       contextWindow: model.contextWindow,
       isEnabled: model.isEnabled,
-      capabilities: model.capabilities,
+      capabilities: (model.capabilities as string[]) || [],
       apiKey: model.apiKey,
-      apiEndpoint: model.apiEndpoint,
-      maxTokens: model.maxTokens,
-      temperature: model.temperature,
-      maxRetries: model.maxRetries,
-      timeout: model.timeout,
-      rateLimit: model.rateLimit,
+      apiEndpoint: model.apiEndpoint || "",
+      maxTokens: model.maxTokens || 1000,
+      temperature: model.temperature || 0.7,
+      maxRetries: model.maxRetries || 3,
+      timeout: model.timeout || 30000,
+      rateLimit: model.rateLimit || 100,
     });
     setShowEditDialog(true);
   };
@@ -303,10 +250,6 @@ export default function CreateModels() {
       if (providerConfig.defaultEndpoint) {
         modelForm.setValue("apiEndpoint", providerConfig.defaultEndpoint);
       }
-      modelForm.setValue("authMethod", providerConfig.authMethod);
-      modelForm.setValue("requestHeaders", providerConfig.defaultHeaders);
-      modelForm.setValue("authMethod", providerConfig.authMethod);
-      modelForm.setValue("requestHeaders", providerConfig.defaultHeaders);
     }
   };
 
@@ -343,25 +286,26 @@ export default function CreateModels() {
         <div style={{ 
           display: 'flex', 
           flexDirection: 'column',
-          alignItems: 'center', 
-          justifyContent: 'center', 
-          height: '400px',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '400px',
           gap: '24px'
         }}>
           <div style={{
-            width: '80px',
-            height: '80px',
-            animation: 'spin 2s linear infinite'
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
           }}>
             <img 
               src="/ai-sentinel-logo.png" 
-              alt="Loading..." 
-              style={{ 
-                width: '100%', 
-                height: '100%', 
+              alt="AI Sentinel" 
+              style={{
+                width: '80px',
+                height: '80px',
                 objectFit: 'contain',
-                filter: 'brightness(1.2) saturate(1.4) contrast(1.1)'
-              }} 
+                animation: 'spin 2s linear infinite',
+                filter: 'brightness(1.1) saturate(1.3) contrast(1.2)'
+              }}
             />
           </div>
           <div style={{
@@ -387,8 +331,6 @@ export default function CreateModels() {
       </AdminLayout>
     );
   }
-
-
 
   return (
     <AdminLayout 
@@ -434,410 +376,75 @@ export default function CreateModels() {
                 padding: '8px 16px',
                 borderRadius: '6px',
                 border: 'none',
-                cursor: 'pointer',
                 fontSize: '14px',
-                fontWeight: '500'
+                fontWeight: '500',
+                cursor: 'pointer'
               }}
             >
               {showDebug ? 'Hide Debug' : 'Debug Panel'}
             </Button>
-          {isReadOnly ? (
-            // Demo mode - show info dialog
-            <Button 
-              onClick={() => showDialog(DEMO_DIALOGS.CREATE_AI_MODELS)}
-              style={{
-                background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-                border: 'none',
-                color: 'white',
-                padding: '12px 24px',
-                borderRadius: '12px',
-                fontWeight: '600',
-                fontSize: '16px',
-                boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
-                transition: 'all 0.2s ease',
-                cursor: 'pointer'
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 6px 20px rgba(59, 130, 246, 0.4)';
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.transform = 'translateY(0px)';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.3)';
-              }}
-            >
-              <Plus style={{ width: '20px', height: '20px', marginRight: '8px' }} />
-              Learn About Model Creation
-            </Button>
-          ) : (
-            // Regular mode - functional dialog
-            <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-              <DialogTrigger asChild>
-                <Button 
-                  onClick={resetForm}
-                  style={{
-                    background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-                    border: 'none',
+            {!isDemoMode ? (
+              <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+                <DialogTrigger asChild>
+                  <Button style={{
+                    backgroundColor: '#3b82f6',
                     color: 'white',
-                    padding: '12px 24px',
-                    borderRadius: '12px',
-                    fontWeight: '600',
-                    fontSize: '16px',
-                    boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
-                    transition: 'all 0.2s ease',
-                    cursor: 'pointer'
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = '0 6px 20px rgba(59, 130, 246, 0.4)';
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0px)';
-                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.3)';
-                  }}
-                >
-                  <Plus style={{ width: '20px', height: '20px', marginRight: '8px' }} />
-                  Create Model
-                </Button>
-              </DialogTrigger>
-            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>Create New AI Model</DialogTitle>
-              </DialogHeader>
-              <Form {...modelForm}>
-                <form onSubmit={modelForm.handleSubmit(onSubmitModel)} className="space-y-4">
-                  <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                    <TabsList className="grid w-full grid-cols-4">
-                      <TabsTrigger value="basic">Basic Info</TabsTrigger>
-                      <TabsTrigger value="api">API Config</TabsTrigger>
-                      <TabsTrigger value="settings">Settings</TabsTrigger>
-                      <TabsTrigger value="advanced">Advanced</TabsTrigger>
-                    </TabsList>
-
-                    <TabsContent value="basic" className="space-y-4 mt-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <FormField
-                          control={modelForm.control}
-                          name="name"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Model Name</FormLabel>
-                              <FormControl>
-                                <Input placeholder="GPT-4 Turbo" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={modelForm.control}
-                          name="provider"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Provider</FormLabel>
-                              <Select onValueChange={handleProviderChange} value={field.value}>
-                                <FormControl>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Select provider" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  {providers.map((provider) => (
-                                    <SelectItem key={provider.value} value={provider.value}>
-                                      {provider.label}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                      <FormField
-                        control={modelForm.control}
-                        name="modelId"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Model ID</FormLabel>
-                            <FormControl>
-                              <Input placeholder="gpt-4-turbo" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={modelForm.control}
-                        name="description"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Description</FormLabel>
-                            <FormControl>
-                              <Textarea placeholder="Model description..." {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={modelForm.control}
-                        name="contextWindow"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Context Window</FormLabel>
-                            <FormControl>
-                              <Input 
-                                type="number" 
-                                placeholder="4096" 
-                                {...field}
-                                onChange={(e) => field.onChange(parseInt(e.target.value))}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={modelForm.control}
-                        name="isEnabled"
-                        render={({ field }) => (
-                          <FormItem className="flex items-center space-x-2">
-                            <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </FormControl>
-                            <FormLabel>Enable Model</FormLabel>
-                          </FormItem>
-                        )}
-                      />
-                    </TabsContent>
-
-                    <TabsContent value="api" className="space-y-4 mt-4">
-                      <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                        <h3 className="font-semibold text-blue-900 mb-2">API Authentication & Communication</h3>
-                        <p className="text-sm text-blue-700">Configure how your application communicates with the AI model API.</p>
-                      </div>
-                      <FormField
-                        control={modelForm.control}
-                        name="apiKey"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>API Key</FormLabel>
-                            <FormControl>
-                              <Input type="password" placeholder="sk-..." {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={modelForm.control}
-                        name="apiEndpoint"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>API Endpoint</FormLabel>
-                            <FormControl>
-                              <Input placeholder="https://api.openai.com/v1/chat/completions" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      {/* Authentication and headers are now handled automatically */}
-                      <div className="bg-green-50 p-3 rounded-lg border border-green-200">
-                        <p className="text-sm text-green-700">
-                          ✓ Authentication method, request headers, and organization ID are configured automatically
-                        </p>
-                      </div>
-                    </TabsContent>
-
-                    <TabsContent value="settings" className="space-y-4 mt-4">
-                      <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-                        <h3 className="font-semibold text-green-900 mb-2">Model Parameters</h3>
-                        <p className="text-sm text-green-700">Configure model behavior and output settings.</p>
-                      </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <FormField
-                          control={modelForm.control}
-                          name="maxTokens"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Max Tokens</FormLabel>
-                              <FormControl>
-                                <Input 
-                                  type="number" 
-                                  placeholder="1000" 
-                                  {...field}
-                                  onChange={(e) => field.onChange(parseInt(e.target.value))}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={modelForm.control}
-                          name="temperature"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Temperature</FormLabel>
-                              <FormControl>
-                                <Input 
-                                  type="number" 
-                                  step="0.1"
-                                  min="0"
-                                  max="2"
-                                  placeholder="0.7" 
-                                  {...field}
-                                  onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <FormLabel>Capabilities</FormLabel>
-                        <div className="grid grid-cols-2 gap-2">
-                          {capabilities.map((capability) => (
-                            <FormField
-                              key={capability}
-                              control={modelForm.control}
-                              name="capabilities"
-                              render={({ field }) => (
-                                <FormItem className="flex items-center space-x-2">
-                                  <FormControl>
-                                    <Switch
-                                      checked={field.value?.includes(capability)}
-                                      onCheckedChange={(checked) => {
-                                        if (checked) {
-                                          field.onChange([...field.value, capability]);
-                                        } else {
-                                          field.onChange(field.value?.filter((c) => c !== capability));
-                                        }
-                                      }}
-                                    />
-                                  </FormControl>
-                                  <FormLabel className="text-sm">{capability}</FormLabel>
-                                </FormItem>
-                              )}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    </TabsContent>
-
-                    <TabsContent value="advanced" className="space-y-4 mt-4">
-                      <div className="bg-orange-50 p-4 rounded-lg border border-orange-200">
-                        <h3 className="font-semibold text-orange-900 mb-2">Advanced Configuration</h3>
-                        <p className="text-sm text-orange-700">Rate limiting, timeouts, and error handling settings.</p>
-                      </div>
-                      <div className="grid grid-cols-3 gap-4">
-                        <FormField
-                          control={modelForm.control}
-                          name="maxRetries"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Max Retries</FormLabel>
-                              <FormControl>
-                                <Input 
-                                  type="number" 
-                                  min="0" 
-                                  max="10" 
-                                  {...field}
-                                  onChange={(e) => field.onChange(parseInt(e.target.value))}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={modelForm.control}
-                          name="timeout"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Timeout (ms)</FormLabel>
-                              <FormControl>
-                                <Input 
-                                  type="number" 
-                                  min="1000" 
-                                  max="60000" 
-                                  {...field}
-                                  onChange={(e) => field.onChange(parseInt(e.target.value))}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={modelForm.control}
-                          name="rateLimit"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Rate Limit (req/min)</FormLabel>
-                              <FormControl>
-                                <Input 
-                                  type="number" 
-                                  min="1" 
-                                  max="1000" 
-                                  {...field}
-                                  onChange={(e) => field.onChange(parseInt(e.target.value))}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                    </TabsContent>
-                  </Tabs>
-                  <div style={{ 
-                    display: 'flex', 
-                    justifyContent: 'flex-end', 
-                    gap: '12px', 
-                    paddingTop: '24px',
-                    borderTop: '1px solid #e2e8f0'
+                    padding: '8px 16px',
+                    borderRadius: '6px',
+                    border: 'none',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
                   }}>
-                    <Button 
-                      type="button" 
-                      variant="outline" 
-                      onClick={() => setShowCreateDialog(false)}
-                      style={{
-                        padding: '10px 20px',
-                        borderRadius: '8px',
-                        border: '1px solid #d1d5db',
-                        background: 'white',
-                        color: '#374151'
-                      }}
-                    >
-                      Cancel
-                    </Button>
-                    <Button 
-                      type="submit" 
-                      disabled={createModelMutation.isPending}
-                      style={{
-                        padding: '10px 20px',
-                        borderRadius: '8px',
-                        background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-                        color: 'white',
-                        border: 'none',
-                        fontWeight: '600'
-                      }}
-                    >
-                      {createModelMutation.isPending ? "Creating..." : "Create Model"}
-                    </Button>
-                  </div>
-                </form>
-              </Form>
-            </DialogContent>
-            </Dialog>
-          )}
+                    <Plus style={{ width: '16px', height: '16px' }} />
+                    Create Model
+                  </Button>
+                </DialogTrigger>
+                <DialogContent style={{ maxWidth: '80vw', maxHeight: '90vh', overflowY: 'auto' }}>
+                  <DialogHeader>
+                    <DialogTitle>Create New AI Model</DialogTitle>  
+                  </DialogHeader>
+                  <ModelForm 
+                    form={modelForm}
+                    onSubmit={onSubmitModel}
+                    activeTab={activeTab}
+                    setActiveTab={setActiveTab}
+                    providers={providers}
+                    capabilities={capabilities}
+                    handleProviderChange={handleProviderChange}
+                    isSubmitting={createModelMutation.isPending}
+                    onCancel={() => setShowCreateDialog(false)}
+                  />
+                </DialogContent>
+              </Dialog>
+            ) : (
+              <Button
+                onClick={() => showDialog({
+                  title: 'Create AI Model',
+                  description: 'In demo mode, AI model creation shows how you can build custom models with your own API keys, provider endpoints, and specialized configurations for your organization.'
+                })}
+                style={{
+                  backgroundColor: '#3b82f6',
+                  color: 'white',
+                  padding: '8px 16px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+              >
+                <Plus style={{ width: '16px', height: '16px' }} />
+                Create Model
+              </Button>
+            )}
+          </div>
         </div>
 
         {/* Debug Panel */}
@@ -846,766 +453,237 @@ export default function CreateModels() {
             backgroundColor: '#f8fafc',
             border: '1px solid #e2e8f0',
             borderRadius: '8px',
-            padding: '20px',
-            marginBottom: '20px'
+            padding: '16px'
           }}>
-            <h3 style={{
-              fontSize: '18px',
-              fontWeight: '600',
-              color: '#1e293b',
-              marginBottom: '16px'
-            }}>
+            <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#1e293b', margin: '0 0 12px 0' }}>
               Debug Information
             </h3>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', fontSize: '14px' }}>
               <div>
-                <h4 style={{ fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>
-                  Models Query Status
-                </h4>
-                <div style={{ fontFamily: 'monospace', fontSize: '12px', backgroundColor: '#fff', padding: '12px', borderRadius: '4px', border: '1px solid #d1d5db' }}>
-                  <div>Loading: {modelsLoading ? 'true' : 'false'}</div>
-                  <div>Count: {models?.length || 0}</div>
-                  <div>Error: {isError ? 'true' : 'false'}</div>
-                  <div>Error Message: {error?.message || 'none'}</div>
-                </div>
+                <strong>Models Loading:</strong> {modelsLoading ? 'Yes' : 'No'}<br/>
+                <strong>Models Count:</strong> {models?.length || 0}<br/>
+                <strong>Has Error:</strong> {isError ? 'Yes' : 'No'}<br/>
+                <strong>Error Message:</strong> {error?.message || 'None'}
               </div>
               <div>
-                <h4 style={{ fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>
-                  Debug Status
-                </h4>
-                <div style={{ fontFamily: 'monospace', fontSize: '12px', backgroundColor: '#fff', padding: '12px', borderRadius: '4px', border: '1px solid #d1d5db' }}>
-                  {debugStatus ? (
-                    <pre>{JSON.stringify(debugStatus, null, 2).substring(0, 300)}...</pre>
-                  ) : (
-                    <div>Loading debug status...</div>
-                  )}
-                </div>
+                <strong>Debug Status:</strong> {debugStatus ? 'Loaded' : 'Not loaded'}<br/>
+                <strong>Environment:</strong> {(debugStatus as any)?.environment || 'Unknown'}<br/>
+                <strong>Database:</strong> {(debugStatus as any)?.databaseConnected ? 'Connected' : 'Disconnected'}<br/>
+                <strong>API Endpoint:</strong> /api/ai-models
               </div>
             </div>
-            {models && models.length > 0 && (
-              <div style={{ marginTop: '16px' }}>
-                <h4 style={{ fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>
-                  Sample Models (First 2)
-                </h4>
-                <div style={{ fontFamily: 'monospace', fontSize: '12px', backgroundColor: '#fff', padding: '12px', borderRadius: '4px', border: '1px solid #d1d5db' }}>
-                  <pre>{JSON.stringify(models.slice(0, 2), null, 2)}</pre>
-                </div>
-              </div>
-            )}
           </div>
         )}
 
         {/* Models Grid */}
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', 
-          gap: '24px' 
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
+          gap: '20px'
         }}>
           {models.map((model: AiModel) => (
-            <Card 
-              key={model.id} 
+            <div
+              key={model.id}
               style={{
-                background: 'linear-gradient(145deg, #ffffff 0%, #f8fafc 100%)',
-                border: '1px solid #e2e8f0',
-                borderRadius: '16px',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
-                transition: 'all 0.3s ease',
-                cursor: 'pointer'
+                backgroundColor: 'white',
+                border: '1px solid #e5e7eb',
+                borderRadius: '12px',
+                padding: '20px',
+                boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+                transition: 'all 0.2s ease-in-out'
               }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px)';
-                e.currentTarget.style.boxShadow = '0 12px 28px rgba(0, 0, 0, 0.12)';
+              onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = '#3b82f6';
+                e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
               }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.transform = 'translateY(0px)';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.05)';
-                e.currentTarget.style.borderColor = '#e2e8f0';
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = '#e5e7eb';
+                e.currentTarget.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.1)';
               }}
             >
-              <CardHeader style={{ paddingBottom: '12px' }}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <div style={{
-                      width: '48px',
-                      height: '48px',
-                      background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-                      borderRadius: '12px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)'
-                    }}>
-                      <Bot style={{ width: '24px', height: '24px', color: 'white' }} />
-                    </div>
-                    <div>
-                      <CardTitle style={{ 
-                        fontSize: '20px', 
-                        fontWeight: '700', 
-                        color: '#1e293b',
-                        marginBottom: '4px'
-                      }}>
-                        {model.name}
-                      </CardTitle>
-                      <p style={{ 
-                        fontSize: '14px', 
-                        color: '#64748b', 
-                        textTransform: 'capitalize',
-                        fontWeight: '500'
-                      }}>
-                        {model.provider}
-                      </p>
-                    </div>
-                  </div>
-                  <Badge 
-                    variant={model.isEnabled ? "default" : "secondary"}
-                    style={{
-                      background: model.isEnabled 
-                        ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' 
-                        : '#6b7280',
-                      color: 'white',
-                      border: 'none',
-                      padding: '6px 12px',
-                      borderRadius: '8px',
-                      fontSize: '12px',
-                      fontWeight: '600',
-                      marginRight: '144px' // 2 inches = 144px (72px per inch)
-                    }}
-                  >
-                    {model.isEnabled ? "Enabled" : "Disabled"}
-                  </Badge>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                <div>
+                  <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#1e293b', margin: '0 0 4px 0' }}>
+                    {model.name}
+                  </h3>
+                  <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>
+                    {model.provider} • {model.modelId}
+                  </p>
                 </div>
-              </CardHeader>
-              <CardContent style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                {/* Model Details */}
-                <div style={{ 
-                  background: '#f8fafc', 
-                  padding: '16px', 
-                  borderRadius: '12px',
-                  border: '1px solid #e2e8f0'
+                <div style={{
+                  backgroundColor: model.isEnabled ? '#10b981' : '#6b7280',
+                  color: 'white',
+                  padding: '4px 8px',
+                  borderRadius: '4px',
+                  fontSize: '12px',
+                  fontWeight: '500',
+                  marginLeft: '144px'
                 }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: '14px', color: '#64748b', fontWeight: '500' }}>Model ID:</span>
-                      <span style={{ 
-                        fontSize: '14px', 
-                        color: '#1e293b', 
-                        fontWeight: '600',
-                        fontFamily: 'monospace',
-                        background: '#ffffff',
-                        padding: '4px 8px',
-                        borderRadius: '6px',
-                        border: '1px solid #e2e8f0'
-                      }}>
-                        {model.modelId}
-                      </span>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: '14px', color: '#64748b', fontWeight: '500' }}>Context Window:</span>
-                      <span style={{ 
-                        fontSize: '14px', 
-                        color: '#1e293b', 
-                        fontWeight: '600',
-                        background: '#ffffff',
-                        padding: '4px 8px',
-                        borderRadius: '6px',
-                        border: '1px solid #e2e8f0'
-                      }}>
-                        {model.contextWindow ? model.contextWindow.toLocaleString() : 'N/A'}
-                      </span>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: '14px', color: '#64748b', fontWeight: '500' }}>API Key:</span>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span style={{ 
-                          fontSize: '12px', 
-                          fontFamily: 'monospace',
-                          color: '#374151',
-                          background: '#ffffff',
-                          padding: '4px 8px',
-                          borderRadius: '6px',
-                          border: '1px solid #e2e8f0'
-                        }}>
-                          {showApiKeys[model.id] ? model.apiKey : maskApiKey(model.apiKey || '')}
-                        </span>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => toggleApiKeyVisibility(model.id)}
-                          style={{
-                            background: 'none',
-                            border: 'none',
-                            padding: '4px',
-                            cursor: 'pointer',
-                            borderRadius: '4px'
-                          }}
-                        >
-                          {showApiKeys[model.id] ? (
-                            <EyeOff style={{ width: '14px', height: '14px', color: '#64748b' }} />
-                          ) : (
-                            <Eye style={{ width: '14px', height: '14px', color: '#64748b' }} />
-                          )}
-                        </Button>
-                      </div>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: '14px', color: '#64748b', fontWeight: '500' }}>Endpoint:</span>
-                      <span style={{ 
-                        fontSize: '12px', 
-                        color: '#374151',
-                        fontFamily: 'monospace',
-                        background: '#ffffff',
-                        padding: '4px 8px',
-                        borderRadius: '6px',
-                        border: '1px solid #e2e8f0',
-                        maxWidth: '200px',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap'
-                      }} title={model.apiEndpoint}>
-                        {model.apiEndpoint}
-                      </span>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: '14px', color: '#64748b', fontWeight: '500' }}>Rate Limit:</span>
-                      <span style={{ 
-                        fontSize: '12px', 
-                        color: '#374151',
-                        background: '#ffffff',
-                        padding: '4px 8px',
-                        borderRadius: '6px',
-                        border: '1px solid #e2e8f0'
-                      }}>
-                        {model.rateLimit || 100}/min
-                      </span>
-                    </div>
-                  </div>
+                  {model.isEnabled ? 'Enabled' : 'Disabled'}
                 </div>
-                {model.description && (
-                  <div style={{
-                    background: '#f0f9ff',
-                    padding: '12px',
-                    borderRadius: '8px',
-                    border: '1px solid #bae6fd'
+              </div>
+
+              {model.description && (
+                <p style={{ fontSize: '14px', color: '#6b7280', margin: '0 0 12px 0' }}>
+                  {model.description}
+                </p>
+              )}
+
+              <div style={{ marginBottom: '16px' }}>
+                <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '4px' }}>API Key</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <code style={{
+                    backgroundColor: '#f3f4f6',
+                    padding: '4px 8px',
+                    borderRadius: '4px',
+                    fontSize: '12px',
+                    fontFamily: 'monospace',
+                    flex: 1
                   }}>
-                    <p style={{ 
-                      fontSize: '14px', 
-                      color: '#0f172a', 
-                      margin: 0,
-                      lineHeight: '1.5'
-                    }}>
-                      {model.description}
-                    </p>
-                  </div>
-                )}
-                {model.capabilities && model.capabilities.length > 0 && (
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                    {model.capabilities.slice(0, 3).map((capability) => (
-                      <Badge 
-                        key={capability} 
-                        variant="outline" 
-                        style={{
-                          fontSize: '11px',
-                          padding: '4px 8px',
-                          background: '#ffffff',
-                          border: '1px solid #d1d5db',
-                          color: '#374151',
-                          borderRadius: '6px'
-                        }}
-                      >
-                        {capability}
-                      </Badge>
-                    ))}
-                    {model.capabilities.length > 3 && (
-                      <Badge 
-                        variant="outline" 
-                        style={{
-                          fontSize: '11px',
-                          padding: '4px 8px',
-                          background: '#ffffff',
-                          border: '1px solid #d1d5db',
-                          color: '#374151',
-                          borderRadius: '6px'
-                        }}
-                      >
-                        +{model.capabilities.length - 3} more
-                      </Badge>
-                    )}
-                  </div>
-                )}
-                <div style={{ 
-                  display: 'flex', 
-                  gap: '8px', 
-                  paddingTop: '16px',
-                  borderTop: '1px solid #e2e8f0'
-                }}>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={isReadOnly ? () => showDialog(DEMO_DIALOGS.CREATE_AI_MODELS) : () => handleTestConfig(model.id)}
-                    disabled={testConfigMutation.isPending && !isReadOnly}
-                    title={isReadOnly ? "Learn about API testing in demo mode" : "Test API configuration"}
+                    {showApiKeys[model.id] ? model.apiKey : maskApiKey(model.apiKey)}
+                  </code>
+                  <button
+                    onClick={() => toggleApiKeyVisibility(model.id)}
                     style={{
-                      flex: 1,
-                      background: isReadOnly ? '#f3f4f6' : '#f0f9ff',
-                      border: `1px solid ${isReadOnly ? '#d1d5db' : '#0ea5e9'}`,
-                      color: isReadOnly ? '#9ca3af' : '#0369a1',
-                      padding: '8px 12px',
-                      borderRadius: '8px',
-                      fontSize: '13px',
-                      fontWeight: '500',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '6px',
-                      cursor: isReadOnly ? 'pointer' : 'pointer',
-                      opacity: isReadOnly ? 0.6 : 1,
-                      transition: 'all 0.2s ease'
-                    }}
-                  >
-                    <TestTube style={{ width: '14px', height: '14px' }} />
-                    Test
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={isReadOnly ? () => showDialog(DEMO_DIALOGS.CREATE_AI_MODELS) : () => handleEditModel(model)}
-                    title={isReadOnly ? "Learn about model editing in demo mode" : "Edit model"}
-                    style={{
-                      flex: 1,
-                      background: isReadOnly ? '#f3f4f6' : '#f0fdf4',
-                      border: `1px solid ${isReadOnly ? '#d1d5db' : '#22c55e'}`,
-                      color: isReadOnly ? '#9ca3af' : '#15803d',
-                      padding: '8px 12px',
-                      borderRadius: '8px',
-                      fontSize: '13px',
-                      fontWeight: '500',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '6px',
+                      backgroundColor: 'transparent',
+                      border: 'none',
                       cursor: 'pointer',
-                      opacity: isReadOnly ? 0.6 : 1,
-                      transition: 'all 0.2s ease'
+                      padding: '4px',
+                      color: '#6b7280'
                     }}
                   >
-                    <Edit2 style={{ width: '14px', height: '14px' }} />
-                    Edit
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={isReadOnly ? () => showDialog(DEMO_DIALOGS.CREATE_AI_MODELS) : () => handleDeleteModel(model.id)}
-                    title={isReadOnly ? "Learn about model deletion in demo mode" : "Delete model"}
-                    style={{
-                      flex: 1,
-                      background: isReadOnly ? '#f3f4f6' : '#fef2f2',
-                      border: `1px solid ${isReadOnly ? '#d1d5db' : '#ef4444'}`,
-                      color: isReadOnly ? '#9ca3af' : '#dc2626',
-                      padding: '8px 12px',
-                      borderRadius: '8px',
-                      fontSize: '13px',
-                      fontWeight: '500',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '6px',
-                      cursor: 'pointer',
-                      opacity: isReadOnly ? 0.6 : 1,
-                      transition: 'all 0.2s ease'
-                    }}
-                  >
-                    <Trash2 style={{ width: '14px', height: '14px' }} />
-                    Delete
-                  </Button>
+                    {showApiKeys[model.id] ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+
+              <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                <Button
+                  onClick={() => handleTestConfig(model.id)}
+                  disabled={testConfigMutation.isPending}
+                  style={{
+                    backgroundColor: '#3b82f6',
+                    color: 'white',
+                    padding: '6px 12px',
+                    borderRadius: '4px',
+                    border: 'none',
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}
+                >
+                  <TestTube size={14} />
+                  Test
+                </Button>
+                {!isDemoMode ? (
+                  <>
+                    <Button
+                      onClick={() => handleEditModel(model)}
+                      style={{
+                        backgroundColor: '#10b981',
+                        color: 'white',
+                        padding: '6px 12px',
+                        borderRadius: '4px',
+                        border: 'none',
+                        fontSize: '12px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px'
+                      }}
+                    >
+                      <Edit size={14} />
+                      Edit
+                    </Button>
+                    <Button
+                      onClick={() => handleDeleteModel(model.id)}
+                      style={{
+                        backgroundColor: '#ef4444',
+                        color: 'white',
+                        padding: '6px 12px',
+                        borderRadius: '4px',
+                        border: 'none',
+                        fontSize: '12px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px'
+                      }}
+                    >
+                      <Trash2 size={14} />
+                      Delete
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      onClick={() => showDialog({
+                        title: 'Edit AI Model',
+                        description: 'In demo mode, model editing shows how you can modify API endpoints, adjust parameters like temperature and token limits, and configure advanced settings for your custom AI models.'
+                      })}
+                      style={{
+                        backgroundColor: '#10b981',
+                        color: 'white',
+                        padding: '6px 12px',
+                        borderRadius: '4px',
+                        border: 'none',
+                        fontSize: '12px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px'
+                      }}
+                    >
+                      <Edit size={14} />
+                      Edit
+                    </Button>
+                    <Button
+                      onClick={() => showDialog({
+                        title: 'Delete AI Model',
+                        description: 'In demo mode, model deletion demonstrates the confirmation process and safety measures in place when removing AI models from your organization\'s configuration.'
+                      })}
+                      style={{
+                        backgroundColor: '#ef4444',
+                        color: 'white',
+                        padding: '6px 12px',
+                        borderRadius: '4px',
+                        border: 'none',
+                        fontSize: '12px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px'
+                      }}
+                    >
+                      <Trash2 size={14} />
+                      Delete
+                    </Button>
+                  </>
+                )}
+              </div>
+            </div>
           ))}
         </div>
 
         {/* Edit Dialog */}
         <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
-          <DialogContent style={{
-            maxWidth: '900px',
-            maxHeight: '90vh',
-            overflowY: 'auto',
-            background: 'white',
-            borderRadius: '16px',
-            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.15)'
-          }}>
+          <DialogContent style={{ maxWidth: '80vw', maxHeight: '90vh', overflowY: 'auto' }}>
             <DialogHeader>
-              <DialogTitle style={{ 
-                fontSize: '24px', 
-                fontWeight: '700', 
-                color: '#1e293b',
-                marginBottom: '8px'
-              }}>
-                Edit AI Model
-              </DialogTitle>
+              <DialogTitle>Edit AI Model</DialogTitle>
             </DialogHeader>
-            <Form {...modelForm}>
-              <form onSubmit={modelForm.handleSubmit(onSubmitModel)} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                <Tabs value={activeTab} onValueChange={setActiveTab} style={{ width: '100%' }}>
-                  <TabsList style={{
-                    display: 'grid',
-                    width: '100%',
-                    gridTemplateColumns: 'repeat(4, 1fr)',
-                    background: '#f8fafc',
-                    padding: '4px',
-                    borderRadius: '12px',
-                    border: '1px solid #e2e8f0'
-                  }}>
-                    <TabsTrigger value="basic" style={{
-                      padding: '12px 16px',
-                      borderRadius: '8px',
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      transition: 'all 0.2s ease'
-                    }}>
-                      Basic Info
-                    </TabsTrigger>
-                    <TabsTrigger value="api" style={{
-                      padding: '12px 16px',
-                      borderRadius: '8px',
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      transition: 'all 0.2s ease'
-                    }}>
-                      API Config
-                    </TabsTrigger>
-                    <TabsTrigger value="settings" style={{
-                      padding: '12px 16px',
-                      borderRadius: '8px',
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      transition: 'all 0.2s ease'
-                    }}>
-                      Settings
-                    </TabsTrigger>
-                    <TabsTrigger value="advanced" style={{
-                      padding: '12px 16px',
-                      borderRadius: '8px',
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      transition: 'all 0.2s ease'
-                    }}>
-                      Advanced
-                    </TabsTrigger>
-                  </TabsList>
-
-                  <TabsContent value="basic" style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '20px' }}>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                      <FormField
-                        control={modelForm.control}
-                        name="name"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Model Name</FormLabel>
-                            <FormControl>
-                              <Input placeholder="GPT-4 Turbo" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={modelForm.control}
-                        name="provider"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Provider</FormLabel>
-                            <Select onValueChange={handleProviderChange} value={field.value}>
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select provider" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                {providers.map((provider) => (
-                                  <SelectItem key={provider.value} value={provider.value}>
-                                    {provider.label}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    <FormField
-                      control={modelForm.control}
-                      name="modelId"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Model ID</FormLabel>
-                          <FormControl>
-                            <Input placeholder="gpt-4-turbo" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={modelForm.control}
-                      name="description"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Description</FormLabel>
-                          <FormControl>
-                            <Textarea placeholder="Model description..." {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={modelForm.control}
-                      name="contextWindow"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Context Window</FormLabel>
-                          <FormControl>
-                            <Input 
-                              type="number" 
-                              placeholder="4096" 
-                              {...field}
-                              onChange={(e) => field.onChange(parseInt(e.target.value))}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={modelForm.control}
-                      name="isEnabled"
-                      render={({ field }) => (
-                        <FormItem style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                          <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          </FormControl>
-                          <FormLabel>Enable Model</FormLabel>
-                        </FormItem>
-                      )}
-                    />
-                  </TabsContent>
-
-                  <TabsContent value="api" style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '20px' }}>
-                    <div style={{
-                      background: '#eff6ff',
-                      padding: '16px',
-                      borderRadius: '12px',
-                      border: '1px solid #bfdbfe'
-                    }}>
-                      <h3 style={{ 
-                        fontWeight: '600', 
-                        color: '#1e3a8a', 
-                        marginBottom: '8px',
-                        fontSize: '16px'
-                      }}>
-                        API Authentication & Communication
-                      </h3>
-                      <p style={{ fontSize: '14px', color: '#1d4ed8', margin: 0 }}>
-                        Configure how your application communicates with the AI model API.
-                      </p>
-                    </div>
-                    <FormField
-                      control={modelForm.control}
-                      name="apiKey"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>API Key</FormLabel>
-                          <FormControl>
-                            <Input type="password" placeholder="sk-..." {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={modelForm.control}
-                      name="apiEndpoint"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>API Endpoint</FormLabel>
-                          <FormControl>
-                            <Input placeholder="https://api.openai.com/v1/chat/completions" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    {/* Authentication and headers are now handled automatically */}
-                    <div style={{
-                      background: '#f0fdf4',
-                      padding: '12px',
-                      borderRadius: '8px', 
-                      border: '1px solid #bbf7d0'
-                    }}>
-                      <p style={{ fontSize: '14px', color: '#15803d', margin: 0 }}>
-                        ✓ Authentication method, request headers, and organization ID are configured automatically
-                      </p>
-                    </div>
-                  </TabsContent>
-
-                  <TabsContent value="settings" className="space-y-4 mt-4">
-                    <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-                      <h3 className="font-semibold text-green-900 mb-2">Model Parameters</h3>
-                      <p className="text-sm text-green-700">Configure model behavior and output settings.</p>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <FormField
-                        control={modelForm.control}
-                        name="maxTokens"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Max Tokens</FormLabel>
-                            <FormControl>
-                              <Input 
-                                type="number" 
-                                placeholder="1000" 
-                                {...field}
-                                onChange={(e) => field.onChange(parseInt(e.target.value))}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={modelForm.control}
-                        name="temperature"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Temperature</FormLabel>
-                            <FormControl>
-                              <Input 
-                                type="number" 
-                                step="0.1"
-                                min="0"
-                                max="2"
-                                placeholder="0.7" 
-                                {...field}
-                                onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <FormLabel>Capabilities</FormLabel>
-                      <div className="grid grid-cols-2 gap-2">
-                        {capabilities.map((capability) => (
-                          <FormField
-                            key={capability}
-                            control={modelForm.control}
-                            name="capabilities"
-                            render={({ field }) => (
-                              <FormItem className="flex items-center space-x-2">
-                                <FormControl>
-                                  <Switch
-                                    checked={field.value?.includes(capability)}
-                                    onCheckedChange={(checked) => {
-                                      if (checked) {
-                                        field.onChange([...field.value, capability]);
-                                      } else {
-                                        field.onChange(field.value?.filter((c) => c !== capability));
-                                      }
-                                    }}
-                                  />
-                                </FormControl>
-                                <FormLabel className="text-sm">{capability}</FormLabel>
-                              </FormItem>
-                            )}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  </TabsContent>
-
-                  <TabsContent value="advanced" className="space-y-4 mt-4">
-                    <div className="bg-orange-50 p-4 rounded-lg border border-orange-200">
-                      <h3 className="font-semibold text-orange-900 mb-2">Advanced Configuration</h3>
-                      <p className="text-sm text-orange-700">Rate limiting, timeouts, and error handling settings.</p>
-                    </div>
-                    <div className="grid grid-cols-3 gap-4">
-                      <FormField
-                        control={modelForm.control}
-                        name="maxRetries"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Max Retries</FormLabel>
-                            <FormControl>
-                              <Input 
-                                type="number" 
-                                min="0" 
-                                max="10" 
-                                {...field}
-                                onChange={(e) => field.onChange(parseInt(e.target.value))}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={modelForm.control}
-                        name="timeout"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Timeout (ms)</FormLabel>
-                            <FormControl>
-                              <Input 
-                                type="number" 
-                                min="1000" 
-                                max="60000" 
-                                {...field}
-                                onChange={(e) => field.onChange(parseInt(e.target.value))}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={modelForm.control}
-                        name="rateLimit"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Rate Limit (req/min)</FormLabel>
-                            <FormControl>
-                              <Input 
-                                type="number" 
-                                min="1" 
-                                max="1000" 
-                                {...field}
-                                onChange={(e) => field.onChange(parseInt(e.target.value))}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </TabsContent>
-                </Tabs>
-                <div className="flex justify-end space-x-2 pt-4">
-                  <Button type="button" variant="outline" onClick={() => setShowEditDialog(false)}>
-                    Cancel
-                  </Button>
-                  <Button type="submit" disabled={updateModelMutation.isPending}>
-                    {updateModelMutation.isPending ? "Updating..." : "Update Model"}
-                  </Button>
-                </div>
-              </form>
-            </Form>
+            <ModelForm 
+              form={modelForm}
+              onSubmit={onSubmitModel}
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              providers={providers}
+              capabilities={capabilities}
+              handleProviderChange={handleProviderChange}
+              isSubmitting={updateModelMutation.isPending}
+              onCancel={() => setShowEditDialog(false)}
+            />
           </DialogContent>
         </Dialog>
         
@@ -1613,5 +691,337 @@ export default function CreateModels() {
         <DialogComponent />
       </div>
     </AdminLayout>
+  );
+}
+
+// Model Form Component
+function ModelForm({ 
+  form, 
+  onSubmit, 
+  activeTab, 
+  setActiveTab, 
+  providers, 
+  capabilities, 
+  handleProviderChange, 
+  isSubmitting, 
+  onCancel 
+}: {
+  form: any;
+  onSubmit: (data: any) => void;
+  activeTab: string;
+  setActiveTab: (tab: string) => void;
+  providers: any[];
+  capabilities: string[];
+  handleProviderChange: (provider: string) => void;
+  isSubmitting: boolean;
+  onCancel: () => void;
+}) {
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <Tabs value={activeTab} onValueChange={setActiveTab} style={{ width: '100%' }}>
+          <TabsList style={{ display: 'grid', width: '100%', gridTemplateColumns: '1fr 1fr 1fr 1fr' }}>
+            <TabsTrigger value="basic">Basic Info</TabsTrigger>
+            <TabsTrigger value="api">API Config</TabsTrigger>
+            <TabsTrigger value="settings">Parameters</TabsTrigger>
+            <TabsTrigger value="advanced">Advanced</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="basic" style={{ marginTop: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Model Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g., Custom GPT-4" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="provider"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Provider</FormLabel>
+                    <Select onValueChange={(value) => {
+                      field.onChange(value);
+                      handleProviderChange(value);
+                    }} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select provider" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {providers.map((provider) => (
+                          <SelectItem key={provider.value} value={provider.value}>
+                            {provider.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="modelId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Model ID</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g., gpt-4" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="contextWindow"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Context Window</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="number" 
+                        min="1" 
+                        max="2000000" 
+                        {...field}
+                        onChange={(e) => field.onChange(parseInt(e.target.value))}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea 
+                      placeholder="Describe this model's capabilities and use cases..." 
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="isEnabled"
+              render={({ field }) => (
+                <FormItem style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormLabel>Enable this model</FormLabel>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </TabsContent>
+          
+          <TabsContent value="api" style={{ marginTop: '16px' }}>
+            <FormField
+              control={form.control}
+              name="apiKey"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>API Key</FormLabel>
+                  <FormControl>
+                    <Input type="password" placeholder="Enter your API key" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="apiEndpoint"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>API Endpoint</FormLabel>
+                  <FormControl>
+                    <Input placeholder="API endpoint URL" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </TabsContent>
+          
+          <TabsContent value="settings" style={{ marginTop: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <FormField
+                control={form.control}
+                name="maxTokens"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Max Tokens</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="number" 
+                        min="1" 
+                        max="100000" 
+                        {...field}
+                        onChange={(e) => field.onChange(parseInt(e.target.value))}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="temperature"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Temperature</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="number" 
+                        min="0" 
+                        max="2" 
+                        step="0.1" 
+                        {...field}
+                        onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            
+            <div>
+              <FormLabel>Capabilities</FormLabel>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '8px' }}>
+                {capabilities.map((capability) => (
+                  <FormField
+                    key={capability}
+                    control={form.control}
+                    name="capabilities"
+                    render={({ field }) => (
+                      <FormItem style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <FormControl>
+                          <Switch
+                            checked={field.value?.includes(capability)}
+                            onCheckedChange={(checked) => {
+                              const current = field.value || [];
+                              if (checked) {
+                                field.onChange([...current, capability]);
+                              } else {
+                                field.onChange(current.filter((c: string) => c !== capability));
+                              }
+                            }}
+                          />
+                        </FormControl>
+                        <FormLabel style={{ fontSize: '14px' }}>{capability}</FormLabel>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                ))}
+              </div>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="advanced" style={{ marginTop: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
+              <FormField
+                control={form.control}
+                name="maxRetries"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Max Retries</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="number" 
+                        min="0" 
+                        max="10" 
+                        {...field}
+                        onChange={(e) => field.onChange(parseInt(e.target.value))}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="timeout"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Timeout (ms)</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="number" 
+                        min="1000" 
+                        max="120000" 
+                        {...field}
+                        onChange={(e) => field.onChange(parseInt(e.target.value))}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="rateLimit"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Rate Limit</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="number" 
+                        min="1" 
+                        max="10000" 
+                        {...field}
+                        onChange={(e) => field.onChange(parseInt(e.target.value))}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </TabsContent>
+        </Tabs>
+        
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', paddingTop: '16px' }}>
+          <Button type="button" variant="outline" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Saving..." : "Save Model"}
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 }

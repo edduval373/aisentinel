@@ -1,0 +1,86 @@
+[11:03:54.964] Running build in Washington, D.C., USA (East) – iad1
+[11:03:54.965] Build machine configuration: 2 cores, 8 GB
+[11:03:54.979] Cloning github.com/edduval373/aisentinel (Branch: main, Commit: 5191f49)
+[11:03:56.490] Cloning completed: 1.511s
+[11:03:56.615] Found .vercelignore
+[11:03:56.728] Removed 695 ignored files defined in .vercelignore
+[11:03:56.728]   /.git/config
+[11:03:56.729]   /.git/description
+[11:03:56.729]   /.git/FETCH_HEAD
+[11:03:56.729]   /.git/HEAD
+[11:03:56.729]   /.git/hooks/applypatch-msg.sample
+[11:03:56.729]   /.git/hooks/commit-msg.sample
+[11:03:56.729]   /.git/hooks/fsmonitor-watchman.sample
+[11:03:56.729]   /.git/hooks/post-update.sample
+[11:03:56.733]   /.git/hooks/pre-applypatch.sample
+[11:03:56.733]   /.git/hooks/pre-commit.sample
+[11:03:56.911] Restored build cache from previous deployment (FmymkdvfamLxtkD2v2SRv2xXHZkf)
+[11:03:59.375] Running "vercel build"
+[11:03:59.841] Vercel CLI 44.5.0
+[11:04:00.700] Running "install" command: `npm install`...
+[11:04:03.488] 
+[11:04:03.489] up to date, audited 741 packages in 3s
+[11:04:03.490] 
+[11:04:03.490] 166 packages are looking for funding
+[11:04:03.490]   run `npm fund` for details
+[11:04:03.506] 
+[11:04:03.506] 12 vulnerabilities (3 low, 5 moderate, 3 high, 1 critical)
+[11:04:03.507] 
+[11:04:03.507] To address issues that do not require attention, run:
+[11:04:03.507]   npm audit fix
+[11:04:03.507] 
+[11:04:03.508] To address all issues possible (including breaking changes), run:
+[11:04:03.508]   npm audit fix --force
+[11:04:03.508] 
+[11:04:03.508] Some issues need review, and may require choosing
+[11:04:03.508] a different dependency.
+[11:04:03.509] 
+[11:04:03.509] Run `npm audit` for details.
+[11:04:04.129] 
+[11:04:04.129] > rest-express@1.0.0 build
+[11:04:04.130] > vite build --config vite.config.production.ts && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist --external:../vite.config --external:vite
+[11:04:04.130] 
+[11:04:04.441] [36mvite v5.4.19 [32mbuilding for production...[36m[39m
+[11:04:04.494] transforming...
+[11:04:05.154] [32m✓[39m 58 modules transformed.
+[11:04:05.158] [31mx[39m Build failed in 691ms
+[11:04:05.158] [31merror during build:
+[11:04:05.159] [31m[vite:esbuild] Transform failed with 3 errors:
+[11:04:05.159] /vercel/path0/client/src/pages/admin/create-models.tsx:1615:6: ERROR: Unexpected closing "AdminLayout" tag does not match opening "div" tag
+[11:04:05.159] /vercel/path0/client/src/pages/admin/create-models.tsx:1617:0: ERROR: The character "}" is not valid inside a JSX element
+[11:04:05.159] /vercel/path0/client/src/pages/admin/create-models.tsx:1617:1: ERROR: Unexpected end of file before a closing "AdminLayout" tag[31m
+[11:04:05.159] file: [36m/vercel/path0/client/src/pages/admin/create-models.tsx:1615:6[31m
+[11:04:05.159] [33m
+[11:04:05.159] [33mUnexpected closing "AdminLayout" tag does not match opening "div" tag[33m
+[11:04:05.160] 1613|          <DialogComponent />
+[11:04:05.160] 1614|        </div>
+[11:04:05.160] 1615|      </AdminLayout>
+[11:04:05.160]    |        ^
+[11:04:05.160] 1616|    );
+[11:04:05.160] 1617|  }
+[11:04:05.160] 
+[11:04:05.160] [33mThe character "}" is not valid inside a JSX element[33m
+[11:04:05.160] 1615|      </AdminLayout>
+[11:04:05.161] 1616|    );
+[11:04:05.161] 1617|  }
+[11:04:05.161]    |  ^
+[11:04:05.161] 
+[11:04:05.161] [33mUnexpected end of file before a closing "AdminLayout" tag[33m
+[11:04:05.161] 1615|      </AdminLayout>
+[11:04:05.161] 1616|    );
+[11:04:05.161] 1617|  }
+[11:04:05.161]    |   ^
+[11:04:05.161] [31m
+[11:04:05.161]     at failureErrorWithLog (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:1472:15)
+[11:04:05.161]     at /vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:755:50
+[11:04:05.162]     at responseCallbacks.<computed> (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:622:9)
+[11:04:05.162]     at handleIncomingPacket (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:677:12)
+[11:04:05.162]     at Socket.readFromStdout (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:600:7)
+[11:04:05.162]     at Socket.emit (node:events:518:28)
+[11:04:05.162]     at addChunk (node:internal/streams/readable:561:12)
+[11:04:05.162]     at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+[11:04:05.162]     at Readable.push (node:internal/streams/readable:392:5)
+[11:04:05.162]     at Pipe.onStreamRead (node:internal/stream_base_commons:189:23)[39m
+[11:04:05.179] Error: Command "rm -f public/index.html && npm run build" exited with 1
+[11:04:05.442] 
+[11:04:08.783] Exiting build container
