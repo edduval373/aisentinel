@@ -41,9 +41,15 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   const isDemoMode = isDemoModeActive(user);
 
   // Fetch AI models
-  const { data: aiModels, isLoading: modelsLoading } = useQuery<AiModel[]>({
+  const { data: aiModels, isLoading: modelsLoading, error: modelsError } = useQuery<AiModel[]>({
     queryKey: ['/api/ai-models'],
   });
+
+  // Debug logging for AI models
+  console.log("AI Models loaded:", aiModels?.length || 0, "models");
+  if (modelsError) {
+    console.error("AI Models error:", modelsError);
+  }
   
   // Auto-select first available AI model (prioritize working models)
   useEffect(() => {
@@ -65,9 +71,15 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   });
 
   // Fetch activity types
-  const { data: activityTypes, isLoading: typesLoading } = useQuery<ActivityType[]>({
+  const { data: activityTypes, isLoading: typesLoading, error: typesError } = useQuery<ActivityType[]>({
     queryKey: ['/api/activity-types'],
   });
+
+  // Debug logging for Activity Types
+  console.log("Activity Types loaded:", activityTypes?.length || 0, "types");
+  if (typesError) {
+    console.error("Activity Types error:", typesError);
+  }
   
   // Auto-select first available activity type
   useEffect(() => {
