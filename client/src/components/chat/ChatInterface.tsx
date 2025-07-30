@@ -52,13 +52,6 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
     console.error("AI Models error:", modelsError);
   }
   
-  // Update connection status based on successful API calls
-  useEffect(() => {
-    if (aiModels && aiModels.length > 0 && activityTypes && activityTypes.length > 0) {
-      setIsConnected(true);
-    }
-  }, [aiModels, activityTypes]);
-  
   // Auto-select first available AI model (prioritize working models)
   useEffect(() => {
     if (aiModels && aiModels.length > 0 && selectedModel === null) {
@@ -89,6 +82,13 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   if (typesError) {
     console.error("Activity Types error:", typesError);
   }
+
+  // Update connection status based on successful API calls
+  useEffect(() => {
+    if (aiModels && aiModels.length > 0 && activityTypes && activityTypes.length > 0) {
+      setIsConnected(true);
+    }
+  }, [aiModels, activityTypes]);
   
   // Auto-select first available activity type
   useEffect(() => {
