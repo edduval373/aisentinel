@@ -1,3 +1,5 @@
+// PROTECTED SECTION START - Landing Page Authentication Flow - July 30, 2025
+// Changes require explicit developer permission
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -655,3 +657,4 @@ export default function Landing() {
     </div>
   );
 }
+// PROTECTED SECTION END - Landing Page Authentication Flow

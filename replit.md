@@ -1,5 +1,8 @@
 # AI Sentinel - Enterprise AI Governance Platform
 
+## Code Protection System
+The project implements a code protection system to prevent changes to tested sections without explicit developer permission. See `CODE_PROTECTION.md` for protected sections registry and modification procedures.
+
 ## Overview
 
 AI Sentinel is a comprehensive enterprise AI governance platform that provides secure, compliant, and monitored AI interactions for organizations. The application combines a React frontend with an Express.js backend, featuring real-time chat capabilities, content filtering, and administrative oversight.
