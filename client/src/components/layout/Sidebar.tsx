@@ -43,10 +43,23 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   });
 
   const isDemoUser = user?.roleLevel === 0 || window.location.pathname === '/demo' || !document.cookie.includes('sessionToken=');
-  const isSuperUser = user?.role === 'super-user' || (user?.roleLevel ?? 0) >= 100;
-  const isOwner = user?.role === 'owner' || (user?.roleLevel ?? 0) >= 99;
-  const isAdmin = user?.role === 'admin' || (user?.roleLevel ?? 0) >= 2;
+  const isSuperUser = user?.role === 'super-user' || (user?.roleLevel ?? 0) >= 1000;
+  const isOwner = user?.role === 'owner' || (user?.roleLevel ?? 0) >= 999;
+  const isAdmin = user?.role === 'admin' || (user?.roleLevel ?? 0) >= 998;
   const isRegularUser = user?.role === 'user' || user?.roleLevel === 1;
+  
+  console.log('🔍 Sidebar Role Detection:', {
+    user: user ? {
+      role: user.role,
+      roleLevel: user.roleLevel,
+      email: user.email
+    } : null,
+    isDemoUser,
+    isSuperUser,
+    isOwner,
+    isAdmin,
+    isRegularUser
+  });
   
   // Always show sidebar - no authentication restrictions
   // const isUnauthenticated = !user;
