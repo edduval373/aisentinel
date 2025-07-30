@@ -116,13 +116,7 @@ export default function Landing() {
       lineHeight: '1.6',
       color: '#1e293b'
     }}>
-      {/* Developer Role Picker */}
-      {showDeveloperPicker && developerEmail && (
-        <DeveloperRolePicker
-          email={developerEmail}
-          onRoleSelect={handleRoleSelect}
-        />
-      )}
+
       {/* Header */}
       <header style={{ 
         position: 'relative', 
@@ -168,40 +162,7 @@ export default function Landing() {
             >
               Sign In
             </Button>
-            
-            {/* Developer Authentication - Only show in development environment */}
-            {(window.location.hostname.includes('replit.dev') || 
-              window.location.hostname === 'localhost' || 
-              new URLSearchParams(window.location.search).get('dev') === 'true') && (
-              <button
-                onClick={async () => {
-                  console.log('[DEVELOPER] Showing role picker for developer authentication...');
-                  setDeveloperEmail('ed.duval15@gmail.com');
-                  setShowDeveloperPicker(true);
-                }}
-                style={{
-                  fontSize: '12px',
-                  color: '#dc2626',
-                  backgroundColor: '#fee2e2',
-                  border: '1px solid #dc2626',
-                  borderRadius: '6px',
-                  padding: '8px 16px',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  fontWeight: '500'
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor = '#dc2626';
-                  e.currentTarget.style.color = 'white';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = '#fee2e2';
-                  e.currentTarget.style.color = '#dc2626';
-                }}
-              >
-                Developer Login
-              </button>
-            )}
+
           </div>
         </div>
       </header>
