@@ -29,7 +29,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [selectedModel, setSelectedModel] = useState<number | null>(null);
   const [selectedActivityType, setSelectedActivityType] = useState<number | null>(null);
-  const [isConnected, setIsConnected] = useState(false);
+  const [isConnected, setIsConnected] = useState(true); // Set to true by default since we have working API
   const [messages, setMessages] = useState<ChatMessageType[]>([]);
   const [lastMessage, setLastMessage] = useState<string>("");
   const [showPreviousChats, setShowPreviousChats] = useState(false);
@@ -47,9 +47,17 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
 
   // Debug logging for AI models
   console.log("AI Models loaded:", aiModels?.length || 0, "models");
+  console.log("Selected Model ID:", selectedModel);
   if (modelsError) {
     console.error("AI Models error:", modelsError);
   }
+  
+  // Update connection status based on successful API calls
+  useEffect(() => {
+    if (aiModels && aiModels.length > 0 && activityTypes && activityTypes.length > 0) {
+      setIsConnected(true);
+    }
+  }, [aiModels, activityTypes]);
   
   // Auto-select first available AI model (prioritize working models)
   useEffect(() => {
@@ -77,6 +85,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
 
   // Debug logging for Activity Types
   console.log("Activity Types loaded:", activityTypes?.length || 0, "types");
+  console.log("Selected Activity Type ID:", selectedActivityType);
   if (typesError) {
     console.error("Activity Types error:", typesError);
   }
