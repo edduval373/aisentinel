@@ -225,6 +225,47 @@ export default async function handler(req, res) {
       }
     }
 
+    // API Keys configuration status endpoint
+    if (path === '/api/admin/api-keys' && req.method === 'GET') {
+      try {
+        console.log("Fetching API keys configuration status for production...");
+        
+        // Check environment variables for API key configuration status
+        const apiKeyStatus = {
+          openai: {
+            configured: !!process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your-openai-api-key-here',
+            status: !!process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your-openai-api-key-here' ? 'Configured' : 'Not configured'
+          },
+          anthropic: {
+            configured: !!process.env.ANTHROPIC_API_KEY && process.env.ANTHROPIC_API_KEY !== 'your-anthropic-api-key-here',
+            status: !!process.env.ANTHROPIC_API_KEY && process.env.ANTHROPIC_API_KEY !== 'your-anthropic-api-key-here' ? 'Configured' : 'Not configured'
+          },
+          perplexity: {
+            configured: !!process.env.PERPLEXITY_API_KEY && process.env.PERPLEXITY_API_KEY !== 'your-perplexity-api-key-here',
+            status: !!process.env.PERPLEXITY_API_KEY && process.env.PERPLEXITY_API_KEY !== 'your-perplexity-api-key-here' ? 'Configured' : 'Not configured'
+          },
+          google: {
+            configured: !!process.env.GOOGLE_AI_API_KEY && process.env.GOOGLE_AI_API_KEY !== 'your-google-api-key-here',
+            status: !!process.env.GOOGLE_AI_API_KEY && process.env.GOOGLE_AI_API_KEY !== 'your-google-api-key-here' ? 'Configured' : 'Not configured'
+          },
+          cohere: {
+            configured: !!process.env.COHERE_API_KEY && process.env.COHERE_API_KEY !== 'your-cohere-api-key-here',
+            status: !!process.env.COHERE_API_KEY && process.env.COHERE_API_KEY !== 'your-cohere-api-key-here' ? 'Configured' : 'Not configured'
+          },
+          mistral: {
+            configured: !!process.env.MISTRAL_API_KEY && process.env.MISTRAL_API_KEY !== 'your-mistral-api-key-here',
+            status: !!process.env.MISTRAL_API_KEY && process.env.MISTRAL_API_KEY !== 'your-mistral-api-key-here' ? 'Configured' : 'Not configured'
+          }
+        };
+
+        console.log("Production API Keys Status:", apiKeyStatus);
+        return res.status(200).json(apiKeyStatus);
+      } catch (error) {
+        console.error("Error checking API keys configuration in production:", error);
+        return res.status(500).json({ message: "Failed to check API keys configuration" });
+      }
+    }
+
     // Current company endpoint for sidebar - Connect to real database
     if (path === '/api/user/current-company' && req.method === 'GET') {
       try {

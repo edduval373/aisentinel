@@ -36,10 +36,10 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const [location, navigate] = useLocation();
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
-  // Fetch current company data
+  // Fetch current company data - always enabled since API handles both authenticated and demo users
   const { data: currentCompany } = useQuery({
     queryKey: ['/api/user/current-company'],
-    enabled: !!user && !!user.companyId,
+    enabled: true, // Always fetch - API handles both authenticated and demo users
   });
 
   const isDemoUser = user?.roleLevel === 0 || window.location.pathname === '/demo' || !document.cookie.includes('sessionToken=');
@@ -611,7 +611,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       {/* Bottom section */}
       <div style={{ borderTop: '1px solid #3b82f6', padding: '12px' }}>
         {/* Current Company Display */}
-        {currentCompany && (
+        {currentCompany && typeof currentCompany === 'object' && 'name' in currentCompany && (
           <div style={{ 
             marginBottom: '12px',
             paddingBottom: '12px',
@@ -632,10 +632,10 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
               alignItems: 'center',
               gap: '8px'
             }}>
-              {currentCompany.logo && (
+              {currentCompany.logo && 'logo' in currentCompany && (
                 <img 
-                  src={currentCompany.logo} 
-                  alt={currentCompany.name}
+                  src={currentCompany.logo as string} 
+                  alt={currentCompany.name as string}
                   style={{
                     width: '20px',
                     height: '20px',
@@ -654,13 +654,13 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap'
                 }}>
-                  {currentCompany.name}
+                  {currentCompany.name as string}
                 </div>
                 <div style={{
                   color: '#94a3b8',
                   fontSize: '10px'
                 }}>
-                  ID: {currentCompany.id}
+                  ID: {(currentCompany as any).id}
                 </div>
               </div>
             </div>
