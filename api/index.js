@@ -210,35 +210,97 @@ export default async function handler(req, res) {
           });
         }
 
-        // Validate authenticated session token format
-        if (!sessionToken.startsWith('prod-session-') && !sessionToken.startsWith('dev-session-')) {
-          console.log(`Auth check - Invalid token format: ${sessionToken.substring(0, 20)}...`);
+        // Validate session against Railway database
+        let client = null;
+        try {
+          console.log('Auth check - Attempting Railway database connection for session validation');
+          
+          if (!process.env.DATABASE_URL) {
+            throw new Error('DATABASE_URL not configured');
+          }
+
+          const { Client } = await import('pg');
+          client = new Client({
+            connectionString: process.env.DATABASE_URL,
+            ssl: { rejectUnauthorized: false },
+            connectionTimeoutMillis: 3000,
+            query_timeout: 3000
+          });
+          
+          await Promise.race([
+            client.connect(),
+            new Promise((_, reject) => setTimeout(() => reject(new Error('Connection timeout')), 3000))
+          ]);
+          
+          // Validate session token in database
+          const sessionResult = await client.query(
+            'SELECT us.*, u.email, u.first_name, u.last_name, u.company_id, u.role, u.role_level FROM user_sessions us JOIN users u ON us.user_id = u.id WHERE us.session_token = $1 AND us.expires_at > NOW()',
+            [sessionToken]
+          );
+          
+          if (sessionResult.rows.length === 0) {
+            console.log('Auth check - Session not found in database or expired');
+            return res.status(200).json({
+              authenticated: false,
+              message: 'Session not found or expired'
+            });
+          }
+          
+          const session = sessionResult.rows[0];
+          console.log(`Auth check - Valid database session found for user: ${session.email}`);
+          
+          // Update last accessed time
+          await client.query(
+            'UPDATE user_sessions SET last_accessed_at = NOW() WHERE session_token = $1',
+            [sessionToken]
+          );
+          
+          // Get company name
+          const companyResult = await client.query(
+            'SELECT name FROM companies WHERE id = $1',
+            [session.company_id]
+          );
+          
+          const companyName = companyResult.rows[0]?.name || 'Unknown Company';
+          
+          return res.status(200).json({
+            authenticated: true,
+            user: {
+              id: session.user_id,
+              email: session.email,
+              firstName: session.first_name,
+              lastName: session.last_name,
+              role: session.role,
+              roleLevel: session.role_level,
+              companyId: session.company_id,
+              companyName: companyName,
+              isDeveloper: session.email === 'ed.duval15@gmail.com',
+              testRole: session.test_role
+            },
+            sessionValid: true,
+            sessionExists: true,
+            databaseConnected: true,
+            environment: 'production-database'
+          });
+          
+        } catch (dbError) {
+          console.error('Auth check - Database connection failed:', dbError.message);
           return res.status(200).json({
             authenticated: false,
-            message: 'Invalid session token format'
+            message: 'Database connection failed - authentication unavailable',
+            databaseConnected: false,
+            error: dbError.message
           });
+        } finally {
+          if (client) {
+            try {
+              await client.end();
+              console.log('Auth check - Database connection closed');
+            } catch (closeError) {
+              console.warn('Auth check - Error closing connection:', closeError.message);
+            }
+          }
         }
-
-        console.log('Auth check - Valid session token found, returning authenticated user');
-        
-        // For production serverless, return authenticated user
-        return res.status(200).json({
-          authenticated: true,
-          user: {
-            id: '42450602',
-            email: 'ed.duval15@gmail.com',
-            firstName: 'Edward',
-            lastName: 'Duval',
-            role: 'super-user',
-            roleLevel: 1000,
-            companyId: 1,
-            companyName: 'Duval AI Solutions',
-            isDeveloper: true,
-            testRole: 'super-user'
-          },
-          sessionValid: true,
-          environment: 'production-serverless'
-        });
       } catch (error) {
         return res.status(500).json({
           isAuthenticated: false,
@@ -280,6 +342,93 @@ export default async function handler(req, res) {
         return res.status(200).json(debugInfo);
       } catch (error) {
         return res.status(500).json({ error: error.message });
+      }
+    }
+
+    // Company Management endpoint - requires super-user authentication
+    if (path === '/api/admin/companies' && req.method === 'GET') {
+      try {
+        console.log("Company management endpoint requested");
+        
+        // Extract and validate session token
+        const sessionToken = req.headers.cookie?.match(/sessionToken=([^;]+)/)?.[1];
+        if (!sessionToken) {
+          return res.status(401).json({ message: "Authentication required" });
+        }
+        
+        let client = null;
+        try {
+          const { Client } = await import('pg');
+          client = new Client({
+            connectionString: process.env.DATABASE_URL,
+            ssl: { rejectUnauthorized: false },
+            connectionTimeoutMillis: 3000,
+            query_timeout: 3000
+          });
+          
+          await Promise.race([
+            client.connect(),
+            new Promise((_, reject) => setTimeout(() => reject(new Error('Connection timeout')), 3000))
+          ]);
+          
+          // Validate session and get user
+          const sessionResult = await client.query(
+            'SELECT us.*, u.email, u.role_level FROM user_sessions us JOIN users u ON us.user_id = u.id WHERE us.session_token = $1 AND us.expires_at > NOW()',
+            [sessionToken]
+          );
+          
+          if (sessionResult.rows.length === 0) {
+            return res.status(401).json({ message: "Invalid or expired session" });
+          }
+          
+          const session = sessionResult.rows[0];
+          
+          // Check super-user access (role level 1000)
+          if (session.role_level < 1000) {
+            return res.status(403).json({ message: "Super-user access required" });
+          }
+          
+          // Fetch all companies from database
+          const companiesResult = await client.query(
+            'SELECT id, name, domain, logo, created_at, primary_admin_name, primary_admin_email, primary_admin_title FROM companies ORDER BY id'
+          );
+          
+          const companies = companiesResult.rows.map(row => ({
+            id: row.id,
+            name: row.name,
+            domain: row.domain,
+            logo: row.logo,
+            createdAt: row.created_at,
+            primaryAdminName: row.primary_admin_name,
+            primaryAdminEmail: row.primary_admin_email,
+            primaryAdminTitle: row.primary_admin_title,
+            isActive: true // Default all companies to active
+          }));
+          
+          console.log(`Returning ${companies.length} companies for super-user ${session.email}`);
+          return res.status(200).json(companies);
+          
+        } catch (dbError) {
+          console.error('Database error in company management:', dbError.message);
+          return res.status(500).json({ 
+            message: "Database connection failed",
+            error: dbError.message 
+          });
+        } finally {
+          if (client) {
+            try {
+              await client.end();
+            } catch (closeError) {
+              console.warn('Error closing company management connection:', closeError.message);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Company management API error:', error);
+        return res.status(500).json({ 
+          message: "Failed to fetch companies",
+          error: error.message 
+        });
       }
     }
 
