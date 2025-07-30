@@ -7,15 +7,17 @@ if (!process.env.SENDGRID_API_KEY) {
   throw new Error("SENDGRID_API_KEY environment variable must be set");
 }
 
-// Validate API key format (with more flexibility)
-const apiKey = process.env.SENDGRID_API_KEY;
+// Validate API key format
+const apiKey = process.env.SENDGRID_API_KEY.trim();
+console.log(`SendGrid API key: length=${apiKey.length}, starts with SG.=${apiKey.startsWith('SG.')}`);
+
 if (!apiKey.startsWith('SG.')) {
-  console.warn(`SendGrid API key format warning - expected to start with SG., got: ${apiKey.substring(0, 10)}...`);
-  console.warn('Proceeding anyway to test actual functionality...');
+  console.error(`Invalid SendGrid API key format - expected to start with SG., got: ${apiKey.substring(0, 10)}...`);
+  throw new Error("Invalid SendGrid API key format");
 }
 
-if (apiKey.length < 50 || apiKey.length > 100) {
-  console.warn(`SendGrid API key length warning: ${apiKey.length} chars (typical range: 50-100)`);
+if (apiKey.length !== 69) {
+  console.warn(`SendGrid API key length: ${apiKey.length} chars (expected 69)`);
 }
 
 mailService.setApiKey(apiKey);
