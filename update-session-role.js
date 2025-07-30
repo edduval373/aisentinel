@@ -6,7 +6,13 @@ const pool = new Pool({ connectionString });
 
 async function updateSessionRoleLevel() {
   try {
-    const sessionToken = 'alhGXAXICFWpV0kScb_CbBDvGJlVdGRpV3QJxSDy9KSJPDr5JnrOi7sjW4YEix7B';
+    // Get session token from environment or command line args for security
+    const sessionToken = process.env.SESSION_TOKEN || process.argv[2];
+    
+    if (!sessionToken) {
+      console.error('❌ No session token provided. Use: node update-session-role.js <session_token>');
+      return;
+    }
     
     console.log('🔍 BEFORE UPDATE - Checking current values...');
     

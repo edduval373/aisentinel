@@ -6,7 +6,13 @@ const pool = new Pool({ connectionString });
 
 async function clearProductionSession() {
   try {
-    const sessionToken = 'alhGXAXICFWpV0kScb_CbBDvGJlVdGRpV3QJxSDy9KSJPDr5JnrOi7sjW4YEix7B';
+    // Get session token from environment or command line args for security
+    const sessionToken = process.env.SESSION_TOKEN || process.argv[2];
+    
+    if (!sessionToken) {
+      console.error('❌ No session token provided. Use: node clear-session.js <session_token>');
+      return;
+    }
     
     console.log('🗑️ CLEARING PRODUCTION SESSION');
     console.log('Session token:', sessionToken.substring(0, 20) + '...');

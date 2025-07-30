@@ -141,6 +141,13 @@ The application is configured for deployment on Vercel with the following setup:
 
 ```
 Recent Updates:
+- July 30, 2025. CRITICAL SECURITY FIX - Exposed Session Token Removed:
+  * FIXED: Removed hardcoded session token from update-session-role.js and clear-session.js files
+  * SECURED: Replaced hardcoded token with environment variable or command-line argument approach
+  * VERIFIED: No other instances of exposed session tokens found in codebase
+  * ENHANCED: Both scripts now require secure token passing via SESSION_TOKEN env var or command line
+  * COMPLETED: Full security audit confirms no other sensitive credentials exposed in repository
+  * RESOLVED: GitHub security alert addressed immediately with proper token handling implementation
 - July 29, 2025. PRODUCTION COMPANY MANAGEMENT API COMPLETELY FIXED:
   * RESOLVED: Critical production API routing issue where PUT requests for company updates were falling back to GET endpoint
   * IMPLEMENTED: Proper PUT endpoint that returns updated company object with all required fields (isActive, primaryAdminTitle)
