@@ -690,7 +690,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                   key={message.id}
                   message={message}
                   aiModel={messageAiModel}
-                  user={user || undefined}
+                  user={user as any}
                 />
               );
             })}

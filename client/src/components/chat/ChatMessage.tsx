@@ -121,10 +121,9 @@ export default function ChatMessage({ message, aiModel, user }: ChatMessageProps
                 {aiModel?.name || 'AI Assistant'}
               </span>
             </div>
-            <MessageRenderer 
-              content={message.response || ""} 
-              style={{ fontSize: '14px', color: '#334155' }}
-            />
+            <div style={{ fontSize: '14px', color: '#334155' }}>
+              <MessageRenderer content={message.response || ""} />
+            </div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '4px' }}>
               <p style={{ fontSize: '12px', color: '#64748b' }}>{timestamp}</p>
             </div>
