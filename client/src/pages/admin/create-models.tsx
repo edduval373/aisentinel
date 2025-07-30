@@ -84,8 +84,11 @@ export default function CreateModels() {
   const isReadOnly = isReadOnlyMode(user);
 
   // Fetch AI models
-  const { data: models = [], isLoading: modelsLoading, error, isError } = useQuery<AiModel[]>({
+  const { data: models = [], isLoading: modelsLoading, error, isError, refetch } = useQuery<AiModel[]>({
     queryKey: ["/api/ai-models"],
+    retry: 2,
+    refetchOnWindowFocus: false,
+    staleTime: 30000, // 30 seconds
   });
 
   // Debug logging for models loading
@@ -94,7 +97,10 @@ export default function CreateModels() {
     modelsCount: models?.length || 0,
     isError,
     error: error?.message,
-    models: models?.slice(0, 2) // First 2 models for debug
+    models: models?.slice(0, 2), // First 2 models for debug
+    rawModels: models, // Full models array
+    queryDataType: typeof models,
+    isArray: Array.isArray(models)
   });
 
   // Fetch debug status
@@ -368,6 +374,22 @@ export default function CreateModels() {
             </div>
           </div>
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+            <button
+              onClick={() => refetch()}
+              style={{
+                backgroundColor: '#10b981',
+                color: 'white',
+                padding: '8px 16px',
+                borderRadius: '6px',
+                border: 'none',
+                fontSize: '14px',
+                fontWeight: '500',
+                cursor: 'pointer',
+                marginRight: '8px'
+              }}
+            >
+              Refresh Models
+            </button>
             <Button
               onClick={() => setShowDebug(!showDebug)}
               style={{
@@ -476,12 +498,17 @@ export default function CreateModels() {
         )}
 
         {/* Models Grid */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
-          gap: '20px'
-        }}>
-          {models.map((model: AiModel) => (
+        {modelsLoading ? (
+          <div style={{ textAlign: 'center', padding: '40px' }}>
+            <div>Loading AI models...</div>
+          </div>
+        ) : models && models.length > 0 ? (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
+            gap: '20px'
+          }}>
+            {models.map((model: AiModel) => (
             <div
               key={model.id}
               style={{
@@ -665,7 +692,12 @@ export default function CreateModels() {
               </div>
             </div>
           ))}
-        </div>
+          </div>
+        ) : (
+          <div style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}>
+            <div>No AI models found. Create your first model to get started.</div>
+          </div>
+        )}
 
         {/* Edit Dialog */}
         <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
