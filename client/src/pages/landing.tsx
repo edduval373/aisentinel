@@ -71,19 +71,36 @@ export default function Landing() {
       return;
     }
     
-    // Check if user just verified email and show success message
+    // Check if user just verified email and immediately check authentication
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('verified') === 'true') {
       const verifiedEmail = urlParams.get('email');
       console.log("[LANDING DEBUG] Email verification detected for:", verifiedEmail);
       
-      // Show success message and clear URL parameters
-      setTimeout(() => {
-        // Clear URL parameters 
-        window.history.replaceState({}, document.title, '/');
-        // Force page refresh to check authentication
-        window.location.reload();
-      }, 2000);
+      // Clear URL parameters immediately
+      window.history.replaceState({}, document.title, '/');
+      
+      // Check authentication immediately after verification
+      console.log("[LANDING DEBUG] Checking authentication after email verification...");
+      fetch('/api/auth/me', {
+        method: 'GET',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(response => response.json())
+      .then(authData => {
+        console.log("[LANDING DEBUG] Post-verification auth response:", authData);
+        if (authData.authenticated && authData.user) {
+          console.log("[LANDING DEBUG] Authentication confirmed after verification, redirecting to main app");
+          window.location.href = '/';
+          return;
+        } else {
+          console.log("[LANDING DEBUG] Not authenticated after verification, staying on landing page");
+        }
+      })
+      .catch(error => {
+        console.log("[LANDING DEBUG] Post-verification auth check failed:", error);
+      });
       
       // Show verification success notification
       const notification = document.createElement('div');
@@ -100,15 +117,17 @@ export default function Landing() {
         font-family: system-ui, -apple-system, sans-serif;
         font-weight: 500;
       `;
-      notification.textContent = `✅ Email verified successfully! Welcome to AI Sentinel.`;
+      notification.textContent = `✅ Email verified successfully! Redirecting to chat...`;
       document.body.appendChild(notification);
       
-      // Remove notification after 3 seconds
+      // Remove notification after redirect
       setTimeout(() => {
         if (notification.parentNode) {
           notification.parentNode.removeChild(notification);
         }
-      }, 3000);
+      }, 2000);
+      
+      return; // Exit useEffect early since we're handling verification
     }
   }, []);
   
