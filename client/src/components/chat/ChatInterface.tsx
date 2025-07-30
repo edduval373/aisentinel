@@ -67,7 +67,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   }, [aiModels, selectedModel]);
 
   // Fetch Model Fusion config
-  const { data: modelFusionConfig } = useQuery({
+  const { data: modelFusionConfig } = useQuery<{isEnabled: boolean}>({
     queryKey: ['/api/model-fusion-config'],
   });
 
@@ -100,7 +100,6 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   // Fetch chat messages when session changes
   const { data: chatMessages, isLoading: messagesLoading } = useQuery<ChatMessageType[]>({
     queryKey: ['/api/chat/session', currentSession, 'messages'],
-    queryFn: () => apiRequest(`/api/chat/session/${currentSession}/messages`),
     enabled: !!currentSession,
   });
 
@@ -597,8 +596,8 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                           opacity: 0.75,
                           marginTop: '2px'
                         }}>
-                          {new Date(session.createdAt).toLocaleDateString()} at{' '}
-                          {new Date(session.createdAt).toLocaleTimeString()}
+                          {session.createdAt ? new Date(session.createdAt).toLocaleDateString() : 'Unknown date'} at{' '}
+                          {session.createdAt ? new Date(session.createdAt).toLocaleTimeString() : 'Unknown time'}
                           {session.messageCount !== undefined && (
                             <span style={{ marginLeft: '8px' }}>• {session.messageCount} message{session.messageCount !== 1 ? 's' : ''}</span>
                           )}
@@ -668,13 +667,13 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {messages.map((message) => {
-              const messageAiModel = message.aiModel || aiModels?.find(m => m.id === message.aiModelId);
+              const messageAiModel = aiModels?.find(m => m.id === message.aiModelId);
               return (
                 <ChatMessage
                   key={message.id}
                   message={message}
                   aiModel={messageAiModel}
-                  user={user}
+                  user={user || undefined}
                 />
               );
             })}
