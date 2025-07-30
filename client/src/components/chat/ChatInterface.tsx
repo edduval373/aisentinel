@@ -48,6 +48,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   // Debug logging for AI models
   console.log("AI Models loaded:", aiModels?.length || 0, "models");
   console.log("Selected Model ID:", selectedModel);
+  console.log("Selected Model Object:", aiModels?.find(m => m.id === selectedModel));
   if (modelsError) {
     console.error("AI Models error:", modelsError);
   }
@@ -79,6 +80,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   // Debug logging for Activity Types
   console.log("Activity Types loaded:", activityTypes?.length || 0, "types");
   console.log("Selected Activity Type ID:", selectedActivityType);
+  console.log("Selected Activity Type Object:", activityTypes?.find(at => at.id === selectedActivityType));
   if (typesError) {
     console.error("Activity Types error:", typesError);
   }
@@ -343,7 +345,9 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                 border: '1px solid #d1d5db',
                 backgroundColor: 'white'
               }}>
-                <SelectValue placeholder="Select AI Model" />
+                <SelectValue placeholder="Select AI Model">
+                  {selectedModel ? aiModels?.find(m => m.id === selectedModel)?.name || 'Select AI Model' : 'Select AI Model'}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent style={{ 
                 backgroundColor: '#eff6ff', 
@@ -423,7 +427,9 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                 border: '1px solid #d1d5db',
                 backgroundColor: 'white'
               }}>
-                <SelectValue placeholder="Select Activity Type" />
+                <SelectValue placeholder="Select Activity Type">
+                  {selectedActivityType ? activityTypes?.find(at => at.id === selectedActivityType)?.name || 'Select Activity Type' : 'Select Activity Type'}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent style={{ 
                 backgroundColor: '#eff6ff', 
