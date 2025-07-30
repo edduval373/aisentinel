@@ -28,8 +28,7 @@ export const pool = new Pool({
   },
   max: 5, // Maximum number of connections in the pool
   idleTimeoutMillis: 1000, // Close idle connections after 1 second
-  connectionTimeoutMillis: 3000, // Timeout connection attempts after 3 seconds
-  acquireTimeoutMillis: 3000 // Timeout waiting for connection from pool
+  connectionTimeoutMillis: 3000 // Timeout connection attempts after 3 seconds
 });
 
 export const db = drizzle(pool, { schema });
