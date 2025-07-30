@@ -353,7 +353,9 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                 border: '1px solid #d1d5db',
                 backgroundColor: 'white'
               }}>
-                <SelectValue placeholder="Select AI Model" />
+                <SelectValue placeholder="Select AI Model">
+                  {selectedModel ? (aiModels?.find(m => m.id === selectedModel)?.name || "Select AI Model") : "Select AI Model"}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent style={{ 
                 backgroundColor: '#eff6ff', 
@@ -436,7 +438,9 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                 border: '1px solid #d1d5db',
                 backgroundColor: 'white'
               }}>
-                <SelectValue placeholder="Select Activity Type" />
+                <SelectValue placeholder="Select Activity Type">
+                  {selectedActivityType ? (activityTypes?.find(at => at.id === selectedActivityType)?.name || "Select Activity Type") : "Select Activity Type"}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent style={{ 
                 backgroundColor: '#eff6ff', 
