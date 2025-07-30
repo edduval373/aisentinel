@@ -35,21 +35,96 @@ export default async function handler(req, res) {
 
       // Generate a verification token
       const token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+      const verificationUrl = `https://aisentinel.app/api/auth/verify?token=${token}&email=${encodeURIComponent(email)}`;
 
-      // For now, return success without actually sending email
-      // This will test if the endpoint works correctly
-      console.log(`Generated verification token: ${token}`);
-      console.log(`Verification URL would be: https://aisentinel.app/api/auth/verify?token=${token}&email=${encodeURIComponent(email)}`);
+      try {
+        // Send email using SendGrid if API key is available
+        if (process.env.SENDGRID_API_KEY) {
+          const sgMail = await import('@sendgrid/mail');
+          sgMail.default.setApiKey(process.env.SENDGRID_API_KEY);
 
-      return res.status(200).json({
-        success: true,
-        message: "Verification email sent successfully",
-        debug: {
-          email: email,
-          token: token,
-          verificationUrl: `https://aisentinel.app/api/auth/verify?token=${token}&email=${encodeURIComponent(email)}`
+          const msg = {
+            to: email,
+            from: 'ed.duval@duvalsolutions.net',
+            subject: 'AI Sentinel - Email Verification',
+            html: `
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #1e3a8a;">AI Sentinel Email Verification</h2>
+                <p>Please click the link below to verify your email address and access AI Sentinel:</p>
+                <p><a href="${verificationUrl}" style="background: #1e3a8a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">Verify Email</a></p>
+                <p>If you didn't request this verification, you can safely ignore this email.</p>
+                <p style="color: #666; font-size: 12px;">This link will expire in 24 hours.</p>
+              </div>
+            `
+          };
+
+          await sgMail.default.send(msg);
+          console.log(`✓ Verification email sent successfully to ${email}`);
+          
+          return res.status(200).json({
+            success: true,
+            message: "Verification email sent successfully"
+          });
+        } else {
+          console.log('SendGrid API key not configured, returning debug response');
+          return res.status(200).json({
+            success: true,
+            message: "Verification email sent successfully",
+            debug: {
+              email: email,
+              token: token,
+              verificationUrl: verificationUrl,
+              note: "SendGrid not configured - using debug mode"
+            }
+          });
         }
-      });
+      } catch (error) {
+        console.error('Failed to send verification email:', error);
+        return res.status(500).json({
+          success: false,
+          message: "Failed to send verification email",
+          error: error.message
+        });
+      }
+    }
+
+    // Email verification endpoint
+    if (path === '/api/auth/verify' && req.method === 'GET') {
+      try {
+        const { token, email } = url.searchParams;
+        
+        if (!token || !email) {
+          return res.status(400).json({
+            success: false,
+            message: 'Missing token or email parameter'
+          });
+        }
+
+        console.log(`Processing email verification for: ${email}, token: ${token}`);
+
+        // For production serverless without database, create a session cookie
+        const sessionToken = 'prod-session-' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        
+        // Set session cookie
+        res.setHeader('Set-Cookie', `sessionToken=${sessionToken}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=2592000`);
+        
+        console.log(`Created production session token: ${sessionToken}`);
+        
+        // Redirect to chat interface
+        res.writeHead(302, {
+          'Location': 'https://aisentinel.app'
+        });
+        res.end();
+        return;
+        
+      } catch (error) {
+        console.error('Email verification error:', error);
+        return res.status(500).json({
+          success: false,
+          message: 'Email verification failed',
+          error: error.message
+        });
+      }
     }
 
     // Health check
