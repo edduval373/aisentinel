@@ -57,39 +57,42 @@ export default function SetupApiKeys() {
     queryKey: ['/api/ai-models'],
   });
 
+  // Fetch API key configuration status from environment
+  const { data: apiKeyConfig, isLoading: apiKeyLoading, error: apiKeyError } = useQuery({
+    queryKey: ['/api/admin/api-keys'],
+  });
+
   console.log('SetupApiKeys: Query state:', { 
     isLoading: modelsLoading, 
     hasData: !!aiModels, 
     dataLength: aiModels?.length,
     error: modelsError,
+    apiKeyConfig,
+    apiKeyLoading,
+    apiKeyError,
     userAuth: { isAuthenticated: !!user, roleLevel: user?.roleLevel, companyId: user?.companyId }
   });
 
-  // Initialize API keys from models
+  // Initialize API keys from environment configuration
   useEffect(() => {
-    if (aiModels) {
-      console.log('SetupApiKeys: Loading AI models:', aiModels.length, 'models');
+    if (apiKeyConfig) {
+      console.log('SetupApiKeys: Loading API key config:', apiKeyConfig);
       const keys: Record<string, string> = {};
-      aiModels.forEach(model => {
-        console.log(`SetupApiKeys: Processing model:`, { provider: model.provider, hasKey: !!model.apiKey, keyLength: model.apiKey?.length });
-        if (model.provider === 'openai' && !keys.openai) {
-          keys.openai = model.apiKey || '';
-        } else if (model.provider === 'anthropic' && !keys.anthropic) {
-          keys.anthropic = model.apiKey || '';
-        } else if (model.provider === 'perplexity' && !keys.perplexity) {
-          keys.perplexity = model.apiKey || '';
-        } else if (model.provider === 'google' && !keys.google) {
-          keys.google = model.apiKey || '';
-        } else if (model.provider === 'cohere' && !keys.cohere) {
-          keys.cohere = model.apiKey || '';
-        } else if (model.provider === 'mistral' && !keys.mistral) {
-          keys.mistral = model.apiKey || '';
+      
+      // Use environment configuration status to determine if keys are set
+      Object.entries(apiKeyConfig).forEach(([provider, config]: [string, any]) => {
+        if (config.configured && config.status === 'Configured') {
+          keys[provider] = `${provider.toUpperCase()}_API_KEY_CONFIGURED`;
+        } else {
+          keys[provider] = '';
         }
       });
-      console.log('SetupApiKeys: Final API keys state:', Object.keys(keys).map(k => ({ provider: k, hasKey: !!keys[k], keyLength: keys[k]?.length })));
+      
+      console.log('SetupApiKeys: Final API keys state from environment:', 
+        Object.keys(keys).map(k => ({ provider: k, configured: !!keys[k] })));
       setApiKeys(keys);
     }
-  }, [aiModels]);
+  }, [apiKeyConfig]);
 
   // Update API key mutation
   const updateApiKeyMutation = useMutation({
@@ -282,7 +285,8 @@ export default function SetupApiKeys() {
   };
 
   const getConnectionStatus = (provider: any) => {
-    const hasValidKey = apiKeys[provider.id] && !apiKeys[provider.id].startsWith('placeholder-');
+    const providerKey = provider.id || provider.provider || provider.name?.toLowerCase();
+    const hasValidKey = apiKeys[providerKey] && apiKeys[providerKey] !== '';
     return hasValidKey ? "connected" : "needs-key";
   };
 
@@ -312,7 +316,7 @@ export default function SetupApiKeys() {
     );
   }
 
-  if (modelsLoading) {
+  if (modelsLoading || apiKeyLoading) {
     return (
       <AdminLayout title="Setup API Keys" subtitle="Configure AI provider API keys">
         <div style={{ 
