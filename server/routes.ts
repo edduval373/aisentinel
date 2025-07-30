@@ -35,6 +35,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ status: 'OK', timestamp: new Date().toISOString() });
   });
 
+  // Database test endpoint for debug panel
+  app.get('/api/debug/database', async (req, res) => {
+    try {
+      console.log('Database test endpoint hit');
+      
+      // Test database connectivity by querying companies table
+      const companies = await storage.getCompanies();
+      const companyCount = companies.length;
+      
+      // Get first company for detailed info
+      const firstCompany = companies[0];
+      
+      res.json({ 
+        status: 'connected',
+        timestamp: new Date().toISOString(),
+        companyCount,
+        firstCompany: firstCompany ? {
+          id: firstCompany.id,
+          name: firstCompany.name,
+          primaryAdminTitle: firstCompany.primaryAdminTitle
+        } : null
+      });
+    } catch (error) {
+      console.error('Database test failed:', error);
+      res.status(500).json({ 
+        status: 'error', 
+        error: error instanceof Error ? error.message : 'Unknown database error',
+        timestamp: new Date().toISOString()
+      });
+    }
+  });
+
   // Super-user authentication endpoint - for manual login (developer testing)
   app.post('/api/auth/super-login', async (req, res) => {
     try {

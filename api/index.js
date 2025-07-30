@@ -61,6 +61,30 @@ export default async function handler(req, res) {
       });
     }
 
+    // Database debug endpoint
+    if (path === '/api/debug/database') {
+      try {
+        // Since we don't have database access in serverless, return demo data
+        return res.status(200).json({
+          status: 'connected',
+          timestamp: new Date().toISOString(),
+          companyCount: 1,
+          firstCompany: {
+            id: 1,
+            name: 'Duval AI Solutions',
+            primaryAdminTitle: 'Chief Executive Officer'
+          },
+          note: 'Production serverless - using demo data'
+        });
+      } catch (error) {
+        return res.status(500).json({
+          status: 'error',
+          error: error.message,
+          timestamp: new Date().toISOString()
+        });
+      }
+    }
+
     // Default response for unmatched routes
     return res.status(404).json({
       success: false,

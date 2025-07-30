@@ -7,11 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Wifi, WifiOff, History, RotateCcw, Trash2, MessageSquare, Brain } from "lucide-react";
+import { Wifi, WifiOff, History, RotateCcw, Trash2, MessageSquare, Brain, Bug } from "lucide-react";
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
 import FeaturesBenefitsDialog from "@/components/FeaturesBenefitsDialog";
 import { DeveloperRoleSwitcher } from "@/components/developer/DeveloperRoleSwitcher";
+import { DebugStatusPanel } from "@/components/DebugStatusPanel";
 import { useFeaturesBenefits } from "@/hooks/useFeaturesBenefits";
 import { isDemoModeActive } from "@/utils/demoMode";
 import type { AiModel, ActivityType, ChatMessage as ChatMessageType, Company, ChatSession } from "@shared/schema";
@@ -33,6 +34,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   const [lastMessage, setLastMessage] = useState<string>("");
   const [showPreviousChats, setShowPreviousChats] = useState(false);
   const [prefillMessage, setPrefillMessage] = useState<string>("");
+  const [showDebugPanel, setShowDebugPanel] = useState(false);
   
   // Features & Benefits dialog for demo users
   const { showDialog, openDialog, closeDialog } = useFeaturesBenefits();
@@ -489,6 +491,27 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                 <Trash2 style={{ width: '14px', height: '14px' }} />
                 Clear
               </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowDebugPanel(true)}
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '4px',
+                  padding: '6px 10px',
+                  fontSize: '14px',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                  fontWeight: '500',
+                  backgroundColor: '#fef3c7',
+                  borderColor: '#f59e0b',
+                  color: '#92400e'
+                }}
+                title="Debug Status Panel - View authentication and system information"
+              >
+                <Bug style={{ width: '14px', height: '14px' }} />
+                Debug
+              </Button>
             </div>
           </div>
         </div>
@@ -686,6 +709,12 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       <FeaturesBenefitsDialog
         open={showDialog}
         onOpenChange={closeDialog}
+      />
+      
+      {/* Debug Status Panel */}
+      <DebugStatusPanel
+        isOpen={showDebugPanel}
+        onClose={() => setShowDebugPanel(false)}
       />
     </div>
   );
