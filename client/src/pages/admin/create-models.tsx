@@ -140,6 +140,7 @@ export default function CreateModels() {
   const [editingModel, setEditingModel] = useState<AiModel | null>(null);
   const [showApiKeys, setShowApiKeys] = useState<Record<number, boolean>>({});
   const [activeTab, setActiveTab] = useState("basic");
+  const [showDebug, setShowDebug] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user } = useAuth();
@@ -161,6 +162,12 @@ export default function CreateModels() {
     isError,
     error: error?.message,
     models: models?.slice(0, 2) // First 2 models for debug
+  });
+
+  // Fetch debug status
+  const { data: debugStatus } = useQuery({
+    queryKey: ["/api/debug/status"],
+    enabled: showDebug,
   });
 
   const modelForm = useForm<z.infer<typeof modelSchema>>({
@@ -418,6 +425,22 @@ export default function CreateModels() {
               </p>
             </div>
           </div>
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+            <Button
+              onClick={() => setShowDebug(!showDebug)}
+              style={{
+                backgroundColor: showDebug ? '#dc2626' : '#eab308',
+                color: 'white',
+                padding: '8px 16px',
+                borderRadius: '6px',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: '500'
+              }}
+            >
+              {showDebug ? 'Hide Debug' : 'Debug Panel'}
+            </Button>
           {isReadOnly ? (
             // Demo mode - show info dialog
             <Button 
@@ -816,6 +839,61 @@ export default function CreateModels() {
             </Dialog>
           )}
         </div>
+
+        {/* Debug Panel */}
+        {showDebug && (
+          <div style={{
+            backgroundColor: '#f8fafc',
+            border: '1px solid #e2e8f0',
+            borderRadius: '8px',
+            padding: '20px',
+            marginBottom: '20px'
+          }}>
+            <h3 style={{
+              fontSize: '18px',
+              fontWeight: '600',
+              color: '#1e293b',
+              marginBottom: '16px'
+            }}>
+              Debug Information
+            </h3>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+              <div>
+                <h4 style={{ fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>
+                  Models Query Status
+                </h4>
+                <div style={{ fontFamily: 'monospace', fontSize: '12px', backgroundColor: '#fff', padding: '12px', borderRadius: '4px', border: '1px solid #d1d5db' }}>
+                  <div>Loading: {modelsLoading ? 'true' : 'false'}</div>
+                  <div>Count: {models?.length || 0}</div>
+                  <div>Error: {isError ? 'true' : 'false'}</div>
+                  <div>Error Message: {error?.message || 'none'}</div>
+                </div>
+              </div>
+              <div>
+                <h4 style={{ fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>
+                  Debug Status
+                </h4>
+                <div style={{ fontFamily: 'monospace', fontSize: '12px', backgroundColor: '#fff', padding: '12px', borderRadius: '4px', border: '1px solid #d1d5db' }}>
+                  {debugStatus ? (
+                    <pre>{JSON.stringify(debugStatus, null, 2).substring(0, 300)}...</pre>
+                  ) : (
+                    <div>Loading debug status...</div>
+                  )}
+                </div>
+              </div>
+            </div>
+            {models && models.length > 0 && (
+              <div style={{ marginTop: '16px' }}>
+                <h4 style={{ fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>
+                  Sample Models (First 2)
+                </h4>
+                <div style={{ fontFamily: 'monospace', fontSize: '12px', backgroundColor: '#fff', padding: '12px', borderRadius: '4px', border: '1px solid #d1d5db' }}>
+                  <pre>{JSON.stringify(models.slice(0, 2), null, 2)}</pre>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Models Grid */}
         <div style={{ 
