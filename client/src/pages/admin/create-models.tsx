@@ -150,8 +150,17 @@ export default function CreateModels() {
   const isReadOnly = isReadOnlyMode(user);
 
   // Fetch AI models
-  const { data: models = [], isLoading: modelsLoading } = useQuery({
+  const { data: models = [], isLoading: modelsLoading, error, isError } = useQuery({
     queryKey: ["/api/ai-models"],
+  });
+
+  // Debug logging for models loading
+  console.log("🤖 Create Models Debug:", {
+    modelsLoading,
+    modelsCount: models?.length || 0,
+    isError,
+    error: error?.message,
+    models: models?.slice(0, 2) // First 2 models for debug
   });
 
   const modelForm = useForm<z.infer<typeof modelSchema>>({
