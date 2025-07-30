@@ -225,6 +225,97 @@ export default async function handler(req, res) {
       }
     }
 
+    // Current company endpoint for sidebar
+    if (path === '/api/user/current-company' && req.method === 'GET') {
+      try {
+        return res.status(200).json({
+          id: 1,
+          name: 'Duval AI Solutions',
+          logo: '/ai-sentinel-logo.png',
+          domain: 'duvalsolutions.net',
+          primaryAdminName: 'Edward Duval',
+          primaryAdminEmail: 'ed.duval15@gmail.com',
+          primaryAdminTitle: 'Chief Executive Officer',
+          environment: 'production-serverless'
+        });
+      } catch (error) {
+        return res.status(500).json({
+          error: error.message,
+          message: 'Failed to fetch current company'
+        });
+      }
+    }
+
+    // Companies endpoint for Company Management
+    if (path === '/api/admin/companies' && req.method === 'GET') {
+      try {
+        return res.status(200).json([
+          {
+            id: 1,
+            name: 'Duval AI Solutions',
+            primaryAdminTitle: 'Chief Executive Officer',
+            primaryAdminName: 'Edward Duval',
+            primaryAdminEmail: 'ed.duval15@gmail.com',
+            logo: '/ai-sentinel-logo.png',
+            isActive: true,
+            employeeCount: 1,
+            createdAt: '2025-07-10T00:00:00.000Z'
+          }
+        ]);
+      } catch (error) {
+        return res.status(500).json({
+          success: false,
+          message: 'Failed to fetch companies',
+          error: error.message
+        });
+      }
+    }
+
+    // API Keys endpoint for Setup API Keys
+    if (path === '/api/admin/api-keys' && req.method === 'GET') {
+      try {
+        const hasOpenAI = !!process.env.OPENAI_API_KEY;
+        const hasAnthropic = !!process.env.ANTHROPIC_API_KEY;
+        const hasPerplexity = !!process.env.PERPLEXITY_API_KEY;
+        const hasGoogle = !!process.env.GOOGLE_AI_API_KEY;
+        const hasSendGrid = !!process.env.SENDGRID_API_KEY;
+
+        return res.status(200).json({
+          openai: {
+            configured: hasOpenAI,
+            status: hasOpenAI ? 'active' : 'not_configured',
+            models: hasOpenAI ? ['gpt-4o', 'gpt-4-turbo', 'gpt-3.5-turbo'] : []
+          },
+          anthropic: {
+            configured: hasAnthropic,
+            status: hasAnthropic ? 'active' : 'not_configured',
+            models: hasAnthropic ? ['claude-3-5-sonnet-20241022', 'claude-3-haiku-20240307'] : []
+          },
+          perplexity: {
+            configured: hasPerplexity,
+            status: hasPerplexity ? 'active' : 'not_configured',
+            models: hasPerplexity ? ['llama-3.1-sonar-large-128k-online'] : []
+          },
+          google: {
+            configured: hasGoogle,
+            status: hasGoogle ? 'active' : 'not_configured',
+            models: hasGoogle ? ['gemini-1.5-pro', 'gemini-1.5-flash'] : []
+          },
+          sendgrid: {
+            configured: hasSendGrid,
+            status: hasSendGrid ? 'active' : 'not_configured',
+            service: 'email'
+          }
+        });
+      } catch (error) {
+        return res.status(500).json({
+          success: false,
+          message: 'Failed to fetch API keys',
+          error: error.message
+        });
+      }
+    }
+
     // Chat session creation endpoint
     if (path === '/api/chat/session' && req.method === 'POST') {
       try {

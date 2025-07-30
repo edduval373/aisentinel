@@ -48,19 +48,6 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const isAdmin = user?.role === 'admin' || (user?.roleLevel ?? 0) >= 998;
   const isRegularUser = user?.role === 'user' || user?.roleLevel === 1;
   
-  console.log('🔍 Sidebar Role Detection:', {
-    user: user ? {
-      role: user.role,
-      roleLevel: user.roleLevel,
-      email: user.email
-    } : null,
-    isDemoUser,
-    isSuperUser,
-    isOwner,
-    isAdmin,
-    isRegularUser
-  });
-  
   // Always show sidebar - no authentication restrictions
   // const isUnauthenticated = !user;
   
