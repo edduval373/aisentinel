@@ -389,6 +389,49 @@ Database Elements:
         ) : debugData ? (
           <div style={{ padding: '0' }}>
             
+            {/* CRITICAL SESSION FIX ALERT - Top Priority */}
+            {debugData.cookies.sessionToken === null && (
+              <div style={{ 
+                backgroundColor: '#dc2626', 
+                color: 'white',
+                border: '3px solid #991b1b', 
+                borderRadius: '8px', 
+                padding: '16px',
+                marginBottom: '20px',
+                textAlign: 'center',
+                fontWeight: 'bold',
+                boxShadow: '0 4px 12px rgba(220, 38, 38, 0.3)'
+              }}>
+                <div style={{ fontSize: '18px', marginBottom: '12px' }}>
+                  🚨 CRITICAL: NO SESSION TOKEN FOUND
+                </div>
+                <div style={{ fontSize: '14px', marginBottom: '16px', opacity: '0.9' }}>
+                  Click below to create a database session and fix the authentication issue:
+                </div>
+                <Button 
+                  onClick={createSession}
+                  disabled={isCreatingSession}
+                  style={{ 
+                    backgroundColor: 'white',
+                    color: '#dc2626',
+                    fontWeight: 'bold',
+                    fontSize: '16px',
+                    padding: '12px 24px',
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '8px',
+                    margin: '0 auto',
+                    border: '2px solid #dc2626',
+                    borderRadius: '6px',
+                    cursor: isCreatingSession ? 'not-allowed' : 'pointer'
+                  }}
+                >
+                  <Key style={{ width: '18px', height: '18px' }} />
+                  {isCreatingSession ? 'CREATING SESSION...' : 'FIX SESSION NOW'}
+                </Button>
+              </div>
+            )}
+            
             {/* Cookie Analysis */}
             <div style={{ marginBottom: '24px' }}>
               <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', fontSize: '16px', fontWeight: 'bold' }}>
