@@ -3,8 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Shield, Users, BarChart3, Lock, CheckCircle, AlertTriangle, Settings, Tag } from "lucide-react";
+import { Shield, Users, BarChart3, Lock, CheckCircle, AlertTriangle, Settings, Tag, Bug } from "lucide-react";
 import VersionDisplay from "@/components/VersionDisplay";
+import SessionDebugModal from "@/components/SessionDebugModal";
 
 
 export default function Landing() {
@@ -357,6 +358,45 @@ export default function Landing() {
               View Pricing Plans
               <BarChart3 style={{marginLeft: '8px', color: 'white', width: '18px', height: '18px'}} />
             </button>
+            {/* Debug Session Modal - Development Tool */}
+            <SessionDebugModal 
+              trigger={
+                <button
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '12px 20px',
+                    backgroundColor: '#f59e0b',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontSize: '15px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    textDecoration: 'none',
+                    transition: 'all 0.2s ease',
+                    minWidth: '250px',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                    flex: '1',
+                    maxWidth: '280px'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.backgroundColor = '#d97706';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 6px 12px -1px rgba(0, 0, 0, 0.15)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.backgroundColor = '#f59e0b';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+                  }}
+                >
+                  Debug Session Elements
+                  <Bug style={{marginLeft: '8px', color: 'white', width: '18px', height: '18px'}} />
+                </button>
+              }
+            />
           </div>
           
 
