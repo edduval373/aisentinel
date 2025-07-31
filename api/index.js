@@ -412,10 +412,11 @@ export default async function handler(req, res) {
           // Create session token
           const sessionToken = `prod-session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
           
-          // Create user session in database
+          // Create user session in database - FIXED: Include email field
+          console.log('🔄 [CREATE SESSION] Creating session for user:', user.email, 'with ID:', user.id);
           const sessionResult = await client.query(
-            'INSERT INTO user_sessions (user_id, session_token, expires_at, created_at, last_accessed_at) VALUES ($1, $2, $3, NOW(), NOW()) RETURNING *',
-            [user.id, sessionToken, new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)] // 30 days
+            'INSERT INTO user_sessions (user_id, session_token, email, expires_at, created_at, last_accessed_at) VALUES ($1, $2, $3, $4, NOW(), NOW()) RETURNING *',
+            [user.id, sessionToken, user.email, new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)] // 30 days
           );
           
           const session = sessionResult.rows[0];
