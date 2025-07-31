@@ -422,8 +422,15 @@ export default async function handler(req, res) {
           const session = sessionResult.rows[0];
           console.log(`✅ Created real database session: ${session.id}`);
           
-          // Set session cookie
-          res.setHeader('Set-Cookie', `sessionToken=${sessionToken}; HttpOnly; Secure; SameSite=Strict; Max-Age=${30 * 24 * 60 * 60}; Path=/; Domain=${req.headers.host || '.aisentinel.app'}`);
+          // Set session cookie - FIXED for production compatibility
+          console.log('🍪 [CREATE SESSION] Setting session cookie...');
+          console.log('🍪 [CREATE SESSION] Host header:', req.headers.host);
+          
+          // Use simple cookie without domain for better compatibility
+          const cookieValue = `sessionToken=${sessionToken}; HttpOnly; Secure; SameSite=None; Max-Age=${30 * 24 * 60 * 60}; Path=/`;
+          console.log('🍪 [CREATE SESSION] Cookie value:', cookieValue);
+          
+          res.setHeader('Set-Cookie', cookieValue);
           
           return res.status(200).json({
             success: true,
@@ -433,7 +440,9 @@ export default async function handler(req, res) {
             userId: user.id,
             email: user.email,
             databaseConnected: true,
-            environment: 'production-real-database'
+            environment: 'production-real-database',
+            cookieSet: true,
+            host: req.headers.host
           });
           
         } finally {

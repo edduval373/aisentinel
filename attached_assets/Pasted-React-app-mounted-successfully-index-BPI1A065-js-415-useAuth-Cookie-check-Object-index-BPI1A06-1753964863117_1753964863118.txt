@@ -1,0 +1,51 @@
+React app mounted successfully
+index-BPI1A065.js:415 🔍 useAuth - Cookie check: Object
+index-BPI1A065.js:415 Authentication check: ObjectisAdmin: falseisAuthenticated: falseisOwner: falseisSuperUser: falserole: undefinedroleLevel: 1[[Prototype]]: Object
+index-BPI1A065.js:614 [APP DEBUG] Router component rendering...
+index-BPI1A065.js:415 🔍 useAuth - Cookie check: ObjecthasAuthCookie: falseisDemoMode: falsepathname: "/"[[Prototype]]: Object
+index-BPI1A065.js:415 Authentication check: ObjectisAdmin: falseisAuthenticated: falseisOwner: falseisSuperUser: falserole: undefinedroleLevel: 1[[Prototype]]: Object
+index-BPI1A065.js:614 [APP DEBUG] Authentication check: ObjectisAdmin: falseisAuthenticated: falseisOwner: falseisSuperUser: falserole: undefinedroleLevel: undefined[[Prototype]]: Object
+index-BPI1A065.js:614 [APP DEBUG] useAuth hook returned: ObjectisAdmin: falseisAuthenticated: falseisLoading: trueisOwner: falseisSuperUser: falseuser: false[[Prototype]]: Object
+index-BPI1A065.js:50 🔄 [API GET] /api/auth/me - Start
+index-BPI1A065.js:50 🔄 [API GET] Full URL: https://www.aisentinel.app/api/auth/me
+index-BPI1A065.js:50 🔄 [API GET] Data: undefined
+index-BPI1A065.js:50 🔄 [API GET] Environment: production
+index-BPI1A065.js:415 Unauthenticated user: No company context
+index-BPI1A065.js:415 🔍 useAuth - Cookie check: Object
+index-BPI1A065.js:415 Authentication check: Object
+index-BPI1A065.js:50 📊 [API GET] /api/auth/me - Status: 200 (150ms)
+index-BPI1A065.js:50 📊 [API GET] Headers: Object
+index-BPI1A065.js:50 📊 [API GET] Content-Type: application/json; charset=utf-8
+index-BPI1A065.js:50 ✅ [API GET] /api/auth/me - Success: Object
+index-BPI1A065.js:415 Authentication response: Object
+index-BPI1A065.js:415 🔍 useAuth - Cookie check: Object
+index-BPI1A065.js:415 Authentication check: Object
+index-BPI1A065.js:614 [APP DEBUG] Router component rendering...
+index-BPI1A065.js:415 🔍 useAuth - Cookie check: Object
+index-BPI1A065.js:415 Authentication check: Object
+index-BPI1A065.js:614 [APP DEBUG] Authentication check: Object
+index-BPI1A065.js:614 [APP DEBUG] useAuth hook returned: Object
+index-BPI1A065.js:614 [APP DEBUG] Logout detected, forcing landing page
+index-BPI1A065.js:614 [APP DEBUG] User logged out, showing landing page
+index-BPI1A065.js:537 [LANDING DEBUG] Landing component rendering...
+index-BPI1A065.js:537 [LANDING DEBUG] About to return JSX
+index-BPI1A065.js:537 [LANDING DEBUG] Landing component mounted successfully
+index-BPI1A065.js:415 🔍 useAuth - Cookie check: Object
+index-BPI1A065.js:415 Authentication check: Object
+/api/version/current:1  Failed to load resource: the server responded with a status of 404 ()Understand this error
+index-BPI1A065.js:504 🔍 Starting comprehensive session analysis...
+index-BPI1A065.js:504 🔍 Testing /api/auth/me...
+index-BPI1A065.js:492 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ index-BPI1A065.js:492Understand this warning
+index-BPI1A065.js:504 ✅ Auth response: Object
+index-BPI1A065.js:504 🔍 Testing chat session creation...
+/api/chat/session:1  Failed to load resource: the server responded with a status of 500 ()Understand this error
+index-BPI1A065.js:504 ✅ Session response: Object
+index-BPI1A065.js:504 🔍 Testing /api/ai-models...
+index-BPI1A065.js:504 ✅ AI Models response status: 200
+index-BPI1A065.js:504 🔍 Testing /api/activity-types...
+/api/activity-types:1  Failed to load resource: the server responded with a status of 500 ()Understand this error
+index-BPI1A065.js:504 ✅ Activity Types response status: 500
+index-BPI1A065.js:504 🔍 Testing database connection...
+index-BPI1A065.js:504 ✅ Database status: Object
+index-BPI1A065.js:504 🔍 Session analysis complete: Object

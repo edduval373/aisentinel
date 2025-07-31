@@ -283,9 +283,9 @@ export default function SessionDebugModal({ trigger }: SessionDebugModalProps) {
         const testResult = await testResponse.json();
         console.log('🧪 [FIX SESSION] Auth test after creation:', testResult);
         
-        alert('Session created successfully! Page will reload.');
-        // Refresh the page to load with new session
-        window.location.reload();
+        alert('Session created successfully! Redirecting to chat...');
+        // Redirect to chat interface instead of reloading
+        window.location.href = '/?verified=true&session=created';
       } else {
         console.error('❌ [FIX SESSION] Session creation failed:', result.message);
         alert(`Session creation failed: ${result.message}`);
