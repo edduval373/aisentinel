@@ -66,6 +66,20 @@ export default function SessionDebugModal({ trigger }: SessionDebugModalProps) {
     return null;
   };
 
+  // Enhanced session token detection for production tokens
+  const getSessionToken = () => {
+    const sessionToken = getCookie('sessionToken');
+    if (sessionToken) {
+      // Check if it's a production session token
+      if (sessionToken.startsWith('prod-session-')) {
+        return sessionToken;
+      }
+      // Return any other session token format
+      return sessionToken;
+    }
+    return null;
+  };
+
   // Helper function to parse all cookies with details
   const getAllCookieDetails = () => {
     const cookies = document.cookie.split(';').map(cookie => {
@@ -94,7 +108,7 @@ export default function SessionDebugModal({ trigger }: SessionDebugModalProps) {
     
     const analysis: SessionDebugData = {
       cookies: {
-        sessionToken: getCookie('sessionToken') || null,
+        sessionToken: getSessionToken() || null,
         demoUser: getCookie('demoUser') || null,
         allCookies: cookieDetails.raw || 'No cookies found'
       },
@@ -433,7 +447,7 @@ Database Elements:
           <div style={{ padding: '0' }}>
             
             {/* CRITICAL SESSION FIX ALERT - Top Priority */}
-            {debugData.cookies.sessionToken === null && (
+            {!debugData.cookies.sessionToken && (
               <div style={{ 
                 backgroundColor: '#dc2626', 
                 color: 'white',
