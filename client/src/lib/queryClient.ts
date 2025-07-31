@@ -23,22 +23,10 @@ async function getFallbackResponse(url: string, method: string, data?: unknown):
 
   if (!isProduction) return null;
 
-  // Authentication fallback for production
+  // Authentication fallback DISABLED for proper session validation
   if (url.includes('auth/me') && method === 'GET') {
-    console.log('🔄 [FALLBACK] Using production auth fallback');
-    return { 
-      authenticated: true, 
-      user: {
-        id: 42450602,
-        email: 'ed.duval15@gmail.com',
-        companyId: 1,
-        companyName: 'Duval AI Solutions',
-        role: 'super-user',
-        roleLevel: 100,
-        firstName: 'Ed',
-        lastName: 'Duval'
-      }
-    };
+    console.log('🚫 [FALLBACK] Auth fallback disabled - must use real sessions');
+    return null; // Force real authentication
   }
 
   // Admin companies fallback

@@ -187,9 +187,9 @@ export default async function handler(req, res) {
         console.log('🍪 [RAILWAY LOG] Setting cookie via headers for serverless compatibility');
         
         try {
-          // PERPLEXITY FIX: Remove Domain attribute for Vercel compatibility
-          const cookieString = `sessionToken=${sessionToken}; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=2592000`;
-          console.log('🍪 [RAILWAY LOG] Cookie string (no domain):', cookieString.substring(0, 80) + '...');
+          // PRODUCTION COOKIE FIX: Use SameSite=Lax for better compatibility
+          const cookieString = `sessionToken=${sessionToken}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`;
+          console.log('🍪 [RAILWAY LOG] Cookie string (production-optimized):', cookieString.substring(0, 80) + '...');
           
           // Set redirect location
           const redirectUrl = 'https://aisentinel.app/?verified=true&token=success';

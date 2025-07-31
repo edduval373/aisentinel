@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Production Cookie Transport Test</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 1000px; 
+            margin: 20px auto; 
+            padding: 20px;
+            background: #f9fafb;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+        .success { background: #d1fae5; border-color: #065f46; }
+        .error { background: #fee2e2; border-color: #991b1b; }
+        .warning { background: #fef3c7; border-color: #92400e; }
+        .info { background: #dbeafe; border-color: #1e40af; }
+        button {
+            background: #3b82f6;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 8px;
+            font-size: 14px;
+        }
+        button:hover { background: #2563eb; }
+        .danger { background: #dc2626; }
+        .danger:hover { background: #b91c1c; }
+        pre {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 12px;
+            overflow-x: auto;
+        }
+        .cookie-test {
+            font-family: monospace;
+            background: #f3f4f6;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Production Cookie Transport Test</h1>
+        <p>Test the complete cookie delivery pipeline from email verification to browser storage.</p>
+        
+        <div class="test-section info">
+            <h3>Step 1: Current Cookie Status</h3>
+            <div id="current-cookies">Loading...</div>
+            <button onclick="refreshCookies()">🔄 Refresh Cookie Status</button>
+        </div>
+
+        <div class="test-section">
+            <h3>Step 2: Database Session Creation Test</h3>
+            <p>Test creating a production session directly in the database.</p>
+            <button onclick="testSessionCreation()">🔨 Create Database Session</button>
+            <div id="session-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Step 3: Cookie Setting Test</h3>
+            <p>Test different cookie configurations to find what works.</p>
+            <button onclick="testCookieVariants()">🍪 Test Cookie Variants</button>
+            <div id="cookie-test-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Step 4: Authentication Flow Test</h3>
+            <p>Test the complete flow from session creation to authentication.</p>
+            <button onclick="testAuthFlow()">🔐 Test Complete Auth Flow</button>
+            <div id="auth-flow-result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Step 5: Database Connection Test</h3>
+            <p>Verify database connectivity and table structure.</p>
+            <button onclick="testDatabase()">🗄️ Test Database</button>
+            <div id="database-result"></div>
+        </div>
+
+        <div class="test-section warning">
+            <h3>Diagnostics</h3>
+            <div id="diagnostics">
+                <div>Environment: <span id="env">Loading...</span></div>
+                <div>Domain: <span id="domain">Loading...</span></div>
+                <div>Cookies Enabled: <span id="cookies-enabled">Loading...</span></div>
+                <div>Secure Context: <span id="secure-context">Loading...</span></div>
+            </div>
+        </div>
+
+        <div class="test-section error">
+            <h3>Reset Actions</h3>
+            <button class="danger" onclick="clearAllCookies()">🗑️ Clear All Cookies</button>
+            <button class="danger" onclick="resetSession()">🔄 Reset Session State</button>
+        </div>
+    </div>
+
+    <script>
+        // Environment detection
+        const isProduction = window.location.hostname.includes('aisentinel.app');
+        const baseUrl = isProduction ? '' : '';
+
+        // Initialize diagnostics
+        function updateDiagnostics() {
+            document.getElementById('env').textContent = isProduction ? 'Production' : 'Development';
+            document.getElementById('domain').textContent = window.location.hostname;
+            document.getElementById('cookies-enabled').textContent = navigator.cookieEnabled ? 'Yes' : 'No';
+            document.getElementById('secure-context').textContent = window.isSecureContext ? 'Yes' : 'No';
+        }
+
+        // Refresh current cookies
+        function refreshCookies() {
+            const cookies = document.cookie;
+            const cookiesDiv = document.getElementById('current-cookies');
+            
+            if (!cookies) {
+                cookiesDiv.innerHTML = '<div class="error">❌ No cookies found</div>';
+                return;
+            }
+            
+            const cookieArray = cookies.split(';').map(c => c.trim());
+            let html = '<div class="cookie-test">';
+            
+            cookieArray.forEach(cookie => {
+                const [name, value] = cookie.split('=');
+                if (name === 'sessionToken') {
+                    html += `<div style="color: #059669;"><strong>🔑 ${name}</strong> = ${value}</div>`;
+                } else {
+                    html += `<div>${name} = ${value}</div>`;
+                }
+            });
+            
+            html += '</div>';
+            cookiesDiv.innerHTML = html;
+        }
+
+        // Test session creation
+        async function testSessionCreation() {
+            const resultDiv = document.getElementById('session-result');
+            resultDiv.innerHTML = '<div class="info">Creating database session...</div>';
+            
+            try {
+                const response = await fetch('/api/auth/create-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            ✅ Session created successfully<br>
+                            Session ID: ${data.sessionId}<br>
+                            User ID: ${data.userId}<br>
+                            Email: ${data.email}<br>
+                            Database Connected: ${data.databaseConnected}
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ ${data.message}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        // Test different cookie configurations
+        async function testCookieVariants() {
+            const resultDiv = document.getElementById('cookie-test-results');
+            resultDiv.innerHTML = '<div class="info">Testing cookie variants...</div>';
+            
+            // Test basic cookie setting
+            const testToken = `test-cookie-${Date.now()}`;
+            
+            // Variant 1: Basic secure cookie
+            document.cookie = `testCookie1=${testToken}; Secure; SameSite=Lax; Path=/; Max-Age=3600`;
+            
+            // Variant 2: Without Secure (for testing)
+            document.cookie = `testCookie2=${testToken}; SameSite=Lax; Path=/; Max-Age=3600`;
+            
+            // Variant 3: Different SameSite setting
+            document.cookie = `testCookie3=${testToken}; Secure; SameSite=None; Path=/; Max-Age=3600`;
+            
+            setTimeout(() => {
+                const cookies = document.cookie;
+                const tests = [
+                    { variant: 'Secure + SameSite=Lax', cookie: 'testCookie1', present: cookies.includes('testCookie1') },
+                    { variant: 'No Secure + SameSite=Lax', cookie: 'testCookie2', present: cookies.includes('testCookie2') },
+                    { variant: 'Secure + SameSite=None', cookie: 'testCookie3', present: cookies.includes('testCookie3') }
+                ];
+                
+                let html = '';
+                tests.forEach(test => {
+                    const status = test.present ? '✅' : '❌';
+                    const cssClass = test.present ? 'success' : 'error';
+                    html += `<div class="${cssClass}">${status} ${test.variant}: ${test.present ? 'Working' : 'Failed'}</div>`;
+                });
+                
+                resultDiv.innerHTML = html;
+            }, 1000);
+        }
+
+        // Test complete authentication flow
+        async function testAuthFlow() {
+            const resultDiv = document.getElementById('auth-flow-result');
+            resultDiv.innerHTML = '<div class="info">Testing authentication flow...</div>';
+            
+            try {
+                // Step 1: Create session
+                const sessionResponse = await fetch('/api/auth/create-session', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                const sessionData = await sessionResponse.json();
+                
+                if (!sessionData.success) {
+                    throw new Error(`Session creation failed: ${sessionData.message}`);
+                }
+                
+                // Step 2: Wait for cookie to be set
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Step 3: Test authentication
+                const authResponse = await fetch('/api/auth/me', {
+                    credentials: 'include'
+                });
+                const authData = await authResponse.json();
+                
+                if (authData.authenticated) {
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            ✅ Complete authentication flow successful!<br>
+                            Authenticated: ${authData.authenticated}<br>
+                            User: ${authData.user.email}<br>
+                            Role Level: ${authData.user.roleLevel}
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error">
+                            ❌ Authentication failed<br>
+                            Message: ${authData.message || 'Unknown error'}<br>
+                            Cookie Header: ${authData.cookieHeader || 'Not provided'}
+                        </div>
+                    `;
+                }
+                
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Flow test error: ${error.message}</div>`;
+            }
+        }
+
+        // Test database connection
+        async function testDatabase() {
+            const resultDiv = document.getElementById('database-result');
+            resultDiv.innerHTML = '<div class="info">Testing database connection...</div>';
+            
+            try {
+                const response = await fetch('/test-database-connection.js');
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            ✅ Database connection successful<br>
+                            Tables found: ${data.database.tablesFound.join(', ')}<br>
+                            Missing tables: ${data.database.missingTables.length === 0 ? 'None' : data.database.missingTables.join(', ')}<br>
+                            DB Version: ${data.database.version.substring(0, 50)}...
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ Database error: ${data.error}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Connection test failed: ${error.message}</div>`;
+            }
+        }
+
+        // Clear all cookies
+        function clearAllCookies() {
+            document.cookie.split(";").forEach(cookie => {
+                const eqPos = cookie.indexOf("=");
+                const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+                document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+                document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=${window.location.hostname}`;
+            });
+            setTimeout(refreshCookies, 500);
+        }
+
+        // Reset session state
+        function resetSession() {
+            clearAllCookies();
+            localStorage.clear();
+            sessionStorage.clear();
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        }
+
+        // Initialize
+        updateDiagnostics();
+        refreshCookies();
+    </script>
+</body>
+</html>
