@@ -40,6 +40,37 @@ export default function Landing() {
     window.location.href = "/demo-signup";
   };
 
+  const handleDevAuthentication = async () => {
+    console.log("[LANDING DEBUG] Development authentication starting...");
+    try {
+      const response = await fetch('/api/dev-login', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: 'ed.duval15@gmail.com',
+          name: 'Edward Duval'
+        })
+      });
+      
+      const result = await response.json();
+      console.log('[LANDING DEBUG] Dev authentication result:', result);
+      
+      if (result.success) {
+        console.log('[LANDING DEBUG] Authentication successful, reloading page...');
+        window.location.reload();
+      } else {
+        console.error('[LANDING DEBUG] Authentication failed:', result.message);
+        alert('Authentication failed: ' + result.message);
+      }
+    } catch (error) {
+      console.error('[LANDING DEBUG] Authentication error:', error);
+      alert('Authentication error: ' + (error instanceof Error ? error.message : String(error)));
+    }
+  };
+
   // Helper function to get cookie value
   const getCookie = (name: string) => {
     const value = `; ${document.cookie}`;
@@ -358,6 +389,46 @@ export default function Landing() {
               View Pricing Plans
               <BarChart3 style={{marginLeft: '8px', color: 'white', width: '18px', height: '18px'}} />
             </button>
+            
+            {/* Development Authentication Button - Only show in development */}
+            {window.location.hostname.includes('replit.dev') && (
+              <button
+                onClick={handleDevAuthentication}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '12px 20px',
+                  backgroundColor: '#dc2626',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '15px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  textDecoration: 'none',
+                  transition: 'all 0.2s ease',
+                  minWidth: '250px',
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                  flex: '1',
+                  maxWidth: '280px'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = '#b91c1c';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 6px 12px -1px rgba(0, 0, 0, 0.15)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = '#dc2626';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+                }}
+              >
+                DEV: Authenticate for Testing
+                <Settings style={{marginLeft: '8px', color: 'white', width: '18px', height: '18px'}} />
+              </button>
+            )}
+            
             {/* Debug Session Modal - Development Tool */}
             <SessionDebugModal 
               trigger={
@@ -423,7 +494,7 @@ export default function Landing() {
               gap: '8px'
             }}>
               <Shield style={{width: '20px', height: '20px', color: '#1e40af'}} />
-              <span>AI Sentinel {currentVersion ? `v${currentVersion.version}` : 'v1.0.0'}</span>
+              <span>AI Sentinel {currentVersion && 'version' in currentVersion ? `v${currentVersion.version}` : 'v1.0.0'}</span>
             </div>
             
             {/* Credit Card Security Notice */}

@@ -360,9 +360,21 @@ export default async function handler(req, res) {
     // Create real database session for production user
     if (path === '/api/auth/create-session' && req.method === 'POST') {
       try {
-        console.log('Creating real database session for production user');
+        console.log('🔄 [CREATE SESSION] Starting session creation process');
         
-        // Connect to database
+        // Check DATABASE_URL first
+        if (!process.env.DATABASE_URL) {
+          console.error('❌ [CREATE SESSION] DATABASE_URL environment variable not set');
+          return res.status(500).json({
+            success: false,
+            message: 'Database configuration missing',
+            debug: 'DATABASE_URL not configured'
+          });
+        }
+        
+        console.log('✅ [CREATE SESSION] DATABASE_URL is configured');
+        
+        // Connect to database with enhanced error handling
         let client = null;
         try {
           const { Client } = await import('pg');
@@ -373,8 +385,9 @@ export default async function handler(req, res) {
             query_timeout: 5000
           });
           
+          console.log('🔗 [CREATE SESSION] Attempting database connection...');
           await client.connect();
-          console.log('✅ Connected to database for session creation');
+          console.log('✅ [CREATE SESSION] Connected to Railway PostgreSQL database');
           
           // Get or create user
           let userResult = await client.query(
