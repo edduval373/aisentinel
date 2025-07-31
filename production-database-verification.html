@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Production Database Session Verification</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1000px; margin: 20px auto; padding: 20px; background: #f8fafc; }
+        .container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .success { background: #f0fdf4; color: #166534; padding: 15px; border-radius: 6px; margin: 10px 0; }
+        .error { background: #fef2f2; color: #991b1b; padding: 15px; border-radius: 6px; margin: 10px 0; }
+        .warning { background: #fffbeb; color: #92400e; padding: 15px; border-radius: 6px; margin: 10px 0; }
+        .info { background: #f0f9ff; color: #0c4a6e; padding: 15px; border-radius: 6px; margin: 10px 0; }
+        button { background: #3b82f6; color: white; padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; margin: 8px; }
+        button:hover { background: #2563eb; }
+        pre { background: #1e293b; color: #f1f5f9; padding: 15px; border-radius: 6px; font-size: 12px; overflow-x: auto; white-space: pre-wrap; }
+        .metric { display: flex; justify-content: space-between; margin: 8px 0; font-family: monospace; }
+        .step { border: 1px solid #e5e7eb; padding: 20px; margin: 15px 0; border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+        th, td { border: 1px solid #e5e7eb; padding: 8px; text-align: left; font-size: 12px; }
+        th { background: #f9fafb; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Step 2: Production Database Session Verification</h1>
+        <div class="warning">
+            <strong>Production Only:</strong> This verifies actual database session creation and retrieval
+        </div>
+        
+        <div class="step">
+            <h3>Step 2A: Database Connection Test</h3>
+            <p>Verify database connectivity and table structure.</p>
+            <button onclick="testDatabaseConnection()">Test Database Connection</button>
+            <div id="database-connection-result"></div>
+        </div>
+
+        <div class="step">
+            <h3>Step 2B: Create Production Session</h3>
+            <p>Create a new session in the database and capture the session ID.</p>
+            <button onclick="createProductionSession()">Create Production Session</button>
+            <div id="session-creation-result"></div>
+        </div>
+
+        <div class="step">
+            <h3>Step 2C: Verify Session in Database</h3>
+            <p>Query the database to verify the session was created with proper details.</p>
+            <button onclick="verifySessionInDatabase()">Verify Session in Database</button>
+            <div id="session-verification-result"></div>
+        </div>
+
+        <div class="step">
+            <h3>Step 2D: Session ID Analysis</h3>
+            <p>Understand the session ID generation and cookie relationship.</p>
+            <div class="info">
+                <h4>Session ID vs Cookie Token Relationship:</h4>
+                <ul>
+                    <li><strong>Session ID:</strong> Database primary key (auto-incremented integer)</li>
+                    <li><strong>Session Token:</strong> The actual cookie value (prod-session-{timestamp}-{random})</li>
+                    <li><strong>Process:</strong> Database generates Session ID → API creates Session Token → Cookie contains Session Token</li>
+                </ul>
+            </div>
+            <button onclick="analyzeSessionIds()">Analyze Current Sessions</button>
+            <div id="session-analysis-result"></div>
+        </div>
+    </div>
+
+    <script>
+        const domain = window.location.hostname;
+        const isProduction = domain.includes('aisentinel.app');
+        
+        if (!isProduction) {
+            document.body.innerHTML = `
+                <div class="container">
+                    <div class="error">
+                        <h2>Production Only Tool</h2>
+                        <p>This tool only works on the production domain (aisentinel.app).</p>
+                        <p>Current domain: ${domain}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function testDatabaseConnection() {
+            const resultDiv = document.getElementById('database-connection-result');
+            resultDiv.innerHTML = '<div class="info">Testing database connection...</div>';
+            
+            try {
+                const response = await fetch('/test-database-connection.js', {
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    let html = '<div class="success">✅ Database Connection Successful</div>';
+                    html += `<div class="metric"><span>Current Time:</span><span>${new Date(data.database.currentTime).toLocaleString()}</span></div>`;
+                    html += `<div class="metric"><span>Tables Found:</span><span>${data.database.tablesFound.join(', ')}</span></div>`;
+                    
+                    if (data.database.missingTables.length > 0) {
+                        html += `<div class="error">❌ Missing Tables: ${data.database.missingTables.join(', ')}</div>`;
+                    } else {
+                        html += '<div class="success">✅ All required tables present</div>';
+                    }
+                    
+                    resultDiv.innerHTML = html;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ Database Connection Failed: ${data.error}</div>`;
+                }
+            } catch (error) {
+                console.error('Database connection test error:', error);
+                resultDiv.innerHTML = `<div class="error">❌ Test failed: ${error.message}</div>`;
+            }
+        }
+
+        async function createProductionSession() {
+            const resultDiv = document.getElementById('session-creation-result');
+            resultDiv.innerHTML = '<div class="info">Creating production session...</div>';
+            
+            try {
+                const response = await fetch('/api/auth/create-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                console.log('Session creation response:', data);
+                
+                if (data.success) {
+                    let html = '<div class="success">✅ Production Session Created Successfully</div>';
+                    html += `<div class="metric"><span>Session ID (Database):</span><span>${data.sessionId}</span></div>`;
+                    html += `<div class="metric"><span>Session Token (Cookie):</span><span>${data.sessionToken ? data.sessionToken.substring(0, 30) + '...' : 'Not provided'}</span></div>`;
+                    html += `<div class="metric"><span>User ID:</span><span>${data.userId}</span></div>`;
+                    html += `<div class="metric"><span>Email:</span><span>${data.email}</span></div>`;
+                    html += `<div class="metric"><span>Database Connected:</span><span>${data.databaseConnected}</span></div>`;
+                    html += `<div class="metric"><span>Cookie Set:</span><span>${data.cookieSet}</span></div>`;
+                    
+                    // Store session details for verification
+                    window.lastCreatedSession = {
+                        sessionId: data.sessionId,
+                        sessionToken: data.sessionToken,
+                        userId: data.userId,
+                        email: data.email
+                    };
+                    
+                    resultDiv.innerHTML = html;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ Session Creation Failed: ${data.message}</div>`;
+                }
+            } catch (error) {
+                console.error('Session creation error:', error);
+                resultDiv.innerHTML = `<div class="error">❌ Request failed: ${error.message}</div>`;
+            }
+        }
+
+        async function verifySessionInDatabase() {
+            const resultDiv = document.getElementById('session-verification-result');
+            
+            if (!window.lastCreatedSession) {
+                resultDiv.innerHTML = '<div class="warning">⚠️ Please create a session first using Step 2B</div>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<div class="info">Verifying session in database...</div>';
+            
+            try {
+                // Use the auth/me endpoint to verify the session exists and is valid
+                const response = await fetch('/api/auth/me', {
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                console.log('Session verification response:', data);
+                
+                if (data.authenticated) {
+                    let html = '<div class="success">✅ Session Successfully Verified in Database</div>';
+                    html += `<div class="metric"><span>Authenticated:</span><span>${data.authenticated}</span></div>`;
+                    html += `<div class="metric"><span>User Email:</span><span>${data.user.email}</span></div>`;
+                    html += `<div class="metric"><span>User ID:</span><span>${data.user.id}</span></div>`;
+                    html += `<div class="metric"><span>Role Level:</span><span>${data.user.roleLevel}</span></div>`;
+                    html += `<div class="metric"><span>Company ID:</span><span>${data.user.companyId}</span></div>`;
+                    
+                    // Compare with created session
+                    const created = window.lastCreatedSession;
+                    if (data.user.email === created.email && data.user.id === created.userId) {
+                        html += '<div class="success">✅ Database session matches created session</div>';
+                    } else {
+                        html += '<div class="warning">⚠️ Database session differs from created session</div>';
+                    }
+                    
+                    resultDiv.innerHTML = html;
+                } else {
+                    let html = '<div class="error">❌ Session Not Found in Database</div>';
+                    if (data.message) {
+                        html += `<div class="error">Message: ${data.message}</div>`;
+                    }
+                    if (data.cookieHeader) {
+                        html += `<div class="info">Cookie Header: ${data.cookieHeader}</div>`;
+                    }
+                    resultDiv.innerHTML = html;
+                }
+            } catch (error) {
+                console.error('Session verification error:', error);
+                resultDiv.innerHTML = `<div class="error">❌ Verification failed: ${error.message}</div>`;
+            }
+        }
+
+        async function analyzeSessionIds() {
+            const resultDiv = document.getElementById('session-analysis-result');
+            resultDiv.innerHTML = '<div class="info">Analyzing session ID structure...</div>';
+            
+            try {
+                // Get current cookie
+                const cookies = document.cookie;
+                const currentSessionToken = cookies.match(/sessionToken=([^;]+)/)?.[1];
+                
+                let html = '<h4>Current Session Analysis:</h4>';
+                
+                if (currentSessionToken) {
+                    html += `<div class="metric"><span>Cookie Token:</span><span>${currentSessionToken}</span></div>`;
+                    
+                    // Analyze token structure
+                    if (currentSessionToken.startsWith('prod-session-')) {
+                        const parts = currentSessionToken.split('-');
+                        if (parts.length >= 3) {
+                            const timestamp = parts[2];
+                            const date = new Date(parseInt(timestamp));
+                            html += `<div class="metric"><span>Token Created:</span><span>${date.toLocaleString()}</span></div>`;
+                        }
+                        html += '<div class="success">✅ Valid production session token format</div>';
+                    } else {
+                        html += '<div class="warning">⚠️ Non-production session token format</div>';
+                    }
+                } else {
+                    html += '<div class="error">❌ No session token found in cookies</div>';
+                }
+                
+                // Show relationship explanation
+                html += `
+                    <div style="margin: 20px 0; padding: 15px; background: #f9fafb; border-radius: 6px;">
+                        <h5>Session ID vs Token Relationship:</h5>
+                        <ol>
+                            <li><strong>Database Session ID:</strong> Auto-increment integer (1, 2, 3, etc.)</li>
+                            <li><strong>Session Token:</strong> Unique string stored in cookie (prod-session-{timestamp}-{random})</li>
+                            <li><strong>Cookie Processing:</strong> Browser stores token → API validates token against database → Returns session data</li>
+                        </ol>
+                    </div>
+                `;
+                
+                if (window.lastCreatedSession) {
+                    html += '<h4>Last Created Session:</h4>';
+                    html += `<div class="metric"><span>Database ID:</span><span>${window.lastCreatedSession.sessionId}</span></div>`;
+                    html += `<div class="metric"><span>Token:</span><span>${window.lastCreatedSession.sessionToken}</span></div>`;
+                    html += `<div class="metric"><span>User:</span><span>${window.lastCreatedSession.email}</span></div>`;
+                }
+                
+                resultDiv.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Session analysis error:', error);
+                resultDiv.innerHTML = `<div class="error">❌ Analysis failed: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>

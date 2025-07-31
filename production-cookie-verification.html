@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Production Cookie Verification</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 900px; margin: 20px auto; padding: 20px; background: #f8fafc; }
+        .container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .success { background: #f0fdf4; color: #166534; padding: 15px; border-radius: 6px; margin: 10px 0; }
+        .error { background: #fef2f2; color: #991b1b; padding: 15px; border-radius: 6px; margin: 10px 0; }
+        .warning { background: #fffbeb; color: #92400e; padding: 15px; border-radius: 6px; margin: 10px 0; }
+        .info { background: #f0f9ff; color: #0c4a6e; padding: 15px; border-radius: 6px; margin: 10px 0; }
+        button { background: #3b82f6; color: white; padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; margin: 8px; }
+        button:hover { background: #2563eb; }
+        .danger { background: #dc2626; }
+        .danger:hover { background: #b91c1c; }
+        pre { background: #1e293b; color: #f1f5f9; padding: 15px; border-radius: 6px; font-size: 12px; overflow-x: auto; white-space: pre-wrap; }
+        .metric { display: flex; justify-content: space-between; margin: 8px 0; font-family: monospace; }
+        .step { border: 1px solid #e5e7eb; padding: 20px; margin: 15px 0; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Production Cookie Verification</h1>
+        <div class="warning">
+            <strong>Production Only:</strong> This tool only works on aisentinel.app domain
+        </div>
+        
+        <div class="step">
+            <h3>Current Production Status</h3>
+            <div id="production-status">
+                <div class="metric"><span>Domain:</span><span id="current-domain">Loading...</span></div>
+                <div class="metric"><span>Environment:</span><span id="current-env">Loading...</span></div>
+                <div class="metric"><span>Cookies Found:</span><span id="cookie-count">Loading...</span></div>
+                <div class="metric"><span>Session Token:</span><span id="session-token-status">Loading...</span></div>
+            </div>
+            <button onclick="refreshStatus()">Refresh Status</button>
+        </div>
+
+        <div class="step">
+            <h3>Step 1A: Verify Email Verification Cookie Setting</h3>
+            <p>Test the email verification endpoint that should set production cookies.</p>
+            <button onclick="testEmailVerificationCookie()">Test Email Verification Cookie</button>
+            <div id="email-verification-result"></div>
+        </div>
+
+        <div class="step">
+            <h3>Step 1B: Verify Session Creation Cookie Setting</h3>
+            <p>Test the session creation endpoint that should set production cookies.</p>
+            <button onclick="testSessionCreationCookie()">Test Session Creation Cookie</button>
+            <div id="session-creation-result"></div>
+        </div>
+
+        <div class="step">
+            <h3>Step 1C: Network Header Analysis</h3>
+            <p>Analyze Set-Cookie headers in production API responses.</p>
+            <button onclick="analyzeNetworkHeaders()">Analyze Headers</button>
+            <div id="network-analysis-result"></div>
+        </div>
+    </div>
+
+    <script>
+        // Verify we're in production
+        const domain = window.location.hostname;
+        const isProduction = domain.includes('aisentinel.app');
+        
+        if (!isProduction) {
+            document.body.innerHTML = `
+                <div class="container">
+                    <div class="error">
+                        <h2>Production Only Tool</h2>
+                        <p>This tool only works on the production domain (aisentinel.app).</p>
+                        <p>Current domain: ${domain}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function refreshStatus() {
+            document.getElementById('current-domain').textContent = domain;
+            document.getElementById('current-env').textContent = isProduction ? 'Production' : 'Development';
+            
+            const cookies = document.cookie;
+            const cookieCount = cookies ? cookies.split(';').filter(c => c.trim()).length : 0;
+            document.getElementById('cookie-count').textContent = cookieCount;
+            
+            const sessionToken = cookies.match(/sessionToken=([^;]+)/)?.[1];
+            if (sessionToken) {
+                if (sessionToken.startsWith('prod-session-')) {
+                    document.getElementById('session-token-status').innerHTML = 
+                        `<span style="color: #16a34a;">✅ Production Token Found</span>`;
+                } else {
+                    document.getElementById('session-token-status').innerHTML = 
+                        `<span style="color: #f59e0b;">⚠️ Non-Production Token</span>`;
+                }
+            } else {
+                document.getElementById('session-token-status').innerHTML = 
+                    `<span style="color: #dc2626;">❌ No Token Found</span>`;
+            }
+        }
+
+        async function testEmailVerificationCookie() {
+            const resultDiv = document.getElementById('email-verification-result');
+            resultDiv.innerHTML = '<div class="info">Testing email verification cookie setting...</div>';
+            
+            try {
+                // Test the email verification endpoint that sets cookies
+                const testToken = `test-${Date.now()}`;
+                const testEmail = 'ed.duval15@gmail.com';
+                
+                const verifyUrl = `/api/auth/verify?token=${testToken}&email=${encodeURIComponent(testEmail)}`;
+                console.log('Testing URL:', verifyUrl);
+                
+                const response = await fetch(verifyUrl, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                console.log('Response status:', response.status);
+                console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+                
+                const setCookieHeader = response.headers.get('set-cookie');
+                
+                let html = `<div class="metric"><span>Status:</span><span>${response.status}</span></div>`;
+                
+                if (setCookieHeader) {
+                    html += `<div class="success">✅ Set-Cookie header found</div>`;
+                    html += `<pre>Set-Cookie: ${setCookieHeader}</pre>`;
+                    
+                    // Check if cookie was actually set in browser
+                    setTimeout(() => {
+                        const cookies = document.cookie;
+                        const newSessionToken = cookies.match(/sessionToken=([^;]+)/)?.[1];
+                        
+                        if (newSessionToken && newSessionToken.startsWith('prod-session-')) {
+                            resultDiv.innerHTML += '<div class="success">✅ Production cookie successfully set in browser</div>';
+                        } else {
+                            resultDiv.innerHTML += '<div class="error">❌ Cookie header sent but not stored in browser</div>';
+                        }
+                        refreshStatus();
+                    }, 1000);
+                } else {
+                    html += `<div class="error">❌ No Set-Cookie header in response</div>`;
+                }
+                
+                resultDiv.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Email verification test error:', error);
+                resultDiv.innerHTML = `<div class="error">❌ Test failed: ${error.message}</div>`;
+            }
+        }
+
+        async function testSessionCreationCookie() {
+            const resultDiv = document.getElementById('session-creation-result');
+            resultDiv.innerHTML = '<div class="info">Testing session creation cookie setting...</div>';
+            
+            try {
+                const response = await fetch('/api/auth/create-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include'
+                });
+                
+                console.log('Session creation response status:', response.status);
+                console.log('Session creation headers:', Object.fromEntries(response.headers.entries()));
+                
+                const data = await response.json();
+                const setCookieHeader = response.headers.get('set-cookie');
+                
+                let html = `<div class="metric"><span>Status:</span><span>${response.status}</span></div>`;
+                html += `<div class="metric"><span>Success:</span><span>${data.success}</span></div>`;
+                
+                if (data.success) {
+                    html += `<div class="metric"><span>Session ID:</span><span>${data.sessionId}</span></div>`;
+                    html += `<div class="metric"><span>Database Connected:</span><span>${data.databaseConnected}</span></div>`;
+                }
+                
+                if (setCookieHeader) {
+                    html += `<div class="success">✅ Set-Cookie header found</div>`;
+                    html += `<pre>Set-Cookie: ${setCookieHeader}</pre>`;
+                    
+                    // Check browser cookie storage after delay
+                    setTimeout(() => {
+                        const cookies = document.cookie;
+                        const sessionToken = cookies.match(/sessionToken=([^;]+)/)?.[1];
+                        
+                        if (sessionToken && sessionToken.startsWith('prod-session-')) {
+                            resultDiv.innerHTML += '<div class="success">✅ Production session cookie stored in browser</div>';
+                        } else if (sessionToken) {
+                            resultDiv.innerHTML += `<div class="warning">⚠️ Cookie stored but wrong format: ${sessionToken.substring(0, 20)}...</div>`;
+                        } else {
+                            resultDiv.innerHTML += '<div class="error">❌ Cookie header sent but not stored in browser</div>';
+                        }
+                        refreshStatus();
+                    }, 1000);
+                } else {
+                    html += `<div class="error">❌ No Set-Cookie header in response</div>`;
+                }
+                
+                resultDiv.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Session creation test error:', error);
+                resultDiv.innerHTML = `<div class="error">❌ Test failed: ${error.message}</div>`;
+            }
+        }
+
+        async function analyzeNetworkHeaders() {
+            const resultDiv = document.getElementById('network-analysis-result');
+            resultDiv.innerHTML = '<div class="info">Analyzing network headers for cookie issues...</div>';
+            
+            try {
+                // Test multiple endpoints to see cookie header patterns
+                const endpoints = [
+                    { name: 'Auth Check', url: '/api/auth/me', method: 'GET' },
+                    { name: 'Session Creation', url: '/api/auth/create-session', method: 'POST' }
+                ];
+                
+                let html = '<h4>Header Analysis Results:</h4>';
+                
+                for (const endpoint of endpoints) {
+                    const response = await fetch(endpoint.url, {
+                        method: endpoint.method,
+                        credentials: 'include',
+                        headers: endpoint.method === 'POST' ? { 'Content-Type': 'application/json' } : {}
+                    });
+                    
+                    const headers = Object.fromEntries(response.headers.entries());
+                    const setCookie = response.headers.get('set-cookie');
+                    
+                    html += `<div style="margin: 15px 0; padding: 10px; border: 1px solid #e5e7eb; border-radius: 6px;">`;
+                    html += `<strong>${endpoint.name} (${endpoint.method})</strong><br>`;
+                    html += `Status: ${response.status}<br>`;
+                    
+                    if (setCookie) {
+                        html += `<span style="color: #16a34a;">✅ Set-Cookie: ${setCookie}</span><br>`;
+                    } else {
+                        html += `<span style="color: #dc2626;">❌ No Set-Cookie header</span><br>`;
+                    }
+                    
+                    html += `<details><summary>All Headers</summary><pre>${JSON.stringify(headers, null, 2)}</pre></details>`;
+                    html += `</div>`;
+                }
+                
+                // Cookie analysis
+                const currentCookies = document.cookie;
+                html += `<div style="margin: 15px 0; padding: 10px; border: 1px solid #e5e7eb; border-radius: 6px;">`;
+                html += `<strong>Current Browser Cookies:</strong><br>`;
+                if (currentCookies) {
+                    html += `<pre>${currentCookies}</pre>`;
+                } else {
+                    html += `<span style="color: #dc2626;">No cookies found in browser</span>`;
+                }
+                html += `</div>`;
+                
+                resultDiv.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Network analysis error:', error);
+                resultDiv.innerHTML = `<div class="error">❌ Analysis failed: ${error.message}</div>`;
+            }
+        }
+
+        // Initialize
+        if (isProduction) {
+            refreshStatus();
+        }
+    </script>
+</body>
+</html>
