@@ -384,7 +384,7 @@ export default function Landing() {
               gap: '8px'
             }}>
               <Shield style={{width: '20px', height: '20px', color: '#1e40af'}} />
-              <span>AI Sentinel {currentVersion ? `v${currentVersion.version}` : 'v1.0.0'} - {currentVersion?.title || 'Enterprise Ready'}</span>
+              <span>AI Sentinel {currentVersion ? `v${currentVersion.version}` : 'v1.0.0'}</span>
             </div>
             
             {/* Credit Card Security Notice */}
