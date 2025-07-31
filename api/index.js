@@ -183,59 +183,38 @@ export default async function handler(req, res) {
           throw new Error(`Database session creation failed: ${dbError.message}`);
         }
         
-        // VERCEL SERVERLESS FIX: Use Express cookie method instead of manual headers
-        console.log('🍪 [RAILWAY LOG] Setting cookie using Express res.cookie() method for Vercel compatibility');
+        // SERVERLESS COOKIE FIX: Manual header approach compatible with Vercel
+        console.log('🍪 [RAILWAY LOG] Setting cookie via headers for serverless compatibility');
         
         try {
-          // Use Express cookie method with proper options for production
-          res.cookie('sessionToken', sessionToken, {
-            domain: '.aisentinel.app',
-            path: '/',
-            httpOnly: true,
-            secure: true,
-            sameSite: 'strict',
-            maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
-          });
+          // Build cookie string with all required attributes
+          const cookieString = `sessionToken=${sessionToken}; Domain=.aisentinel.app; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=2592000`;
+          console.log('🍪 [RAILWAY LOG] Cookie string:', cookieString.substring(0, 80) + '...');
           
-          console.log('✅ [RAILWAY LOG] Express cookie set successfully');
-          console.log('🔍 [RAILWAY LOG] Cookie options: domain=.aisentinel.app, httpOnly=true, secure=true');
+          // Set redirect location
+          const redirectUrl = 'https://aisentinel.app/?verified=true&token=success';
+          console.log('🔄 [RAILWAY LOG] Redirect URL:', redirectUrl);
           
-          // Verify cookie was set in headers
-          const headers = res.getHeaders();
-          console.log('🔍 [RAILWAY LOG] Response headers after Express cookie:', Object.keys(headers));
+          // SERVERLESS SOLUTION: Combine cookie and redirect in writeHead
+          console.log('🔧 [RAILWAY LOG] Setting cookie and redirect together via writeHead');
           
-          if (headers['set-cookie']) {
-            console.log('✅ [RAILWAY LOG] Cookie header confirmed in response');
-          } else {
-            console.log('❌ [RAILWAY LOG] WARNING: No Set-Cookie header found after Express cookie');
-          }
-          
-        } catch (cookieError) {
-          console.error('❌ [RAILWAY LOG] Express cookie setting failed:', cookieError);
-          throw new Error(`Express cookie failed: ${cookieError.message}`);
-        }
-        
-        console.log('🔄 [RAILWAY LOG] Preparing redirect to chat interface');
-        
-        // Set redirect location
-        const redirectUrl = 'https://aisentinel.app/?verified=true&token=success';
-        console.log('🔄 [RAILWAY LOG] Redirect URL:', redirectUrl);
-        
-        try {
           res.writeHead(302, {
             'Location': redirectUrl,
+            'Set-Cookie': cookieString,
             'Cache-Control': 'no-cache, no-store, must-revalidate'
           });
-          console.log('✅ [RAILWAY LOG] Redirect headers set successfully');
+          
+          console.log('✅ [RAILWAY LOG] Cookie and redirect headers set successfully');
+          console.log('🍪 [RAILWAY LOG] Cookie included in writeHead response');
           
           res.end();
           console.log('✅ [RAILWAY LOG] Response ended - verification complete');
           console.log('🎉 [RAILWAY LOG] Email verification process completed successfully');
           return;
           
-        } catch (redirectError) {
-          console.error('❌ [RAILWAY LOG] Failed to set redirect:', redirectError);
-          throw new Error(`Redirect failed: ${redirectError.message}`);
+        } catch (cookieError) {
+          console.error('❌ [RAILWAY LOG] Cookie and redirect failed:', cookieError);
+          throw new Error(`Cookie and redirect failed: ${cookieError.message}`);
         }
         
       } catch (error) {
