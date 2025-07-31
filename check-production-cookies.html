@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Production Cookie Checker</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 800px; 
+            margin: 40px auto; 
+            padding: 20px;
+            background: #f9fafb;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .cookie-info {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-family: monospace;
+            word-break: break-all;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success { background: #d1fae5; color: #065f46; }
+        .error { background: #fee2e2; color: #991b1b; }
+        .warning { background: #fef3c7; color: #92400e; }
+        button {
+            background: #3b82f6;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #2563eb; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Production Cookie Checker</h1>
+        <p>Use this tool to check your authentication cookies in production.</p>
+        
+        <h2>Current Cookies</h2>
+        <div id="cookie-display" class="cookie-info">
+            Loading cookies...
+        </div>
+        
+        <h2>Authentication Status</h2>
+        <div id="auth-status">
+            Checking authentication...
+        </div>
+        
+        <h2>Actions</h2>
+        <button onclick="refreshCookies()">🔄 Refresh Cookies</button>
+        <button onclick="testAuth()">🔐 Test Authentication</button>
+        <button onclick="clearCookies()">🗑️ Clear All Cookies</button>
+        
+        <h2>Cookie Analysis</h2>
+        <div id="analysis"></div>
+    </div>
+
+    <script>
+        function displayCookies() {
+            const cookies = document.cookie;
+            const cookieDisplay = document.getElementById('cookie-display');
+            
+            if (!cookies) {
+                cookieDisplay.innerHTML = '<span style="color: #ef4444;">No cookies found</span>';
+                return;
+            }
+            
+            const cookieArray = cookies.split(';').map(c => c.trim());
+            let html = '';
+            
+            cookieArray.forEach(cookie => {
+                const [name, value] = cookie.split('=');
+                if (name === 'sessionToken') {
+                    html += `<div style="background: #dbeafe; padding: 8px; margin: 4px 0; border-left: 4px solid #3b82f6;">
+                        <strong>🔑 ${name}</strong> = ${value}
+                    </div>`;
+                } else {
+                    html += `<div>${name} = ${value}</div>`;
+                }
+            });
+            
+            cookieDisplay.innerHTML = html;
+            analyzeCookies(cookies);
+        }
+        
+        function analyzeCookies(cookies) {
+            const analysis = document.getElementById('analysis');
+            const sessionToken = cookies.match(/sessionToken=([^;]+)/)?.[1];
+            
+            let html = '';
+            
+            if (!sessionToken) {
+                html = '<div class="status error">❌ No sessionToken found - You are not authenticated</div>';
+            } else if (sessionToken.startsWith('prod-session-')) {
+                html = '<div class="status success">✅ Valid production session token found</div>';
+                html += '<div class="status success">🎉 You should be authenticated in production</div>';
+            } else if (sessionToken.startsWith('demo-session-')) {
+                html = '<div class="status warning">⚠️ Demo session token found</div>';
+            } else if (sessionToken.startsWith('dev-session-')) {
+                html = '<div class="status warning">⚠️ Development session token (won\'t work in production)</div>';
+            } else {
+                html = '<div class="status error">❓ Unknown session token pattern</div>';
+            }
+            
+            analysis.innerHTML = html;
+        }
+        
+        async function testAuth() {
+            const statusDiv = document.getElementById('auth-status');
+            statusDiv.innerHTML = '<div class="status">🔄 Testing authentication...</div>';
+            
+            try {
+                const response = await fetch('/api/auth/me', {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                
+                if (data.authenticated) {
+                    statusDiv.innerHTML = `
+                        <div class="status success">✅ Authenticated as ${data.user.email}</div>
+                        <div class="cookie-info">
+                            Role: ${data.user.role} (Level ${data.user.roleLevel})<br>
+                            Company: ${data.user.companyName}<br>
+                            Environment: ${data.environment || 'unknown'}
+                        </div>
+                    `;
+                } else {
+                    statusDiv.innerHTML = '<div class="status error">❌ Not authenticated</div>';
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `<div class="status error">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        function refreshCookies() {
+            displayCookies();
+            testAuth();
+        }
+        
+        function clearCookies() {
+            if (confirm('Clear all cookies? This will log you out.')) {
+                document.cookie.split(";").forEach(cookie => {
+                    const eqPos = cookie.indexOf("=");
+                    const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+                    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+                });
+                setTimeout(refreshCookies, 100);
+            }
+        }
+        
+        // Initialize
+        displayCookies();
+        testAuth();
+    </script>
+</body>
+</html>
