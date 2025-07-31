@@ -128,6 +128,10 @@ export default async function handler(req, res) {
         
         console.log('🔗 [RAILWAY LOG] DATABASE_URL configured, connecting to Railway PostgreSQL...');
         
+        // Generate production session token FIRST (outside database block)
+        const sessionToken = 'prod-session-' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        console.log('🔑 [RAILWAY LOG] Generated session token:', sessionToken.substring(0, 20) + '...');
+        
         try {
           // Import pg for database connection
           const { Client } = await import('pg');
@@ -156,10 +160,6 @@ export default async function handler(req, res) {
             userId = userResult.rows[0].id;
             console.log('✅ [RAILWAY LOG] Found existing user with ID:', userId);
           }
-
-          // Generate production session token
-          const sessionToken = 'prod-session-' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-          console.log('🔑 [RAILWAY LOG] Generated session token:', sessionToken.substring(0, 20) + '...');
           
           // Create authentic database session
           console.log('💾 [RAILWAY LOG] Creating database session record...');
