@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Bug, CheckCircle, XCircle, AlertTriangle, Wifi, WifiOff, Database, User, MessageSquare, Settings, Cookie, Key, Server } from "lucide-react";
+import { Bug, CheckCircle, XCircle, AlertTriangle, Wifi, WifiOff, Database, User, MessageSquare, Settings, Cookie, Key, Server, Copy } from "lucide-react";
 
 interface SessionDebugData {
   // Cookie Analysis
@@ -65,15 +65,37 @@ export default function SessionDebugModal({ trigger }: SessionDebugModalProps) {
     return null;
   };
 
+  // Helper function to parse all cookies with details
+  const getAllCookieDetails = () => {
+    const cookies = document.cookie.split(';').map(cookie => {
+      const [name, ...valueParts] = cookie.trim().split('=');
+      return {
+        name: name.trim(),
+        value: valueParts.join('=').trim()
+      };
+    }).filter(cookie => cookie.name && cookie.value);
+
+    return {
+      count: cookies.length,
+      cookies: cookies,
+      raw: document.cookie,
+      domain: window.location.hostname,
+      protocol: window.location.protocol,
+      port: window.location.port
+    };
+  };
+
   const analyzeSession = async () => {
     setIsLoading(true);
     console.log("🔍 Starting comprehensive session analysis...");
+    
+    const cookieDetails = getAllCookieDetails();
     
     const analysis: SessionDebugData = {
       cookies: {
         sessionToken: getCookie('sessionToken') || null,
         demoUser: getCookie('demoUser') || null,
-        allCookies: document.cookie
+        allCookies: cookieDetails.raw || 'No cookies found'
       },
       auth: null,
       chatSession: null,
@@ -233,6 +255,51 @@ export default function SessionDebugModal({ trigger }: SessionDebugModalProps) {
     }
   };
 
+  const copyDebugData = () => {
+    if (!debugData) return;
+    
+    const debugText = `AI Sentinel Debug Report
+Generated: ${new Date().toISOString()}
+
+Cookie Analysis:
+- Session Token: ${debugData.cookies.sessionToken ? `${debugData.cookies.sessionToken.substring(0, 20)}...` : 'Not found'}
+- Demo User Cookie: ${debugData.cookies.demoUser || 'Not found'}
+- All Cookies: ${debugData.cookies.allCookies || 'No cookies found'}
+- Current Domain: ${window.location.hostname}
+- Current URL: ${window.location.href}
+- Protocol: ${window.location.protocol}
+
+Authentication Status:
+- Authenticated: ${debugData.auth?.authenticated ? 'Yes' : 'No'}
+- Session Valid: ${debugData.auth?.sessionValid ? 'Yes' : 'No'}
+- Session Exists: ${debugData.auth?.sessionExists ? 'Yes' : 'No'}
+- Database Connected: ${debugData.auth?.databaseConnected ? 'Yes' : 'No'}
+
+Chat Session Status:
+- Session Created: ${debugData.chatSession?.sessionCreated ? 'Yes' : 'No'}
+- Current Session ID: ${debugData.chatSession?.currentSession || 'None'}
+- Error: ${debugData.chatSession?.error || 'None'}
+
+API Connectivity:
+- Auth Me: ${debugData.apiStatus.authMe}
+- Chat Session: ${debugData.apiStatus.chatSession}
+- AI Models: ${debugData.apiStatus.aiModels}
+- Activity Types: ${debugData.apiStatus.activityTypes}
+- Database Connection: ${debugData.apiStatus.databaseConnection}
+
+Database Elements:
+- User Record Exists: ${debugData.database?.userExists ? 'Yes' : 'No'}
+- Session Record Exists: ${debugData.database?.sessionRecordExists ? 'Yes' : 'No'}
+- Company Exists: ${debugData.database?.companyExists ? 'Yes' : 'No'}
+- Database Error: ${debugData.database?.error || 'None'}`;
+    
+    navigator.clipboard.writeText(debugText).then(() => {
+      console.log('Debug data copied to clipboard');
+    }).catch(err => {
+      console.error('Failed to copy debug data:', err);
+    });
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
@@ -258,10 +325,29 @@ export default function SessionDebugModal({ trigger }: SessionDebugModalProps) {
       </DialogTrigger>
       <DialogContent style={{ maxWidth: '800px', maxHeight: '90vh', overflow: 'auto' }}>
         <DialogHeader>
-          <DialogTitle style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Bug style={{ width: '20px', height: '20px' }} />
-            Session Analysis & Debugging
-          </DialogTitle>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <DialogTitle style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Bug style={{ width: '20px', height: '20px' }} />
+              Session Analysis & Debugging
+            </DialogTitle>
+            {debugData && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={copyDebugData}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '6px 12px',
+                  fontSize: '12px'
+                }}
+              >
+                <Copy style={{ width: '14px', height: '14px' }} />
+                Copy Debug Data
+              </Button>
+            )}
+          </div>
         </DialogHeader>
         
         {isLoading ? (
@@ -299,7 +385,10 @@ export default function SessionDebugModal({ trigger }: SessionDebugModalProps) {
                 </div>
                 <Separator />
                 <div style={{ fontSize: '12px', color: '#64748b' }}>
-                  All cookies: {debugData.cookies.allCookies || 'No cookies found'}
+                  <div>All cookies: {debugData.cookies.allCookies || 'No cookies found'}</div>
+                  <div style={{ marginTop: '4px' }}>Domain: {window.location.hostname}</div>
+                  <div>Protocol: {window.location.protocol}</div>
+                  <div>Full URL: {window.location.href}</div>
                 </div>
               </div>
             </div>
