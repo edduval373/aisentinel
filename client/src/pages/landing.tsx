@@ -372,7 +372,6 @@ export default function Landing() {
             {/* Version Display - Prominent */}
             <div style={{
               backgroundColor: '#f8fafc',
-              border: '2px solid #1e40af',
               borderRadius: '12px',
               padding: '16px 32px',
               fontWeight: '700',
