@@ -21,6 +21,7 @@ import {
   versionReleases,
   versionFeatures,
   versionDeployments,
+  appVersions,
   type User,
   type UpsertUser,
   type Company,
@@ -65,9 +66,11 @@ import {
   type InsertVersionFeature,
   type VersionDeployment,
   type InsertVersionDeployment,
+  type AppVersion,
+  type InsertAppVersion,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, and, count, sql, sum, like, inArray } from "drizzle-orm";
+import { eq, desc, and, count, sql, sum, like, inArray, gte, asc, not, ilike } from "drizzle-orm";
 
 // Interface for storage operations
 export interface IStorage {
@@ -1471,7 +1474,16 @@ export class DatabaseStorage implements IStorage {
         .limit(1);
       
       if (currentVersion) {
+        console.log("Found current version:", currentVersion);
         return currentVersion;
+      }
+      
+      // If no current version, get the most recent one
+      const allVersions = await db.select().from(appVersions);
+      if (allVersions.length > 0) {
+        const latestVersion = allVersions.sort((a, b) => b.id - a.id)[0];
+        console.log("Using latest version as current:", latestVersion);
+        return latestVersion;
       }
       
       // Return default version if none exists

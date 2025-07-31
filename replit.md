@@ -143,7 +143,18 @@ The application is configured for deployment on Vercel with the following setup:
 ## Recent Changes
 
 ```
+## Deployment Workflow
+**IMPORTANT: Always increment version before GitHub deployment**
+1. Run `node increment-version.mjs` to create new version (auto-increments patch number)
+2. Commit and push to GitHub with updated version number
+3. Version display will automatically show new version across the platform
+
 Recent Updates:
+- July 31, 2025. VERSION INCREMENT WORKFLOW ESTABLISHED:
+  * CREATED: increment-version.mjs script for automated version incrementing before deployment
+  * IMPLEMENTED: Version tracking workflow - always increment before GitHub commits
+  * TESTED: Version v1.0.0 → v1.0.1 increment working correctly with database persistence
+  * DOCUMENTED: Deployment workflow requiring version increment prior to each GitHub push
 - July 31, 2025. VERSION DISPLAY POSITIONING AND STYLING COMPLETE:
   * REPOSITIONED: Version display moved from footer to prominent position near "Secure Trial Requires Credit Card" message
   * ENHANCED: Version display styling with professional blue border, larger font, and Shield icon
