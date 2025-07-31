@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Production Session Diagnostics Runner</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1200px; margin: 20px auto; padding: 20px; background: #f8fafc; }
+        .container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .success { background: #f0fdf4; color: #166534; padding: 15px; border-radius: 6px; margin: 10px 0; }
+        .error { background: #fef2f2; color: #991b1b; padding: 15px; border-radius: 6px; margin: 10px 0; }
+        .warning { background: #fffbeb; color: #92400e; padding: 15px; border-radius: 6px; margin: 10px 0; }
+        .info { background: #f0f9ff; color: #0c4a6e; padding: 15px; border-radius: 6px; margin: 10px 0; }
+        button { background: #3b82f6; color: white; padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; margin: 8px; }
+        button:hover { background: #2563eb; }
+        .urgent { background: #dc2626; }
+        .urgent:hover { background: #b91c1c; }
+        pre { background: #1e293b; color: #f1f5f9; padding: 15px; border-radius: 6px; font-size: 12px; overflow-x: auto; }
+        .diagnostic { border: 1px solid #e5e7eb; padding: 20px; margin: 15px 0; border-radius: 8px; }
+        .step-number { background: #3b82f6; color: white; border-radius: 50%; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; margin-right: 10px; }
+        .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Production Session Diagnostics Runner</h1>
+        <div class="warning">
+            <strong>Production Environment Detected:</strong> Running comprehensive session diagnostics
+        </div>
+        
+        <div class="diagnostic">
+            <h3><span class="step-number">1</span>Cookie Transport Test</h3>
+            <p>Test if cookies are being set and transported properly by the browser.</p>
+            <button onclick="runCookieTransportTest()">Run Cookie Transport Test</button>
+            <div id="cookie-transport-results"></div>
+        </div>
+
+        <div class="diagnostic">
+            <h3><span class="step-number">2</span>Database Session Test</h3>
+            <p>Test database session creation and verification.</p>
+            <button onclick="runDatabaseSessionTest()">Run Database Session Test</button>
+            <div id="database-session-results"></div>
+        </div>
+
+        <div class="diagnostic">
+            <h3><span class="step-number">3</span>End-to-End Flow Test</h3>
+            <p>Test complete flow: Database → Cookie → Authentication</p>
+            <button onclick="runEndToEndTest()">Run Complete Flow Test</button>
+            <div id="end-to-end-results"></div>
+        </div>
+
+        <div class="diagnostic">
+            <h3><span class="step-number">4</span>Network Analysis</h3>
+            <p>Analyze HTTP headers and cookie transport mechanisms.</p>
+            <button onclick="runNetworkAnalysis()">Run Network Analysis</button>
+            <div id="network-analysis-results"></div>
+        </div>
+
+        <div class="results-grid">
+            <div>
+                <h3>Diagnostic Summary</h3>
+                <div id="diagnostic-summary">No tests run yet</div>
+            </div>
+            <div>
+                <h3>Recommended Actions</h3>
+                <div id="recommended-actions">Run diagnostics to get recommendations</div>
+            </div>
+        </div>
+
+        <div class="diagnostic">
+            <h3>Fix Session Issues</h3>
+            <button class="urgent" onclick="fixSessionIssues()">Fix Identified Issues</button>
+            <div id="fix-results"></div>
+        </div>
+    </div>
+
+    <script>
+        const domain = window.location.hostname;
+        const isProduction = domain.includes('aisentinel.app');
+        
+        if (!isProduction) {
+            document.body.innerHTML = `
+                <div class="container">
+                    <div class="error">
+                        <h2>Production Only</h2>
+                        <p>This diagnostic tool only works on aisentinel.app</p>
+                        <p>Current domain: ${domain}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        let diagnosticResults = {
+            cookieTransport: null,
+            databaseSession: null,
+            endToEndFlow: null,
+            networkAnalysis: null
+        };
+
+        async function runCookieTransportTest() {
+            const resultDiv = document.getElementById('cookie-transport-results');
+            resultDiv.innerHTML = '<div class="info">Testing cookie transport...</div>';
+            
+            try {
+                // Test 1: Manual cookie setting
+                const testValue = `transport-test-${Date.now()}`;
+                document.cookie = `transportTest=${testValue}; Secure; SameSite=Lax; Path=/; Max-Age=3600`;
+                
+                // Test 2: Server cookie setting via session creation
+                const response = await fetch('/api/auth/create-session', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                const setCookieHeader = response.headers.get('set-cookie');
+                
+                // Wait for cookies to be processed
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Check results
+                const cookies = document.cookie;
+                const transportTestExists = cookies.includes(`transportTest=${testValue}`);
+                const sessionTokenExists = cookies.includes('sessionToken=');
+                
+                let html = '<h4>Cookie Transport Results:</h4>';
+                
+                if (transportTestExists) {
+                    html += '<div class="success">✅ Manual cookie setting: Working</div>';
+                } else {
+                    html += '<div class="error">❌ Manual cookie setting: Failed</div>';
+                }
+                
+                if (setCookieHeader) {
+                    html += '<div class="success">✅ Server Set-Cookie header: Present</div>';
+                    html += `<pre>Set-Cookie: ${setCookieHeader}</pre>`;
+                } else {
+                    html += '<div class="error">❌ Server Set-Cookie header: Missing</div>';
+                }
+                
+                if (sessionTokenExists) {
+                    html += '<div class="success">✅ Session cookie in browser: Present</div>';
+                } else {
+                    html += '<div class="error">❌ Session cookie in browser: Missing</div>';
+                }
+                
+                html += `<pre>All cookies: ${cookies || 'None found'}</pre>`;
+                
+                diagnosticResults.cookieTransport = {
+                    manualCookie: transportTestExists,
+                    serverHeader: !!setCookieHeader,
+                    sessionCookie: sessionTokenExists,
+                    success: data.success
+                };
+                
+                resultDiv.innerHTML = html;
+                updateDiagnosticSummary();
+                
+            } catch (error) {
+                console.error('Cookie transport test error:', error);
+                resultDiv.innerHTML = `<div class="error">❌ Test failed: ${error.message}</div>`;
+                diagnosticResults.cookieTransport = { error: error.message };
+            }
+        }
+
+        async function runDatabaseSessionTest() {
+            const resultDiv = document.getElementById('database-session-results');
+            resultDiv.innerHTML = '<div class="info">Testing database session creation...</div>';
+            
+            try {
+                // Test database connection
+                const dbResponse = await fetch('/test-database-connection.js');
+                const dbData = await dbResponse.json();
+                
+                // Test session creation
+                const sessionResponse = await fetch('/api/auth/create-session', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                
+                const sessionData = await sessionResponse.json();
+                
+                let html = '<h4>Database Session Results:</h4>';
+                
+                if (dbData.success) {
+                    html += '<div class="success">✅ Database connection: Working</div>';
+                    html += `<div class="info">Tables found: ${dbData.database.tablesFound.join(', ')}</div>`;
+                } else {
+                    html += '<div class="error">❌ Database connection: Failed</div>';
+                }
+                
+                if (sessionData.success) {
+                    html += '<div class="success">✅ Session creation: Working</div>';
+                    html += `<div class="info">Session ID: ${sessionData.sessionId}</div>`;
+                    html += `<div class="info">User: ${sessionData.email}</div>`;
+                } else {
+                    html += '<div class="error">❌ Session creation: Failed</div>';
+                    html += `<div class="error">Error: ${sessionData.message}</div>`;
+                }
+                
+                diagnosticResults.databaseSession = {
+                    databaseConnection: dbData.success,
+                    sessionCreation: sessionData.success,
+                    sessionId: sessionData.sessionId,
+                    email: sessionData.email
+                };
+                
+                resultDiv.innerHTML = html;
+                updateDiagnosticSummary();
+                
+            } catch (error) {
+                console.error('Database session test error:', error);
+                resultDiv.innerHTML = `<div class="error">❌ Test failed: ${error.message}</div>`;
+                diagnosticResults.databaseSession = { error: error.message };
+            }
+        }
+
+        async function runEndToEndTest() {
+            const resultDiv = document.getElementById('end-to-end-results');
+            resultDiv.innerHTML = '<div class="info">Testing end-to-end flow...</div>';
+            
+            try {
+                // Step 1: Create session
+                const sessionResponse = await fetch('/api/auth/create-session', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                const sessionData = await sessionResponse.json();
+                
+                // Step 2: Wait for cookie propagation
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Step 3: Test authentication
+                const authResponse = await fetch('/api/auth/me', {
+                    credentials: 'include'
+                });
+                const authData = await authResponse.json();
+                
+                let html = '<h4>End-to-End Flow Results:</h4>';
+                
+                html += `<div class="info">Step 1 - Session Creation: ${sessionData.success ? 'Success' : 'Failed'}</div>`;
+                
+                if (sessionData.success) {
+                    html += `<div class="info">  Session ID: ${sessionData.sessionId}</div>`;
+                    html += `<div class="info">  Cookie Set: ${sessionData.cookieSet}</div>`;
+                }
+                
+                html += `<div class="info">Step 2 - Cookie Propagation: 2 second wait</div>`;
+                
+                html += `<div class="info">Step 3 - Authentication Test: ${authData.authenticated ? 'Success' : 'Failed'}</div>`;
+                
+                if (authData.authenticated) {
+                    html += '<div class="success">🎉 COMPLETE FLOW SUCCESS!</div>';
+                    html += `<div class="success">User: ${authData.user.email}</div>`;
+                    html += `<div class="success">Role Level: ${authData.user.roleLevel}</div>`;
+                } else {
+                    html += '<div class="error">❌ FLOW FAILED AT AUTHENTICATION</div>';
+                    html += `<div class="error">Message: ${authData.message || 'No message provided'}</div>`;
+                }
+                
+                diagnosticResults.endToEndFlow = {
+                    sessionCreated: sessionData.success,
+                    authenticationWorking: authData.authenticated,
+                    flowComplete: sessionData.success && authData.authenticated
+                };
+                
+                resultDiv.innerHTML = html;
+                updateDiagnosticSummary();
+                
+            } catch (error) {
+                console.error('End-to-end test error:', error);
+                resultDiv.innerHTML = `<div class="error">❌ Test failed: ${error.message}</div>`;
+                diagnosticResults.endToEndFlow = { error: error.message };
+            }
+        }
+
+        async function runNetworkAnalysis() {
+            const resultDiv = document.getElementById('network-analysis-results');
+            resultDiv.innerHTML = '<div class="info">Analyzing network headers...</div>';
+            
+            try {
+                const endpoints = [
+                    { name: 'Session Creation', url: '/api/auth/create-session', method: 'POST' },
+                    { name: 'Authentication Check', url: '/api/auth/me', method: 'GET' }
+                ];
+                
+                let html = '<h4>Network Analysis Results:</h4>';
+                
+                for (const endpoint of endpoints) {
+                    const response = await fetch(endpoint.url, {
+                        method: endpoint.method,
+                        credentials: 'include',
+                        headers: endpoint.method === 'POST' ? { 'Content-Type': 'application/json' } : {}
+                    });
+                    
+                    const headers = Object.fromEntries(response.headers.entries());
+                    const setCookie = response.headers.get('set-cookie');
+                    
+                    html += `<div style="margin: 15px 0; padding: 10px; border: 1px solid #e5e7eb;">`;
+                    html += `<strong>${endpoint.name}:</strong><br>`;
+                    html += `Status: ${response.status}<br>`;
+                    
+                    if (setCookie) {
+                        html += `<span style="color: #16a34a;">✅ Set-Cookie: ${setCookie.substring(0, 80)}...</span><br>`;
+                    } else {
+                        html += `<span style="color: #dc2626;">❌ No Set-Cookie header</span><br>`;
+                    }
+                    
+                    html += `</div>`;
+                }
+                
+                // Current browser state
+                const cookies = document.cookie;
+                html += `<div style="margin: 15px 0; padding: 10px; border: 1px solid #e5e7eb;">`;
+                html += `<strong>Current Browser Cookies:</strong><br>`;
+                if (cookies) {
+                    html += `<pre>${cookies}</pre>`;
+                } else {
+                    html += `<span style="color: #dc2626;">No cookies in browser</span>`;
+                }
+                html += `</div>`;
+                
+                diagnosticResults.networkAnalysis = {
+                    headersAnalyzed: true,
+                    cookiesInBrowser: !!cookies
+                };
+                
+                resultDiv.innerHTML = html;
+                updateDiagnosticSummary();
+                
+            } catch (error) {
+                console.error('Network analysis error:', error);
+                resultDiv.innerHTML = `<div class="error">❌ Analysis failed: ${error.message}</div>`;
+                diagnosticResults.networkAnalysis = { error: error.message };
+            }
+        }
+
+        function updateDiagnosticSummary() {
+            const summaryDiv = document.getElementById('diagnostic-summary');
+            const actionsDiv = document.getElementById('recommended-actions');
+            
+            let summary = '<h4>Test Results:</h4>';
+            let actions = '<h4>Recommended Actions:</h4><ul>';
+            
+            // Analyze results
+            const results = diagnosticResults;
+            
+            if (results.cookieTransport) {
+                if (results.cookieTransport.manualCookie && !results.cookieTransport.sessionCookie) {
+                    summary += '<div class="warning">⚠️ Manual cookies work, server cookies fail</div>';
+                    actions += '<li>Fix server cookie configuration (SameSite, Secure flags)</li>';
+                } else if (!results.cookieTransport.manualCookie) {
+                    summary += '<div class="error">❌ Browser blocking all cookies</div>';
+                    actions += '<li>Check browser cookie settings and HTTPS requirements</li>';
+                }
+            }
+            
+            if (results.databaseSession) {
+                if (results.databaseSession.databaseConnection && results.databaseSession.sessionCreation) {
+                    summary += '<div class="success">✅ Database sessions working</div>';
+                } else {
+                    summary += '<div class="error">❌ Database session issues</div>';
+                    actions += '<li>Fix database connection or session creation logic</li>';
+                }
+            }
+            
+            if (results.endToEndFlow) {
+                if (results.endToEndFlow.flowComplete) {
+                    summary += '<div class="success">✅ Complete flow working</div>';
+                } else {
+                    summary += '<div class="error">❌ End-to-end flow broken</div>';
+                    actions += '<li>Fix cookie transport between session creation and authentication</li>';
+                }
+            }
+            
+            actions += '</ul>';
+            
+            summaryDiv.innerHTML = summary;
+            actionsDiv.innerHTML = actions;
+        }
+
+        async function fixSessionIssues() {
+            const resultDiv = document.getElementById('fix-results');
+            resultDiv.innerHTML = '<div class="info">Attempting to fix identified issues...</div>';
+            
+            // Based on diagnostic results, attempt fixes
+            let html = '<h4>Fix Attempts:</h4>';
+            
+            try {
+                // Fix 1: Test different cookie configurations
+                html += '<div class="info">Testing alternative cookie configurations...</div>';
+                
+                const testConfigs = [
+                    { name: 'SameSite=Lax', config: 'Secure; SameSite=Lax; Path=/' },
+                    { name: 'SameSite=None', config: 'Secure; SameSite=None; Path=/' },
+                    { name: 'No SameSite', config: 'Secure; Path=/' }
+                ];
+                
+                for (const test of testConfigs) {
+                    const testValue = `fix-test-${Date.now()}`;
+                    document.cookie = `${test.name.replace(/[^a-zA-Z]/g, '')}=${testValue}; ${test.config}; Max-Age=300`;
+                    
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    
+                    const cookies = document.cookie;
+                    if (cookies.includes(testValue)) {
+                        html += `<div class="success">✅ ${test.name} configuration works</div>`;
+                    } else {
+                        html += `<div class="error">❌ ${test.name} configuration failed</div>`;
+                    }
+                }
+                
+                resultDiv.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Fix attempt error:', error);
+                resultDiv.innerHTML = `<div class="error">❌ Fix attempts failed: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>
