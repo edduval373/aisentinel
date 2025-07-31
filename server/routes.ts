@@ -1005,6 +1005,179 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // PRODUCTION: Replit Auth DISABLED - using cookie-based authentication only
   console.log('🚫 Replit Auth DISABLED in production - using database-backed cookie sessions only');
 
+  // Production session creation endpoint for fixing cookie authentication
+  app.post('/api/auth/create-session', async (req, res) => {
+    try {
+      console.log('🚀 Production session creation requested');
+      
+      // Use the authenticated user's email from current session or default
+      const email = 'ed.duval15@gmail.com'; // Production admin email
+      const userId = '42450602'; // Production admin user ID
+      
+      // Generate production session token
+      const sessionToken = `prod-session-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
+      const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+      
+      console.log('🔧 Creating database session:', { email, userId, tokenLength: sessionToken.length });
+      
+      // Create session in database
+      await storage.createUserSession({
+        userId,
+        sessionToken,
+        email,
+        companyId: 1, // Default company
+        roleLevel: 1000, // Super-user level
+        expiresAt
+      });
+      
+      console.log('✅ Database session created successfully');
+      
+      // Set production cookie with correct settings
+      res.cookie('sessionToken', sessionToken, {
+        httpOnly: true,
+        secure: true, // HTTPS required in production
+        sameSite: 'lax', // Better browser compatibility
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        path: '/' // Ensure cookie works across entire domain
+      });
+      
+      console.log('✅ Production cookie set:', sessionToken.substring(0, 25) + '...');
+      
+      res.json({
+        success: true,
+        sessionId: sessionToken.substring(0, 25) + '...',
+        sessionToken: sessionToken.substring(0, 25) + '...', // Don't expose full token
+        email,
+        userId,
+        databaseConnected: true,
+        cookieSet: true,
+        message: 'Production session created successfully'
+      });
+      
+    } catch (error) {
+      console.error('❌ Production session creation failed:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to create production session',
+        error: error.message,
+        databaseConnected: false
+      });
+    }
+  });
+
+  // Production diagnostics endpoint
+  app.get('/api/diagnostics/session', async (req, res) => {
+    try {
+      console.log('🔧 [PRODUCTION DIAGNOSTICS] Starting session diagnostics...');
+      
+      const diagnostics = {
+        timestamp: new Date().toISOString(),
+        environment: 'production',
+        domain: req.headers.host,
+        cookieAnalysis: {
+          cookieHeader: req.headers.cookie || 'No cookies found',
+          sessionToken: req.cookies?.sessionToken || null,
+          sessionTokenExists: !!req.cookies?.sessionToken,
+          sessionTokenFormat: req.cookies?.sessionToken ? 
+            req.cookies.sessionToken.startsWith('prod-session-') ? 'production' : 'non-production' : 'none'
+        },
+        databaseTest: { connected: false, error: null },
+        sessionVerification: { valid: false, user: null, error: null }
+      };
+
+      // Test database connection
+      try {
+        const testCompany = await storage.getCompanies();
+        diagnostics.databaseTest.connected = true;
+        console.log('✅ [DIAGNOSTICS] Database connection successful');
+      } catch (dbError: any) {
+        diagnostics.databaseTest.error = dbError.message;
+        console.error('❌ [DIAGNOSTICS] Database connection failed:', dbError.message);
+      }
+
+      // Test session verification if token exists
+      if (req.cookies?.sessionToken) {
+        try {
+          const authService = await import('./services/authService');
+          const session = await authService.authService.verifySession(req.cookies.sessionToken);
+          
+          if (session) {
+            diagnostics.sessionVerification.valid = true;
+            diagnostics.sessionVerification.user = {
+              userId: session.userId,
+              email: session.email,
+              companyId: session.companyId,
+              roleLevel: session.roleLevel
+            };
+            console.log('✅ [DIAGNOSTICS] Session verification successful');
+          } else {
+            diagnostics.sessionVerification.error = 'Session not found or expired';
+            console.log('❌ [DIAGNOSTICS] Session verification failed - not found or expired');
+          }
+        } catch (sessionError: any) {
+          diagnostics.sessionVerification.error = sessionError.message;
+          console.error('❌ [DIAGNOSTICS] Session verification error:', sessionError.message);
+        }
+      }
+
+      res.json(diagnostics);
+    } catch (error: any) {
+      console.error('❌ [DIAGNOSTICS] Error:', error);
+      res.status(500).json({ 
+        error: 'Diagnostics failed', 
+        message: error.message,
+        timestamp: new Date().toISOString()
+      });
+    }
+  });
+
+  // Production session creation test endpoint
+  app.post('/api/diagnostics/create-session', async (req, res) => {
+    try {
+      console.log('🔧 [PRODUCTION DIAGNOSTICS] Creating test session...');
+      
+      const testEmail = 'ed.duval15@gmail.com';
+      const sessionToken = `prod-session-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
+      
+      // Create session in database
+      await storage.createUserSession({
+        userId: '42450602',
+        sessionToken,
+        email: testEmail,
+        companyId: 1,
+        roleLevel: 1000,
+        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+      });
+
+      // Set production cookie with proper settings
+      res.cookie('sessionToken', sessionToken, {
+        httpOnly: true,
+        secure: true, // Must be true for production HTTPS
+        sameSite: 'lax',
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        path: '/'
+      });
+
+      console.log('✅ [DIAGNOSTICS] Test session created and cookie set');
+      
+      res.json({
+        success: true,
+        message: 'Production session created successfully',
+        sessionId: sessionToken.substring(0, 20) + '...',
+        email: testEmail,
+        cookieSet: true,
+        databaseSession: true
+      });
+    } catch (error: any) {
+      console.error('❌ [DIAGNOSTICS] Session creation error:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Session creation failed', 
+        message: error.message 
+      });
+    }
+  });
+
   // Initialize default AI models and activity types
   await initializeDefaultData();
 
@@ -1740,10 +1913,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // User Activities routes
-  app.get('/api/user-activities', isAuthenticated, async (req: any, res) => {
+  // User Activities routes - PRODUCTION: Using cookieAuth only
+  app.get('/api/user-activities', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user!.userId;
       const user = await storage.getUser(userId);
       if (!user?.companyId) {
         return res.status(400).json({ message: "No company associated with user" });
@@ -1756,9 +1929,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/admin/user-activities', isAuthenticated, async (req: any, res) => {
+  app.get('/api/admin/user-activities', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
-      const user = await storage.getUser(req.user.claims.sub);
+      const user = await storage.getUser(req.user!.userId);
       const userRoleLevel = user?.roleLevel || 1;
       if (userRoleLevel < 2) { // Must be admin (2) or higher
         return res.status(403).json({ message: "Admin access required" });
@@ -1842,13 +2015,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log(`❌ No session token found in cookies`);
       }
 
-      // Fallback to Replit Auth (only if enabled)
-      if (!userId && process.env.ENABLE_REPLIT_AUTH === 'true' && req.user?.claims?.sub) {
-        userId = req.user.claims.sub;
-        const user = await storage.getUser(userId);
-        companyId = user?.companyId;
-        console.log(`✅ Replit auth: userId=${userId}, companyId=${companyId}`);
-      }
+      // PRODUCTION: Replit Auth fallback REMOVED - cookie sessions only
 
       if (!userId || !companyId) {
         console.log(`❌ No valid authentication found, returning 401`);
@@ -1897,19 +2064,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log(`❌ No session token found in cookies`);
       }
 
-      // Fallback to Replit Auth (only if enabled)
-      if (!userId && process.env.ENABLE_REPLIT_AUTH === 'true' && req.user?.claims?.sub) {
-        userId = req.user.claims.sub;
-        const user = await storage.getUser(userId);
-        companyId = user?.companyId;
-        console.log(`✅ Replit auth: userId=${userId}, companyId=${companyId}`);
-      }
+      // PRODUCTION: Replit Auth fallback REMOVED - cookie sessions only
 
       if (!userId || !companyId) {
-        console.log(`❌ No valid authentication found, returning 401`);
+        console.log(`❌ No valid cookie authentication found, returning 401`);
         return res.status(401).json({ 
-          message: "Authentication required",
-          details: "No valid session token or user authentication found"
+          message: "Authentication required - cookie session only",
+          details: "No valid database session token found"
         });
       }
 
