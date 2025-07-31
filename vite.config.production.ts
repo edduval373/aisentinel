@@ -22,4 +22,7 @@ export default defineConfig({
     minify: true,
     sourcemap: false,
   },
+  
+  // Copy additional static files
+  publicDir: path.resolve(__dirname, "public"),
 });
