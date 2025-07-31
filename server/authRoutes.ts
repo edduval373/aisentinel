@@ -82,6 +82,61 @@ export function setupAuthRoutes(app: Express) {
     }
   });
 
+  // Test verification endpoint for Railway logging
+  app.get('/api/auth/test-verify', async (req, res) => {
+    try {
+      console.log('🧪 [DEV TEST] Test verification endpoint accessed');
+      console.log('🧪 [DEV TEST] This simulates the production verification flow');
+      
+      // Generate test token and email
+      const testToken = 'test-token-' + Math.random().toString(36).substring(2, 15);
+      const testEmail = 'ed.duval15@gmail.com';
+      
+      console.log('🧪 [DEV TEST] Generated test parameters:');
+      console.log(`🧪 [DEV TEST] - Token: ${testToken}`);
+      console.log(`🧪 [DEV TEST] - Email: ${testEmail}`);
+      
+      // Generate session token (same as production)
+      const sessionToken = 'test-session-' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+      console.log('🧪 [DEV TEST] Generated session token:', sessionToken.substring(0, 20) + '...');
+      
+      // Set cookie (simulating production process)
+      const cookieString = `sessionToken=${sessionToken}; Path=/; HttpOnly; SameSite=Strict; Max-Age=2592000`;
+      console.log('🧪 [DEV TEST] Cookie string prepared:', cookieString.substring(0, 50) + '...');
+      
+      try {
+        res.cookie('sessionToken', sessionToken, {
+          httpOnly: true,
+          secure: false, // Not secure for development
+          sameSite: 'strict',
+          maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        });
+        console.log('✅ [DEV TEST] Cookie set successfully in development');
+        
+        // Get the current host from the request to redirect back to the same environment
+        const protocol = req.secure ? 'https' : 'http';
+        const host = req.get('host');
+        const redirectUrl = `${protocol}://${host}/?verified=true&test=true&email=${encodeURIComponent(testEmail)}`;
+        
+        console.log('🧪 [DEV TEST] Redirecting to:', redirectUrl);
+        res.redirect(redirectUrl);
+        
+      } catch (cookieError) {
+        console.error('❌ [DEV TEST] Failed to set cookie:', cookieError);
+        throw new Error(`Cookie setting failed: ${cookieError.message}`);
+      }
+      
+    } catch (error) {
+      console.error('💥 [DEV TEST] Test verification error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Test verification failed',
+        error: error.message,
+        timestamp: new Date().toISOString()
+      });
+    }
+  });
+
   // Development bypass for email verification
   app.get('/api/auth/dev-verify', async (req, res) => {
     try {

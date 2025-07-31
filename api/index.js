@@ -88,16 +88,23 @@ export default async function handler(req, res) {
       }
     }
 
-    // Email verification endpoint
+    // Email verification endpoint with comprehensive Railway logging
     if (path === '/api/auth/verify' && req.method === 'GET') {
       try {
+        console.log('🚀 [RAILWAY LOG] Email verification endpoint accessed');
+        console.log('🚀 [RAILWAY LOG] Request headers:', JSON.stringify(req.headers, null, 2));
+        console.log('🚀 [RAILWAY LOG] Full URL:', req.url);
+        
         const token = url.searchParams.get('token');
         const email = url.searchParams.get('email');
         
-        console.log(`URL: ${req.url}`);
-        console.log(`Parsed token: ${token}, email: ${email}`);
+        console.log('🚀 [RAILWAY LOG] Parsed parameters:');
+        console.log(`🚀 [RAILWAY LOG] - Token: ${token ? token.substring(0, 10) + '...' : 'null'}`);
+        console.log(`🚀 [RAILWAY LOG] - Email: ${email || 'null'}`);
+        console.log('🚀 [RAILWAY LOG] - Search params:', Object.fromEntries(url.searchParams.entries()));
         
         if (!token || !email) {
+          console.log('❌ [RAILWAY LOG] Missing required parameters - aborting verification');
           return res.status(400).json({
             success: false,
             message: 'Missing token or email parameter',
@@ -110,29 +117,72 @@ export default async function handler(req, res) {
           });
         }
 
-        console.log(`Processing email verification for: ${email}, token: ${token}`);
+        console.log('✅ [RAILWAY LOG] Parameters validated successfully');
+        console.log(`🔐 [RAILWAY LOG] Processing email verification for: ${email}`);
 
-        // For production serverless without database, create a session cookie
+        // Generate production session token
         const sessionToken = 'prod-session-' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        console.log('🔑 [RAILWAY LOG] Generated session token:', sessionToken.substring(0, 20) + '...');
         
-        // Set session cookie
-        res.setHeader('Set-Cookie', `sessionToken=${sessionToken}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=2592000`);
+        // Prepare cookie with detailed logging
+        const cookieString = `sessionToken=${sessionToken}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=2592000`;
+        console.log('🍪 [RAILWAY LOG] Cookie string prepared:', cookieString.substring(0, 50) + '...');
         
-        console.log(`Created production session token: ${sessionToken}`);
+        // Set cookie header with verification
+        try {
+          res.setHeader('Set-Cookie', cookieString);
+          console.log('✅ [RAILWAY LOG] Set-Cookie header applied successfully');
+          
+          // Verify header was set
+          const headers = res.getHeaders();
+          console.log('🔍 [RAILWAY LOG] Response headers after setting cookie:', JSON.stringify(headers, null, 2));
+          
+          if (headers['set-cookie']) {
+            console.log('✅ [RAILWAY LOG] Cookie header confirmed in response headers');
+          } else {
+            console.log('❌ [RAILWAY LOG] WARNING: Cookie header not found in response headers');
+          }
+          
+        } catch (cookieError) {
+          console.error('❌ [RAILWAY LOG] Failed to set cookie header:', cookieError);
+          throw new Error(`Cookie setting failed: ${cookieError.message}`);
+        }
         
-        // Redirect to chat interface
-        res.writeHead(302, {
-          'Location': 'https://aisentinel.app'
-        });
-        res.end();
-        return;
+        console.log('🔄 [RAILWAY LOG] Preparing redirect to chat interface');
+        
+        // Set redirect location
+        const redirectUrl = 'https://aisentinel.app/?verified=true&token=success';
+        console.log('🔄 [RAILWAY LOG] Redirect URL:', redirectUrl);
+        
+        try {
+          res.writeHead(302, {
+            'Location': redirectUrl,
+            'Cache-Control': 'no-cache, no-store, must-revalidate'
+          });
+          console.log('✅ [RAILWAY LOG] Redirect headers set successfully');
+          
+          res.end();
+          console.log('✅ [RAILWAY LOG] Response ended - verification complete');
+          console.log('🎉 [RAILWAY LOG] Email verification process completed successfully');
+          return;
+          
+        } catch (redirectError) {
+          console.error('❌ [RAILWAY LOG] Failed to set redirect:', redirectError);
+          throw new Error(`Redirect failed: ${redirectError.message}`);
+        }
         
       } catch (error) {
-        console.error('Email verification error:', error);
+        console.error('💥 [RAILWAY LOG] Email verification critical error:', error);
+        console.error('💥 [RAILWAY LOG] Error stack:', error.stack);
+        console.error('💥 [RAILWAY LOG] Error type:', typeof error);
+        console.error('💥 [RAILWAY LOG] Error properties:', Object.keys(error));
+        
         return res.status(500).json({
           success: false,
           message: 'Email verification failed',
-          error: error.message
+          error: error.message,
+          timestamp: new Date().toISOString(),
+          railwayLogs: 'Check Railway logs for detailed cookie creation tracking'
         });
       }
     }

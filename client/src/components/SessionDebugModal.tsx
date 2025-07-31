@@ -498,6 +498,23 @@ export default function SessionDebugModal({ trigger }: SessionDebugModalProps) {
                 <Key style={{ width: '16px', height: '16px' }} />
                 Create Real Session
               </Button>
+              <Button 
+                onClick={() => window.location.href = '/api/auth/test-verify'}
+                style={{
+                  backgroundColor: '#f59e0b',
+                  color: 'white',
+                  padding: '8px 16px',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+              >
+                <Bug style={{ width: '16px', height: '16px' }} />
+                Test Verification
+              </Button>
             </div>
 
           </div>
