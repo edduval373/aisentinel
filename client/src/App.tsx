@@ -48,8 +48,18 @@ function Router() {
     return null; // Let the HTML loading screen handle this
   }
 
-  // If authenticated, redirect to home/chat instead of landing page
-  if (isAuthenticated && window.location.pathname === '/') {
+  // Check if user just logged out
+  const hasLogoutFlag = new URLSearchParams(window.location.search).get('logout') === 'true' || 
+                        sessionStorage.getItem('forceLogout') === 'true';
+  
+  // If user just logged out, clear the flag and force landing page
+  if (hasLogoutFlag) {
+    sessionStorage.removeItem('forceLogout');
+    console.log("[APP DEBUG] Logout detected, forcing landing page");
+  }
+  
+  // If authenticated and not just logged out, stay on home/chat 
+  if (isAuthenticated && window.location.pathname === '/' && !hasLogoutFlag) {
     console.log("[APP DEBUG] Authenticated user on root path, staying on home");
   }
 
@@ -119,6 +129,12 @@ function Router() {
           const params = new URLSearchParams(window.location.search);
           const verifiedEmail = params.get('email');
           const isVerified = params.get('verified') === 'true';
+          
+          // If user just logged out, force landing page
+          if (hasLogoutFlag) {
+            console.log("[APP DEBUG] User logged out, showing landing page");
+            return <Landing />;
+          }
           
           if (isVerified && verifiedEmail) {
             console.log("[APP DEBUG] Email verification successful for:", verifiedEmail);

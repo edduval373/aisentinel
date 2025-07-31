@@ -338,10 +338,13 @@ export default function Home() {
     localStorage.clear();
     sessionStorage.clear();
     
+    // Set a flag to force landing page display after logout
+    sessionStorage.setItem('forceLogout', 'true');
+    
     console.log('All data cleared, redirecting to landing page...');
     
-    // Immediate redirect without delay
-    window.location.replace('/');
+    // Force reload to landing page (this will clear the authentication state)
+    window.location.href = '/?logout=true';
   };
 
   // Company switching function for super-users
