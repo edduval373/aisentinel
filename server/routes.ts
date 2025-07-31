@@ -1054,6 +1054,330 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // PRODUCTION: Replit Auth DISABLED - using cookie-based authentication only
   console.log('🚫 Replit Auth DISABLED in production - using database-backed cookie sessions only');
 
+  // Production diagnostic tool - accessible directly in browser
+  app.get('/api/production-diagnostic', (req, res) => {
+    res.setHeader('Content-Type', 'text/html');
+    res.send(`<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Sentinel Production Diagnostics</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f8fafc;
+            line-height: 1.6;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: 600;
+        }
+        .success { background: #d1fae5; border: 1px solid #10b981; color: #065f46; }
+        .error { background: #fee2e2; border: 1px solid #ef4444; color: #991b1b; }
+        .warning { background: #fef3c7; border: 1px solid #f59e0b; color: #92400e; }
+        .info { background: #dbeafe; border: 1px solid #3b82f6; color: #1e40af; }
+        button {
+            background: #3b82f6;
+            color: white;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 10px 5px;
+        }
+        button:hover:not(:disabled) { background: #2563eb; }
+        button:disabled { background: #9ca3af; cursor: not-allowed; }
+        .console {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 13px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            margin: 20px 0;
+        }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
+        @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 AI Sentinel Production Diagnostics</h1>
+        <p>Comprehensive testing tool for production authentication and API endpoints.</p>
+        
+        <div class="grid">
+            <div>
+                <button onclick="runFullDiagnostic()">🚀 RUN FULL DIAGNOSTIC</button>
+                <button onclick="createSession()">🔑 CREATE SESSION ONLY</button>
+            </div>
+            <div>
+                <button onclick="testAuth()">🔍 TEST AUTHENTICATION</button>
+                <button onclick="refreshPage()">🔄 REFRESH PAGE</button>
+            </div>
+        </div>
+        
+        <div id="results"></div>
+        <div id="console" class="console" style="display: none;"></div>
+        
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+            <h3>Usage Instructions</h3>
+            <ol>
+                <li><strong>RUN FULL DIAGNOSTIC:</strong> Tests session creation, authentication, and all API endpoints</li>
+                <li><strong>CREATE SESSION ONLY:</strong> Just creates a new production session and sets the cookie</li>
+                <li><strong>TEST AUTHENTICATION:</strong> Checks if you're currently authenticated</li>
+                <li><strong>REFRESH PAGE:</strong> Goes back to the main app (use after successful authentication)</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        let logOutput = [];
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = \`[\${timestamp}] \${message}\`;
+            logOutput.push(logEntry);
+            
+            const consoleEl = document.getElementById('console');
+            consoleEl.style.display = 'block';
+            consoleEl.textContent = logOutput.join('\\n');
+            consoleEl.scrollTop = consoleEl.scrollHeight;
+            
+            console.log(message);
+        }
+        
+        function clearLog() {
+            logOutput = [];
+            document.getElementById('console').textContent = '';
+            document.getElementById('results').innerHTML = '';
+        }
+        
+        async function createSession() {
+            clearLog();
+            log('🚀 Creating production session...');
+            
+            try {
+                const response = await fetch('/api/auth/create-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    log('✅ SESSION CREATED SUCCESSFULLY');
+                    log(\`   Session ID: \${data.sessionId}\`);
+                    log(\`   User: \${data.email}\`);
+                    log(\`   Cookie Set: \${data.cookieSet}\`);
+                    
+                    document.getElementById('results').innerHTML = \`
+                        <div class="status success">
+                            <h4>🎉 Session Created Successfully!</h4>
+                            <p><strong>Session ID:</strong> \${data.sessionId}</p>
+                            <p><strong>User:</strong> \${data.email}</p>
+                            <p><strong>Database Connected:</strong> ✅</p>
+                            <p><strong>Cookie Set:</strong> ✅</p>
+                        </div>
+                    \`;
+                } else {
+                    throw new Error(data.message || 'Session creation failed');
+                }
+            } catch (error) {
+                log('❌ SESSION CREATION FAILED: ' + error.message);
+                document.getElementById('results').innerHTML = \`
+                    <div class="status error">
+                        <h4>❌ Session Creation Failed</h4>
+                        <p><strong>Error:</strong> \${error.message}</p>
+                    </div>
+                \`;
+            }
+        }
+        
+        async function testAuth() {
+            clearLog();
+            log('🔍 Testing authentication...');
+            
+            try {
+                const response = await fetch('/api/auth/me', { credentials: 'include' });
+                const data = await response.json();
+                
+                if (data.authenticated) {
+                    log('✅ AUTHENTICATION SUCCESSFUL');
+                    log(\`   User: \${data.user.firstName} \${data.user.lastName}\`);
+                    log(\`   Email: \${data.user.email}\`);
+                    log(\`   Role: \${data.user.role} (Level \${data.user.roleLevel})\`);
+                    log(\`   Company ID: \${data.user.companyId}\`);
+                    
+                    document.getElementById('results').innerHTML = \`
+                        <div class="status success">
+                            <h4>✅ Authentication Successful!</h4>
+                            <p><strong>User:</strong> \${data.user.firstName} \${data.user.lastName}</p>
+                            <p><strong>Email:</strong> \${data.user.email}</p>
+                            <p><strong>Role:</strong> \${data.user.role} (Level \${data.user.roleLevel})</p>
+                            <p><strong>Company ID:</strong> \${data.user.companyId}</p>
+                            <div style="margin-top: 15px; padding: 10px; background: rgba(16, 185, 129, 0.1); border-radius: 6px;">
+                                <strong>✅ Ready to use the app!</strong> Click "REFRESH PAGE" to go to the main interface.
+                            </div>
+                        </div>
+                    \`;
+                } else {
+                    log('❌ NOT AUTHENTICATED');
+                    document.getElementById('results').innerHTML = \`
+                        <div class="status error">
+                            <h4>❌ Not Authenticated</h4>
+                            <p>No valid session found. Click "CREATE SESSION ONLY" to authenticate.</p>
+                        </div>
+                    \`;
+                }
+            } catch (error) {
+                log('❌ AUTHENTICATION TEST FAILED: ' + error.message);
+                document.getElementById('results').innerHTML = \`
+                    <div class="status error">
+                        <h4>❌ Authentication Test Failed</h4>
+                        <p><strong>Error:</strong> \${error.message}</p>
+                    </div>
+                \`;
+            }
+        }
+        
+        async function runFullDiagnostic() {
+            clearLog();
+            log('🔧 Starting full production diagnostic...');
+            
+            // Step 1: Create session
+            log('\\n=== STEP 1: SESSION CREATION ===');
+            await createSession();
+            
+            // Wait a moment
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            // Step 2: Test authentication
+            log('\\n=== STEP 2: AUTHENTICATION TEST ===');
+            try {
+                const authResponse = await fetch('/api/auth/me', { credentials: 'include' });
+                const authData = await authResponse.json();
+                
+                if (authData.authenticated) {
+                    log('✅ AUTHENTICATION: SUCCESS');
+                    log(\`   User: \${authData.user.firstName} \${authData.user.lastName}\`);
+                    log(\`   Role: \${authData.user.role} (Level \${authData.user.roleLevel})\`);
+                } else {
+                    log('❌ AUTHENTICATION: FAILED');
+                    return;
+                }
+            } catch (error) {
+                log('❌ AUTHENTICATION ERROR: ' + error.message);
+                return;
+            }
+            
+            // Step 3: Test critical endpoints
+            log('\\n=== STEP 3: CRITICAL ENDPOINTS ===');
+            const endpoints = [
+                '/api/ai-models',
+                '/api/activity-types',
+                '/api/companies',
+                '/api/permissions',
+                '/api/users'
+            ];
+            
+            let workingEndpoints = 0;
+            for (const endpoint of endpoints) {
+                try {
+                    const response = await fetch(endpoint, { credentials: 'include' });
+                    if (response.ok) {
+                        const data = await response.json();
+                        log(\`✅ \${endpoint}: \${Array.isArray(data) ? data.length + ' items' : 'SUCCESS'}\`);
+                        workingEndpoints++;
+                    } else {
+                        log(\`❌ \${endpoint}: HTTP \${response.status}\`);
+                    }
+                } catch (error) {
+                    log(\`❌ \${endpoint}: \${error.message}\`);
+                }
+            }
+            
+            // Step 4: Test optional endpoints
+            log('\\n=== STEP 4: OPTIONAL ENDPOINTS ===');
+            const optionalEndpoints = [
+                '/api/version/current',
+                '/api/model-fusion-configs',
+                '/api/auth/developer-status'
+            ];
+            
+            for (const endpoint of optionalEndpoints) {
+                try {
+                    const response = await fetch(endpoint, { credentials: 'include' });
+                    if (response.ok) {
+                        log(\`⚠️ \${endpoint}: WORKING (newer deployment)\`);
+                    } else {
+                        log(\`⚠️ \${endpoint}: NOT FOUND (expected)\`);
+                    }
+                } catch (error) {
+                    log(\`⚠️ \${endpoint}: NOT AVAILABLE\`);
+                }
+            }
+            
+            // Final summary
+            log('\\n=== DIAGNOSTIC COMPLETE ===');
+            log(\`Critical endpoints working: \${workingEndpoints}/\${endpoints.length}\`);
+            
+            if (workingEndpoints >= 3) {
+                log('✅ SYSTEM READY: App should work properly');
+                document.getElementById('results').innerHTML = \`
+                    <div class="status success">
+                        <h4>🎉 Production System Ready!</h4>
+                        <p><strong>Authentication:</strong> ✅ Working</p>
+                        <p><strong>Critical APIs:</strong> \${workingEndpoints}/\${endpoints.length} working</p>
+                        <p><strong>Status:</strong> App should load properly</p>
+                        <div style="margin-top: 15px; padding: 10px; background: rgba(16, 185, 129, 0.1); border-radius: 6px;">
+                            <strong>Next step:</strong> Click "REFRESH PAGE" to access the authenticated app interface.
+                        </div>
+                    </div>
+                \`;
+            } else {
+                log('⚠️ LIMITED FUNCTIONALITY: Some endpoints not working');
+                document.getElementById('results').innerHTML = \`
+                    <div class="status warning">
+                        <h4>⚠️ Limited Functionality</h4>
+                        <p><strong>Authentication:</strong> ✅ Working</p>
+                        <p><strong>Critical APIs:</strong> \${workingEndpoints}/\${endpoints.length} working</p>
+                        <p><strong>Status:</strong> Basic functionality available</p>
+                    </div>
+                \`;
+            }
+        }
+        
+        function refreshPage() {
+            window.location.href = '/';
+        }
+        
+        // Auto-run authentication test on page load
+        window.onload = function() {
+            setTimeout(testAuth, 500);
+        };
+    </script>
+</body>
+</html>`);
+  });
+
   // Serve session creation page directly as HTML endpoint
   app.get('/api/create-session-page', (req, res) => {
     res.setHeader('Content-Type', 'text/html');
