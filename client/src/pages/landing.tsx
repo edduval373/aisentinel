@@ -361,38 +361,61 @@ export default function Landing() {
           
 
           
+          {/* Centered Security & Version Information Section */}
           <div style={{
-            backgroundColor: '#f1f5f9',
-            border: '1px solid #e2e8f0',
-            borderRadius: '8px',
-            padding: '16px',
-            marginTop: '24px',
-            maxWidth: '500px',
-            margin: '24px auto 0 auto'
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            marginTop: '32px',
+            gap: '16px'
           }}>
+            {/* Version Display - Prominent */}
             <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              marginBottom: '8px'
+              backgroundColor: '#1e40af',
+              color: 'white',
+              borderRadius: '8px',
+              padding: '12px 24px',
+              fontWeight: '600',
+              fontSize: '16px',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
             }}>
-              <Lock style={{width: '16px', height: '16px', color: '#1d4ed8'}} />
-              <span style={{
-                fontWeight: '600',
-                color: '#1e293b',
-                fontSize: '14px'
-              }}>
-                Secure Trial Requires Credit Card
-              </span>
+              <VersionDisplay />
             </div>
-            <p style={{
-              fontSize: '14px',
-              color: '#64748b',
-              margin: 0,
-              lineHeight: '1.5'
+            
+            {/* Credit Card Security Notice */}
+            <div style={{
+              backgroundColor: '#f1f5f9',
+              border: '1px solid #e2e8f0',
+              borderRadius: '8px',
+              padding: '16px',
+              maxWidth: '500px',
+              textAlign: 'center'
             }}>
-              No charges during 30-day trial. Card required to prevent abuse and ensure service quality.
-            </p>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                marginBottom: '8px'
+              }}>
+                <Lock style={{width: '16px', height: '16px', color: '#1d4ed8'}} />
+                <span style={{
+                  fontWeight: '600',
+                  color: '#1e293b',
+                  fontSize: '14px'
+                }}>
+                  Secure Trial Requires Credit Card
+                </span>
+              </div>
+              <p style={{
+                fontSize: '14px',
+                color: '#64748b',
+                margin: 0,
+                lineHeight: '1.5'
+              }}>
+                No charges during 30-day trial. Card required to prevent abuse and ensure service quality.
+              </p>
+            </div>
           </div>
 
 
@@ -700,11 +723,6 @@ export default function Landing() {
           <p style={{ color: '#94a3b8', marginBottom: '24px' }}>
             Enterprise AI Governance Platform
           </p>
-          
-          {/* Simple Version Display */}
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <VersionDisplay showTitle style={{ color: '#94a3b8' }} />
-          </div>
         </div>
       </footer>
     </div>
