@@ -56,6 +56,7 @@ export default function SessionDebugModal({ trigger }: SessionDebugModalProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [debugData, setDebugData] = useState<SessionDebugData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isCreatingSession, setIsCreatingSession] = useState(false);
 
   // Helper function to get cookie value
   const getCookie = (name: string) => {
@@ -232,6 +233,36 @@ export default function SessionDebugModal({ trigger }: SessionDebugModalProps) {
     setDebugData(analysis);
     setIsLoading(false);
     console.log("🔍 Session analysis complete:", analysis);
+  };
+
+  const createSession = async () => {
+    setIsCreatingSession(true);
+    try {
+      console.log('🔄 Creating database session...');
+      const response = await fetch('/api/auth/create-session', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      const result = await response.json();
+      console.log('✅ Session creation result:', result);
+      
+      if (result.success) {
+        console.log('🎉 Session created successfully, refreshing page...');
+        // Refresh the page to load with new session
+        window.location.reload();
+      } else {
+        console.error('❌ Session creation failed:', result.message);
+      }
+      
+    } catch (error) {
+      console.error('❌ Session creation error:', error);
+    } finally {
+      setIsCreatingSession(false);
+    }
   };
 
   const getStatusIcon = (status: 'success' | 'error' | 'pending') => {
@@ -565,27 +596,13 @@ Database Elements:
                 Re-analyze
               </Button>
               <Button 
-                onClick={async () => {
-                  try {
-                    const response = await fetch('/api/auth/create-session', {
-                      method: 'POST',
-                      credentials: 'include'
-                    });
-                    const result = await response.json();
-                    if (result.success) {
-                      alert('Real database session created successfully! Please refresh the page.');
-                    } else {
-                      alert('Failed to create session: ' + result.message);
-                    }
-                  } catch (error) {
-                    alert('Error creating session: ' + (error instanceof Error ? error.message : String(error)));
-                  }
-                }}
+                onClick={createSession}
                 variant="default"
+                disabled={isCreatingSession}
                 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
               >
                 <Key style={{ width: '16px', height: '16px' }} />
-                Create Real Session
+                {isCreatingSession ? 'Creating Session...' : 'Create Real Session'}
               </Button>
               <Button 
                 onClick={() => window.location.href = '/api/auth/test-verify'}
