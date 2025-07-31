@@ -120,9 +120,68 @@ export default async function handler(req, res) {
         console.log('✅ [RAILWAY LOG] Parameters validated successfully');
         console.log(`🔐 [RAILWAY LOG] Processing email verification for: ${email}`);
 
-        // Generate production session token
-        const sessionToken = 'prod-session-' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-        console.log('🔑 [RAILWAY LOG] Generated session token:', sessionToken.substring(0, 20) + '...');
+        // DATABASE REQUIREMENT: Must connect to Railway PostgreSQL for real session creation
+        if (!process.env.DATABASE_URL) {
+          console.error('❌ [RAILWAY LOG] CRITICAL: DATABASE_URL not configured - cannot create authentic session');
+          throw new Error('Database connection required for authentic session creation');
+        }
+        
+        console.log('🔗 [RAILWAY LOG] DATABASE_URL configured, connecting to Railway PostgreSQL...');
+        
+        try {
+          // Import pg for database connection
+          const { Client } = await import('pg');
+          const client = new Client({
+            connectionString: process.env.DATABASE_URL,
+            ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+          });
+          
+          await client.connect();
+          console.log('✅ [RAILWAY LOG] Connected to Railway PostgreSQL database');
+          
+          // Get or create user record
+          console.log('🔍 [RAILWAY LOG] Looking up user record for:', email);
+          const userResult = await client.query('SELECT * FROM users WHERE email = $1', [email]);
+          
+          let userId;
+          if (userResult.rows.length === 0) {
+            console.log('📝 [RAILWAY LOG] User not found, creating new user record');
+            const insertResult = await client.query(
+              'INSERT INTO users (id, email, first_name, last_name, role, role_level, company_id, is_active, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id',
+              [`user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`, email, 'User', 'User', 'user', 1, 1, true, new Date()]
+            );
+            userId = insertResult.rows[0].id;
+            console.log('✅ [RAILWAY LOG] Created new user with ID:', userId);
+          } else {
+            userId = userResult.rows[0].id;
+            console.log('✅ [RAILWAY LOG] Found existing user with ID:', userId);
+          }
+
+          // Generate production session token
+          const sessionToken = 'prod-session-' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+          console.log('🔑 [RAILWAY LOG] Generated session token:', sessionToken.substring(0, 20) + '...');
+          
+          // Create authentic database session
+          console.log('💾 [RAILWAY LOG] Creating database session record...');
+          const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+          
+          await client.query(
+            'INSERT INTO user_sessions (user_id, session_token, email, company_id, role_level, expires_at, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+            [userId, sessionToken, email, 1, 1, expiresAt, new Date()]
+          );
+          
+          console.log('✅ [RAILWAY LOG] Database session created successfully');
+          console.log('✅ [RAILWAY LOG] Session expires at:', expiresAt.toISOString());
+          
+          await client.end();
+          console.log('🔗 [RAILWAY LOG] Database connection closed');
+          
+        } catch (dbError) {
+          console.error('❌ [RAILWAY LOG] Database operation failed:', dbError);
+          console.error('❌ [RAILWAY LOG] Database error details:', dbError.message);
+          console.error('❌ [RAILWAY LOG] This is a critical failure - no fallback data will be used');
+          throw new Error(`Database session creation failed: ${dbError.message}`);
+        }
         
         // Prepare cookie with detailed logging - adding Domain for production
         const cookieString = `sessionToken=${sessionToken}; Path=/; Domain=.aisentinel.app; HttpOnly; Secure; SameSite=Strict; Max-Age=2592000`;
@@ -239,86 +298,45 @@ export default async function handler(req, res) {
           });
         }
 
-        // Check for demo session token
-        if (sessionToken.startsWith('demo-session-')) {
-          console.log('Auth check - Demo session token found, returning demo user');
-          return res.status(200).json({
-            authenticated: true,
-            user: {
-              id: 'demo-user',
-              email: 'demo@aisentinel.com',
-              firstName: 'Demo',
-              lastName: 'User',
-              role: 'demo',
-              roleLevel: 0,
-              companyId: 1,
-              companyName: 'Duval AI Solutions',
-              isDeveloper: false,
-              testRole: null
-            },
-            sessionValid: true,
-            environment: 'production-demo'
+        // NO DEMO MODE - Require authentic database session validation
+        console.log('Auth check - Validating session token against Railway PostgreSQL database');
+        
+        if (!process.env.DATABASE_URL) {
+          console.error('Auth check - CRITICAL: DATABASE_URL not configured');
+          return res.status(500).json({
+            authenticated: false,
+            error: 'Database connection required for authentication'
           });
         }
-
-        // Check for production session token - VALIDATE IN DATABASE
-        if (sessionToken.startsWith('prod-session-')) {
-          console.log('Auth check - Production session token found, VALIDATING IN DATABASE');
-          // Continue to database validation below - NO FALLBACKS
-        }
-
-        // Validate session against Railway database
-        let client = null;
+        
         try {
-          console.log('Auth check - Attempting Railway database connection for session validation');
-          
-          if (!process.env.DATABASE_URL) {
-            throw new Error('DATABASE_URL not configured');
-          }
-
           const { Client } = await import('pg');
-          client = new Client({
+          const client = new Client({
             connectionString: process.env.DATABASE_URL,
-            ssl: { rejectUnauthorized: false },
-            connectionTimeoutMillis: 3000,
-            query_timeout: 3000
+            ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
           });
           
-          await Promise.race([
-            client.connect(),
-            new Promise((_, reject) => setTimeout(() => reject(new Error('Connection timeout')), 3000))
-          ]);
+          await client.connect();
+          console.log('Auth check - Connected to Railway PostgreSQL database');
           
-          // Validate session token in database
+          // Query authentic session from database
           const sessionResult = await client.query(
-            'SELECT us.*, u.email, u.first_name, u.last_name, u.company_id, u.role, u.role_level FROM user_sessions us JOIN users u ON us.user_id = u.id WHERE us.session_token = $1 AND us.expires_at > NOW()',
-            [sessionToken]
+            'SELECT us.*, u.* FROM user_sessions us JOIN users u ON us.user_id = u.id WHERE us.session_token = $1 AND us.expires_at > $2',
+            [sessionToken, new Date()]
           );
           
+          await client.end();
+          
           if (sessionResult.rows.length === 0) {
-            console.log('Auth check - Session not found in database or expired');
+            console.log('Auth check - Session token not found in database or expired');
             return res.status(200).json({
               authenticated: false,
-              message: 'Session not found or expired'
+              message: 'Invalid or expired session token'
             });
           }
           
           const session = sessionResult.rows[0];
-          console.log(`Auth check - Valid database session found for user: ${session.email}`);
-          
-          // Update last accessed time
-          await client.query(
-            'UPDATE user_sessions SET last_accessed_at = NOW() WHERE session_token = $1',
-            [sessionToken]
-          );
-          
-          // Get company name
-          const companyResult = await client.query(
-            'SELECT name FROM companies WHERE id = $1',
-            [session.company_id]
-          );
-          
-          const companyName = companyResult.rows[0]?.name || 'Unknown Company';
+          console.log('Auth check - Valid session found for user:', session.email);
           
           return res.status(200).json({
             authenticated: true,
@@ -330,33 +348,20 @@ export default async function handler(req, res) {
               role: session.role,
               roleLevel: session.role_level,
               companyId: session.company_id,
-              companyName: companyName,
-              isDeveloper: session.email === 'ed.duval15@gmail.com',
-              testRole: session.test_role
+              isDeveloper: false,
+              testRole: null
             },
             sessionValid: true,
-            sessionExists: true,
-            databaseConnected: true,
-            environment: 'production-database'
+            environment: 'production-demo'
           });
           
         } catch (dbError) {
-          console.error('Auth check - Database connection failed:', dbError.message);
-          return res.status(200).json({
+          console.error('Auth check - Database authentication failed:', dbError);
+          return res.status(500).json({
             authenticated: false,
-            message: 'Database connection failed - authentication unavailable',
-            databaseConnected: false,
-            error: dbError.message
+            error: 'Database authentication failed',
+            message: dbError.message
           });
-        } finally {
-          if (client) {
-            try {
-              await client.end();
-              console.log('Auth check - Database connection closed');
-            } catch (closeError) {
-              console.warn('Auth check - Error closing connection:', closeError.message);
-            }
-          }
         }
       } catch (error) {
         return res.status(500).json({
