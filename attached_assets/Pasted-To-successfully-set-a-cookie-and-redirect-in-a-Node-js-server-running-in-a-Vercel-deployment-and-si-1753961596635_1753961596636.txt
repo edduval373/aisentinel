@@ -1,0 +1,81 @@
+To successfully set a cookie and redirect in a Node.js server running in a Vercel deployment (and similar serverless environments), you must ensure headers are formed correctly and account for platform-specific quirks, especially cross-domain and security policies. Here’s how you can address common issues that prevent cookies from being set and honored during redirects:
+
+## Proper Way to Set a Cookie and Redirect
+
+The standard and effective approach is:
+
+1. **Set the cookie header** using `setHeader` before issuing the redirect.
+2. **Use a single `writeHead` call for the redirect**—do not split the response or send multiple headers in sequence.
+3. **End the response** immediately after headers are sent.
+
+A working example:
+```js
+res.setHeader('Set-Cookie', cookieString);
+// cookieString example: 'token=YOUR_TOKEN_VALUE; Path=/; HttpOnly; SameSite=None; Secure'
+res.writeHead(302, {
+  'Location': redirectUrl,
+  'Cache-Control': 'no-cache, no-store, must-revalidate'
+});
+res.end();
+```
+- Do **not** attempt to call `writeHead` twice or set/append headers after the headers are sent.
+
+## Important Vercel-Specific and Cross-Domain Notes
+
+- **Domain attribute in cookies:** Several developers have seen that specifying the `Domain` attribute (e.g., `Domain=.aisentinel.app`) can prevent cookies from being set on Vercel, depending on the exact host and the environment. Removing the `Domain` attribute often solves the problem if you’re serving on the apex domain or on Vercel subdomains, as cookies might be dropped if the domain does not exactly match the response host or due to Vercel’s proxying behavior[1][2].
+- **`SameSite` and `Secure`:** If you are using cookies across HTTPS origins or with iframes, set `SameSite=None; Secure`. Vercel enforces HTTPS, so `Secure` is mandatory for cross-site or iframe usage[3].
+- **No cookie with GET/AJAX unless credentials are included:** If fetching from the client side, ensure you use `{ credentials: 'include' }` with fetch or set `withCredentials: true` with Axios to ensure cookies are sent and received on the browser side[4].
+- **No cookie propagation on cross-subdomain API to app on Vercel:** If your API and frontend are on different Vercel domains or subdomains, avoid specifying a `Domain` and test with only the essential cookie attributes[1][2][3].
+
+## Example Fix
+
+If you still aren't seeing the cookie in the browser after redirect:
+
+1. **Remove the `Domain` attribute from `cookieString`.**
+2. Ensure all attributes are correct for modern browsers:
+   - `Path=/; HttpOnly; SameSite=None; Secure`
+3. Use only a single write operation for the headers.
+
+### Example:
+```js
+const cookieString = 'token=YOUR_TOKEN_VALUE; Path=/; HttpOnly; SameSite=None; Secure';
+
+res.setHeader('Set-Cookie', cookieString);
+res.writeHead(302, {
+  'Location': redirectUrl,
+  'Cache-Control': 'no-cache, no-store, must-revalidate'
+});
+res.end();
+```
+
+This approach has resolved similar Vercel deployment issues for many developers, especially around problems introduced by the `Domain` attribute or ordering of header logic[1][5].
+
+## Checklist for Troubleshooting
+
+- Try omitting the `Domain=...` attribute from your cookie.
+- Ensure your cookie contains at least `Path=/; HttpOnly; Secure` (and `SameSite=None` for cross-site).
+- Always set cookies before calling `writeHead` for headers.
+- Make sure no errors occur before headers are written, and that the response is ended after headers are sent.
+
+If you need additional debugging, inspect the "Network" tab in your browser dev tools to see if the `Set-Cookie` header is present on the redirected response. If the header is missing, adjust as above and retest[1][5][3][2].
+
+[1] https://stackoverflow.com/questions/78039142/cookies-not-being-stored-in-browser-after-deploying-web-app-to-vercel/78039162
+[2] https://stackoverflow.com/a/78039162
+[3] https://stackoverflow.com/questions/79134995/problems-with-cookie-on-vercel
+[4] https://stackoverflow.com/questions/56602615/res-setheaderset-cookie-is-not-setting-the-cookie-in-node-express
+[5] https://stackoverflow.com/questions/70458025/how-can-i-set-a-cookie-then-redirect-using-the-native-http-https-modules
+[6] https://github.com/vercel/next.js/discussions/48434
+[7] https://stackoverflow.com/questions/70670527/set-cookie-with-nextjs-and-vercel
+[8] https://github.com/vercel/next.js/issues/63467
+[9] https://vercel.com/docs/deployment-protection/methods-to-protect-deployments/vercel-authentication
+[10] https://www.youtube.com/watch?v=ML1pZdHas4c
+[11] https://stackoverflow.com/questions/27347882/node-js-writehead-to-set-both-location-and-set-cookie
+[12] https://www.reddit.com/r/node/comments/11btfaw/cookies_being_sent_in_localhost_but_not_to_the/
+[13] https://community.vercel.com/t/session-cookies-connect-sid-not-set-in-browser-on-vercel-deployment/1995
+[14] https://vercel.com/docs/project-configuration
+[15] https://blog.csdn.net/qq_34289537/article/details/69158341
+[16] https://stackoverflow.com/questions/79176115/cookies-missing-in-middleware-on-vercel
+[17] https://www.reddit.com/r/node/comments/11e4v6q/cookie_is_set_but_not_visible_in_browser/
+[18] https://stackoverflow.com/questions/62101821/nextjs-api-routes-how-to-remove-a-cookie-from-header/62103085
+[19] https://stackoverflow.com/questions/75580458/cookie-working-fine-on-localhost-but-not-working-on-vercel-production
+[20] https://www.youtube.com/watch?v=DJvM2lSPn6w

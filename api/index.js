@@ -187,25 +187,25 @@ export default async function handler(req, res) {
         console.log('🍪 [RAILWAY LOG] Setting cookie via headers for serverless compatibility');
         
         try {
-          // Build cookie string with all required attributes
-          const cookieString = `sessionToken=${sessionToken}; Domain=.aisentinel.app; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=2592000`;
-          console.log('🍪 [RAILWAY LOG] Cookie string:', cookieString.substring(0, 80) + '...');
+          // PERPLEXITY FIX: Remove Domain attribute for Vercel compatibility
+          const cookieString = `sessionToken=${sessionToken}; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=2592000`;
+          console.log('🍪 [RAILWAY LOG] Cookie string (no domain):', cookieString.substring(0, 80) + '...');
           
           // Set redirect location
           const redirectUrl = 'https://aisentinel.app/?verified=true&token=success';
           console.log('🔄 [RAILWAY LOG] Redirect URL:', redirectUrl);
           
-          // SERVERLESS SOLUTION: Combine cookie and redirect in writeHead
-          console.log('🔧 [RAILWAY LOG] Setting cookie and redirect together via writeHead');
+          // PERPLEXITY RECOMMENDED: Set cookie header before writeHead
+          console.log('🔧 [RAILWAY LOG] Setting cookie header before redirect (Perplexity method)');
+          res.setHeader('Set-Cookie', cookieString);
           
           res.writeHead(302, {
             'Location': redirectUrl,
-            'Set-Cookie': cookieString,
             'Cache-Control': 'no-cache, no-store, must-revalidate'
           });
           
-          console.log('✅ [RAILWAY LOG] Cookie and redirect headers set successfully');
-          console.log('🍪 [RAILWAY LOG] Cookie included in writeHead response');
+          console.log('✅ [RAILWAY LOG] Cookie set via setHeader, redirect via writeHead');
+          console.log('🍪 [RAILWAY LOG] Using Perplexity recommended approach');
           
           res.end();
           console.log('✅ [RAILWAY LOG] Response ended - verification complete');

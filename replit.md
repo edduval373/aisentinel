@@ -192,6 +192,8 @@ Recent Updates:
   * ENHANCED: Production cookie setting now uses proper Express API with domain=.aisentinel.app for reliable cookie creation
   * SERVERLESS FIX: Resolved "res.cookie is not a function" by switching to writeHead approach combining cookie and redirect headers
   * COMPATIBLE: Cookie creation now works in Vercel serverless environment using manual Set-Cookie header in writeHead response
+  * PERPLEXITY FIX: Removed Domain=.aisentinel.app attribute causing Vercel cookie issues per expert recommendation
+  * ENHANCED: Changed SameSite=Strict to SameSite=None for cross-site compatibility and separated cookie/redirect headers
 - July 31, 2025. VERSION INCREMENT WORKFLOW ESTABLISHED:
   * CREATED: increment-version.mjs script for automated version incrementing before deployment
   * IMPLEMENTED: Version tracking workflow - always increment before GitHub commits
