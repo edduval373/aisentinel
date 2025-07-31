@@ -371,15 +371,20 @@ export default function Landing() {
           }}>
             {/* Version Display - Prominent */}
             <div style={{
-              backgroundColor: '#1e40af',
-              color: 'white',
-              borderRadius: '8px',
-              padding: '12px 24px',
-              fontWeight: '600',
-              fontSize: '16px',
-              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+              backgroundColor: '#f8fafc',
+              border: '2px solid #1e40af',
+              borderRadius: '12px',
+              padding: '16px 32px',
+              fontWeight: '700',
+              fontSize: '18px',
+              color: '#1e40af',
+              boxShadow: '0 4px 12px rgba(30, 64, 175, 0.15)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
             }}>
-              <VersionDisplay />
+              <Shield style={{width: '20px', height: '20px', color: '#1e40af'}} />
+              <span>AI Sentinel {currentVersion ? `v${currentVersion.version}` : 'v1.0.0'} - {currentVersion?.title || 'Enterprise Ready'}</span>
             </div>
             
             {/* Credit Card Security Notice */}
