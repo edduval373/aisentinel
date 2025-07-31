@@ -585,8 +585,8 @@ Database Elements:
               </div>
             </div>
 
-            {/* Session Fix Alert */}
-            {debugData.auth?.authenticated && !debugData.auth?.sessionExists && (
+            {/* Session Fix Alert - Show if no session token exists */}
+            {debugData.cookies.sessionToken === null && (
               <div style={{ 
                 backgroundColor: '#fef3c7', 
                 border: '1px solid #f59e0b', 
@@ -599,7 +599,10 @@ Database Elements:
                   🔧 Session Missing - Click to Fix
                 </div>
                 <div style={{ fontSize: '14px', color: '#78350f', marginBottom: '12px' }}>
-                  You're authenticated but missing a session token. Click below to create one:
+                  {debugData.auth?.authenticated 
+                    ? "You're authenticated but missing a session token. Click below to create one:"
+                    : "No session token found. Click below to create a database session:"
+                  }
                 </div>
                 <Button 
                   onClick={createSession}
