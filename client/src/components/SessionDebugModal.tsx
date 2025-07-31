@@ -282,10 +282,19 @@ export default function SessionDebugModal({ trigger }: SessionDebugModalProps) {
         });
         const testResult = await testResponse.json();
         console.log('🧪 [FIX SESSION] Auth test after creation:', testResult);
+        console.log('🍪 [FIX SESSION] Browser cookies after session creation:', document.cookie);
         
-        alert('Session created successfully! Redirecting to chat...');
-        // Redirect to chat interface instead of reloading
-        window.location.href = '/?verified=true&session=created';
+        // Check if the new session token is actually in the browser
+        const newSessionToken = document.cookie.match(/sessionToken=([^;]+)/)?.[1];
+        console.log('🔍 [FIX SESSION] New session token in browser:', newSessionToken ? newSessionToken.substring(0, 25) + '...' : 'NOT FOUND');
+        
+        if (testResult.authenticated) {
+          alert('Session created and authenticated successfully! Redirecting to chat...');
+          window.location.href = '/?verified=true&session=created';
+        } else {
+          alert('Session created but authentication failed. Check browser console for details.');
+          console.error('🚨 [FIX SESSION] Session created but auth test failed:', testResult);
+        }
       } else {
         console.error('❌ [FIX SESSION] Session creation failed:', result.message);
         alert(`Session creation failed: ${result.message}`);
