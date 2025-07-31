@@ -238,7 +238,10 @@ export default function SessionDebugModal({ trigger }: SessionDebugModalProps) {
   const createSession = async () => {
     setIsCreatingSession(true);
     try {
-      console.log('🔄 Creating database session...');
+      console.log('🔄 [FIX SESSION] Starting session creation process...');
+      console.log('🔄 [FIX SESSION] Current URL:', window.location.href);
+      console.log('🔄 [FIX SESSION] Current cookies before request:', document.cookie);
+      
       const response = await fetch('/api/auth/create-session', {
         method: 'POST',
         credentials: 'include',
@@ -247,19 +250,50 @@ export default function SessionDebugModal({ trigger }: SessionDebugModalProps) {
         }
       });
       
+      console.log('🔄 [FIX SESSION] Response status:', response.status);
+      console.log('🔄 [FIX SESSION] Response headers:', Object.fromEntries(response.headers.entries()));
+      
+      if (!response.ok) {
+        console.error('❌ [FIX SESSION] HTTP Error:', response.status, response.statusText);
+        const errorText = await response.text();
+        console.error('❌ [FIX SESSION] Error response body:', errorText);
+        alert(`Session creation failed: HTTP ${response.status} - ${errorText}`);
+        return;
+      }
+      
       const result = await response.json();
-      console.log('✅ Session creation result:', result);
+      console.log('✅ [FIX SESSION] Session creation result:', result);
       
       if (result.success) {
-        console.log('🎉 Session created successfully, refreshing page...');
+        console.log('🎉 [FIX SESSION] Session created successfully!');
+        console.log('🍪 [FIX SESSION] Cookies after creation:', document.cookie);
+        console.log('📊 [FIX SESSION] Session details:', {
+          sessionId: result.sessionId,
+          sessionToken: result.sessionToken?.substring(0, 20) + '...',
+          userId: result.userId,
+          email: result.email,
+          databaseConnected: result.databaseConnected
+        });
+        
+        // Test the new session immediately
+        const testResponse = await fetch('/api/auth/me', {
+          method: 'GET',
+          credentials: 'include'
+        });
+        const testResult = await testResponse.json();
+        console.log('🧪 [FIX SESSION] Auth test after creation:', testResult);
+        
+        alert('Session created successfully! Page will reload.');
         // Refresh the page to load with new session
         window.location.reload();
       } else {
-        console.error('❌ Session creation failed:', result.message);
+        console.error('❌ [FIX SESSION] Session creation failed:', result.message);
+        alert(`Session creation failed: ${result.message}`);
       }
       
     } catch (error) {
-      console.error('❌ Session creation error:', error);
+      console.error('❌ [FIX SESSION] Session creation error:', error);
+      alert(`Session creation error: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
       setIsCreatingSession(false);
     }
