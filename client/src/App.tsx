@@ -58,23 +58,18 @@ function Router() {
     console.log("[APP DEBUG] Logout detected, forcing landing page");
   }
   
-  // If authenticated and not just logged out, stay on home/chat 
-  if (isAuthenticated && window.location.pathname === '/' && !hasLogoutFlag) {
-    console.log("[APP DEBUG] Authenticated user on root path, staying on home");
-  }
+  // STRICT SECURITY: Only authenticated users can access chat
+  console.log("[APP DEBUG] STRICT MODE: No fallbacks, authentication required for all protected routes");
 
-  // Create role-based route guard
+  // STRICT role-based route guard - NO DEMO FALLBACKS
   const RoleGuard = ({ children, requiredRole }: { children: React.ReactNode; requiredRole: 'admin' | 'owner' | 'super-user' }) => {
-    // Check if user is in demo mode (roleLevel 0)
-    const isDemoUser = user?.roleLevel === 0 || window.location.pathname === '/demo';
-    
     const hasAccess = 
-      isDemoUser || // Demo users can access all admin pages in read-only mode
       requiredRole === 'admin' && (isAdmin || isOwner || isSuperUser) ||
       requiredRole === 'owner' && (isOwner || isSuperUser) ||
       requiredRole === 'super-user' && isSuperUser;
 
-    if (!isAuthenticated && !isDemoUser) {
+    // STRICT: Must be authenticated, no exceptions
+    if (!isAuthenticated) {
       return <Landing />;
     }
 
@@ -102,13 +97,7 @@ function Router() {
       <Route path="/pricing" component={PricingPage} />
       <Route path="/demo-signup" component={DemoSignup} />
       
-      {/* Demo route - accessible without authentication */}
-      <Route path="/demo">
-        {() => {
-          console.log("[APP DEBUG] Demo mode accessed");
-          return <CompanyProvider><Home /></CompanyProvider>;
-        }}
-      </Route>
+      {/* Demo route REMOVED - NO FALLBACKS */}
       
       {/* Chat route - authenticated users only */}
       <Route path="/chat">
@@ -179,14 +168,15 @@ function Router() {
             );
           }
           
+          // STRICT SECURITY: Only authenticated users can access chat
           if (!isAuthenticated) {
-            console.log("[APP DEBUG] Not authenticated, showing landing page");
-            console.log("[APP DEBUG] About to render Landing component");
-            // Force page title update to ensure we're showing the right page
+            console.log("[APP DEBUG] STRICT MODE: Not authenticated, showing landing page");
             document.title = "AI Sentinel - Enterprise AI Governance Platform";
             return <Landing />;
           }
-          console.log("[APP DEBUG] Authenticated, showing home");
+          
+          // STRICT: Only show home if explicitly authenticated by server
+          console.log("[APP DEBUG] STRICT MODE: Authenticated user verified, showing home");
           return <CompanyProvider><Home /></CompanyProvider>;
         }}
       </Route>
