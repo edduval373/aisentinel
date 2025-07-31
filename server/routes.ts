@@ -908,6 +908,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Add missing endpoints that frontend expects
+  
+  // Version management endpoints
+  app.get('/api/version/current', async (req, res) => {
+    try {
+      const currentVersion = await storage.getCurrentVersion();
+      res.json(currentVersion);
+    } catch (error) {
+      console.error('Error getting current version:', error);
+      res.status(500).json({ message: 'Failed to get current version' });
+    }
+  });
+
+  // Model fusion configs (plural) route - alias for singular route
+  app.get('/api/model-fusion-configs', optionalAuth, async (req: any, res) => {
+    try {
+      let companyId = 1; // Default to company 1 for demo users
+
+      // If user is authenticated and has a company, use their company
+      if (req.user && req.user.companyId) {
+        companyId = req.user.companyId;
+        console.log("Authenticated user requesting model fusion configs:", { userId: req.user.userId, companyId });
+      } else {
+        console.log("Demo mode model fusion configs request");
+      }
+
+      let config = await storage.getModelFusionConfig(companyId);
+
+      // If no config found, provide demo fallback
+      if (!config) {
+        console.log("No model fusion config found, providing demo fallback");
+        config = {
+          id: 1,
+          companyId,
+          isEnabled: false,
+          summaryModelId: null,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+      }
+
+      console.log("Returning model fusion config for company", companyId + ":", config);
+      return res.json(config);
+    } catch (error) {
+      console.error("Error fetching model fusion configs:", error);
+      res.status(500).json({ message: "Failed to fetch model fusion configs" });
+    }
+  });
+
   // Setup authentication routes
   setupAuthRoutes(app);
 
