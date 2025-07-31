@@ -1002,17 +1002,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Enable Replit Auth for production authentication (conditional)
-  if (process.env.ENABLE_REPLIT_AUTH === 'true') {
-    try {
-      await setupAuth(app);
-      console.log('Replit Auth setup successful');
-    } catch (error) {
-      console.error('Replit Auth setup failed, continuing without it:', error.message);
-    }
-  } else {
-    console.log('Replit Auth disabled, using cookie-based authentication only');
-  }
+  // PRODUCTION: Replit Auth DISABLED - using cookie-based authentication only
+  console.log('🚫 Replit Auth DISABLED in production - using database-backed cookie sessions only');
 
   // Initialize default AI models and activity types
   await initializeDefaultData();
@@ -1968,19 +1959,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log(`❌ No session token found in cookies`);
       }
 
-      // Fallback to Replit Auth (only if enabled)
-      if (!userId && process.env.ENABLE_REPLIT_AUTH === 'true' && req.user?.claims?.sub) {
-        userId = req.user.claims.sub;
-        const user = await storage.getUser(userId);
-        companyId = user?.companyId;
-        console.log(`✅ Replit auth: userId=${userId}, companyId=${companyId}`);
-      }
+      // PRODUCTION: Replit Auth fallback REMOVED - cookie sessions only
 
       if (!userId || !companyId) {
-        console.log(`❌ No valid authentication - returning 401`);
+        console.log(`❌ No valid cookie authentication - returning 401`);
         return res.status(401).json({ 
-          message: "Authentication required",
-          details: "No valid session token or user authentication found"
+          message: "Authentication required - cookie session only",
+          details: "No valid database session token found"
         });
       }
 
