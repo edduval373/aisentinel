@@ -532,6 +532,26 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
               <Button
                 variant="outline"
                 size="sm"
+                onClick={() => window.location.href = '/'}
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '4px',
+                  padding: '6px 10px',
+                  fontSize: '14px',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                  fontWeight: '500',
+                  backgroundColor: '#dbeafe',
+                  borderColor: '#3b82f6',
+                  color: '#1e40af'
+                }}
+              >
+                <MessageSquare style={{ width: '14px', height: '14px' }} />
+                Landing Page
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={() => setShowDebugPanel(true)}
                 style={{ 
                   display: 'flex', 
