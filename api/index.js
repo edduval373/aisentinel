@@ -183,29 +183,36 @@ export default async function handler(req, res) {
           throw new Error(`Database session creation failed: ${dbError.message}`);
         }
         
-        // Prepare cookie with detailed logging - adding Domain for production
-        const cookieString = `sessionToken=${sessionToken}; Path=/; Domain=.aisentinel.app; HttpOnly; Secure; SameSite=Strict; Max-Age=2592000`;
-        console.log('🍪 [RAILWAY LOG] Cookie string prepared:', cookieString.substring(0, 80) + '...');
-        console.log('🍪 [RAILWAY LOG] Domain set to .aisentinel.app for proper cookie scope');
+        // VERCEL SERVERLESS FIX: Use Express cookie method instead of manual headers
+        console.log('🍪 [RAILWAY LOG] Setting cookie using Express res.cookie() method for Vercel compatibility');
         
-        // Set cookie header with verification
         try {
-          res.setHeader('Set-Cookie', cookieString);
-          console.log('✅ [RAILWAY LOG] Set-Cookie header applied successfully');
+          // Use Express cookie method with proper options for production
+          res.cookie('sessionToken', sessionToken, {
+            domain: '.aisentinel.app',
+            path: '/',
+            httpOnly: true,
+            secure: true,
+            sameSite: 'strict',
+            maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+          });
           
-          // Verify header was set
+          console.log('✅ [RAILWAY LOG] Express cookie set successfully');
+          console.log('🔍 [RAILWAY LOG] Cookie options: domain=.aisentinel.app, httpOnly=true, secure=true');
+          
+          // Verify cookie was set in headers
           const headers = res.getHeaders();
-          console.log('🔍 [RAILWAY LOG] Response headers after setting cookie:', JSON.stringify(headers, null, 2));
+          console.log('🔍 [RAILWAY LOG] Response headers after Express cookie:', Object.keys(headers));
           
           if (headers['set-cookie']) {
-            console.log('✅ [RAILWAY LOG] Cookie header confirmed in response headers');
+            console.log('✅ [RAILWAY LOG] Cookie header confirmed in response');
           } else {
-            console.log('❌ [RAILWAY LOG] WARNING: Cookie header not found in response headers');
+            console.log('❌ [RAILWAY LOG] WARNING: No Set-Cookie header found after Express cookie');
           }
           
         } catch (cookieError) {
-          console.error('❌ [RAILWAY LOG] Failed to set cookie header:', cookieError);
-          throw new Error(`Cookie setting failed: ${cookieError.message}`);
+          console.error('❌ [RAILWAY LOG] Express cookie setting failed:', cookieError);
+          throw new Error(`Express cookie failed: ${cookieError.message}`);
         }
         
         console.log('🔄 [RAILWAY LOG] Preparing redirect to chat interface');

@@ -188,6 +188,8 @@ Recent Updates:
   * AUTHENTICATED: Session validation now requires valid user_sessions records in database - no fake authentication
   * CRITICAL FIX: Resolved "sessionToken is not defined" error in production email verification by correcting variable scope
   * REPAIRED: Session token generation moved outside database try-catch block to ensure availability for cookie creation
+  * VERCEL FIX: Switched from manual Set-Cookie headers to Express res.cookie() method for better Vercel serverless compatibility
+  * ENHANCED: Production cookie setting now uses proper Express API with domain=.aisentinel.app for reliable cookie creation
 - July 31, 2025. VERSION INCREMENT WORKFLOW ESTABLISHED:
   * CREATED: increment-version.mjs script for automated version incrementing before deployment
   * IMPLEMENTED: Version tracking workflow - always increment before GitHub commits
