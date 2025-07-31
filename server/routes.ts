@@ -67,77 +67,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Version information routes
+  // Simple Version routes
   app.get('/api/version/current', async (req, res) => {
     try {
-      const currentVersion = await storage.getCurrentVersion();
-      if (currentVersion) {
-        res.json({
-          id: currentVersion.id,
-          version: `${currentVersion.majorVersion}.${currentVersion.minorVersion}.${currentVersion.patchVersion}`,
-          title: currentVersion.title,
-          isStable: currentVersion.isStable,
-          releaseDate: currentVersion.releaseDate
-        });
-      } else {
-        // Return default version if none exists
-        res.json({
-          id: 0,
-          version: "1.0.0",
-          title: "Initial Release",
-          isStable: true,
-          releaseDate: new Date().toISOString()
-        });
-      }
+      const version = await storage.getCurrentVersion();
+      res.json(version);
     } catch (error) {
       console.error('Error fetching current version:', error);
-      res.status(500).json({ error: 'Failed to fetch version information' });
+      res.status(500).json({ error: 'Failed to fetch current version' });
     }
   });
 
-  app.get('/api/version/releases', cookieAuth, async (req, res) => {
+  app.get('/api/versions', async (req, res) => {
     try {
-      const releases = await storage.getVersionReleases();
-      res.json(releases);
+      const versions = await storage.getAllVersions();
+      res.json(versions);
     } catch (error) {
-      console.error('Error fetching version releases:', error);
-      res.status(500).json({ error: 'Failed to fetch version releases' });
+      console.error('Error fetching versions:', error);
+      res.status(500).json({ error: 'Failed to fetch versions' });
     }
   });
 
-  app.get('/api/version/:id/features', cookieAuth, async (req, res) => {
+  app.post('/api/versions', cookieAuth, async (req, res) => {
     try {
-      const versionId = parseInt(req.params.id);
-      const features = await storage.getVersionFeatures(versionId);
-      res.json(features);
+      const version = await storage.createVersion(req.body);
+      res.json(version);
     } catch (error) {
-      console.error('Error fetching version features:', error);
-      res.status(500).json({ error: 'Failed to fetch version features' });
-    }
-  });
-
-  app.post('/api/version/releases', cookieAuth, async (req, res) => {
-    try {
-      const releaseData = {
-        ...req.body,
-        developerId: req.user?.email || 'unknown',
-        releaseDate: new Date()
-      };
-      const release = await storage.createVersionRelease(releaseData);
-      res.json(release);
-    } catch (error) {
-      console.error('Error creating version release:', error);
-      res.status(500).json({ error: 'Failed to create version release' });
-    }
-  });
-
-  app.post('/api/version/features', cookieAuth, async (req, res) => {
-    try {
-      const feature = await storage.createVersionFeature(req.body);
-      res.json(feature);
-    } catch (error) {
-      console.error('Error creating version feature:', error);
-      res.status(500).json({ error: 'Failed to create version feature' });
+      console.error('Error creating version:', error);
+      res.status(500).json({ error: 'Failed to create version' });
     }
   });
 

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield, Users, BarChart3, Lock, CheckCircle, AlertTriangle, Settings, Tag } from "lucide-react";
+import VersionDisplay from "@/components/VersionDisplay";
 
 
 export default function Landing() {
@@ -700,51 +701,10 @@ export default function Landing() {
             Enterprise AI Governance Platform
           </p>
           
-          {/* Version Information */}
-          {currentVersion && (
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px',
-              padding: '12px 16px',
-              backgroundColor: 'rgba(255, 255, 255, 0.05)',
-              borderRadius: '8px',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              maxWidth: '400px',
-              margin: '0 auto'
-            }}>
-              <Tag style={{ width: '16px', height: '16px', color: '#22d3ee' }} />
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-                <span style={{ 
-                  fontSize: '14px', 
-                  fontWeight: 600, 
-                  color: '#22d3ee'
-                }}>
-                  Version {currentVersion.version}
-                </span>
-                <span style={{ 
-                  fontSize: '12px', 
-                  color: '#94a3b8'
-                }}>
-                  {currentVersion.title}
-                </span>
-              </div>
-              {currentVersion.isStable && (
-                <div style={{
-                  padding: '2px 6px',
-                  backgroundColor: '#059669',
-                  borderRadius: '4px',
-                  fontSize: '10px',
-                  fontWeight: 600,
-                  color: 'white',
-                  textTransform: 'uppercase'
-                }}>
-                  Stable
-                </div>
-              )}
-            </div>
-          )}
+          {/* Simple Version Display */}
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <VersionDisplay showTitle style={{ color: '#94a3b8' }} />
+          </div>
         </div>
       </footer>
     </div>

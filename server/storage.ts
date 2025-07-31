@@ -1462,54 +1462,65 @@ export class DatabaseStorage implements IStorage {
     return roles;
   }
 
-  // Versioning operations
-  async getCurrentVersion(): Promise<VersionRelease | undefined> {
-    const [currentVersion] = await db.select()
-      .from(versionReleases)
-      .where(eq(versionReleases.isCurrentVersion, true))
-      .limit(1);
-    return currentVersion;
+  // Simple Version operations
+  async getCurrentVersion(): Promise<AppVersion | undefined> {
+    try {
+      const [currentVersion] = await db.select()
+        .from(appVersions)
+        .where(eq(appVersions.isCurrentVersion, true))
+        .limit(1);
+      
+      if (currentVersion) {
+        return currentVersion;
+      }
+      
+      // Return default version if none exists
+      return {
+        id: 1,
+        majorVersion: 1,
+        minorVersion: 0,
+        patchVersion: 0,
+        version: "1.0.0",
+        title: "AI Sentinel Launch",
+        isCurrentVersion: true,
+        releaseDate: new Date(),
+        createdAt: new Date()
+      };
+    } catch (error) {
+      console.log("Error fetching version from database, returning default:", error);
+      // Return default version if database query fails
+      return {
+        id: 1,
+        majorVersion: 1,
+        minorVersion: 0,
+        patchVersion: 0,
+        version: "1.0.0",
+        title: "AI Sentinel Launch",
+        isCurrentVersion: true,
+        releaseDate: new Date(),
+        createdAt: new Date()
+      };
+    }
   }
 
-  async getVersionReleases(): Promise<VersionRelease[]> {
+  async getAllVersions(): Promise<AppVersion[]> {
     return await db.select()
-      .from(versionReleases)
-      .orderBy(desc(versionReleases.majorVersion), desc(versionReleases.minorVersion), desc(versionReleases.patchVersion));
+      .from(appVersions)
+      .orderBy(desc(appVersions.releaseDate));
   }
 
-  async getVersionFeatures(versionId: number): Promise<VersionFeature[]> {
-    return await db.select()
-      .from(versionFeatures)
-      .where(eq(versionFeatures.versionId, versionId))
-      .orderBy(versionFeatures.importance, versionFeatures.category);
-  }
-
-  async createVersionRelease(releaseData: InsertVersionRelease): Promise<VersionRelease> {
-    const [release] = await db.insert(versionReleases).values(releaseData).returning();
-    return release;
-  }
-
-  async setCurrentVersion(versionId: number): Promise<VersionRelease> {
-    // First unset all current versions
-    await db.update(versionReleases).set({ isCurrentVersion: false });
+  async createVersion(versionData: InsertAppVersion): Promise<AppVersion> {
+    // If this is set as current version, unset all others first
+    if (versionData.isCurrentVersion) {
+      try {
+        await db.update(appVersions).set({ isCurrentVersion: false });
+      } catch (error) {
+        console.log("Note: appVersions table doesn't exist yet, will be created");
+      }
+    }
     
-    // Set the new current version
-    const [updatedVersion] = await db.update(versionReleases)
-      .set({ isCurrentVersion: true })
-      .where(eq(versionReleases.id, versionId))
-      .returning();
-    
-    return updatedVersion;
-  }
-
-  async createVersionFeature(featureData: InsertVersionFeature): Promise<VersionFeature> {
-    const [feature] = await db.insert(versionFeatures).values(featureData).returning();
-    return feature;
-  }
-
-  async createVersionDeployment(deploymentData: InsertVersionDeployment): Promise<VersionDeployment> {
-    const [deployment] = await db.insert(versionDeployments).values(deploymentData).returning();
-    return deployment;
+    const [version] = await db.insert(appVersions).values(versionData).returning();
+    return version;
   }
 }
 

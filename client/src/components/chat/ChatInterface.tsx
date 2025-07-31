@@ -13,6 +13,7 @@ import ChatInput from "./ChatInput";
 import FeaturesBenefitsDialog from "@/components/FeaturesBenefitsDialog";
 import { DeveloperRoleSwitcher } from "@/components/developer/DeveloperRoleSwitcher";
 import { DebugStatusPanel } from "@/components/DebugStatusPanel";
+import VersionDisplay from "@/components/VersionDisplay";
 import { useFeaturesBenefits } from "@/hooks/useFeaturesBenefits";
 import { isDemoModeActive } from "@/utils/demoMode";
 import type { AiModel, ActivityType, ChatMessage as ChatMessageType, Company, ChatSession } from "@shared/schema";
@@ -740,6 +741,9 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
           disabled={!selectedModel || !selectedActivityType || !currentSession || sendMessageMutation.isPending}
           prefillMessage={prefillMessage}
         />
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '8px' }}>
+          <VersionDisplay />
+        </div>
       </div>
       
       {/* Features & Benefits Dialog for demo users */}
