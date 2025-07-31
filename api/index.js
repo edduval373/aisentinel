@@ -269,18 +269,30 @@ export default async function handler(req, res) {
     // Authentication status endpoint - critical for debug panel
     if (path === '/api/auth/me') {
       try {
-        // Extract session token from cookies if available
-        const sessionToken = req.headers.cookie?.match(/sessionToken=([^;]+)/)?.[1];
+        // Extract session token from cookies if available - ENHANCED PRODUCTION DEBUGGING
+        const cookieHeader = req.headers.cookie || '';
+        console.log(`🔍 [AUTH CHECK] Full cookie header: "${cookieHeader}"`);
         
-        console.log(`Auth check - URL: ${req.url}`);
-        console.log(`Auth check - Cookie header: ${req.headers.cookie}`);
-        console.log(`Auth check - Extracted token: ${sessionToken ? sessionToken.substring(0, 20) + '...' : 'none'}`);
+        const sessionToken = cookieHeader.match(/sessionToken=([^;]+)/)?.[1];
+        
+        console.log(`🔍 [AUTH CHECK] URL: ${req.url}`);
+        console.log(`🔍 [AUTH CHECK] Host: ${req.headers.host}`);
+        console.log(`🔍 [AUTH CHECK] User-Agent: ${req.headers['user-agent']?.substring(0, 50)}...`);
+        console.log(`🔍 [AUTH CHECK] Extracted token: ${sessionToken ? sessionToken.substring(0, 20) + '...' : 'NONE FOUND'}`);
+        
+        // Also check for prod-session tokens specifically
+        const prodSessionMatch = cookieHeader.match(/sessionToken=(prod-session-[^;]+)/);
+        if (prodSessionMatch) {
+          console.log(`🎯 [AUTH CHECK] Found prod-session token: ${prodSessionMatch[1].substring(0, 25)}...`);
+        }
         
         if (!sessionToken) {
-          console.log('Auth check - No session token found, returning unauthenticated');
+          console.log('❌ [AUTH CHECK] No session token found in cookies, returning unauthenticated');
           return res.status(200).json({
             authenticated: false,
-            message: 'No session token found'
+            message: 'No session token found in cookie header',
+            cookieHeader: cookieHeader,
+            debug: 'Check cookie setting in create-session endpoint'
           });
         }
 
