@@ -1,0 +1,35 @@
+React app mounted successfully
+index-C4Xxobng.js:415 🔍 useAuth - Cookie check: Object
+index-C4Xxobng.js:415 Authentication check: Object
+index-C4Xxobng.js:614 [APP DEBUG] Router component rendering...
+index-C4Xxobng.js:415 🔍 useAuth - Cookie check: Object
+index-C4Xxobng.js:415 Authentication check: Object
+index-C4Xxobng.js:614 [APP DEBUG] Authentication check: Object
+index-C4Xxobng.js:614 [APP DEBUG] useAuth hook returned: Object
+index-C4Xxobng.js:50 🔄 [API GET] /api/auth/me - Start
+index-C4Xxobng.js:50 🔄 [API GET] Full URL: https://www.aisentinel.app/api/auth/me
+index-C4Xxobng.js:50 🔄 [API GET] Data: undefined
+index-C4Xxobng.js:50 🔄 [API GET] Environment: production
+index-C4Xxobng.js:415 Unauthenticated user: No company context
+index-C4Xxobng.js:415 🔍 useAuth - Cookie check: Object
+index-C4Xxobng.js:415 Authentication check: Object
+index-C4Xxobng.js:50 📊 [API GET] /api/auth/me - Status: 200 (143ms)
+index-C4Xxobng.js:50 📊 [API GET] Headers: Object
+index-C4Xxobng.js:50 📊 [API GET] Content-Type: application/json; charset=utf-8
+index-C4Xxobng.js:50 ✅ [API GET] /api/auth/me - Success: Object
+index-C4Xxobng.js:415 Authentication response: Object
+index-C4Xxobng.js:415 🔍 useAuth - Cookie check: Object
+index-C4Xxobng.js:415 Authentication check: Object
+index-C4Xxobng.js:614 [APP DEBUG] Router component rendering...
+index-C4Xxobng.js:415 🔍 useAuth - Cookie check: Object
+index-C4Xxobng.js:415 Authentication check: Object
+index-C4Xxobng.js:614 [APP DEBUG] Authentication check: Object
+index-C4Xxobng.js:614 [APP DEBUG] useAuth hook returned: Object
+index-C4Xxobng.js:614 [APP DEBUG] Logout detected, forcing landing page
+index-C4Xxobng.js:614 [APP DEBUG] User logged out, showing landing page
+index-C4Xxobng.js:537 [LANDING DEBUG] Landing component rendering...
+index-C4Xxobng.js:537 [LANDING DEBUG] About to return JSX
+index-C4Xxobng.js:537 [LANDING DEBUG] Landing component mounted successfully
+index-C4Xxobng.js:415 🔍 useAuth - Cookie check: Object
+index-C4Xxobng.js:415 Authentication check: Object
+/api/version/current:1  Failed to load resource: the server responded with a status of 404 ()Understand this error

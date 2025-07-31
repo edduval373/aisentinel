@@ -438,8 +438,8 @@ export default async function handler(req, res) {
           console.log('🍪 [CREATE SESSION] Setting session cookie...');
           console.log('🍪 [CREATE SESSION] Host header:', req.headers.host);
           
-          // Use simple cookie without domain for better compatibility
-          const cookieValue = `sessionToken=${sessionToken}; HttpOnly; Secure; SameSite=None; Max-Age=${30 * 24 * 60 * 60}; Path=/`;
+          // Use simple cookie without HttpOnly so JavaScript can access it for debugging
+          const cookieValue = `sessionToken=${sessionToken}; Secure; SameSite=None; Max-Age=${30 * 24 * 60 * 60}; Path=/`;
           console.log('🍪 [CREATE SESSION] Cookie value:', cookieValue);
           
           res.setHeader('Set-Cookie', cookieValue);
