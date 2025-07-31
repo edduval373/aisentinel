@@ -42,8 +42,10 @@ export default function Landing() {
 
   const handleDevAuthentication = async () => {
     console.log("[LANDING DEBUG] Development authentication starting...");
+    console.log("[LANDING DEBUG] Current cookies before auth:", document.cookie);
+    
     try {
-      const response = await fetch('/api/dev-login', {
+      const response = await fetch('/api/auth/dev-login', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -55,12 +57,32 @@ export default function Landing() {
         })
       });
       
+      console.log('[LANDING DEBUG] Response status:', response.status);
+      console.log('[LANDING DEBUG] Response headers:', Object.fromEntries(response.headers.entries()));
+      
       const result = await response.json();
       console.log('[LANDING DEBUG] Dev authentication result:', result);
       
       if (result.success) {
-        console.log('[LANDING DEBUG] Authentication successful, reloading page...');
-        window.location.reload();
+        console.log('[LANDING DEBUG] Authentication successful! Checking cookies...');
+        console.log('[LANDING DEBUG] Cookies after auth:', document.cookie);
+        
+        // Test authentication immediately
+        const authTest = await fetch('/api/auth/me', {
+          method: 'GET',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const authResult = await authTest.json();
+        console.log('[LANDING DEBUG] Auth test result:', authResult);
+        
+        if (authResult.authenticated) {
+          console.log('[LANDING DEBUG] Auth verified! Redirecting to chat...');
+          window.location.href = '/chat';
+        } else {
+          console.log('[LANDING DEBUG] Auth not verified, reloading page...');
+          window.location.reload();
+        }
       } else {
         console.error('[LANDING DEBUG] Authentication failed:', result.message);
         alert('Authentication failed: ' + result.message);
