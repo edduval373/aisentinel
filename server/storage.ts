@@ -18,6 +18,9 @@ import {
   subscriptions,
   trialUsage,
   demoUsers,
+  versionReleases,
+  versionFeatures,
+  versionDeployments,
   type User,
   type UpsertUser,
   type Company,
@@ -56,6 +59,12 @@ import {
   type InsertTrialUsage,
   type DemoUser,
   type InsertDemoUser,
+  type VersionRelease,
+  type InsertVersionRelease,
+  type VersionFeature,
+  type InsertVersionFeature,
+  type VersionDeployment,
+  type InsertVersionDeployment,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, count, sql, sum, like, inArray } from "drizzle-orm";
@@ -190,6 +199,15 @@ export interface IStorage {
   
   // User update method
   updateUser(id: string, userData: Partial<UpsertUser>): Promise<User>;
+  
+  // Versioning operations
+  getCurrentVersion(): Promise<VersionRelease | undefined>;
+  getVersionReleases(): Promise<VersionRelease[]>;
+  getVersionFeatures(versionId: number): Promise<VersionFeature[]>;
+  createVersionRelease(release: InsertVersionRelease): Promise<VersionRelease>;
+  setCurrentVersion(versionId: number): Promise<VersionRelease>;
+  createVersionFeature(feature: InsertVersionFeature): Promise<VersionFeature>;
+  createVersionDeployment(deployment: InsertVersionDeployment): Promise<VersionDeployment>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1442,6 +1460,56 @@ export class DatabaseStorage implements IStorage {
     }
     
     return roles;
+  }
+
+  // Versioning operations
+  async getCurrentVersion(): Promise<VersionRelease | undefined> {
+    const [currentVersion] = await db.select()
+      .from(versionReleases)
+      .where(eq(versionReleases.isCurrentVersion, true))
+      .limit(1);
+    return currentVersion;
+  }
+
+  async getVersionReleases(): Promise<VersionRelease[]> {
+    return await db.select()
+      .from(versionReleases)
+      .orderBy(desc(versionReleases.majorVersion), desc(versionReleases.minorVersion), desc(versionReleases.patchVersion));
+  }
+
+  async getVersionFeatures(versionId: number): Promise<VersionFeature[]> {
+    return await db.select()
+      .from(versionFeatures)
+      .where(eq(versionFeatures.versionId, versionId))
+      .orderBy(versionFeatures.importance, versionFeatures.category);
+  }
+
+  async createVersionRelease(releaseData: InsertVersionRelease): Promise<VersionRelease> {
+    const [release] = await db.insert(versionReleases).values(releaseData).returning();
+    return release;
+  }
+
+  async setCurrentVersion(versionId: number): Promise<VersionRelease> {
+    // First unset all current versions
+    await db.update(versionReleases).set({ isCurrentVersion: false });
+    
+    // Set the new current version
+    const [updatedVersion] = await db.update(versionReleases)
+      .set({ isCurrentVersion: true })
+      .where(eq(versionReleases.id, versionId))
+      .returning();
+    
+    return updatedVersion;
+  }
+
+  async createVersionFeature(featureData: InsertVersionFeature): Promise<VersionFeature> {
+    const [feature] = await db.insert(versionFeatures).values(featureData).returning();
+    return feature;
+  }
+
+  async createVersionDeployment(deploymentData: InsertVersionDeployment): Promise<VersionDeployment> {
+    const [deployment] = await db.insert(versionDeployments).values(deploymentData).returning();
+    return deployment;
   }
 }
 

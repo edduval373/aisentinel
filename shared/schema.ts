@@ -360,6 +360,64 @@ export const insertModelFusionConfigSchema = createInsertSchema(modelFusionConfi
 export const insertEmailVerificationTokenSchema = createInsertSchema(emailVerificationTokens).omit({ id: true, createdAt: true });
 export const insertUserSessionSchema = createInsertSchema(userSessions).omit({ id: true, createdAt: true, lastAccessedAt: true });
 
+// Software versioning system
+export const versionReleases = pgTable("version_releases", {
+  id: serial("id").primaryKey(),
+  majorVersion: integer("major_version").notNull(), // e.g., 2 for v2.x.x
+  minorVersion: integer("minor_version").notNull(), // e.g., 1 for v2.1.x
+  patchVersion: integer("patch_version").notNull(), // e.g., 3 for v2.1.3
+  version: varchar("version").notNull().unique(), // Full version string e.g., "2.1.3"
+  releaseType: varchar("release_type").notNull(), // 'major', 'minor', 'patch', 'hotfix'
+  title: varchar("title").notNull(), // Release title
+  description: text("description"), // Release description/notes
+  changelog: text("changelog"), // Detailed changelog
+  isStable: boolean("is_stable").default(true), // Is this a stable release
+  isCurrentVersion: boolean("is_current_version").default(false), // Current active version
+  releaseDate: timestamp("release_date").defaultNow(),
+  createdBy: varchar("created_by").notNull(), // User who created the release
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => [
+  index("idx_version_current").on(table.isCurrentVersion),
+  index("idx_version_stable").on(table.isStable),
+  index("idx_version_date").on(table.releaseDate),
+  unique("idx_version_unique").on(table.majorVersion, table.minorVersion, table.patchVersion),
+]);
+
+// Version features - track what features were added/changed in each version
+export const versionFeatures = pgTable("version_features", {
+  id: serial("id").primaryKey(),
+  versionId: integer("version_id").references(() => versionReleases.id).notNull(),
+  category: varchar("category").notNull(), // 'added', 'changed', 'deprecated', 'removed', 'fixed', 'security'
+  title: varchar("title").notNull(),
+  description: text("description"),
+  importance: varchar("importance").default("medium").notNull(), // 'low', 'medium', 'high', 'critical'
+  userVisible: boolean("user_visible").default(true), // Is this visible to end users
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => [
+  index("idx_version_feature_version").on(table.versionId),
+  index("idx_version_feature_category").on(table.category),
+  index("idx_version_feature_importance").on(table.importance),
+]);
+
+// Version deployment history
+export const versionDeployments = pgTable("version_deployments", {
+  id: serial("id").primaryKey(),
+  versionId: integer("version_id").references(() => versionReleases.id).notNull(),
+  environment: varchar("environment").notNull(), // 'development', 'staging', 'production'
+  status: varchar("status").notNull(), // 'pending', 'deploying', 'deployed', 'failed', 'rolled_back'
+  deployedBy: varchar("deployed_by").notNull(),
+  deployedAt: timestamp("deployed_at").defaultNow(),
+  notes: text("notes"),
+}, (table) => [
+  index("idx_version_deployment_version").on(table.versionId),
+  index("idx_version_deployment_env").on(table.environment),
+  index("idx_version_deployment_status").on(table.status),
+]);
+
+export const insertVersionReleaseSchema = createInsertSchema(versionReleases).omit({ id: true, createdAt: true });
+export const insertVersionFeatureSchema = createInsertSchema(versionFeatures).omit({ id: true, createdAt: true });
+export const insertVersionDeploymentSchema = createInsertSchema(versionDeployments).omit({ id: true, deployedAt: true });
+
 // Types
 export type Company = typeof companies.$inferSelect;
 export type InsertCompany = z.infer<typeof insertCompanySchema>;
@@ -394,6 +452,12 @@ export type EmailVerificationToken = typeof emailVerificationTokens.$inferSelect
 export type InsertEmailVerificationToken = z.infer<typeof insertEmailVerificationTokenSchema>;
 export type UserSession = typeof userSessions.$inferSelect;
 export type InsertUserSession = z.infer<typeof insertUserSessionSchema>;
+export type VersionRelease = typeof versionReleases.$inferSelect;
+export type InsertVersionRelease = z.infer<typeof insertVersionReleaseSchema>;
+export type VersionFeature = typeof versionFeatures.$inferSelect;
+export type InsertVersionFeature = z.infer<typeof insertVersionFeatureSchema>;
+export type VersionDeployment = typeof versionDeployments.$inferSelect;
+export type InsertVersionDeployment = z.infer<typeof insertVersionDeploymentSchema>;
 
 // Subscription Plans
 export const subscriptionPlans = pgTable('subscription_plans', {

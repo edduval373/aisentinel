@@ -3,13 +3,30 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Shield, Users, BarChart3, Lock, CheckCircle, AlertTriangle, Settings } from "lucide-react";
+import { Shield, Users, BarChart3, Lock, CheckCircle, AlertTriangle, Settings, Tag } from "lucide-react";
 
 
 export default function Landing() {
   console.log("[LANDING DEBUG] Landing component rendering...");
   
+  const [currentVersion, setCurrentVersion] = useState(null);
 
+  // Fetch current version on component mount
+  useEffect(() => {
+    const fetchVersion = async () => {
+      try {
+        const response = await fetch('/api/version/current');
+        if (response.ok) {
+          const versionData = await response.json();
+          setCurrentVersion(versionData);
+        }
+      } catch (error) {
+        console.log("Failed to fetch version info:", error);
+      }
+    };
+    
+    fetchVersion();
+  }, []);
   
   const handleLogin = () => {
     console.log("[LANDING DEBUG] Login button clicked");
@@ -222,11 +239,16 @@ export default function Landing() {
             Secure, compliant, and monitored AI interactions for your organization. 
             Control AI usage while maintaining productivity and security.
           </p>
+          {/* Optimized side-by-side button layout */}
           <div style={{
             display: 'flex',
-            flexDirection: 'column',
+            flexDirection: 'row',
             alignItems: 'center',
-            gap: '1rem'
+            justifyContent: 'center',
+            gap: '12px',
+            flexWrap: 'wrap',
+            maxWidth: '900px',
+            margin: '0 auto'
           }}>
             <button
               onClick={handleLogin}
@@ -234,19 +256,20 @@ export default function Landing() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                padding: '12px 24px',
+                padding: '12px 20px',
                 backgroundColor: '#1e40af',
                 color: 'white',
                 border: 'none',
                 borderRadius: '8px',
-                fontSize: '16px',
+                fontSize: '15px',
                 fontWeight: '600',
                 cursor: 'pointer',
                 textDecoration: 'none',
                 transition: 'all 0.2s ease',
-                minWidth: '200px',
+                minWidth: '250px',
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                margin: '8px'
+                flex: '1',
+                maxWidth: '280px'
               }}
               onMouseOver={(e) => {
                 e.currentTarget.style.backgroundColor = '#1d4ed8';
@@ -260,7 +283,7 @@ export default function Landing() {
               }}
             >
               Start 30-Day Free Trial
-              <CheckCircle style={{marginLeft: '8px', color: 'white', width: '20px', height: '20px'}} />
+              <CheckCircle style={{marginLeft: '8px', color: 'white', width: '18px', height: '18px'}} />
             </button>
             <button
               onClick={handleDemoMode}
@@ -269,19 +292,20 @@ export default function Landing() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                padding: '12px 24px',
+                padding: '12px 20px',
                 backgroundColor: '#16a34a',
                 color: 'white',
                 border: 'none',
                 borderRadius: '8px',
-                fontSize: '16px',
+                fontSize: '15px',
                 fontWeight: '600',
                 cursor: 'pointer',
                 textDecoration: 'none',
                 transition: 'all 0.2s ease',
-                minWidth: '200px',
+                minWidth: '250px',
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                margin: '8px'
+                flex: '1',
+                maxWidth: '280px'
               }}
               onMouseOver={(e) => {
                 e.currentTarget.style.backgroundColor = '#15803d';
@@ -294,8 +318,8 @@ export default function Landing() {
                 e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
               }}
             >
-              Try Demo Mode (3 Free Questions)
-              <Shield style={{marginLeft: '8px', color: 'white', width: '20px', height: '20px'}} />
+              Try Demo Mode (3 Free)
+              <Shield style={{marginLeft: '8px', color: 'white', width: '18px', height: '18px'}} />
             </button>
             <button
               onClick={() => window.location.href = "/pricing"}
@@ -303,19 +327,20 @@ export default function Landing() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                padding: '12px 24px',
+                padding: '12px 20px',
                 backgroundColor: '#7c3aed',
                 color: 'white',
                 border: 'none',
                 borderRadius: '8px',
-                fontSize: '16px',
+                fontSize: '15px',
                 fontWeight: '600',
                 cursor: 'pointer',
                 textDecoration: 'none',
                 transition: 'all 0.2s ease',
-                minWidth: '200px',
+                minWidth: '250px',
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                margin: '8px'
+                flex: '1',
+                maxWidth: '280px'
               }}
               onMouseOver={(e) => {
                 e.currentTarget.style.backgroundColor = '#6d28d9';
@@ -329,7 +354,7 @@ export default function Landing() {
               }}
             >
               View Pricing Plans
-              <BarChart3 style={{marginLeft: '8px', color: 'white', width: '20px', height: '20px'}} />
+              <BarChart3 style={{marginLeft: '8px', color: 'white', width: '18px', height: '18px'}} />
             </button>
           </div>
           
@@ -671,9 +696,55 @@ export default function Landing() {
             </div>
             <span style={{ fontSize: '18px', fontWeight: 600 }}>AI Sentinel</span>
           </div>
-          <p style={{ color: '#94a3b8' }}>
+          <p style={{ color: '#94a3b8', marginBottom: '24px' }}>
             Enterprise AI Governance Platform
           </p>
+          
+          {/* Version Information */}
+          {currentVersion && (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              padding: '12px 16px',
+              backgroundColor: 'rgba(255, 255, 255, 0.05)',
+              borderRadius: '8px',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              maxWidth: '400px',
+              margin: '0 auto'
+            }}>
+              <Tag style={{ width: '16px', height: '16px', color: '#22d3ee' }} />
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                <span style={{ 
+                  fontSize: '14px', 
+                  fontWeight: 600, 
+                  color: '#22d3ee'
+                }}>
+                  Version {currentVersion.version}
+                </span>
+                <span style={{ 
+                  fontSize: '12px', 
+                  color: '#94a3b8'
+                }}>
+                  {currentVersion.title}
+                </span>
+              </div>
+              {currentVersion.isStable && (
+                <div style={{
+                  padding: '2px 6px',
+                  backgroundColor: '#059669',
+                  borderRadius: '4px',
+                  fontSize: '10px',
+                  fontWeight: 600,
+                  color: 'white',
+                  textTransform: 'uppercase'
+                }}>
+                  Stable
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </footer>
     </div>

@@ -67,7 +67,79 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Version information routes
+  app.get('/api/version/current', async (req, res) => {
+    try {
+      const currentVersion = await storage.getCurrentVersion();
+      if (currentVersion) {
+        res.json({
+          id: currentVersion.id,
+          version: `${currentVersion.majorVersion}.${currentVersion.minorVersion}.${currentVersion.patchVersion}`,
+          title: currentVersion.title,
+          isStable: currentVersion.isStable,
+          releaseDate: currentVersion.releaseDate
+        });
+      } else {
+        // Return default version if none exists
+        res.json({
+          id: 0,
+          version: "1.0.0",
+          title: "Initial Release",
+          isStable: true,
+          releaseDate: new Date().toISOString()
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching current version:', error);
+      res.status(500).json({ error: 'Failed to fetch version information' });
+    }
+  });
 
+  app.get('/api/version/releases', cookieAuth, async (req, res) => {
+    try {
+      const releases = await storage.getVersionReleases();
+      res.json(releases);
+    } catch (error) {
+      console.error('Error fetching version releases:', error);
+      res.status(500).json({ error: 'Failed to fetch version releases' });
+    }
+  });
+
+  app.get('/api/version/:id/features', cookieAuth, async (req, res) => {
+    try {
+      const versionId = parseInt(req.params.id);
+      const features = await storage.getVersionFeatures(versionId);
+      res.json(features);
+    } catch (error) {
+      console.error('Error fetching version features:', error);
+      res.status(500).json({ error: 'Failed to fetch version features' });
+    }
+  });
+
+  app.post('/api/version/releases', cookieAuth, async (req, res) => {
+    try {
+      const releaseData = {
+        ...req.body,
+        developerId: req.user?.email || 'unknown',
+        releaseDate: new Date()
+      };
+      const release = await storage.createVersionRelease(releaseData);
+      res.json(release);
+    } catch (error) {
+      console.error('Error creating version release:', error);
+      res.status(500).json({ error: 'Failed to create version release' });
+    }
+  });
+
+  app.post('/api/version/features', cookieAuth, async (req, res) => {
+    try {
+      const feature = await storage.createVersionFeature(req.body);
+      res.json(feature);
+    } catch (error) {
+      console.error('Error creating version feature:', error);
+      res.status(500).json({ error: 'Failed to create version feature' });
+    }
+  });
 
   // Super-user authentication endpoint - for manual login (developer testing)
   app.post('/api/auth/super-login', async (req, res) => {
@@ -2673,6 +2745,80 @@ This is a demonstration of AI Sentinel's capabilities. In the full version:
     ws.on('error', (error) => {
       console.error('WebSocket error:', error);
     });
+  });
+
+  // Versioning System API Routes
+  app.get('/api/version/current', async (req, res) => {
+    try {
+      const currentVersion = await storage.getCurrentVersion();
+      res.json(currentVersion);
+    } catch (error) {
+      console.error("Error fetching current version:", error);
+      res.status(500).json({ message: "Failed to fetch current version" });
+    }
+  });
+
+  app.get('/api/version/releases', optionalAuth, async (req: any, res) => {
+    try {
+      const releases = await storage.getVersionReleases();
+      res.json(releases);
+    } catch (error) {
+      console.error("Error fetching version releases:", error);
+      res.status(500).json({ message: "Failed to fetch version releases" });
+    }
+  });
+
+  app.get('/api/version/releases/:versionId/features', async (req, res) => {
+    try {
+      const versionId = parseInt(req.params.versionId);
+      const features = await storage.getVersionFeatures(versionId);
+      res.json(features);
+    } catch (error) {
+      console.error("Error fetching version features:", error);
+      res.status(500).json({ message: "Failed to fetch version features" });
+    }
+  });
+
+  app.post('/api/version/releases', cookieAuth, async (req: AuthenticatedRequest, res) => {
+    try {
+      const user = await storage.getUser(req.user!.userId);
+      const userRoleLevel = user?.roleLevel || 1;
+      
+      // Only super-users can create releases
+      if (userRoleLevel < 1000) {
+        return res.status(403).json({ message: "Super-user access required" });
+      }
+
+      const releaseData = {
+        ...req.body,
+        createdBy: user?.email || 'system'
+      };
+
+      const release = await storage.createVersionRelease(releaseData);
+      res.json(release);
+    } catch (error) {
+      console.error("Error creating version release:", error);
+      res.status(500).json({ message: "Failed to create version release" });
+    }
+  });
+
+  app.patch('/api/version/releases/:versionId/set-current', cookieAuth, async (req: AuthenticatedRequest, res) => {
+    try {
+      const user = await storage.getUser(req.user!.userId);
+      const userRoleLevel = user?.roleLevel || 1;
+      
+      // Only super-users can set current version
+      if (userRoleLevel < 1000) {
+        return res.status(403).json({ message: "Super-user access required" });
+      }
+
+      const versionId = parseInt(req.params.versionId);
+      const updatedVersion = await storage.setCurrentVersion(versionId);
+      res.json(updatedVersion);
+    } catch (error) {
+      console.error("Error setting current version:", error);
+      res.status(500).json({ message: "Failed to set current version" });
+    }
   });
 
   return httpServer;
