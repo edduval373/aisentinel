@@ -124,9 +124,10 @@ export default async function handler(req, res) {
         const sessionToken = 'prod-session-' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
         console.log('🔑 [RAILWAY LOG] Generated session token:', sessionToken.substring(0, 20) + '...');
         
-        // Prepare cookie with detailed logging
-        const cookieString = `sessionToken=${sessionToken}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=2592000`;
-        console.log('🍪 [RAILWAY LOG] Cookie string prepared:', cookieString.substring(0, 50) + '...');
+        // Prepare cookie with detailed logging - adding Domain for production
+        const cookieString = `sessionToken=${sessionToken}; Path=/; Domain=.aisentinel.app; HttpOnly; Secure; SameSite=Strict; Max-Age=2592000`;
+        console.log('🍪 [RAILWAY LOG] Cookie string prepared:', cookieString.substring(0, 80) + '...');
+        console.log('🍪 [RAILWAY LOG] Domain set to .aisentinel.app for proper cookie scope');
         
         // Set cookie header with verification
         try {
