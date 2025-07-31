@@ -585,6 +585,42 @@ Database Elements:
               </div>
             </div>
 
+            {/* Session Fix Alert */}
+            {debugData.auth?.authenticated && !debugData.auth?.sessionExists && (
+              <div style={{ 
+                backgroundColor: '#fef3c7', 
+                border: '1px solid #f59e0b', 
+                borderRadius: '6px', 
+                padding: '12px',
+                marginBottom: '16px',
+                textAlign: 'center'
+              }}>
+                <div style={{ fontWeight: 'bold', color: '#92400e', marginBottom: '8px' }}>
+                  🔧 Session Missing - Click to Fix
+                </div>
+                <div style={{ fontSize: '14px', color: '#78350f', marginBottom: '12px' }}>
+                  You're authenticated but missing a session token. Click below to create one:
+                </div>
+                <Button 
+                  onClick={createSession}
+                  disabled={isCreatingSession}
+                  style={{ 
+                    backgroundColor: '#dc2626',
+                    color: 'white',
+                    fontWeight: 'bold',
+                    padding: '10px 20px',
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '8px',
+                    margin: '0 auto'
+                  }}
+                >
+                  <Key style={{ width: '16px', height: '16px' }} />
+                  {isCreatingSession ? 'Creating Session...' : 'FIX SESSION NOW'}
+                </Button>
+              </div>
+            )}
+
             {/* Action Buttons */}
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', paddingTop: '16px', borderTop: '1px solid #e2e8f0' }}>
               <Button 
@@ -605,21 +641,20 @@ Database Elements:
                 {isCreatingSession ? 'Creating Session...' : 'Create Real Session'}
               </Button>
               <Button 
-                onClick={() => window.location.href = '/api/auth/test-verify'}
-                style={{
-                  backgroundColor: '#f59e0b',
-                  color: 'white',
-                  padding: '8px 16px',
-                  border: 'none',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}
+                onClick={() => window.location.href = '/'}
+                variant="outline"
+                style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
               >
                 <Bug style={{ width: '16px', height: '16px' }} />
-                Test Verification
+                Back to Landing
+              </Button>
+              <Button 
+                onClick={copyDebugData}
+                variant="outline"
+                style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+              >
+                <Copy style={{ width: '16px', height: '16px' }} />
+                Copy Debug Data
               </Button>
             </div>
 
