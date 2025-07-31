@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Step 1: Cookie Verification</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 20px auto; padding: 20px; background: #f8fafc; }
+        .container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .success { background: #f0fdf4; color: #166534; padding: 15px; border-radius: 6px; margin: 10px 0; }
+        .error { background: #fef2f2; color: #991b1b; padding: 15px; border-radius: 6px; margin: 10px 0; }
+        .info { background: #f0f9ff; color: #0c4a6e; padding: 15px; border-radius: 6px; margin: 10px 0; }
+        button { background: #3b82f6; color: white; padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; margin: 8px; }
+        button:hover { background: #2563eb; }
+        pre { background: #1e293b; color: #f1f5f9; padding: 15px; border-radius: 6px; font-size: 12px; overflow-x: auto; }
+        .metric { display: flex; justify-content: space-between; margin: 8px 0; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Step 1: Cookie Verification</h1>
+        <p>Test if sessionToken cookies are being created and stored properly.</p>
+        
+        <div class="info">
+            <h3>Current Cookie Status</h3>
+            <div id="cookie-status">Loading...</div>
+            <button onclick="checkCookies()">Check Cookies Now</button>
+        </div>
+
+        <div>
+            <h3>Method 1: Create Test Session</h3>
+            <p>Create a database session and verify the cookie gets set.</p>
+            <button onclick="createTestSession()">Create Test Session</button>
+            <div id="test-session-result"></div>
+        </div>
+
+        <div>
+            <h3>Method 2: Manual Cookie Test</h3>
+            <p>Set a test cookie manually to verify browser cookie storage works.</p>
+            <button onclick="setTestCookie()">Set Test Cookie</button>
+            <button onclick="checkTestCookie()">Check Test Cookie</button>
+            <div id="manual-cookie-result"></div>
+        </div>
+
+        <div>
+            <h3>Method 3: Network Headers Inspection</h3>
+            <p>Check if Set-Cookie headers are being sent by the server.</p>
+            <button onclick="inspectHeaders()">Inspect Network Headers</button>
+            <div id="header-inspection-result"></div>
+        </div>
+    </div>
+
+    <script>
+        const isProduction = window.location.hostname.includes('aisentinel.app');
+
+        function checkCookies() {
+            const cookies = document.cookie;
+            const statusDiv = document.getElementById('cookie-status');
+            
+            if (!cookies) {
+                statusDiv.innerHTML = '<div class="error">❌ No cookies found in browser</div>';
+                return;
+            }
+            
+            const cookieArray = cookies.split(';').map(c => c.trim());
+            const sessionToken = cookies.match(/sessionToken=([^;]+)/)?.[1];
+            
+            let html = `<div class="metric"><span>Total Cookies:</span><span>${cookieArray.length}</span></div>`;
+            
+            if (sessionToken) {
+                if (sessionToken.startsWith('prod-session-')) {
+                    html += '<div class="success">✅ Production session token found: ' + sessionToken.substring(0, 25) + '...</div>';
+                } else if (sessionToken.startsWith('dev-session-')) {
+                    html += '<div class="info">ℹ️ Development session token found: ' + sessionToken.substring(0, 25) + '...</div>';
+                } else {
+                    html += '<div class="error">❌ Unknown session token format: ' + sessionToken.substring(0, 25) + '...</div>';
+                }
+            } else {
+                html += '<div class="error">❌ No sessionToken cookie found</div>';
+            }
+            
+            html += '<pre>All cookies: ' + cookies + '</pre>';
+            statusDiv.innerHTML = html;
+        }
+
+        async function createTestSession() {
+            const resultDiv = document.getElementById('test-session-result');
+            resultDiv.innerHTML = '<div class="info">Creating test session...</div>';
+            
+            try {
+                console.log('🔧 Creating test session...');
+                
+                const response = await fetch('/api/auth/create-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include'
+                });
+                
+                console.log('🔧 Response status:', response.status);
+                console.log('🔧 Response headers:', Object.fromEntries(response.headers.entries()));
+                
+                const data = await response.json();
+                console.log('🔧 Response data:', data);
+                
+                if (data.success) {
+                    // Wait for cookie to be set then check
+                    setTimeout(() => {
+                        const cookies = document.cookie;
+                        const sessionToken = cookies.match(/sessionToken=([^;]+)/)?.[1];
+                        
+                        if (sessionToken) {
+                            resultDiv.innerHTML = `
+                                <div class="success">
+                                    ✅ Session created AND cookie set successfully!<br>
+                                    Session ID: ${data.sessionId}<br>
+                                    Cookie Token: ${sessionToken.substring(0, 25)}...<br>
+                                    Database Connected: ${data.databaseConnected}
+                                </div>
+                            `;
+                        } else {
+                            resultDiv.innerHTML = `
+                                <div class="error">
+                                    ❌ Session created but cookie NOT set<br>
+                                    Session ID: ${data.sessionId}<br>
+                                    Response indicates cookie set: ${data.cookieSet}<br>
+                                    Check: Server sent Set-Cookie header but browser didn't store it
+                                </div>
+                            `;
+                        }
+                    }, 1000);
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ Session creation failed: ${data.message}</div>`;
+                }
+            } catch (error) {
+                console.error('Session creation error:', error);
+                resultDiv.innerHTML = `<div class="error">❌ Request failed: ${error.message}</div>`;
+            }
+        }
+
+        function setTestCookie() {
+            const testValue = `manual-test-${Date.now()}`;
+            document.cookie = `manualTestCookie=${testValue}; Secure; SameSite=Lax; Path=/; Max-Age=3600`;
+            
+            document.getElementById('manual-cookie-result').innerHTML = 
+                `<div class="info">✅ Manual test cookie set with value: ${testValue}</div>`;
+        }
+
+        function checkTestCookie() {
+            const cookies = document.cookie;
+            const testCookie = cookies.match(/manualTestCookie=([^;]+)/)?.[1];
+            const resultDiv = document.getElementById('manual-cookie-result');
+            
+            if (testCookie) {
+                resultDiv.innerHTML += `<div class="success">✅ Manual test cookie retrieved: ${testCookie}</div>`;
+            } else {
+                resultDiv.innerHTML += `<div class="error">❌ Manual test cookie not found - browser cookie storage may be blocked</div>`;
+            }
+        }
+
+        async function inspectHeaders() {
+            const resultDiv = document.getElementById('header-inspection-result');
+            resultDiv.innerHTML = '<div class="info">Inspecting network headers...</div>';
+            
+            try {
+                // Make a request and log all headers
+                const response = await fetch('/api/auth/create-session', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                
+                const headers = Object.fromEntries(response.headers.entries());
+                const setCookieHeader = response.headers.get('set-cookie');
+                
+                let html = '<h4>Response Headers:</h4><pre>' + JSON.stringify(headers, null, 2) + '</pre>';
+                
+                if (setCookieHeader) {
+                    html += `<div class="success">✅ Set-Cookie header found: ${setCookieHeader}</div>`;
+                } else {
+                    html += `<div class="error">❌ No Set-Cookie header in response</div>`;
+                }
+                
+                resultDiv.innerHTML = html;
+                
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Header inspection failed: ${error.message}</div>`;
+            }
+        }
+
+        // Initialize
+        checkCookies();
+    </script>
+</body>
+</html>
