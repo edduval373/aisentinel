@@ -1005,6 +1005,241 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // PRODUCTION: Replit Auth DISABLED - using cookie-based authentication only
   console.log('🚫 Replit Auth DISABLED in production - using database-backed cookie sessions only');
 
+  // Serve session creation page directly as HTML endpoint
+  app.get('/api/create-session-page', (req, res) => {
+    res.setHeader('Content-Type', 'text/html');
+    res.send(`<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Production Session - AI Sentinel</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f8fafc;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .success {
+            background: #d1fae5;
+            border: 1px solid #10b981;
+            color: #065f46;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .error {
+            background: #fee2e2;
+            border: 1px solid #ef4444;
+            color: #991b1b;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .info {
+            background: #dbeafe;
+            border: 1px solid #3b82f6;
+            color: #1e40af;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+        button:hover:not(:disabled) {
+            background: #2563eb;
+        }
+        button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        .debug {
+            background: #f9fafb;
+            border: 1px solid #d1d5db;
+            padding: 16px;
+            margin: 20px 0;
+            border-radius: 6px;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 AI Sentinel Production Session Setup</h1>
+        <p>This tool creates a production database session to fix authentication issues.</p>
+        
+        <div class="info">
+            <h4>Current Status</h4>
+            <div id="currentStatus">Checking current authentication...</div>
+        </div>
+        
+        <button id="createSession" onclick="createProductionSession()">
+            CREATE PRODUCTION SESSION
+        </button>
+        
+        <div id="status"></div>
+        <div id="debug"></div>
+        
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+            <h3>After Session Creation</h3>
+            <ol style="line-height: 1.6;">
+                <li>Wait for "SUCCESS" confirmation above</li>
+                <li>Go to <a href="https://www.aisentinel.app" target="_blank" style="color: #3b82f6;">www.aisentinel.app</a></li>
+                <li>The authentication should work automatically</li>
+                <li>Debug panel should show "Session Token: Found"</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // Check current status on load
+        window.onload = function() {
+            checkCurrentAuth();
+        };
+        
+        async function checkCurrentAuth() {
+            const statusDiv = document.getElementById('currentStatus');
+            try {
+                const response = await fetch('/api/auth/me', {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                
+                if (data.authenticated) {
+                    statusDiv.innerHTML = \`
+                        <div style="color: #10b981; font-weight: 600;">✅ Already Authenticated</div>
+                        <div style="font-size: 14px; margin-top: 8px;">
+                            User: \${data.user.firstName} \${data.user.lastName} (\${data.user.email})<br>
+                            Role: \${data.user.role} (Level \${data.user.roleLevel})<br>
+                            Company ID: \${data.user.companyId}
+                        </div>
+                    \`;
+                    document.getElementById('createSession').textContent = 'SESSION ALREADY ACTIVE';
+                    document.getElementById('createSession').disabled = true;
+                } else {
+                    statusDiv.innerHTML = \`
+                        <div style="color: #ef4444; font-weight: 600;">❌ Not Authenticated</div>
+                        <div style="font-size: 14px; margin-top: 8px;">
+                            No valid session found. Click the button below to create one.
+                        </div>
+                    \`;
+                }
+            } catch (error) {
+                statusDiv.innerHTML = \`
+                    <div style="color: #f59e0b; font-weight: 600;">⚠️ Connection Error</div>
+                    <div style="font-size: 14px; margin-top: 8px;">
+                        Could not check authentication status: \${error.message}
+                    </div>
+                \`;
+            }
+        }
+        
+        async function createProductionSession() {
+            const button = document.getElementById('createSession');
+            const status = document.getElementById('status');
+            const debug = document.getElementById('debug');
+            
+            button.disabled = true;
+            button.textContent = 'Creating Session...';
+            status.innerHTML = '';
+            debug.innerHTML = '';
+            
+            try {
+                console.log('🚀 Creating production session...');
+                
+                const response = await fetch('/api/auth/create-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error(data.message || 'Session creation failed');
+                }
+                
+                // Verify authentication
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                const authResponse = await fetch('/api/auth/me', {
+                    credentials: 'include'
+                });
+                const authData = await authResponse.json();
+                
+                if (!authData.authenticated) {
+                    throw new Error('Authentication verification failed');
+                }
+                
+                status.innerHTML = \`
+                    <div class="success">
+                        <h4>🎉 SUCCESS! Production Session Created</h4>
+                        <div style="margin-top: 16px;">
+                            <strong>Session Details:</strong><br>
+                            • Session ID: \${data.sessionId}<br>
+                            • Email: \${data.email}<br>
+                            • User: \${authData.user.firstName} \${authData.user.lastName}<br>
+                            • Role: \${authData.user.role} (Level \${authData.user.roleLevel})<br>
+                            • Company ID: \${authData.user.companyId}<br>
+                            • Database Connected: ✅<br>
+                            • Cookie Set: ✅
+                        </div>
+                        <div style="margin-top: 20px; padding: 12px; background: rgba(16, 185, 129, 0.1); border-radius: 6px;">
+                            <strong>Next Step:</strong> Go to <a href="/" style="color: #065f46; text-decoration: underline;">AI Sentinel App</a> - authentication will work automatically!
+                        </div>
+                    </div>
+                \`;
+                
+                debug.innerHTML = \`Production Session Created Successfully:
+\${JSON.stringify({session: data, auth: authData}, null, 2)}\`;
+                
+                button.textContent = 'SESSION CREATED SUCCESSFULLY';
+                
+            } catch (error) {
+                console.error('Session creation failed:', error);
+                
+                status.innerHTML = \`
+                    <div class="error">
+                        <h4>❌ Session Creation Failed</h4>
+                        <p><strong>Error:</strong> \${error.message}</p>
+                        <p>Please try again or contact support if the problem persists.</p>
+                    </div>
+                \`;
+                
+                debug.innerHTML = \`Error Details: \${error.message}
+Stack: \${error.stack || 'No stack trace available'}\`;
+                
+                button.disabled = false;
+                button.textContent = 'RETRY SESSION CREATION';
+            }
+        }
+    </script>
+</body>
+</html>`);
+  });
+
   // Production session creation endpoint for fixing cookie authentication
   app.post('/api/auth/create-session', async (req, res) => {
     try {
