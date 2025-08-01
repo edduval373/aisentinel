@@ -124,6 +124,35 @@ export default function AccountDebugger() {
     alert('Second account created with test token. This is for testing account switching - in production you would verify via email.');
   };
 
+  const forceCreateBothAccounts = () => {
+    console.log('⚡ [FORCE] Creating both accounts directly in localStorage');
+    
+    const accounts = [
+      {
+        email: 'ed.duval15@gmail.com',
+        sessionToken: 'prod-1754052835575-289kvxqgl42h',
+        role: 'Super User',
+        roleLevel: 1000,
+        companyName: 'Duval Solutions',
+        lastUsed: new Date().toISOString()
+      },
+      {
+        email: 'ed.duval@duvalsolutions.net',
+        sessionToken: 'prod-1754052835575-SECOND',
+        role: 'Super User',
+        roleLevel: 1000,
+        companyName: 'Duval Solutions',
+        lastUsed: new Date(Date.now() - 1000).toISOString()
+      }
+    ];
+    
+    localStorage.setItem('aisentinel_saved_accounts', JSON.stringify(accounts));
+    console.log('⚡ [FORCE] Both accounts saved to localStorage');
+    
+    refreshData();
+    alert('FORCE: Both accounts created. Check dropdown now!');
+  };
+
   return (
     <Card style={{ margin: '20px', maxWidth: '800px' }}>
       <CardHeader>
@@ -218,6 +247,9 @@ export default function AccountDebugger() {
             </Button>
             <Button onClick={createValidSecondAccount} variant="outline">
               Create Test Second Account
+            </Button>
+            <Button onClick={forceCreateBothAccounts} style={{backgroundColor: '#f59e0b', color: 'white'}}>
+              ⚡ FORCE CREATE BOTH
             </Button>
             <Button onClick={clearAllAccounts} variant="destructive">
               <Trash2 style={{ width: '16px', height: '16px', marginRight: '4px' }} />

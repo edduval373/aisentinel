@@ -1,11 +1,11 @@
-console.log('=== ACCOUNT DEBUG ==='); 
-const accounts = localStorage.getItem('aisentinel_saved_accounts'); 
-console.log('Raw localStorage:', accounts); 
-if (accounts) { 
-  const parsed = JSON.parse(accounts); 
-  console.log('Parsed accounts:', parsed); 
-  console.log('Account count:', parsed.length); 
-  parsed.forEach((acc, i) => console.log('Account', i+1, ':', acc.email, acc.roleLevel)); 
-} else { 
-  console.log('No accounts in localStorage'); 
+
+// Debug localStorage directly
+console.log('=== LOCALSTORAGE DEBUG ===');
+console.log('Raw localStorage:', localStorage.getItem('aisentinel_saved_accounts'));
+console.log('All localStorage keys:', Object.keys(localStorage));
+for(let i = 0; i < localStorage.length; i++) {
+  const key = localStorage.key(i);
+  console.log();
 }
+console.log('=== END DEBUG ===');
+
