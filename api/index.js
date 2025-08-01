@@ -1345,53 +1345,119 @@ export default async function handler(req, res) {
           }
         }
         
-        // Fallback cached activity types if database unavailable
-        const cachedActivityTypes = [
-          {
-            id: 1,
-            name: "General Chat",
-            description: "General purpose AI conversations",
-            prePrompt: "You are a helpful AI assistant. Please provide clear, accurate, and useful responses.",
-            riskLevel: "low",
-            isEnabled: true,
-            companyId: 1
-          },
-          {
-            id: 2,
-            name: "Code Review",
-            description: "Code analysis and review assistance",
-            prePrompt: "You are an expert code reviewer. Analyze code for bugs, security issues, and best practices.",
-            riskLevel: "medium",
-            isEnabled: true,
-            companyId: 1
-          },
-          {
-            id: 3,
-            name: "Business Analysis",
-            description: "Business strategy and analysis support",
-            prePrompt: "You are a business analyst. Provide strategic insights and analytical support for business decisions.",
-            riskLevel: "medium",
-            isEnabled: true,
-            companyId: 1
-          },
-          {
-            id: 4,
-            name: "Document Review",
-            description: "Document analysis and summarization",
-            prePrompt: "You are a document analyst. Help review, analyze, and summarize documents efficiently.",
-            riskLevel: "low",
-            isEnabled: true,
-            companyId: 1
-          }
-        ];
+        // Return empty array as fallback - no mock data
+        console.log("Database unavailable, returning empty activity types array");
+        return res.status(200).json([]);
         
-        console.log(`Returning ${cachedActivityTypes.length} cached activity types for company 1`);
-        return res.status(200).json(cachedActivityTypes);
       } catch (error) {
         console.error('Activity Types API Error:', error);
         return res.status(500).json({
           error: error.message,
           message: 'Failed to fetch activity types'
+        });
+      }
+    }
+
+    // Company Roles endpoint - Connect to real database 
+    if (path === '/api/company/roles' && req.method === 'GET') {
+      try {
+        console.log("Production company-roles endpoint accessed");
+        
+        if (process.env.DATABASE_URL) {
+          let client = null;
+          try {
+            const { Client } = await import('pg');
+            client = new Client({
+              connectionString: process.env.DATABASE_URL,
+              ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+              connectionTimeoutMillis: 3000,
+              query_timeout: 3000
+            });
+            
+            await Promise.race([
+              client.connect(),
+              new Promise((_, reject) => setTimeout(() => reject(new Error('Connection timeout')), 3000))
+            ]);
+            
+            // Get all company roles for company 1 
+            const rolesResult = await client.query('SELECT * FROM "company_roles" WHERE "company_id" = $1 ORDER BY level DESC', [1]);
+            
+            console.log(`Found ${rolesResult.rows.length} company roles from database`);
+            return res.status(200).json(rolesResult.rows);
+          } catch (dbError) {
+            console.warn(`Database connection failed: ${dbError.message}`);
+          } finally {
+            if (client) {
+              try {
+                await client.end();
+                console.log("Company roles database connection closed");
+              } catch (closeError) {
+                console.warn("Error closing company roles connection:", closeError.message);
+              }
+            }
+          }
+        }
+        
+        console.log("Database unavailable, returning empty roles array");
+        return res.status(200).json([]);
+        
+      } catch (error) {
+        console.error('Company Roles API Error:', error);
+        return res.status(500).json({
+          error: error.message,
+          message: 'Failed to fetch company roles'
+        });
+      }
+    }
+
+    // Admin Users endpoint - Connect to real database
+    if (path === '/api/admin/users' && req.method === 'GET') {
+      try {
+        console.log("Production admin-users endpoint accessed");
+        
+        if (process.env.DATABASE_URL) {
+          let client = null;
+          try {
+            const { Client } = await import('pg');
+            client = new Client({
+              connectionString: process.env.DATABASE_URL,
+              ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+              connectionTimeoutMillis: 3000,
+              query_timeout: 3000
+            });
+            
+            await Promise.race([
+              client.connect(),
+              new Promise((_, reject) => setTimeout(() => reject(new Error('Connection timeout')), 3000))
+            ]);
+            
+            // Get all users for company 1 
+            const usersResult = await client.query('SELECT * FROM "users" WHERE "company_id" = $1 ORDER BY id', [1]);
+            
+            console.log(`Found ${usersResult.rows.length} users from database`);
+            return res.status(200).json(usersResult.rows);
+          } catch (dbError) {
+            console.warn(`Database connection failed: ${dbError.message}`);
+          } finally {
+            if (client) {
+              try {
+                await client.end();
+                console.log("Admin users database connection closed");
+              } catch (closeError) {
+                console.warn("Error closing admin users connection:", closeError.message);
+              }
+            }
+          }
+        }
+        
+        console.log("Database unavailable, returning empty users array");
+        return res.status(200).json([]);
+        
+      } catch (error) {
+        console.error('Admin Users API Error:', error);
+        return res.status(500).json({
+          error: error.message,
+          message: 'Failed to fetch admin users'
         });
       }
     }
