@@ -930,8 +930,8 @@ export default async function handler(req, res) {
           
           // Create REAL chat session in database
           const sessionResult = await client.query(
-            'INSERT INTO "chatSessions" (user_id, company_id, title, ai_model, activity_type, created_at) VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING *',
-            [user.id, user.company_id, 'New Chat', 'General', 'general']
+            'INSERT INTO "chat_sessions" (user_id, company_id, created_at) VALUES ($1, $2, NOW()) RETURNING *',
+            [user.id, user.company_id]
           );
           
           const chatSession = sessionResult.rows[0];
@@ -944,9 +944,7 @@ export default async function handler(req, res) {
             id: chatSession.id,
             companyId: chatSession.company_id,
             userId: chatSession.user_id,
-            title: chatSession.title,
-            aiModel: chatSession.ai_model,
-            activityType: chatSession.activity_type,
+            title: `Chat Session ${chatSession.id}`,
             createdAt: chatSession.created_at,
             environment: 'production-real-database',
             sessionToken: sessionToken
@@ -1039,7 +1037,7 @@ export default async function handler(req, res) {
                   
                   // Verify session exists in database
                   const sessionResult = await client.query(
-                    'SELECT * FROM "chatSessions" WHERE id = $1 AND user_id = $2',
+                    'SELECT * FROM "chat_sessions" WHERE id = $1 AND user_id = $2',
                     [messageData.sessionId, user.id]
                   );
                   
@@ -1049,7 +1047,7 @@ export default async function handler(req, res) {
                   
                   // Insert user message into database
                   const userMessageResult = await client.query(
-                    'INSERT INTO "chatMessages" (session_id, role, content, created_at) VALUES ($1, $2, $3, NOW()) RETURNING *',
+                    'INSERT INTO "chat_messages" (session_id, role, content, created_at) VALUES ($1, $2, $3, NOW()) RETURNING *',
                     [messageData.sessionId, 'user', messageData.content]
                   );
                   
@@ -1065,7 +1063,7 @@ export default async function handler(req, res) {
                   
                   // Insert AI response into database
                   const aiMessageResult = await client.query(
-                    'INSERT INTO "chatMessages" (session_id, role, content, created_at) VALUES ($1, $2, $3, NOW()) RETURNING *',
+                    'INSERT INTO "chat_messages" (session_id, role, content, created_at) VALUES ($1, $2, $3, NOW()) RETURNING *',
                     [messageData.sessionId, 'assistant', aiResponse]
                   );
                   
@@ -1759,102 +1757,7 @@ export default async function handler(req, res) {
       }
     }
 
-    // Chat session creation endpoint - Works without database for demo mode
-    if (path === '/api/chat/session' && req.method === 'POST') {
-      try {
-        console.log("Chat session creation requested");
-        
-        // Check if this is a demo session
-        const sessionToken = req.headers.cookie?.match(/sessionToken=([^;]+)/)?.[1];
-        const isDemoSession = sessionToken && sessionToken.startsWith('demo-session-');
-        
-        if (isDemoSession) {
-          console.log("Creating demo chat session (no database required)");
-          const demoSessionId = Math.floor(Math.random() * 900000) + 100000;
-          
-          return res.status(200).json({
-            sessionId: demoSessionId,
-            message: 'Demo chat session created',
-            type: 'demo',
-            companyId: 1,
-            userId: 'demo-user'
-          });
-        }
-        
-        // For authenticated users, connect to real database
-        console.log("Creating authenticated chat session - CONNECTING TO REAL DATABASE");
-        
-        if (process.env.DATABASE_URL) {
-          let client = null;
-          try {
-            const { Client } = await import('pg');
-            client = new Client({
-              connectionString: process.env.DATABASE_URL,
-              ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-              connectionTimeoutMillis: 3000,
-              query_timeout: 3000
-            });
-            
-            await Promise.race([
-              client.connect(),
-              new Promise((_, reject) => setTimeout(() => reject(new Error('Connection timeout')), 3000))
-            ]);
-            
-            // Generate unique session token for authenticated user
-            const sessionToken = `prod-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
-            
-            // For now, use default user ID 42450602 (Ed Duval) - this should be extracted from session in real implementation
-            const userId = '42450602';
-            const companyId = 1;
-            
-            // Create chat session in database (only using available columns)
-            const sessionResult = await client.query(
-              'INSERT INTO "chat_sessions" (user_id, company_id, created_at) VALUES ($1, $2, NOW()) RETURNING *',
-              [userId, companyId]
-            );
-            
-            const chatSession = sessionResult.rows[0];
-            console.log(`✅ REAL database session created: ${chatSession.id}`);
-            
-            return res.status(200).json({
-              id: chatSession.id,
-              companyId: chatSession.company_id,
-              userId: chatSession.user_id,
-              title: `Chat Session ${chatSession.id}`,
-              createdAt: chatSession.created_at,
-              environment: 'production-real-database'
-            });
-            
-          } catch (dbError) {
-            console.warn(`Database connection failed: ${dbError.message}`);
-          } finally {
-            if (client) {
-              try {
-                await client.end();
-                console.log('Database connection closed after session creation');
-              } catch (closeError) {
-                console.warn('Error closing connection:', closeError.message);
-              }
-            }
-          }
-        }
-        
-        // Fallback if database unavailable
-        console.log("Database unavailable, returning session creation error");
-        return res.status(503).json({
-          error: 'Database connection failed',
-          message: 'Unable to create chat session. Please try again.',
-          suggestion: 'Refresh the page and try again'
-        });
-        
-      } catch (error) {
-        console.error('Chat session creation error:', error);
-        return res.status(500).json({
-          error: error.message,
-          message: 'Failed to create chat session'
-        });
-      }
-    }
+
 
     // Admin companies endpoint with proper connection management
     if (path === '/api/admin/companies' && req.method === 'GET') {
