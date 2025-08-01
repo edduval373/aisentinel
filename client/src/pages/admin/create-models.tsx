@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Bot, Plus, Edit, Trash2, Eye, EyeOff, TestTube } from "lucide-react";
-import { AdminLayout } from "@/components/layout/AdminLayout";
+import AdminLayout from "@/components/layout/AdminLayout";
 import { Button } from "@/components/ui/button"; 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
