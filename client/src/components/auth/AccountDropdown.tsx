@@ -56,25 +56,50 @@ export default function AccountDropdown() {
     const rawData = localStorage.getItem('aisentinel_saved_accounts');
     console.log('🔄 [ACCOUNT DROPDOWN] Raw localStorage data:', rawData);
     
-    // Check all possible account storage locations
-    const alternativeKeys = ['saved_accounts', 'accounts', 'user_accounts'];
     let foundAccounts: any[] = [];
     
-    // Try all keys
-    alternativeKeys.forEach(key => {
-      const data = localStorage.getItem(key);
-      if (data) {
-        try {
-          const parsed = JSON.parse(data);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            console.log(`🔄 [ACCOUNT DROPDOWN] Found accounts in key: ${key}`, parsed.length);
+    // First try the main key
+    if (rawData) {
+      try {
+        const parsed = JSON.parse(rawData);
+        console.log('🔄 [ACCOUNT DROPDOWN] Parsed data type:', typeof parsed, 'isArray:', Array.isArray(parsed));
+        console.log('🔄 [ACCOUNT DROPDOWN] Parsed data:', parsed);
+        if (Array.isArray(parsed)) {
+          console.log('🔄 [ACCOUNT DROPDOWN] Array length:', parsed.length);
+          if (parsed.length > 0) {
+            console.log('🔄 [ACCOUNT DROPDOWN] Found accounts in main key:', parsed.length);
             foundAccounts = parsed;
+          } else {
+            console.log('🔄 [ACCOUNT DROPDOWN] Array is empty');
           }
-        } catch (e) {
-          // ignore parse errors
+        } else {
+          console.log('🔄 [ACCOUNT DROPDOWN] Parsed data is not an array');
         }
+      } catch (e) {
+        console.log('🔄 [ACCOUNT DROPDOWN] Failed to parse main key data:', e);
       }
-    });
+    } else {
+      console.log('🔄 [ACCOUNT DROPDOWN] No rawData found');
+    }
+    
+    // If no accounts in main key, check alternative locations
+    if (foundAccounts.length === 0) {
+      const alternativeKeys = ['saved_accounts', 'accounts', 'user_accounts'];
+      alternativeKeys.forEach(key => {
+        const data = localStorage.getItem(key);
+        if (data) {
+          try {
+            const parsed = JSON.parse(data);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              console.log(`🔄 [ACCOUNT DROPDOWN] Found accounts in alternative key: ${key}`, parsed.length);
+              foundAccounts = parsed;
+            }
+          } catch (e) {
+            // ignore parse errors
+          }
+        }
+      });
+    }
     
     // If no accounts found in any storage, create test accounts directly
     if (foundAccounts.length === 0) {
