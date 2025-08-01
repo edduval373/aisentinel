@@ -101,8 +101,8 @@ export default function AdminActivityTypes() {
     }
   }, [isAuthenticated, isLoading, toast]);
 
-  // Fetch activity types from database - use demo endpoint for demo users
-  const apiEndpoint = isDemoMode ? '/api/activity-types' : '/api/admin/activity-types';
+  // Fetch activity types from database - use same endpoint for all users
+  const apiEndpoint = '/api/activity-types';
   const { data: activityTypes, isLoading: typesLoading } = useQuery<ActivityType[]>({
     queryKey: [apiEndpoint],
     enabled: !isLoading,
@@ -114,10 +114,9 @@ export default function AdminActivityTypes() {
       if (isDemoMode) {
         throw new Error("Demo mode - functionality disabled");
       }
-      return apiRequest('/api/admin/activity-types', 'POST', data);
+      return apiRequest('/api/activity-types', 'POST', data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/activity-types'] });
       queryClient.invalidateQueries({ queryKey: ['/api/activity-types'] });
       toast({
         title: "Success",
@@ -153,10 +152,9 @@ export default function AdminActivityTypes() {
       if (isDemoMode) {
         throw new Error("Demo mode - functionality disabled");
       }
-      return apiRequest(`/api/admin/activity-types/${id}`, 'PATCH', { isEnabled });
+      return apiRequest(`/api/activity-types/${id}`, 'PATCH', { isEnabled });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/activity-types'] });
       queryClient.invalidateQueries({ queryKey: ['/api/activity-types'] });
       toast({
         title: "Success",
@@ -189,10 +187,9 @@ export default function AdminActivityTypes() {
       if (isDemoMode) {
         throw new Error("Demo mode - functionality disabled");
       }
-      return apiRequest(`/api/admin/activity-types/${id}`, 'PATCH', data);
+      return apiRequest(`/api/activity-types/${id}`, 'PATCH', data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/activity-types'] });
       queryClient.invalidateQueries({ queryKey: ['/api/activity-types'] });
       toast({
         title: "Success",
@@ -228,10 +225,9 @@ export default function AdminActivityTypes() {
       if (isDemoMode) {
         throw new Error("Demo mode - functionality disabled");
       }
-      return apiRequest(`/api/admin/activity-types/${id}`, 'DELETE');
+      return apiRequest(`/api/activity-types/${id}`, 'DELETE');
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/activity-types'] });
       queryClient.invalidateQueries({ queryKey: ['/api/activity-types'] });
       toast({
         title: "Success",
