@@ -34,7 +34,7 @@ export default function AdminRoles() {
   const isReadOnly = isReadOnlyMode(user);
   
   // Demo dialog hook
-  const { showDemoDialog, hideDemoDialog, isDemoDialogOpen } = useDemoDialog();
+  const { showDialog, closeDialog, DialogComponent, isOpen } = useDemoDialog();
   const [roles, setRoles] = useState<CompanyRole[]>([]);
   const [loading, setLoading] = useState(true);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -82,7 +82,7 @@ export default function AdminRoles() {
   const fetchRoles = async () => {
     try {
       // Use demo-compatible endpoint
-      const endpoint = isDemoMode ? '/api/roles' : `/api/company/roles/${user?.companyId || 1}`;
+      const endpoint = isDemoMode ? '/api/roles' : '/api/company/roles';
       console.log("Fetching roles for company:", user?.companyId || 1);
       
       const response = await fetch(endpoint, {
@@ -379,7 +379,11 @@ export default function AdminRoles() {
             </div>
             {hasAdminAccess && (
               <button
-                onClick={() => isDemoMode ? showDemoDialog('role-create') : setIsCreateDialogOpen(true)}
+                onClick={() => isDemoMode ? showDialog({
+                  title: "Role Management",
+                  description: "Create custom company roles with hierarchy levels and granular permissions",
+                  features: ["Create roles", "Set permissions", "Manage hierarchy"]
+                }) : setIsCreateDialogOpen(true)}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -428,7 +432,11 @@ export default function AdminRoles() {
                       {hasAdminAccess && (
                         <div style={{ display: 'flex', gap: '4px' }}>
                           <button
-                            onClick={() => isDemoMode ? showDemoDialog('role-edit') : openEditDialog(role)}
+                            onClick={() => isDemoMode ? showDialog({
+                              title: "Role Management",
+                              description: "Edit role permissions and hierarchy levels",
+                              features: ["Edit roles", "Update permissions", "Modify hierarchy"]
+                            }) : openEditDialog(role)}
                             style={{
                               width: '32px',
                               height: '32px',
@@ -454,7 +462,11 @@ export default function AdminRoles() {
                             <Edit size={14} />
                           </button>
                           <button
-                            onClick={() => isDemoMode ? showDemoDialog('role-delete') : openDeleteDialog(role)}
+                            onClick={() => isDemoMode ? showDialog({
+                              title: "Role Management",
+                              description: "Delete company roles and update permissions",
+                              features: ["Delete roles", "Update permissions", "Manage security"]
+                            }) : openDeleteDialog(role)}
                             style={{
                               width: '32px',
                               height: '32px',
@@ -995,19 +1007,7 @@ export default function AdminRoles() {
         )}
 
         {/* Demo Mode Dialog */}
-        <DemoInfoDialog 
-          isOpen={isDemoDialogOpen} 
-          onClose={hideDemoDialog}
-          feature="Role Management"
-          description="View and manage company role hierarchies with sophisticated permission systems. Create custom roles with specific access levels, assign granular permissions, and maintain secure role-based access control across your organization."
-          capabilities={[
-            "Create custom company roles with hierarchy levels",
-            "Assign granular permissions for different system features", 
-            "Manage role-based access control with security levels",
-            "Configure role descriptions and capability matrices",
-            "Monitor role assignments and permission inheritance"
-          ]}
-        />
+        <DialogComponent />
       </div>
     </AdminLayout>
   );
