@@ -221,8 +221,8 @@ export default async function handler(req, res) {
           const cookieString = `sessionToken=${sessionToken}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`;
           console.log('🍪 [RAILWAY LOG] Cookie string (production-optimized):', cookieString.substring(0, 80) + '...');
           
-          // Set redirect location
-          const redirectUrl = 'https://aisentinel.app/?verified=true&token=success';
+          // Set redirect location with session info for account saving
+          const redirectUrl = `https://aisentinel.app/?verified=true&token=success&save-account=true&email=${encodeURIComponent(email)}&session=${sessionToken}`;
           console.log('🔄 [RAILWAY LOG] Redirect URL:', redirectUrl);
           
           // PERPLEXITY RECOMMENDED: Set cookie header before writeHead

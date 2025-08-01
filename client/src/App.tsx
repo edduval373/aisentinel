@@ -5,8 +5,10 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
 import { CompanyProvider } from "@/hooks/useCompanyContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { apiRequest } from "./lib/queryClient";
+import { AccountManager } from "@/lib/accountManager";
+import AccountSelector from "@/components/auth/AccountSelector";
 import Home from "@/pages/home.tsx";
 import Landing from "@/pages/landing.tsx";
 import Login from "@/pages/Login.tsx";
@@ -41,7 +43,31 @@ function Router() {
   console.log("[APP DEBUG] Router component rendering...");
   
   const { isAuthenticated, isLoading, user, isSuperUser, isOwner, isAdmin } = useAuth();
+  const [showAccountSelector, setShowAccountSelector] = useState(false);
+  const [accountsChecked, setAccountsChecked] = useState(false);
   
+  // Check for multiple accounts on app start
+  useEffect(() => {
+    if (!accountsChecked) {
+      const checkAccounts = async () => {
+        const savedAccounts = AccountManager.getSavedAccounts();
+        console.log('Checking saved accounts:', savedAccounts.length);
+        
+        if (savedAccounts.length > 1 && !isAuthenticated) {
+          console.log('Multiple accounts found, showing selector');
+          setShowAccountSelector(true);
+        } else if (savedAccounts.length === 1 && !isAuthenticated) {
+          console.log('Single account found, auto-selecting');
+          const account = savedAccounts[0];
+          await handleAccountSelection(account.sessionToken);
+        }
+        setAccountsChecked(true);
+      };
+      
+      checkAccounts();
+    }
+  }, [isAuthenticated, accountsChecked]);
+
   // Handle URL-based session activation and header authentication
   useEffect(() => {
     // Initialize auth token from URL if present
@@ -56,6 +82,56 @@ function Router() {
     const backupToken = params.get('backup-session');
     const directSession = params.get('direct-session');
     const authToken = params.get('auth-token');
+    const saveAccount = params.get('save-account');
+    const verifiedEmail = params.get('email');
+    
+    // Handle account saving after email verification
+    if (saveAccount === 'true' && verifiedEmail && sessionToken) {
+      console.log('🔄 [ACCOUNT SAVE] Saving verified account:', verifiedEmail);
+      
+      const saveVerifiedAccount = async () => {
+        try {
+          // Set the session token first
+          const { setAuthToken } = await import('./lib/authHeaders');
+          setAuthToken(sessionToken);
+          
+          // Fetch user info to get role details
+          const response = await fetch('/api/auth/me', {
+            credentials: 'include',
+            headers: {
+              'Authorization': `Bearer ${sessionToken}`,
+              'X-Session-Token': sessionToken
+            }
+          });
+          
+          if (response.ok) {
+            const userInfo = await response.json();
+            
+            // Save account to localStorage
+            AccountManager.saveAccount({
+              email: verifiedEmail,
+              sessionToken: sessionToken,
+              role: userInfo.role || 'user',
+              roleLevel: userInfo.roleLevel || 1,
+              companyName: userInfo.companyName,
+              companyId: userInfo.companyId
+            });
+            
+            console.log('✅ [ACCOUNT SAVE] Account saved successfully');
+          }
+          
+          // Clean URL and reload
+          const cleanUrl = window.location.pathname;
+          window.history.replaceState({}, document.title, cleanUrl);
+          window.location.reload();
+        } catch (error) {
+          console.error('❌ [ACCOUNT SAVE] Failed to save account:', error);
+        }
+      };
+      
+      saveVerifiedAccount();
+      return;
+    }
     
     // Handle header-based auth token (new approach)
     if (authToken && authToken.startsWith('prod-')) {
@@ -135,6 +211,42 @@ function Router() {
       window.location.reload();
     }
   }, []);
+
+  // Handle account selection from selector
+  const handleAccountSelection = async (sessionToken: string) => {
+    try {
+      console.log('Selecting account with token:', sessionToken.substring(0, 20) + '...');
+      
+      // Set the auth token
+      const { setAuthToken } = await import('./lib/authHeaders');
+      setAuthToken(sessionToken);
+      
+      // Also set as cookie for compatibility
+      document.cookie = `sessionToken=${sessionToken}; path=/; secure; samesite=lax; max-age=2592000`;
+      
+      // Update last used timestamp
+      const savedAccounts = AccountManager.getSavedAccounts();
+      const selectedAccount = savedAccounts.find(acc => acc.sessionToken === sessionToken);
+      if (selectedAccount) {
+        AccountManager.updateLastUsed(selectedAccount.email);
+      }
+      
+      setShowAccountSelector(false);
+      
+      // Reload to trigger authentication
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
+    } catch (error) {
+      console.error('Error selecting account:', error);
+    }
+  };
+
+  const handleNewAccount = () => {
+    setShowAccountSelector(false);
+    // Redirect to login page
+    window.location.href = '/login';
+  };
   
   console.log("[APP DEBUG] Authentication check:", { isAuthenticated, role: user?.role, roleLevel: user?.roleLevel, isAdmin, isOwner, isSuperUser });
   console.log("[APP DEBUG] useAuth hook returned:", { isAuthenticated, isLoading, user: !!user, isSuperUser, isOwner, isAdmin });
@@ -154,6 +266,16 @@ function Router() {
     console.log("[APP DEBUG] Logout detected, forcing landing page");
   }
   
+  // Show account selector if multiple accounts and not authenticated
+  if (showAccountSelector && !isAuthenticated) {
+    return (
+      <AccountSelector
+        onAccountSelected={handleAccountSelection}
+        onNewAccount={handleNewAccount}
+      />
+    );
+  }
+
   // If authenticated, show main interface (not landing page)
   if (isAuthenticated && !hasLogoutFlag) {
     console.log("[APP DEBUG] User is authenticated, showing main application interface");
