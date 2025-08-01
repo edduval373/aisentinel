@@ -293,16 +293,23 @@ function Router() {
     console.log("[APP DEBUG] STRICT MODE: Not authenticated, showing landing page");
   }
 
-  // STRICT role-based route guard - NO DEMO FALLBACKS
+  // Role-based route guard with proper level hierarchy
   const RoleGuard = ({ children, requiredRole }: { children: React.ReactNode; requiredRole: 'admin' | 'owner' | 'super-user' }) => {
-    const hasAccess = 
-      requiredRole === 'admin' && (isAdmin || isOwner || isSuperUser) ||
-      requiredRole === 'owner' && (isOwner || isSuperUser) ||
-      requiredRole === 'super-user' && isSuperUser;
+    const userRoleLevel = user?.roleLevel || 1;
+    
+    // Define minimum role levels required
+    const roleThresholds = {
+      'admin': 98,    // Administrator (98) and above
+      'owner': 99,    // Owner (99) and above  
+      'super-user': 1000  // Super-user (1000) only
+    };
+    
+    const requiredLevel = roleThresholds[requiredRole];
+    const hasAccess = userRoleLevel >= requiredLevel;
 
-    console.log(`[ROLE GUARD] Checking access for ${requiredRole}:`, {
-      isAuthenticated, isAdmin, isOwner, isSuperUser, hasAccess,
-      userRole: user?.role, userRoleLevel: user?.roleLevel
+    console.log(`[ROLE GUARD] Checking access for ${requiredRole} (level ${requiredLevel}):`, {
+      isAuthenticated, userRoleLevel, requiredLevel, hasAccess,
+      userRole: user?.role
     });
 
     // STRICT: Must be authenticated, no exceptions
@@ -312,19 +319,19 @@ function Router() {
     }
 
     if (!hasAccess) {
-      console.log(`[ROLE GUARD] Access denied for ${requiredRole} - showing access denied page`);
+      console.log(`[ROLE GUARD] Access denied - user level ${userRoleLevel} < required level ${requiredLevel}`);
       return (
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Access Denied</h2>
-            <p className="text-gray-600 mb-4">You need {requiredRole} privileges to access this section.</p>
-            <p className="text-sm text-gray-500">Current role: {user?.role || 'user'}</p>
+            <p className="text-gray-600 mb-4">You need {requiredRole} privileges (level {requiredLevel}+) to access this section.</p>
+            <p className="text-sm text-gray-500">Your current level: {userRoleLevel}</p>
           </div>
         </div>
       );
     }
 
-    console.log(`[ROLE GUARD] Access granted for ${requiredRole} - rendering children`);
+    console.log(`[ROLE GUARD] Access granted - user level ${userRoleLevel} >= required level ${requiredLevel}`);
     return <>{children}</>;
   };
 
