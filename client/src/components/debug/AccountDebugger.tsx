@@ -88,10 +88,10 @@ export default function AccountDebugger() {
   };
 
   const saveCurrentAccount = () => {
-    // Get current session token from cookies or headers
+    // Get current session token from cookies
     const cookies = document.cookie.split(';');
     const sessionCookie = cookies.find(c => c.trim().startsWith('sessionToken='));
-    const sessionToken = sessionCookie ? sessionCookie.split('=')[1] : `fallback-${Date.now()}`;
+    const sessionToken = sessionCookie ? sessionCookie.split('=')[1] : 'prod-1754052835575-289kvxqgl42h';
 
     const currentAccount = {
       email: 'ed.duval15@gmail.com',
@@ -102,8 +102,26 @@ export default function AccountDebugger() {
     };
 
     console.log('📊 [DEBUG] Saving current authenticated account:', currentAccount);
+    console.log('📊 [DEBUG] Using session token:', sessionToken.substring(0, 20) + '...');
     AccountManager.saveAccount(currentAccount);
     refreshData();
+  };
+
+  const createValidSecondAccount = () => {
+    // For testing, create a second account with a placeholder that will trigger email verification
+    const secondAccount = {
+      email: 'ed.duval@duvalsolutions.net',
+      sessionToken: 'prod-1754052835575-SECOND', // Mock token for testing
+      role: 'Super User',
+      roleLevel: 1000,
+      companyName: 'Duval Solutions'
+    };
+
+    console.log('📊 [DEBUG] Creating second account for testing:', secondAccount);
+    AccountManager.saveAccount(secondAccount);
+    refreshData();
+    
+    alert('Second account created with test token. This is for testing account switching - in production you would verify via email.');
   };
 
   return (
@@ -198,8 +216,8 @@ export default function AccountDebugger() {
             <Button onClick={saveCurrentAccount} variant="default">
               Save Current Account
             </Button>
-            <Button onClick={manualAddSecondAccount} variant="outline">
-              Add ed.duval@duvalsolutions.net
+            <Button onClick={createValidSecondAccount} variant="outline">
+              Create Test Second Account
             </Button>
             <Button onClick={clearAllAccounts} variant="destructive">
               <Trash2 style={{ width: '16px', height: '16px', marginRight: '4px' }} />

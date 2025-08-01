@@ -11,10 +11,16 @@ export function setAuthToken(token: string | null): void {
   if (typeof window !== 'undefined') {
     if (token) {
       localStorage.setItem('authToken', token);
+      console.log('🔧 [AUTH HEADERS] Token set in localStorage:', token.substring(0, 20) + '...');
     } else {
       localStorage.removeItem('authToken');
+      console.log('🔧 [AUTH HEADERS] Token cleared from localStorage');
     }
   }
+}
+
+export function clearAuthToken(): void {
+  setAuthToken(null);
 }
 
 export function getAuthHeaders(): Record<string, string> {

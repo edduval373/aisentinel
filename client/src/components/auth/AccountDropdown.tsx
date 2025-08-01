@@ -62,31 +62,46 @@ export default function AccountDropdown() {
   const switchAccount = async (account: SavedAccount) => {
     try {
       console.log('🔄 [ACCOUNT SWITCH] Switching to account:', account.email);
-      console.log('🔄 [ACCOUNT SWITCH] Using session token:', account.sessionToken.substring(0, 20) + '...');
+      console.log('🔄 [ACCOUNT SWITCH] Current cookies before switch:', document.cookie);
       
-      // Set the auth token in headers
+      // First clear existing session
+      document.cookie = 'sessionToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      console.log('🧹 [ACCOUNT SWITCH] Cleared existing session cookie');
+      
+      // Wait a moment for cookie clearing
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Set new session token - use domain-specific approach for production
+      const isProduction = window.location.hostname.includes('.replit.app');
+      if (isProduction) {
+        // For production, set cookie for the main domain
+        const domain = window.location.hostname.split('.').slice(-2).join('.');
+        document.cookie = `sessionToken=${account.sessionToken}; path=/; domain=${domain}; secure; samesite=lax; max-age=2592000`;
+        console.log('✅ [ACCOUNT SWITCH] Set production cookie for domain:', domain);
+      } else {
+        // For development
+        document.cookie = `sessionToken=${account.sessionToken}; path=/; samesite=lax; max-age=2592000`;
+        console.log('✅ [ACCOUNT SWITCH] Set development cookie');
+      }
+      
+      // Set headers for immediate API calls
       const { setAuthToken } = await import('@/lib/authHeaders');
       setAuthToken(account.sessionToken);
       console.log('✅ [ACCOUNT SWITCH] Auth token set in headers');
       
-      // Also set as cookie for compatibility with server-side auth
-      document.cookie = `sessionToken=${account.sessionToken}; path=/; secure; samesite=lax; max-age=2592000`;
-      console.log('✅ [ACCOUNT SWITCH] Session token set as cookie');
-      
       // Update last used timestamp
       AccountManager.updateLastUsed(account.email);
+      
+      console.log('🔄 [ACCOUNT SWITCH] Final cookies after switch:', document.cookie);
       
       toast({
         title: "Account Switched",
         description: `Switching to ${account.email}...`,
       });
       
-      console.log('🔄 [ACCOUNT SWITCH] Reloading page to apply new authentication...');
-      
-      // Reload to apply new authentication
-      setTimeout(() => {
-        window.location.reload();
-      }, 500);
+      // Force hard reload to ensure session changes take effect
+      console.log('🔄 [ACCOUNT SWITCH] Performing hard reload...');
+      window.location.href = window.location.href;
     } catch (error) {
       console.error('❌ [ACCOUNT SWITCH] Error switching account:', error);
       toast({
