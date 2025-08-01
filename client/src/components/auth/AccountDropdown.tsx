@@ -5,6 +5,16 @@ import { ChevronDown, User, LogOut, Trash2, Plus, RotateCcw } from "lucide-react
 import { AccountManager } from "@/lib/accountManager";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface SavedAccount {
   email: string;
@@ -18,6 +28,8 @@ interface SavedAccount {
 export default function AccountDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const [savedAccounts, setSavedAccounts] = useState<SavedAccount[]>([]);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [accountToDelete, setAccountToDelete] = useState<string | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -222,13 +234,24 @@ export default function AccountDropdown() {
       return;
     }
     
-    AccountManager.removeAccount(email);
-    loadSavedAccounts();
-    
-    toast({
-      title: "Account Removed",
-      description: `Removed ${email} from saved accounts`,
-    });
+    // Open confirmation modal
+    setAccountToDelete(email);
+    setDeleteConfirmOpen(true);
+  };
+
+  const confirmDeleteAccount = () => {
+    if (accountToDelete) {
+      AccountManager.removeAccount(accountToDelete);
+      loadSavedAccounts();
+      
+      toast({
+        title: "Account Removed",
+        description: `Removed ${accountToDelete} from saved accounts`,
+      });
+      
+      setAccountToDelete(null);
+    }
+    setDeleteConfirmOpen(false);
   };
 
   const addNewAccount = () => {
@@ -593,6 +616,68 @@ export default function AccountDropdown() {
           </div>
         </>
       )}
+
+      {/* Delete Confirmation Modal */}
+      <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <AlertDialogContent style={{
+          background: 'white',
+          border: '1px solid #e2e8f0',
+          borderRadius: '8px',
+          maxWidth: '400px',
+          padding: '24px'
+        }}>
+          <AlertDialogHeader>
+            <AlertDialogTitle style={{
+              fontSize: '18px',
+              fontWeight: 600,
+              color: '#1e293b',
+              marginBottom: '8px'
+            }}>
+              Remove Account
+            </AlertDialogTitle>
+            <AlertDialogDescription style={{
+              fontSize: '14px',
+              color: '#64748b',
+              lineHeight: '1.5'
+            }}>
+              Are you sure you want to remove <strong>{accountToDelete}</strong> from your saved accounts? 
+              This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter style={{
+            display: 'flex',
+            gap: '8px',
+            justifyContent: 'flex-end',
+            marginTop: '24px'
+          }}>
+            <AlertDialogCancel style={{
+              background: 'transparent',
+              border: '1px solid #e2e8f0',
+              color: '#64748b',
+              padding: '8px 16px',
+              borderRadius: '6px',
+              fontSize: '14px',
+              cursor: 'pointer'
+            }}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmDeleteAccount}
+              style={{
+                background: '#ef4444',
+                border: 'none',
+                color: 'white',
+                padding: '8px 16px',
+                borderRadius: '6px',
+                fontSize: '14px',
+                cursor: 'pointer'
+              }}
+            >
+              Remove Account
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
