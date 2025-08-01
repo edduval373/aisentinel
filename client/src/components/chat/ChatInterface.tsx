@@ -14,6 +14,7 @@ import FeaturesBenefitsDialog from "@/components/FeaturesBenefitsDialog";
 import { DeveloperRoleSwitcher } from "@/components/developer/DeveloperRoleSwitcher";
 import { DebugStatusPanel } from "@/components/DebugStatusPanel";
 import VersionDisplay from "@/components/VersionDisplay";
+import AccountDropdown from "@/components/auth/AccountDropdown";
 import { useFeaturesBenefits } from "@/hooks/useFeaturesBenefits";
 import { isDemoModeActive } from "@/utils/demoMode";
 import type { AiModel, ActivityType, ChatMessage as ChatMessageType, Company, ChatSession } from "@shared/schema";
@@ -559,6 +560,9 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                 <MessageSquare style={{ width: '14px', height: '14px' }} />
                 Landing Page
               </Button>
+              
+              {/* Account Dropdown */}
+              <AccountDropdown />
 {/* Debug panel removed for production */}
             </div>
           </div>
