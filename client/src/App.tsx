@@ -78,16 +78,19 @@ function Router() {
     initializeAuth();
 
     const params = new URLSearchParams(window.location.search);
-    const sessionToken = params.get('session');
+    const sessionToken = params.get('session_token') || params.get('session');
     const backupToken = params.get('backup-session');
     const directSession = params.get('direct-session');
-    const authToken = params.get('auth-token');
+    const authToken = params.get('auth_token') || params.get('auth-token');
     const saveAccount = params.get('save-account');
-    const verifiedEmail = params.get('email');
+    const verifiedEmail = params.get('verified_email') || params.get('email');
+    const roleLevel = params.get('role_level');
+    const companyName = params.get('company_name');
+    const companyId = params.get('company_id');
     
-    // Handle account saving after email verification
-    if (saveAccount === 'true' && verifiedEmail && sessionToken) {
-      console.log('🔄 [ACCOUNT SAVE] Saving verified account:', verifiedEmail);
+    // Handle account saving after email verification (updated parameter checking)
+    if (verifiedEmail && sessionToken?.startsWith('prod-session-')) {
+      console.log('🔄 [ACCOUNT SAVE] Detected verification with account data:', verifiedEmail);
       
       const saveVerifiedAccount = async () => {
         try {
@@ -107,17 +110,24 @@ function Router() {
           if (response.ok) {
             const userInfo = await response.json();
             
-            // Save account to localStorage
-            AccountManager.saveAccount({
+            // Save account to localStorage with URL parameters and API data
+            const accountData = {
               email: verifiedEmail,
               sessionToken: sessionToken,
-              role: userInfo.role || 'user',
-              roleLevel: userInfo.roleLevel || 1,
-              companyName: userInfo.companyName,
-              companyId: userInfo.companyId
-            });
+              role: userInfo.role || (parseInt(roleLevel || '1') >= 1000 ? 'Super User' : 'User'),
+              roleLevel: userInfo.roleLevel || parseInt(roleLevel || '1'),
+              companyName: userInfo.companyName || companyName || 'Default Company',
+              companyId: userInfo.companyId || parseInt(companyId || '1')
+            };
             
-            console.log('✅ [ACCOUNT SAVE] Account saved successfully');
+            console.log('💾 [ACCOUNT SAVE] Saving account data:', accountData);
+            console.log('💾 [ACCOUNT SAVE] URL parameters used:', { roleLevel, companyName, companyId });
+            AccountManager.saveAccount(accountData);
+            
+            // Verify the save worked
+            const savedAccounts = AccountManager.getSavedAccounts();
+            console.log('✅ [ACCOUNT SAVE] Account saved successfully. Total accounts:', savedAccounts.length);
+            console.log('📋 [ACCOUNT SAVE] All saved accounts:', savedAccounts.map(acc => ({ email: acc.email, roleLevel: acc.roleLevel })));
           }
           
           // Clean URL and reload

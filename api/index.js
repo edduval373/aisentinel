@@ -182,6 +182,14 @@ export default async function handler(req, res) {
           console.log('✅ [RAILWAY LOG] Database session created successfully');
           console.log('✅ [RAILWAY LOG] Session expires at:', expiresAt.toISOString());
           
+          // Get user details for account saving
+          const userDetailsResult = await client.query(
+            'SELECT u.*, c.name as company_name FROM users u LEFT JOIN companies c ON u.company_id = c.id WHERE u.id = $1',
+            [userId]
+          );
+          const userDetails = userDetailsResult.rows[0];
+          console.log('✅ [RAILWAY LOG] User details retrieved:', userDetails?.email, 'Role Level:', userDetails?.role_level);
+          
           await client.end();
           console.log('🔗 [RAILWAY LOG] Database connection closed');
           
@@ -221,9 +229,14 @@ export default async function handler(req, res) {
           const cookieString = `sessionToken=${sessionToken}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`;
           console.log('🍪 [RAILWAY LOG] Cookie string (production-optimized):', cookieString.substring(0, 80) + '...');
           
-          // Set redirect location with session info for account saving
-          const redirectUrl = `https://aisentinel.app/?verified=true&token=success&save-account=true&email=${encodeURIComponent(email)}&session=${sessionToken}`;
-          console.log('🔄 [RAILWAY LOG] Redirect URL:', redirectUrl);
+          // Set redirect location with complete account data for saving
+          const redirectUrl = `https://aisentinel.app/?verified_email=${encodeURIComponent(email)}&session_token=${sessionToken}&auth_token=${sessionToken}&role=${encodeURIComponent(userDetails?.role || 'user')}&role_level=${userDetails?.role_level || 1}&company_name=${encodeURIComponent(userDetails?.company_name || 'Default Company')}&company_id=${userDetails?.company_id || 1}&t=${Date.now()}`;
+          console.log('🔄 [RAILWAY LOG] Redirect URL with account data:', redirectUrl.substring(0, 100) + '...');
+          console.log('🔄 [RAILWAY LOG] Account save parameters:', {
+            email: email,
+            roleLevel: userDetails?.role_level || 1,
+            companyName: userDetails?.company_name || 'Default Company'
+          });
           
           // PERPLEXITY RECOMMENDED: Set cookie header before writeHead
           console.log('🔧 [RAILWAY LOG] Setting cookie header before redirect (Perplexity method)');

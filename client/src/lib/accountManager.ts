@@ -13,10 +13,13 @@ export class AccountManager {
 
   static saveAccount(account: Omit<SavedAccount, 'lastUsed'>): void {
     try {
+      console.log('💾 [ACCOUNT MANAGER] Starting to save account:', account.email);
       const savedAccounts = this.getSavedAccounts();
+      console.log('💾 [ACCOUNT MANAGER] Current saved accounts before save:', savedAccounts.length);
       
       // Remove existing account with same email
       const filteredAccounts = savedAccounts.filter(acc => acc.email !== account.email);
+      console.log('💾 [ACCOUNT MANAGER] After filtering duplicates:', filteredAccounts.length);
       
       // Add new account with current timestamp
       const newAccount: SavedAccount = {
@@ -28,12 +31,26 @@ export class AccountManager {
       
       // Keep only last 5 accounts
       const limitedAccounts = filteredAccounts.slice(0, 5);
+      console.log('💾 [ACCOUNT MANAGER] Final accounts to save:', limitedAccounts.length);
       
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(limitedAccounts));
+      const jsonData = JSON.stringify(limitedAccounts);
+      localStorage.setItem(this.STORAGE_KEY, jsonData);
+      console.log('💾 [ACCOUNT MANAGER] Saved to localStorage. Data length:', jsonData.length);
       
-      console.log('Account saved:', account.email);
+      // Verify the save
+      const verification = localStorage.getItem(this.STORAGE_KEY);
+      if (verification) {
+        const verifiedAccounts = JSON.parse(verification);
+        console.log('✅ [ACCOUNT MANAGER] Verification: Account saved successfully. Total:', verifiedAccounts.length);
+        verifiedAccounts.forEach((acc: any, i: number) => {
+          console.log(`✅ [ACCOUNT MANAGER] Verified Account ${i+1}:`, acc.email, 'Role:', acc.roleLevel);
+        });
+      } else {
+        console.error('❌ [ACCOUNT MANAGER] CRITICAL: Failed to save to localStorage!');
+      }
+      
     } catch (error) {
-      console.error('Error saving account:', error);
+      console.error('❌ [ACCOUNT MANAGER] Error saving account:', error);
     }
   }
 

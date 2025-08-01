@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { ChevronDown, User, LogOut, Trash2, Plus } from "lucide-react";
+import { ChevronDown, User, LogOut, Trash2, Plus, RotateCcw } from "lucide-react";
 import { AccountManager } from "@/lib/accountManager";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -27,17 +27,35 @@ export default function AccountDropdown() {
     // Add event listener for storage changes (when another tab saves an account)
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'aisentinel_saved_accounts') {
+        console.log('🔄 [ACCOUNT DROPDOWN] Storage changed, reloading accounts');
         loadSavedAccounts();
       }
     };
     
+    // Add interval to periodically refresh accounts (every 10 seconds)
+    const refreshInterval = setInterval(() => {
+      console.log('🔄 [ACCOUNT DROPDOWN] Periodic refresh of accounts');
+      loadSavedAccounts();
+    }, 10000);
+    
     window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(refreshInterval);
+    };
   }, []);
 
   const loadSavedAccounts = () => {
     const accounts = AccountManager.getSavedAccounts();
-    console.log('Loading saved accounts:', accounts);
+    console.log('🔄 [ACCOUNT DROPDOWN] Loading saved accounts:', accounts);
+    console.log('🔄 [ACCOUNT DROPDOWN] Account count:', accounts.length);
+    accounts.forEach((acc, i) => {
+      console.log(`🔄 [ACCOUNT DROPDOWN] Account ${i+1}:`, {
+        email: acc.email,
+        roleLevel: acc.roleLevel,
+        lastUsed: acc.lastUsed
+      });
+    });
     setSavedAccounts(accounts);
   };
 
@@ -98,6 +116,11 @@ export default function AccountDropdown() {
   const addNewAccount = () => {
     setIsOpen(false);
     window.location.href = '/login';
+  };
+
+  const refreshAccounts = () => {
+    console.log('🔄 [ACCOUNT DROPDOWN] Manual refresh triggered');
+    loadSavedAccounts();
   };
 
   const signOut = () => {
@@ -338,6 +361,33 @@ export default function AccountDropdown() {
 
             {/* Actions Section */}
             <div style={{ padding: '8px' }}>
+              <button
+                onClick={refreshAccounts}
+                style={{
+                  width: '100%',
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#10b981',
+                  padding: '8px 12px',
+                  borderRadius: '6px',
+                  fontSize: '14px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  marginBottom: '4px'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#f0fdf4';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent';
+                }}
+              >
+                <RotateCcw style={{ width: '16px', height: '16px' }} />
+                Refresh Accounts
+              </button>
+              
               <button
                 onClick={addNewAccount}
                 style={{
