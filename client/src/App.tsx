@@ -300,12 +300,19 @@ function Router() {
       requiredRole === 'owner' && (isOwner || isSuperUser) ||
       requiredRole === 'super-user' && isSuperUser;
 
+    console.log(`[ROLE GUARD] Checking access for ${requiredRole}:`, {
+      isAuthenticated, isAdmin, isOwner, isSuperUser, hasAccess,
+      userRole: user?.role, userRoleLevel: user?.roleLevel
+    });
+
     // STRICT: Must be authenticated, no exceptions
     if (!isAuthenticated) {
+      console.log(`[ROLE GUARD] Not authenticated, showing landing`);
       return <Landing />;
     }
 
     if (!hasAccess) {
+      console.log(`[ROLE GUARD] Access denied for ${requiredRole} - showing access denied page`);
       return (
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
@@ -317,6 +324,7 @@ function Router() {
       );
     }
 
+    console.log(`[ROLE GUARD] Access granted for ${requiredRole} - rendering children`);
     return <>{children}</>;
   };
 
