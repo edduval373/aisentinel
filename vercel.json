@@ -65,7 +65,23 @@
       "destination": "/api/index.js"
     },
     {
-      "source": "/((?!assets/).*)",
+      "source": "/create-production-session.html",
+      "destination": "/create-session.html"
+    },
+    {
+      "source": "/create-session.html",
+      "destination": "/create-session.html"
+    },
+    {
+      "source": "/header-auth-test.html", 
+      "destination": "/header-auth-test.html"
+    },
+    {
+      "source": "/quick-session-test.html",
+      "destination": "/quick-session-test.html"
+    },
+    {
+      "source": "/((?!assets/|.*\\.html$).*)",
       "destination": "/index.html"
     }
   ]

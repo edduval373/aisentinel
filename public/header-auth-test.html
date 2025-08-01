@@ -81,7 +81,7 @@
                     log(`✅ Session created: ${data.sessionId} (Method: ${data.authMethod})`, 'success');
                     log(`📊 Database: ${data.databaseConnected}, Email: ${data.email}`, 'info');
                 } else {
-                    log(`❌ Session creation failed: ${data.message}`, 'error');
+                    log(`❌ Session creation failed: ${data.message || 'Unknown error'}`, 'error');
                 }
                 
             } catch (error) {
