@@ -105,7 +105,7 @@ export default function CreateModels() {
     rawModels: models, // Full models array
     queryDataType: typeof models,
     isArray: Array.isArray(models),
-    modelsTestCondition: models && models.length > 0,
+    modelsTestCondition: models && models?.length > 0,
     modelsUndefined: models === undefined,
     modelsNull: models === null,
     modelsEmpty: models?.length === 0
@@ -518,7 +518,7 @@ export default function CreateModels() {
           <div style={{ textAlign: 'center', padding: '40px' }}>
             <div>Loading AI models...</div>
           </div>
-        ) : (models && Array.isArray(models) && models.length > 0) ? (
+        ) : (models && Array.isArray(models) && models?.length > 0) ? (
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
@@ -807,7 +807,7 @@ function ModelForm({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {providers.map((provider) => (
+                        {providers?.map((provider) => (
                           <SelectItem key={provider.value} value={provider.value}>
                             {provider.label}
                           </SelectItem>
@@ -966,7 +966,7 @@ function ModelForm({
             <div>
               <FormLabel>Capabilities</FormLabel>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '8px' }}>
-                {capabilities.map((capability) => (
+                {capabilities?.map((capability) => (
                   <FormField
                     key={capability}
                     control={form.control}
