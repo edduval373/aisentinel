@@ -68,8 +68,6 @@ const capabilities = [
 ];
 
 export default function CreateModels() {
-  console.log("[CREATE MODELS] Component rendering started");
-  
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [editingModel, setEditingModel] = useState<AiModel | null>(null);
@@ -80,8 +78,6 @@ export default function CreateModels() {
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const { showDialog, DialogComponent } = useDemoDialog();
-  
-  console.log("[CREATE MODELS] Component state initialized, user:", user?.role, "level:", user?.roleLevel);
   
   // Check if we're in demo mode
   const isDemoMode = isDemoModeActive(user);
@@ -294,7 +290,6 @@ export default function CreateModels() {
   };
 
   if (modelsLoading) {
-    console.log("[CREATE MODELS] Showing loading state");
     return (
       <AdminLayout title="Create AI Models" subtitle="Create and manage custom AI models from scratch">
         <style>{spinKeyframes}</style>
@@ -347,7 +342,7 @@ export default function CreateModels() {
     );
   }
 
-  console.log("[CREATE MODELS] Rendering main component with models:", models?.length || 0);
+
   
   return (
     <AdminLayout 

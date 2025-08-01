@@ -26,12 +26,18 @@ Demo mode identification: Demo mode uses role level 0, shows orange "DEMO" badge
 - **Logo Standardization**: Atomic/molecular logo design (`ai-sentinel-logo.png`) used consistently.
 - **Type Safety**: Full TypeScript implementation across the stack.
 - **UI/UX**: Focus on a clean, professional enterprise aesthetic. Company branding (logo, name) is prominently displayed and configurable. Layouts are card-based with consistent styling.
-- **Authentication System**: Replit Auth integration with PostgreSQL-backed sessions, role-based access, and secure HTTP-only cookies.
-- **AI Integration**: Support for multiple AI providers (OpenAI, Anthropic), configurable AI models, and structured response handling.
+- **Authentication System**: Replit Auth integration with PostgreSQL-backed sessions, role-based access with hierarchical levels (998+ admin, 999+ owner, 1000+ super-user), and secure HTTP-only cookies.
+- **AI Integration**: Support for multiple AI providers (OpenAI, Anthropic), configurable AI models with company-specific organization IDs, and structured response handling.
 - **Content Security**: Multi-layered content filtering, PII detection, security flagging, and compliance tracking.
-- **Administrative Features**: Real-time dashboard, configuration management for models and activity types, analytics, and report export.
+- **Administrative Features**: Real-time dashboard, configuration management for models and activity types, analytics, and report export. All admin panel pages load existing data correctly with proper API endpoint patterns.
 - **Data Flow**: Secure user authentication with company and employee verification. AI interactions flow through content filters and are logged for audit. Real-time updates utilize WebSockets and server-sent events.
 - **Deployment Strategy**: Configured for Vercel with serverless functions for API routes and static file serving for the client. Uses Vite for client builds, ESBuild for server, and Drizzle Kit for database migrations. Environment variables manage secrets. Comprehensive monitoring and logging are integrated.
+
+## Recent Fixes (August 2025)
+- **Create Models Page**: Fixed JavaScript error "Cannot read properties of undefined (reading 'length')" by applying optional chaining to all array operations (models?.map(), providers?.map(), capabilities?.map())
+- **Role Hierarchy**: Corrected role access levels to 998+ for admin, 999+ for owner, 1000+ for super-user, allowing custom roles 1-997
+- **Organization ID Format**: Fixed inconsistent organizationId format from "company-1" to "1" for proper company-specific model management
+- **Admin Panel Data Loading**: All admin pages now use correct API endpoint pattern `/api/[resource]` and load existing data records properly
 
 ## External Dependencies
 **Core Services**:
