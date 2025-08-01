@@ -93,6 +93,7 @@ export async function apiRequest(
   url: string,
   method: string,
   data?: unknown | undefined,
+  customHeaders?: Record<string, string>
 ): Promise<any> {
   const startTime = Date.now();
 
@@ -102,9 +103,14 @@ export async function apiRequest(
   console.log(`🔄 [API ${method}] Environment: ${import.meta.env.MODE}`);
 
   try {
+    const headers = {
+      ...(data ? { "Content-Type": "application/json" } : {}),
+      ...customHeaders
+    };
+    
     const res = await fetch(url, {
       method,
-      headers: data ? { "Content-Type": "application/json" } : {},
+      headers,
       body: data ? JSON.stringify(data) : undefined,
       credentials: "include",
     });

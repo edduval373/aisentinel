@@ -1,5 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
+import { getAuthHeaders, initializeAuthFromURL } from "@/lib/authHeaders";
+import React from "react";
 
 interface User {
   id: string;
@@ -22,12 +24,21 @@ export function useAuth() {
   
   console.log('🔍 useAuth - Strict authentication mode - NO FALLBACKS');
   
+  // Initialize authentication from URL parameters (for header-based auth)
+  React.useEffect(() => {
+    initializeAuthFromURL();
+  }, []);
+
   // STRICT AUTHENTICATION - NO FALLBACKS OR DEMO MODE
   const { data, isLoading, error } = useQuery<AuthData>({
     queryKey: ['/api/auth/me'],
     queryFn: async () => {
       try {
-        const authResponse = await apiRequest('/api/auth/me', 'GET');
+        // Get auth headers for header-based authentication
+        const headers = getAuthHeaders();
+        console.log('🔄 Auth request headers:', Object.keys(headers));
+        
+        const authResponse = await apiRequest('/api/auth/me', 'GET', null, headers);
         console.log("Authentication response:", authResponse);
         
         // STRICT: Only authenticated if server confirms valid session
