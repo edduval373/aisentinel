@@ -125,10 +125,30 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   // Create session mutation with authentication headers
   const createSessionMutation = useMutation({
     mutationFn: async () => {
-      console.log('🔄 Creating new chat session with authentication...');
+      console.log('🔄 [SESSION CREATE] Starting chat session creation...');
+      console.log('🔄 [SESSION CREATE] User auth status:', user);
+      console.log('🔄 [SESSION CREATE] Current cookies:', document.cookie);
+      console.log('🔄 [SESSION CREATE] Current URL:', window.location.href);
       
       // Get auth headers for authenticated session creation
-      const { getAuthHeaders } = await import('@/lib/authHeaders');
+      const { getAuthHeaders, getAuthToken, setAuthToken } = await import('@/lib/authHeaders');
+      
+      // Check if we have the session token in localStorage authToken
+      let currentAuthToken = getAuthToken();
+      console.log('🔄 [SESSION CREATE] Current auth token in localStorage:', currentAuthToken ? currentAuthToken.substring(0, 20) + '...' : 'NONE');
+      
+      // If no auth token in localStorage, get it from cookies and set it
+      if (!currentAuthToken) {
+        const cookies = document.cookie.split(';');
+        const sessionCookie = cookies.find(c => c.trim().startsWith('sessionToken='));
+        if (sessionCookie) {
+          const sessionToken = sessionCookie.split('=')[1];
+          console.log('🔄 [SESSION CREATE] Found session token in cookies, setting in localStorage:', sessionToken.substring(0, 20) + '...');
+          setAuthToken(sessionToken);
+          currentAuthToken = sessionToken;
+        }
+      }
+      
       const authHeaders = getAuthHeaders();
       
       const headers: Record<string, string> = {
@@ -136,7 +156,9 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
         ...authHeaders
       };
       
-      console.log('🔄 Session creation headers:', Object.keys(headers));
+      console.log('🔄 [SESSION CREATE] Final auth token being used:', currentAuthToken ? currentAuthToken.substring(0, 20) + '...' : 'NONE');
+      console.log('🔄 [SESSION CREATE] Request headers:', headers);
+      console.log('🔄 [SESSION CREATE] Making POST request to /api/chat/session');
       
       const response = await fetch("/api/chat/session", {
         method: "POST",
@@ -144,14 +166,23 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
         credentials: "include"
       });
       
+      console.log('🔄 [SESSION CREATE] Response status:', response.status);
+      console.log('🔄 [SESSION CREATE] Response headers:', Object.fromEntries(response.headers.entries()));
+      
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('❌ Session creation failed:', response.status, errorText);
+        console.error('❌ [SESSION CREATE] Session creation failed:', response.status, errorText);
+        console.error('❌ [SESSION CREATE] Full error response:', {
+          status: response.status,
+          statusText: response.statusText,
+          headers: Object.fromEntries(response.headers.entries()),
+          body: errorText
+        });
         throw new Error(`Failed to create chat session: ${response.status} ${errorText}`);
       }
       
       const session = await response.json();
-      console.log('✅ Session created successfully:', session);
+      console.log('✅ [SESSION CREATE] Session created successfully:', session);
       return session;
     },
     onSuccess: (session) => {
@@ -162,7 +193,19 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       });
     },
     onError: (error) => {
-      console.error('❌ Failed to create session:', error);
+      console.error('❌ [SESSION CREATE] Failed to create session:', error);
+      console.error('❌ [SESSION CREATE] Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
+      
+      // Don't show error toast if user is not authenticated
+      if (!user || !user.email) {
+        console.log('❌ [SESSION CREATE] User not authenticated, skipping error toast');
+        return;
+      }
+      
       toast({
         title: "Failed to create chat session",
         description: "Unable to start a new chat. Please try again.",
@@ -239,12 +282,17 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
     console.log('Should create session:', !currentSession && !createSessionMutation.isPending);
     console.log('AI Models loaded:', aiModels?.length || 0, 'models');
     console.log('Activity Types loaded:', activityTypes?.length || 0, 'types');
+    console.log('User auth:', user);
     console.log('=== END SESSION TRIGGER DEBUG ===');
     
-    if (!currentSession && !createSessionMutation.isPending) {
+    // Only create session if user is authenticated and we don't have a current session
+    if (!currentSession && !createSessionMutation.isPending && user?.email) {
+      console.log('🔄 [SESSION CREATE] Triggering session creation for authenticated user:', user.email);
       createSessionMutation.mutate();
+    } else if (!user?.email) {
+      console.log('⏸️ [SESSION CREATE] Waiting for user authentication...');
     }
-  }, [currentSession, createSessionMutation]);
+  }, [currentSession, createSessionMutation, user]);
 
   // Update messages when chat data changes
   useEffect(() => {
