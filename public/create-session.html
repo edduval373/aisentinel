@@ -34,6 +34,12 @@
                 const data = await response.json();
                 console.log('Session creation response:', data);
                 
+                // Store session token for URL transfer
+                if (data.fullSessionToken) {
+                    sessionTokenForTransfer = data.fullSessionToken;
+                    console.log('Session token stored for URL transfer');
+                }
+                
                 if (data.success) {
                     statusDiv.innerHTML = `
                         <div class="success">
@@ -127,9 +133,17 @@
             }
         }
         
+        let sessionTokenForTransfer = null;
+        
         function navigateToApp() {
-            // Force a page reload to ensure fresh authentication check
-            window.location.href = '/?t=' + Date.now();
+            // Use URL-based session transfer as workaround for cookie domain issues
+            if (sessionTokenForTransfer) {
+                console.log('Using URL-based session transfer:', sessionTokenForTransfer.substring(0, 20) + '...');
+                window.location.href = `/?session=${encodeURIComponent(sessionTokenForTransfer)}&t=${Date.now()}`;
+            } else {
+                // Fallback to regular navigation
+                window.location.href = '/?t=' + Date.now();
+            }
         }
     </script>
 </body>

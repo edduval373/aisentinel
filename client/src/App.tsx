@@ -5,6 +5,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
 import { CompanyProvider } from "@/hooks/useCompanyContext";
+import { useEffect } from "react";
+import { apiRequest } from "./lib/queryClient";
 import Home from "@/pages/home.tsx";
 import Landing from "@/pages/landing.tsx";
 import Login from "@/pages/Login.tsx";
@@ -39,6 +41,31 @@ function Router() {
   console.log("[APP DEBUG] Router component rendering...");
   
   const { isAuthenticated, isLoading, user, isSuperUser, isOwner, isAdmin } = useAuth();
+  
+  // Handle URL-based session activation (workaround for cookie domain issues)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const sessionToken = params.get('session');
+    
+    if (sessionToken && sessionToken.startsWith('prod-session-')) {
+      console.log('🔄 [URL SESSION] Detected session token in URL, activating...');
+      
+      apiRequest('/api/auth/activate-session', 'POST', { sessionToken })
+        .then((result) => {
+          console.log('✅ [URL SESSION] Session activated successfully:', result);
+          // Remove session param from URL and reload to trigger auth check
+          const cleanUrl = window.location.pathname + '?t=' + Date.now();
+          window.history.replaceState({}, document.title, cleanUrl);
+          window.location.reload();
+        })
+        .catch((error) => {
+          console.error('❌ [URL SESSION] Session activation failed:', error);
+          // Remove session param anyway to prevent loops
+          const cleanUrl = window.location.pathname;
+          window.history.replaceState({}, document.title, cleanUrl);
+        });
+    }
+  }, []);
   
   console.log("[APP DEBUG] Authentication check:", { isAuthenticated, role: user?.role, roleLevel: user?.roleLevel, isAdmin, isOwner, isSuperUser });
   console.log("[APP DEBUG] useAuth hook returned:", { isAuthenticated, isLoading, user: !!user, isSuperUser, isOwner, isAdmin });

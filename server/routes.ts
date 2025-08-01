@@ -1615,6 +1615,49 @@ Stack: \${error.stack || 'No stack trace available'}\`;
 </html>`);
   });
 
+  // URL-based session activation endpoint (workaround for cookie domain issues)
+  app.post('/api/auth/activate-session', async (req, res) => {
+    try {
+      const { sessionToken } = req.body;
+      console.log('🔄 Activating session via URL parameter:', sessionToken?.substring(0, 20) + '...');
+      
+      if (!sessionToken || !sessionToken.startsWith('prod-session-')) {
+        return res.status(400).json({ success: false, message: 'Invalid session token' });
+      }
+      
+      // Verify session exists in database
+      const session = await authService.verifySession(sessionToken);
+      if (!session) {
+        return res.status(401).json({ success: false, message: 'Session not found or expired' });
+      }
+      
+      // Set the cookie again with proper settings
+      res.cookie('sessionToken', sessionToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'lax',
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        path: '/',
+        domain: '.aisentinel.app'
+      });
+      
+      console.log('✅ Session activated via URL parameter');
+      res.json({
+        success: true,
+        message: 'Session activated successfully',
+        user: {
+          email: session.email,
+          userId: session.userId,
+          roleLevel: session.roleLevel
+        }
+      });
+      
+    } catch (error) {
+      console.error('❌ Session activation failed:', error);
+      res.status(500).json({ success: false, message: 'Failed to activate session' });
+    }
+  });
+
   // Production session creation endpoint for fixing cookie authentication
   app.post('/api/auth/create-session', async (req, res) => {
     try {
@@ -1658,6 +1701,7 @@ Stack: \${error.stack || 'No stack trace available'}\`;
         success: true,
         sessionId: sessionToken.substring(0, 25) + '...',
         sessionToken: sessionToken.substring(0, 25) + '...', // Don't expose full token
+        fullSessionToken: sessionToken, // Provide full token for URL transfer workaround
         email,
         userId,
         databaseConnected: true,
