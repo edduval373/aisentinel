@@ -12,7 +12,7 @@ Role-based access control: Hierarchical security levels with equal-or-above acce
   - User (1): Chat interface access only
   - Demo (0): Limited demo access with orange "DEMO" badge
 Security model: Level X grants access to all features requiring level X or below
-UI Standards: Complete standard CSS implementation - NO Tailwind CSS allowed anywhere
+UI Standards: Complete standard CSS implementation - NO Tailwind CSS allowed anywhere (CRITICAL: Pure CSS with inline styles only)
 Component styling: All UI components use inline styles for cross-environment consistency
 Demo mode identification: Demo mode uses role level 0, shows orange "DEMO" badge, and displays "Using AI Sentinel API Keys" message.
 
@@ -41,7 +41,7 @@ Demo mode identification: Demo mode uses role level 0, shows orange "DEMO" badge
 - **Role-Based API Access**: Super-users manage universal templates via `/api/admin/ai-model-templates`, owners manage API keys via `/api/admin/company-api-keys`
 - **Chat Interface**: AI models now load based on company's configured API keys, defaulting to demo mode when no valid keys exist
 - **UI Layout**: Moved account dropdown to main header replacing Sign Out link, added deletion confirmation modal
-- **Production Build**: Fixed missing `buttonVariants` export causing Vercel deployment failures by adding class-variance-authority support
+- **Production Build**: Fixed missing `buttonVariants` export causing Vercel deployment failures by adding proper component exports without using Tailwind CSS
 
 ## External Dependencies
 **Core Services**:
