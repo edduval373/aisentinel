@@ -1382,8 +1382,20 @@ export default async function handler(req, res) {
             // Get all company roles for company 1 
             const rolesResult = await client.query('SELECT * FROM "company_roles" WHERE "company_id" = $1 ORDER BY level DESC', [1]);
             
+            // Transform snake_case to camelCase to match frontend expectations
+            const transformedRoles = rolesResult.rows.map(role => ({
+              id: role.id,
+              companyId: role.company_id,
+              name: role.name,
+              level: role.level,
+              description: role.description,
+              permissions: role.permissions,
+              isActive: role.is_active,
+              createdAt: role.created_at
+            }));
+            
             console.log(`Found ${rolesResult.rows.length} company roles from database`);
-            return res.status(200).json(rolesResult.rows);
+            return res.status(200).json(transformedRoles);
           } catch (dbError) {
             console.warn(`Database connection failed: ${dbError.message}`);
           } finally {
