@@ -299,8 +299,8 @@ function Router() {
     
     // Define minimum role levels required
     const roleThresholds = {
-      'admin': 98,    // Administrator (98) and above
-      'owner': 99,    // Owner (99) and above  
+      'admin': 998,   // Administrator (998) and above
+      'owner': 999,   // Owner (999) and above  
       'super-user': 1000  // Super-user (1000) only
     };
     
