@@ -58,19 +58,12 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
     console.error("AI Models error:", modelsError);
   }
   
-  // Auto-select first available AI model (prioritize working models)
+  // Auto-select first available AI model (all models should work with environment API keys)
   useEffect(() => {
     if (aiModels && aiModels.length > 0 && selectedModel === null) {
-      // Prefer models with valid API keys
-      const workingModel = aiModels.find((model: any) => model.hasValidApiKey !== false);
-      if (workingModel) {
-        console.log("Auto-selecting working model:", workingModel.name, "ID:", workingModel.id);
-        setSelectedModel(workingModel.id);
-      } else {
-        // Fallback to first model even if API key is not configured
-        console.log("Auto-selecting first model:", aiModels[0].name, "ID:", aiModels[0].id);
-        setSelectedModel(aiModels[0].id);
-      }
+      // Select the first available model (all should be working with environment keys)
+      console.log("Auto-selecting first model:", aiModels[0].name, "ID:", aiModels[0].id);
+      setSelectedModel(aiModels[0].id);
     }
   }, [aiModels, selectedModel]);
 
@@ -262,16 +255,9 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
     console.log('User auth:', user);
     console.log('=== END SESSION TRIGGER DEBUG ===');
     
-    // Temporary fix: Use a known working session ID (1849) to get chat working
-    if (!currentSession && user?.email) {
-      console.log('🔄 [TEMP FIX] Setting current session to 1849 (known working session)');
-      setCurrentSession('1849');
-      return;
-    }
-    
-    // Only create session if user is authenticated and we don't have a current session
-    if (!currentSession && !createSessionMutation.isPending && user?.email) {
-      console.log('🔄 [SESSION CREATE] Triggering session creation for authenticated user:', user.email);
+    // Create a new session when we have user authentication but no current session
+    if (!currentSession && user?.email && !createSessionMutation.isPending) {
+      console.log('🔄 [SESSION CREATE] No current session found, creating new session for user:', user.email);
       createSessionMutation.mutate();
     } else if (!user?.email) {
       console.log('⏸️ [SESSION CREATE] Waiting for user authentication...');
@@ -310,14 +296,25 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       return;
     }
 
+    // If no current session, create one first, then send the message
+    if (!currentSession) {
+      console.log('🔄 [MESSAGE SEND] No session found, creating session before sending message');
+      createSessionMutation.mutate();
+      
+      // Store the message to send after session creation
+      setTimeout(() => {
+        if (currentSession) {
+          handleSendMessage(message, attachments);
+        }
+      }, 500);
+      return;
+    }
+
     const formData = new FormData();
     formData.append('message', message);
     formData.append('aiModelId', selectedModel.toString());
     formData.append('activityTypeId', selectedActivityType.toString());
-    
-    if (currentSession) {
-      formData.append('sessionId', currentSession.toString());
-    }
+    formData.append('sessionId', currentSession.toString());
 
     if (attachments && attachments.length > 0) {
       attachments.forEach((file) => {
@@ -765,7 +762,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       }}>
         <ChatInput
           onSendMessage={handleSendMessage}
-          disabled={!selectedModel || !selectedActivityType || !currentSession || sendMessageMutation.isPending}
+          disabled={!selectedModel || !selectedActivityType || sendMessageMutation.isPending}
           prefillMessage={prefillMessage}
         />
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '8px' }}>
