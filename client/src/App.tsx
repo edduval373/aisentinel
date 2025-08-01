@@ -42,14 +42,40 @@ function Router() {
   
   const { isAuthenticated, isLoading, user, isSuperUser, isOwner, isAdmin } = useAuth();
   
-  // Handle URL-based session activation (workaround for cookie domain issues)
+  // Handle URL-based session activation and header authentication
   useEffect(() => {
+    // Initialize auth token from URL if present
+    const initializeAuth = async () => {
+      const { initializeAuthFromURL } = await import('./lib/authHeaders');
+      initializeAuthFromURL();
+    };
+    initializeAuth();
+
     const params = new URLSearchParams(window.location.search);
     const sessionToken = params.get('session');
     const backupToken = params.get('backup-session');
     const directSession = params.get('direct-session');
+    const authToken = params.get('auth-token');
     
-    // Handle regular URL session transfer
+    // Handle header-based auth token (new approach)
+    if (authToken && authToken.startsWith('prod-')) {
+      console.log('🔄 [HEADER AUTH] Detected auth token in URL, storing for header authentication...');
+      
+      const handleAuthToken = async () => {
+        const { setAuthToken } = await import('./lib/authHeaders');
+        setAuthToken(authToken);
+        
+        // Clean URL and refresh to trigger auth check
+        const cleanUrl = window.location.pathname + '?t=' + Date.now();
+        window.history.replaceState({}, document.title, cleanUrl);
+        window.location.reload();
+      };
+      
+      handleAuthToken();
+      return;
+    }
+    
+    // Handle regular URL session transfer (legacy)
     if (sessionToken && sessionToken.startsWith('prod-session-')) {
       console.log('🔄 [URL SESSION] Detected session token in URL, activating...');
       

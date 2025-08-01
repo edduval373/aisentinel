@@ -82,6 +82,29 @@ export const cookieAuth = async (req: AuthenticatedRequest, res: Response, next:
 
 export const optionalAuth = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
+    // Try production authentication first (headers + database)
+    try {
+      const { authenticateProductionRequest } = await import('./productionAuth');
+      const productionSession = await authenticateProductionRequest(req);
+      
+      if (productionSession) {
+        console.log('🔒 OptionalAuth: Production authentication successful');
+        req.user = {
+          userId: productionSession.userId,
+          email: productionSession.email,
+          companyId: productionSession.companyId,
+          roleLevel: productionSession.roleLevel,
+          actualRoleLevel: productionSession.roleLevel,
+          isDeveloper: false,
+          testRole: null,
+        };
+        return next();
+      }
+    } catch (prodAuthError) {
+      console.warn('Production auth module not available:', prodAuthError);
+    }
+
+    // Fallback to cookie-based authentication
     const sessionToken = req.cookies?.sessionToken;
     console.log('OptionalAuth: cookies =', req.cookies);
     console.log('OptionalAuth: sessionToken =', sessionToken ? 'exists (' + sessionToken.substring(0, 10) + '...)' : 'missing');

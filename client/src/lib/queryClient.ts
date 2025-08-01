@@ -157,8 +157,18 @@ export const getQueryFn: <T>(options: {
     console.log(`🔄 [QUERY] Full URL: ${window.location.origin}${url}`);
 
     try {
+      // Get auth headers for header-based authentication
+      let headers = {};
+      try {
+        const { getAuthHeaders } = await import('./authHeaders');
+        headers = getAuthHeaders();
+      } catch (importError) {
+        console.warn('Auth headers not available:', importError);
+      }
+      
       const res = await fetch(url, {
         credentials: "include",
+        headers
       });
 
       const duration = Date.now() - startTime;
