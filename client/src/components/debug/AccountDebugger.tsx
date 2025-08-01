@@ -148,6 +148,13 @@ export default function AccountDebugger() {
     
     localStorage.setItem('aisentinel_saved_accounts', JSON.stringify(accounts));
     console.log('⚡ [FORCE] Both accounts saved to localStorage');
+    console.log('⚡ [FORCE] Accounts data:', JSON.stringify(accounts, null, 2));
+    
+    // Force trigger storage event for dropdown refresh
+    window.dispatchEvent(new StorageEvent('storage', {
+      key: 'aisentinel_saved_accounts',
+      newValue: JSON.stringify(accounts)
+    }));
     
     refreshData();
     alert('FORCE: Both accounts created. Check dropdown now!');
