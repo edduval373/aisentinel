@@ -645,31 +645,37 @@ export default async function handler(req, res) {
       try {
         console.log("Fetching API keys configuration status for production...");
         
-        // Check environment variables for API key configuration status
+        // Check environment variables for API key configuration status (matching development endpoint)
         const apiKeyStatus = {
           openai: {
             configured: !!process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your-openai-api-key-here',
-            status: !!process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your-openai-api-key-here' ? 'Configured' : 'Not configured'
+            status: !!process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your-openai-api-key-here' ? 'Configured' : 'Not configured',
+            source: !!process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'your-openai-api-key-here' ? 'environment' : 'none'
           },
           anthropic: {
             configured: !!process.env.ANTHROPIC_API_KEY && process.env.ANTHROPIC_API_KEY !== 'your-anthropic-api-key-here',
-            status: !!process.env.ANTHROPIC_API_KEY && process.env.ANTHROPIC_API_KEY !== 'your-anthropic-api-key-here' ? 'Configured' : 'Not configured'
+            status: !!process.env.ANTHROPIC_API_KEY && process.env.ANTHROPIC_API_KEY !== 'your-anthropic-api-key-here' ? 'Configured' : 'Not configured',
+            source: !!process.env.ANTHROPIC_API_KEY && process.env.ANTHROPIC_API_KEY !== 'your-anthropic-api-key-here' ? 'environment' : 'none'
           },
           perplexity: {
             configured: !!process.env.PERPLEXITY_API_KEY && process.env.PERPLEXITY_API_KEY !== 'your-perplexity-api-key-here',
-            status: !!process.env.PERPLEXITY_API_KEY && process.env.PERPLEXITY_API_KEY !== 'your-perplexity-api-key-here' ? 'Configured' : 'Not configured'
+            status: !!process.env.PERPLEXITY_API_KEY && process.env.PERPLEXITY_API_KEY !== 'your-perplexity-api-key-here' ? 'Configured' : 'Not configured',
+            source: !!process.env.PERPLEXITY_API_KEY && process.env.PERPLEXITY_API_KEY !== 'your-perplexity-api-key-here' ? 'environment' : 'none'
           },
           google: {
             configured: !!process.env.GOOGLE_AI_API_KEY && process.env.GOOGLE_AI_API_KEY !== 'your-google-api-key-here',
-            status: !!process.env.GOOGLE_AI_API_KEY && process.env.GOOGLE_AI_API_KEY !== 'your-google-api-key-here' ? 'Configured' : 'Not configured'
+            status: !!process.env.GOOGLE_AI_API_KEY && process.env.GOOGLE_AI_API_KEY !== 'your-google-api-key-here' ? 'Configured' : 'Not configured',
+            source: !!process.env.GOOGLE_AI_API_KEY && process.env.GOOGLE_AI_API_KEY !== 'your-google-api-key-here' ? 'environment' : 'none'
           },
           cohere: {
             configured: !!process.env.COHERE_API_KEY && process.env.COHERE_API_KEY !== 'your-cohere-api-key-here',
-            status: !!process.env.COHERE_API_KEY && process.env.COHERE_API_KEY !== 'your-cohere-api-key-here' ? 'Configured' : 'Not configured'
+            status: !!process.env.COHERE_API_KEY && process.env.COHERE_API_KEY !== 'your-cohere-api-key-here' ? 'Configured' : 'Not configured',
+            source: !!process.env.COHERE_API_KEY && process.env.COHERE_API_KEY !== 'your-cohere-api-key-here' ? 'environment' : 'none'
           },
           mistral: {
             configured: !!process.env.MISTRAL_API_KEY && process.env.MISTRAL_API_KEY !== 'your-mistral-api-key-here',
-            status: !!process.env.MISTRAL_API_KEY && process.env.MISTRAL_API_KEY !== 'your-mistral-api-key-here' ? 'Configured' : 'Not configured'
+            status: !!process.env.MISTRAL_API_KEY && process.env.MISTRAL_API_KEY !== 'your-mistral-api-key-here' ? 'Configured' : 'Not configured',
+            source: !!process.env.MISTRAL_API_KEY && process.env.MISTRAL_API_KEY !== 'your-mistral-api-key-here' ? 'environment' : 'none'
           }
         };
 
