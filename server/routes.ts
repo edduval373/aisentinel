@@ -1631,14 +1631,15 @@ Stack: \${error.stack || 'No stack trace available'}\`;
         return res.status(401).json({ success: false, message: 'Session not found or expired' });
       }
       
-      // Set the cookie again with proper settings
+      // Set the cookie again with Vercel-optimized settings
+      const isProduction = process.env.NODE_ENV === 'production';
       res.cookie('sessionToken', sessionToken, {
         httpOnly: true,
-        secure: true,
+        secure: isProduction,
         sameSite: 'lax',
         maxAge: 30 * 24 * 60 * 60 * 1000,
-        path: '/',
-        domain: '.aisentinel.app'
+        path: '/'
+        // Let Vercel handle domain automatically
       });
       
       console.log('✅ Session activated via URL parameter');
@@ -1685,14 +1686,15 @@ Stack: \${error.stack || 'No stack trace available'}\`;
       
       console.log('✅ Database session created successfully');
       
-      // Set production cookie with correct settings
+      // Set production cookie with Vercel-optimized settings
+      const isProduction = process.env.NODE_ENV === 'production';
       res.cookie('sessionToken', sessionToken, {
         httpOnly: true,
-        secure: true, // HTTPS required in production
-        sameSite: 'lax', // Better browser compatibility
+        secure: isProduction, // Always secure in production
+        sameSite: 'lax', // Allows cross-page navigation in production
         maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-        path: '/', // Ensure cookie works across entire domain
-        domain: '.aisentinel.app' // Set for entire domain including subdomains
+        path: '/' // Let Vercel handle domain automatically
+        // Removed explicit domain - Vercel handles this automatically
       });
       
       console.log('✅ Production cookie set:', sessionToken.substring(0, 25) + '...');

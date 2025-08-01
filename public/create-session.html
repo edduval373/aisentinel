@@ -135,13 +135,33 @@
         
         let sessionTokenForTransfer = null;
         
-        function navigateToApp() {
-            // Use URL-based session transfer as workaround for cookie domain issues
+        async function navigateToApp() {
+            // Use Vercel-optimized session transfer
             if (sessionTokenForTransfer) {
-                console.log('Using URL-based session transfer:', sessionTokenForTransfer.substring(0, 20) + '...');
+                console.log('Using Vercel session transfer:', sessionTokenForTransfer.substring(0, 20) + '...');
+                
+                try {
+                    // First try the Vercel transfer endpoint
+                    const transferResponse = await fetch('/api/transfer-session', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({ sessionToken: sessionTokenForTransfer })
+                    });
+                    
+                    if (transferResponse.ok) {
+                        console.log('✅ Vercel session transfer successful');
+                        window.location.href = `/?vercel-transfer=true&t=${Date.now()}`;
+                        return;
+                    }
+                } catch (error) {
+                    console.warn('Vercel transfer failed, using URL fallback:', error);
+                }
+                
+                // Fallback to URL transfer
                 window.location.href = `/?session=${encodeURIComponent(sessionTokenForTransfer)}&t=${Date.now()}`;
             } else {
-                // Fallback to regular navigation
+                // Direct navigation
                 window.location.href = '/?t=' + Date.now();
             }
         }
