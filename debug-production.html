@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Production Debug - AI Sentinel</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .debug-section { background: white; margin: 20px 0; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .status { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 4px; overflow-x: auto; }
+        .loading { display: inline-block; width: 20px; height: 20px; border: 3px solid #f3f3f3; border-top: 3px solid #3498db; border-radius: 50%; animation: spin 2s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <h1>🔍 AI Sentinel Production Diagnostics</h1>
+    
+    <div class="debug-section">
+        <h2>Frontend Loading Test</h2>
+        <div id="frontend-status" class="status info">
+            <div class="loading"></div> Testing frontend application...
+        </div>
+        <div id="error-log"></div>
+    </div>
+
+    <div class="debug-section">
+        <h2>API Endpoints Test</h2>
+        <div id="api-status" class="status info">
+            <div class="loading"></div> Testing API endpoints...
+        </div>
+        <pre id="api-results"></pre>
+    </div>
+
+    <div class="debug-section">
+        <h2>JavaScript Console Errors</h2>
+        <div id="console-errors" class="status info">Monitoring console for errors...</div>
+        <pre id="error-details"></pre>
+    </div>
+
+    <div class="debug-section">
+        <h2>Network Resources Test</h2>
+        <div id="resources-status" class="status info">
+            <div class="loading"></div> Testing static resources...
+        </div>
+        <pre id="resources-results"></pre>
+    </div>
+
+    <script>
+        const errorLog = [];
+        const originalConsoleError = console.error;
+        const originalConsoleWarn = console.warn;
+        
+        // Capture console errors
+        console.error = function(...args) {
+            errorLog.push({type: 'error', message: args.join(' '), timestamp: new Date()});
+            updateErrorDisplay();
+            originalConsoleError.apply(console, args);
+        };
+        
+        console.warn = function(...args) {
+            errorLog.push({type: 'warning', message: args.join(' '), timestamp: new Date()});
+            updateErrorDisplay();
+            originalConsoleWarn.apply(console, args);
+        };
+        
+        // Capture unhandled errors
+        window.addEventListener('error', function(e) {
+            errorLog.push({
+                type: 'error',
+                message: `${e.message} at ${e.filename}:${e.lineno}:${e.colno}`,
+                timestamp: new Date()
+            });
+            updateErrorDisplay();
+        });
+        
+        window.addEventListener('unhandledrejection', function(e) {
+            errorLog.push({
+                type: 'error',
+                message: `Unhandled promise rejection: ${e.reason}`,
+                timestamp: new Date()
+            });
+            updateErrorDisplay();
+        });
+
+        function updateErrorDisplay() {
+            const consoleErrorsDiv = document.getElementById('console-errors');
+            const errorDetailsDiv = document.getElementById('error-details');
+            
+            if (errorLog.length === 0) {
+                consoleErrorsDiv.className = 'status success';
+                consoleErrorsDiv.innerHTML = '✅ No JavaScript errors detected';
+                errorDetailsDiv.innerHTML = '';
+            } else {
+                consoleErrorsDiv.className = 'status error';
+                consoleErrorsDiv.innerHTML = `❌ ${errorLog.length} error(s) detected`;
+                errorDetailsDiv.innerHTML = errorLog.map(log => 
+                    `[${log.timestamp.toISOString()}] ${log.type.toUpperCase()}: ${log.message}`
+                ).join('\n');
+            }
+        }
+
+        // Test API endpoints
+        async function testAPIs() {
+            const apiResults = [];
+            const endpoints = [
+                '/api/debug/status',
+                '/api/admin/api-keys',
+                '/api/current-user',
+                '/api/ai-models'
+            ];
+
+            for (const endpoint of endpoints) {
+                try {
+                    const response = await fetch(endpoint);
+                    const data = await response.json();
+                    apiResults.push(`✅ ${endpoint}: ${response.status} ${response.statusText}`);
+                    if (endpoint === '/api/admin/api-keys') {
+                        const configured = Object.values(data).filter(api => api.configured).length;
+                        apiResults.push(`   └─ ${configured}/6 API keys configured`);
+                    }
+                } catch (error) {
+                    apiResults.push(`❌ ${endpoint}: ${error.message}`);
+                }
+            }
+
+            document.getElementById('api-status').className = 'status success';
+            document.getElementById('api-status').innerHTML = '✅ API tests completed';
+            document.getElementById('api-results').innerHTML = apiResults.join('\n');
+        }
+
+        // Test static resources
+        async function testResources() {
+            const resourceResults = [];
+            const resources = [
+                '/ai-sentinel-logo.png',
+                '/assets/index-CKAqnoB9.js',
+                '/assets/index-Uupl8DJ0.css'
+            ];
+
+            for (const resource of resources) {
+                try {
+                    const response = await fetch(resource, { method: 'HEAD' });
+                    resourceResults.push(`✅ ${resource}: ${response.status} ${response.statusText}`);
+                } catch (error) {
+                    resourceResults.push(`❌ ${resource}: ${error.message}`);
+                }
+            }
+
+            document.getElementById('resources-status').className = 'status success';
+            document.getElementById('resources-status').innerHTML = '✅ Resource tests completed';
+            document.getElementById('resources-results').innerHTML = resourceResults.join('\n');
+        }
+
+        // Test if main app loads
+        async function testFrontend() {
+            const frontendStatusDiv = document.getElementById('frontend-status');
+            
+            // Try to load the main React app
+            try {
+                // Create an iframe to test the main app
+                const iframe = document.createElement('iframe');
+                iframe.src = window.location.origin;
+                iframe.style.display = 'none';
+                document.body.appendChild(iframe);
+                
+                // Wait for iframe to load
+                await new Promise((resolve, reject) => {
+                    iframe.onload = resolve;
+                    iframe.onerror = reject;
+                    setTimeout(reject, 5000); // 5 second timeout
+                });
+                
+                // Check if React mounted in iframe
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                const rootDiv = iframeDoc.getElementById('root');
+                
+                if (rootDiv && rootDiv.children.length > 0) {
+                    frontendStatusDiv.className = 'status success';
+                    frontendStatusDiv.innerHTML = '✅ Frontend application loaded successfully';
+                } else {
+                    frontendStatusDiv.className = 'status warning';
+                    frontendStatusDiv.innerHTML = '⚠️ Frontend loaded but React may not have mounted';
+                }
+                
+                document.body.removeChild(iframe);
+            } catch (error) {
+                frontendStatusDiv.className = 'status error';
+                frontendStatusDiv.innerHTML = `❌ Frontend loading failed: ${error.message}`;
+            }
+        }
+
+        // Run all tests
+        Promise.all([
+            testAPIs(),
+            testResources(),
+            testFrontend()
+        ]).then(() => {
+            console.log('All diagnostic tests completed');
+        }).catch(error => {
+            console.error('Diagnostic test failed:', error);
+        });
+
+        // Update error display initially
+        updateErrorDisplay();
+    </script>
+</body>
+</html>

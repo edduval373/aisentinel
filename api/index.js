@@ -1712,6 +1712,95 @@ export default async function handler(req, res) {
       }
     }
 
+    // Current user endpoint - required by frontend
+    if (path === '/api/current-user' && req.method === 'GET') {
+      try {
+        console.log("Current user request - checking authentication...");
+        
+        // Extract session token from cookies
+        const sessionToken = req.headers.cookie?.match(/sessionToken=([^;]+)/)?.[1];
+        
+        if (!sessionToken) {
+          console.log("No session token found - returning unauthenticated");
+          return res.status(401).json({
+            success: false,
+            message: "Not authenticated",
+            isAuthenticated: false
+          });
+        }
+        
+        // Verify session in database
+        const { Client } = await import('pg');
+        const client = new Client({
+          connectionString: process.env.DATABASE_URL,
+          ssl: { rejectUnauthorized: false }
+        });
+        
+        await client.connect();
+        
+        // Check if session exists and is valid
+        const sessionResult = await client.query(
+          'SELECT * FROM user_sessions WHERE session_token = $1 AND expires_at > NOW()',
+          [sessionToken]
+        );
+        
+        if (sessionResult.rows.length === 0) {
+          await client.end();
+          console.log("Invalid or expired session token");
+          return res.status(401).json({
+            success: false,
+            message: "Session expired",
+            isAuthenticated: false
+          });
+        }
+        
+        const session = sessionResult.rows[0];
+        
+        // Get user details
+        const userResult = await client.query(
+          'SELECT u.*, c.name as company_name FROM users u LEFT JOIN companies c ON u.company_id = c.id WHERE u.id = $1',
+          [session.user_id]
+        );
+        
+        await client.end();
+        
+        if (userResult.rows.length === 0) {
+          console.log("User not found for session");
+          return res.status(401).json({
+            success: false,
+            message: "User not found",
+            isAuthenticated: false
+          });
+        }
+        
+        const user = userResult.rows[0];
+        console.log("Current user authenticated:", user.email);
+        
+        return res.status(200).json({
+          success: true,
+          isAuthenticated: true,
+          user: {
+            id: user.id,
+            email: user.email,
+            firstName: user.first_name,
+            lastName: user.last_name,
+            companyId: user.company_id,
+            companyName: user.company_name,
+            role: user.role_level >= 100 ? 'super-user' : user.role_level >= 99 ? 'owner' : user.role_level >= 98 ? 'administrator' : 'user',
+            roleLevel: user.role_level
+          }
+        });
+        
+      } catch (error) {
+        console.error('Current user endpoint error:', error);
+        return res.status(500).json({
+          success: false,
+          message: 'Failed to get current user',
+          error: error.message
+        });
+      }
+    }
+
     // Default response for unmatched routes
     return res.status(404).json({
       success: false,
