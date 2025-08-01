@@ -34,10 +34,12 @@ Demo mode identification: Demo mode uses role level 0, shows orange "DEMO" badge
 - **Deployment Strategy**: Configured for Vercel with serverless functions for API routes and static file serving for the client. Uses Vite for client builds, ESBuild for server, and Drizzle Kit for database migrations. Environment variables manage secrets. Comprehensive monitoring and logging are integrated.
 
 ## Recent Fixes (August 2025)
-- **Create Models Page**: Fixed JavaScript error "Cannot read properties of undefined (reading 'length')" by applying optional chaining to all array operations (models?.map(), providers?.map(), capabilities?.map())
-- **Role Hierarchy**: Corrected role access levels to 998+ for admin, 999+ for owner, 1000+ for super-user, allowing custom roles 1-997
-- **Organization ID Format**: Fixed inconsistent organizationId format from "company-1" to "1" for proper company-specific model management
-- **Admin Panel Data Loading**: All admin pages now use correct API endpoint pattern `/api/[resource]` and load existing data records properly
+- **Universal AI Model Template System**: Implemented template-based AI model architecture where super-users (1000+) create universal templates, owners (999+) manage company API keys
+- **Authentication Data Flow**: Fixed companyId inclusion in `/api/auth/me` response and useAuth hook to properly support company-specific features
+- **Account Dropdown**: Fixed localStorage parsing logic to properly recognize saved accounts instead of creating test accounts
+- **Template Database**: Added 8 universal AI model templates (GPT-4o, Claude Sonnet 4, etc.) and company API key management
+- **Role-Based API Access**: Super-users manage universal templates via `/api/admin/ai-model-templates`, owners manage API keys via `/api/admin/company-api-keys`
+- **Chat Interface**: AI models now load based on company's configured API keys, defaulting to demo mode when no valid keys exist
 
 ## External Dependencies
 **Core Services**:
