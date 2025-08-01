@@ -70,17 +70,21 @@ export default function AccountDebugger() {
   };
 
   const manualAddSecondAccount = () => {
+    // For the second account to work, it needs a real session token
+    // Let's create a placeholder that directs user to verify via email
     const secondAccount = {
       email: 'ed.duval@duvalsolutions.net',
-      sessionToken: `manual-token-${Date.now()}`,
+      sessionToken: 'needs-verification', // Special token indicating verification needed
       role: 'Super User',
       roleLevel: 1000,
       companyName: 'Duval Solutions'
     };
 
-    console.log('📊 [DEBUG] Manually adding second account:', secondAccount);
+    console.log('📊 [DEBUG] Adding second account (requires verification):', secondAccount);
     AccountManager.saveAccount(secondAccount);
     refreshData();
+    
+    alert('Second account added but needs verification. Click "Add Another Account" to verify ed.duval@duvalsolutions.net via email.');
   };
 
   const saveCurrentAccount = () => {

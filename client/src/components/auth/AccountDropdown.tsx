@@ -61,29 +61,34 @@ export default function AccountDropdown() {
 
   const switchAccount = async (account: SavedAccount) => {
     try {
-      console.log('Switching to account:', account.email);
+      console.log('🔄 [ACCOUNT SWITCH] Switching to account:', account.email);
+      console.log('🔄 [ACCOUNT SWITCH] Using session token:', account.sessionToken.substring(0, 20) + '...');
       
-      // Set the auth token
+      // Set the auth token in headers
       const { setAuthToken } = await import('@/lib/authHeaders');
       setAuthToken(account.sessionToken);
+      console.log('✅ [ACCOUNT SWITCH] Auth token set in headers');
       
-      // Also set as cookie for compatibility
+      // Also set as cookie for compatibility with server-side auth
       document.cookie = `sessionToken=${account.sessionToken}; path=/; secure; samesite=lax; max-age=2592000`;
+      console.log('✅ [ACCOUNT SWITCH] Session token set as cookie');
       
       // Update last used timestamp
       AccountManager.updateLastUsed(account.email);
       
       toast({
         title: "Account Switched",
-        description: `Switched to ${account.email}`,
+        description: `Switching to ${account.email}...`,
       });
+      
+      console.log('🔄 [ACCOUNT SWITCH] Reloading page to apply new authentication...');
       
       // Reload to apply new authentication
       setTimeout(() => {
         window.location.reload();
       }, 500);
     } catch (error) {
-      console.error('Error switching account:', error);
+      console.error('❌ [ACCOUNT SWITCH] Error switching account:', error);
       toast({
         title: "Error",
         description: "Failed to switch account",
@@ -301,7 +306,18 @@ export default function AccountDropdown() {
                         borderBottom: '1px solid #f1f5f9',
                         transition: 'background 0.2s ease'
                       }}
-                      onClick={() => switchAccount(account)}
+                      onClick={() => {
+                        // Check if account needs verification
+                        if (account.sessionToken === 'needs-verification') {
+                          toast({
+                            title: "Verification Required",
+                            description: "This account needs email verification. Click 'Add Another Account' to verify.",
+                            variant: "destructive",
+                          });
+                          return;
+                        }
+                        switchAccount(account);
+                      }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.background = '#f8fafc';
                       }}
