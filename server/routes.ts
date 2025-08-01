@@ -799,7 +799,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Auto-add missing fields
       const modelData = {
         ...req.body,
-        organizationId: req.body.organizationId || `company-${user.companyId}`,
+        organizationId: req.body.organizationId || String(user.companyId),
         authMethod: req.body.authMethod || "bearer", 
         requestHeaders: req.body.requestHeaders || '{"Content-Type": "application/json"}'
       };
