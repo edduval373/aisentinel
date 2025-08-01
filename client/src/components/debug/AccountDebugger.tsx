@@ -190,7 +190,7 @@ export default function AccountDebugger() {
       }, 500);
     };
     
-    alert(`FORCE: Both accounts created with SAME SESSION TOKEN!\nLocalStorage: ${localStorage.getItem('aisentinel_saved_accounts') ? 'SUCCESS' : 'FAILED'}\nAccountManager: ${verification.length} accounts\n\nTEST: Use testSwitchAccount() in console to test switching`);
+    alert(`FORCE: Both accounts created with SAME SESSION TOKEN!\nLocalStorage: ${localStorage.getItem('aisentinel_saved_accounts') ? 'SUCCESS' : 'FAILED'}\nAccountManager: ${verification.length} accounts\n\nTEST: Use testSwitchAccount() in console to test switching\n\nCHAT: Session 1842 is active and ready for messages!`);
   };
 
   return (
