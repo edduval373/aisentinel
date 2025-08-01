@@ -94,8 +94,8 @@ export default function AdminPermissions() {
     );
   }
 
-  // Use appropriate endpoint based on demo mode
-  const apiEndpoint = isDemoMode ? '/api/permissions' : '/api/admin/permissions';
+  // Use same endpoint for all users
+  const apiEndpoint = '/api/permissions';
 
   const { data: permissions = [], isLoading: permissionsLoading, error: permissionsError } = useQuery<Permission[]>({
     queryKey: [apiEndpoint],
@@ -128,13 +128,10 @@ export default function AdminPermissions() {
         openDialog('create');
         throw new Error('Demo mode');
       }
-      return apiRequest('/api/admin/permissions', {
-        method: 'POST',
-        body: JSON.stringify(data),
-      });
+      return apiRequest('/api/permissions', 'POST', data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/permissions'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/permissions'] });
       setIsAddDialogOpen(false);
       form.reset();
       toast({
@@ -170,13 +167,10 @@ export default function AdminPermissions() {
         openDialog('edit');
         throw new Error('Demo mode');
       }
-      return apiRequest(`/api/admin/permissions/${id}`, {
-        method: 'PATCH',
-        body: JSON.stringify(data),
-      });
+      return apiRequest(`/api/permissions/${id}`, 'PATCH', data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/permissions'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/permissions'] });
       setIsEditDialogOpen(false);
       setEditingPermission(null);
       editForm.reset();
@@ -213,12 +207,10 @@ export default function AdminPermissions() {
         openDialog('delete');
         throw new Error('Demo mode');
       }
-      return apiRequest(`/api/admin/permissions/${id}`, {
-        method: 'DELETE',
-      });
+      return apiRequest(`/api/permissions/${id}`, 'DELETE');
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/permissions'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/permissions'] });
       setIsDeleteConfirmOpen(false);
       setPermissionToDelete(null);
       toast({
