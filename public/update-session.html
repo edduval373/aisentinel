@@ -111,16 +111,13 @@
                 
                 showStatus('🔄 Creating Super-User session...', 'info');
                 
-                // Create a session using the production super-login endpoint
-                const response = await fetch('/api/auth/super-login', {
+                // Create a session using the production session creation endpoint
+                const response = await fetch('/api/auth/create-session', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        email: 'ed.duval15@gmail.com',
-                        targetRole: 'super-user'
-                    }),
+                    body: JSON.stringify({}),
                     credentials: 'include'
                 });
                 
