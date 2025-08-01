@@ -1,0 +1,38 @@
+currentSession: 1894
+index-DUG-pQKb.js:508 createSessionMutation.isPending: false
+index-DUG-pQKb.js:508 Should create session: false
+index-DUG-pQKb.js:508 AI Models loaded: 9 models
+index-DUG-pQKb.js:508 Activity Types loaded: 4 types
+index-DUG-pQKb.js:508 User auth: Object
+index-DUG-pQKb.js:508 === END SESSION TRIGGER DEBUG ===
+index-DUG-pQKb.js:630 [ROLE GUARD] Checking access for owner (level 999): ObjecthasAccess: trueisAuthenticated: truerequiredLevel: 999userRole: "super-user"userRoleLevel: 1000[[Prototype]]: Object
+index-DUG-pQKb.js:630 [ROLE GUARD] Access granted - user level 1000 >= required level 999
+index-DUG-pQKb.js:610 [CREATE MODELS] Component rendering started
+index-DUG-pQKb.js:425 🔍 useAuth - Strict authentication mode - NO FALLBACKS
+index-DUG-pQKb.js:425 Authentication check: ObjectisAdmin: trueisAuthenticated: trueisOwner: trueisSuperUser: truerole: "super-user"roleLevel: 1000[[Prototype]]: Object
+index-DUG-pQKb.js:610 [CREATE MODELS] Component state initialized, user: super-user level: 1000
+index-DUG-pQKb.js:610 🤖 Create Models Debug: Objecterror: undefinedisArray: trueisError: falsemodels: (2) [{…}, {…}]modelsCount: 9modelsEmpty: falsemodelsLoading: falsemodelsNull: falsemodelsTestCondition: truemodelsUndefined: falsequeryDataType: "object"rawModels: (9) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}][[Prototype]]: Object
+index-DUG-pQKb.js:610 [CREATE MODELS] Rendering main component
+index-DUG-pQKb.js:610 [CREATE MODELS] Component rendering started
+index-DUG-pQKb.js:630 [APP DEBUG] Router component rendering...
+index-DUG-pQKb.js:630 [ROLE GUARD] Checking access for owner (level 999): ObjecthasAccess: trueisAuthenticated: truerequiredLevel: 999userRole: "super-user"userRoleLevel: 1000[[Prototype]]: Object
+index-DUG-pQKb.js:630 [ROLE GUARD] Access granted - user level 1000 >= required level 999
+index-DUG-pQKb.js:610 [CREATE MODELS] Component rendering started
+index-DUG-pQKb.js:425 🔍 useAuth - Strict authentication mode - NO FALLBACKS
+index-DUG-pQKb.js:425 Authentication check: Object
+index-DUG-pQKb.js:610 [CREATE MODELS] Component state initialized, user: super-user level: 1000
+index-DUG-pQKb.js:610 🤖 Create Models Debug: Objecterror: undefinedisArray: trueisError: falsemodels: (2) [{…}, {…}]modelsCount: 9modelsEmpty: falsemodelsLoading: falsemodelsNull: falsemodelsTestCondition: truemodelsUndefined: falsequeryDataType: "object"rawModels: (9) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}][[Prototype]]: Object
+index-DUG-pQKb.js:610 [CREATE MODELS] Rendering main component
+index-DUG-pQKb.js:610 [CREATE MODELS] Component rendering started
+index-DUG-pQKb.js:630 [APP DEBUG] Router component rendering...
+index-DUG-pQKb.js:40 TypeError: Cannot read properties of undefined (reading 'length')
+    at $ (index-DUG-pQKb.js:610:4242)
+    at index-DUG-pQKb.js:610:11771
+    at Array.map (<anonymous>)
+    at l$ (index-DUG-pQKb.js:610:10247)
+    at J0 (index-DUG-pQKb.js:38:17018)
+    at VS (index-DUG-pQKb.js:40:44058)
+    at US (index-DUG-pQKb.js:40:39790)
+    at V3 (index-DUG-pQKb.js:40:39718)
+    at wp (index-DUG-pQKb.js:40:39570)
+    at hg (index-DUG-pQKb.js:40:35934)

@@ -349,32 +349,12 @@ export default function CreateModels() {
 
   console.log("[CREATE MODELS] Rendering main component with models:", models?.length || 0);
   
-  // Add a test div to see if AdminLayout is the issue
-  const testContent = (
-    <div style={{ 
-      backgroundColor: 'red', 
-      color: 'white', 
-      padding: '20px', 
-      margin: '20px', 
-      fontSize: '18px',
-      minHeight: '200px',
-      border: '3px solid blue'
-    }}>
-      TEST CONTENT - MODELS COUNT: {models?.length || 0}
-      <br />
-      USER LEVEL: {user?.roleLevel}
-      <br />
-      IS DEMO: {isDemoMode ? 'YES' : 'NO'}
-    </div>
-  );
-  
   return (
     <AdminLayout 
       title="Create AI Models" 
       subtitle="Create and manage custom AI models from scratch"
       rightContent={<DemoBanner message="Demo Mode - Read Only View - AI models cannot be modified" />}
     >
-      {testContent}
       <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
         
         {/* Header Section */}
@@ -544,7 +524,7 @@ export default function CreateModels() {
             gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
             gap: '20px'
           }}>
-            {models.map((model: AiModel) => (
+            {models?.map((model: AiModel) => (
             <div
               key={model.id}
               style={{
