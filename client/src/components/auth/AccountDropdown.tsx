@@ -73,14 +73,21 @@ export default function AccountDropdown() {
   const switchAccount = async (account: SavedAccount) => {
     try {
       console.log('🔄 [ACCOUNT SWITCH] Switching to account:', account.email);
+      console.log('🔄 [ACCOUNT SWITCH] Account token:', account.sessionToken.substring(0, 20) + '...');
       console.log('🔄 [ACCOUNT SWITCH] Current cookies before switch:', document.cookie);
+      
+      // Show immediate feedback
+      toast({
+        title: "Switching Account",
+        description: `Switching to ${account.email}...`,
+      });
       
       // First clear existing session
       document.cookie = 'sessionToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
       console.log('🧹 [ACCOUNT SWITCH] Cleared existing session cookie');
       
       // Wait a moment for cookie clearing
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 200));
       
       // Set new session token - use domain-specific approach for production
       const isProduction = window.location.hostname.includes('.replit.app');
@@ -94,6 +101,8 @@ export default function AccountDropdown() {
         document.cookie = `sessionToken=${account.sessionToken}; path=/; samesite=lax; max-age=2592000`;
         console.log('✅ [ACCOUNT SWITCH] Set development cookie');
       }
+      
+      console.log('🔄 [ACCOUNT SWITCH] Cookies after setting:', document.cookie);
       
       // Set headers for immediate API calls
       const { setAuthToken } = await import('@/lib/authHeaders');

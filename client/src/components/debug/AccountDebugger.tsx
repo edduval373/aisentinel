@@ -169,7 +169,28 @@ export default function AccountDebugger() {
     const verification = AccountManager.getSavedAccounts();
     console.log('⚡ [FORCE] AccountManager verification:', verification.length, 'accounts');
     
-    alert(`FORCE: Both accounts created with SAME SESSION TOKEN!\nLocalStorage: ${localStorage.getItem('aisentinel_saved_accounts') ? 'SUCCESS' : 'FAILED'}\nAccountManager: ${verification.length} accounts`);
+    // Create a simple function for immediate testing
+    window.testSwitchAccount = function() {
+      const targetEmail = 'ed.duval@duvalsolutions.net';
+      console.log('🧪 [TEST] Manual account switch to:', targetEmail);
+      
+      // Clear existing session
+      document.cookie = 'sessionToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      console.log('🧪 [TEST] Cleared cookies');
+      
+      // Set the same session token
+      document.cookie = `sessionToken=prod-1754052835575-289kvxqgl42h; path=/; samesite=lax; max-age=2592000`;
+      console.log('🧪 [TEST] Set new session token');
+      console.log('🧪 [TEST] Current cookies:', document.cookie);
+      
+      // Force reload to apply changes
+      setTimeout(() => {
+        console.log('🧪 [TEST] Reloading to apply session change...');
+        window.location.reload();
+      }, 500);
+    };
+    
+    alert(`FORCE: Both accounts created with SAME SESSION TOKEN!\nLocalStorage: ${localStorage.getItem('aisentinel_saved_accounts') ? 'SUCCESS' : 'FAILED'}\nAccountManager: ${verification.length} accounts\n\nTEST: Use testSwitchAccount() in console to test switching`);
   };
 
   return (
