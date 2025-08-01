@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quick Session Test</title>
+    <style>
+        body { font-family: monospace; background: #1a1a1a; color: #00ff00; padding: 20px; }
+        .result { background: #2a2a2a; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        button { background: #007acc; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+        button:hover { background: #005999; }
+    </style>
+</head>
+<body>
+    <h2>Quick Session Test - Vercel Transfer</h2>
+    <button onclick="testVercelTransfer()">Test Vercel Transfer</button>
+    <button onclick="checkHealth()">Check Health</button>
+    <button onclick="testAuth()">Test Auth</button>
+    
+    <div id="results"></div>
+
+    <script>
+        let results = document.getElementById('results');
+        
+        function log(message) {
+            results.innerHTML += `<div class="result">${new Date().toISOString()}: ${message}</div>`;
+            results.scrollTop = results.scrollHeight;
+        }
+
+        async function testVercelTransfer() {
+            try {
+                log('🔄 Creating new session...');
+                
+                // Create session
+                const createResponse = await fetch('/api/auth/create-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({})
+                });
+                
+                const sessionData = await createResponse.json();
+                log(`✅ Session created: ${sessionData.sessionId}`);
+                
+                if (sessionData.fullSessionToken) {
+                    log('🔄 Testing Vercel transfer...');
+                    
+                    // Transfer session
+                    const transferResponse = await fetch('/api/transfer-session', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({ sessionToken: sessionData.fullSessionToken })
+                    });
+                    
+                    const transferResult = await transferResponse.json();
+                    log(`✅ Transfer result: ${JSON.stringify(transferResult)}`);
+                    
+                    // Test auth immediately
+                    setTimeout(testAuth, 1000);
+                }
+                
+            } catch (error) {
+                log(`❌ Error: ${error.message}`);
+            }
+        }
+        
+        async function checkHealth() {
+            try {
+                const response = await fetch('/api/health', { credentials: 'include' });
+                const health = await response.json();
+                log(`🔍 Health: cookies=${health.cookies.cookieCount}, session=${health.cookies.sessionExists}`);
+            } catch (error) {
+                log(`❌ Health check failed: ${error.message}`);
+            }
+        }
+        
+        async function testAuth() {
+            try {
+                const response = await fetch('/api/auth/me', { credentials: 'include' });
+                const auth = await response.json();
+                log(`🔐 Auth: ${auth.authenticated ? 'SUCCESS' : 'FAILED'} - ${JSON.stringify(auth)}`);
+            } catch (error) {
+                log(`❌ Auth test failed: ${error.message}`);
+            }
+        }
+    </script>
+</body>
+</html>
