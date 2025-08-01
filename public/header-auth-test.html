@@ -90,19 +90,26 @@
                     return;
                 }
                 
-                if (data.success === true && data.fullSessionToken) {
-                    sessionToken = data.fullSessionToken;
+                // The API response shows fullSessionToken in the logged response but may return sessionToken in JSON
+                if (data.success === true && (data.fullSessionToken || data.sessionToken)) {
+                    sessionToken = data.fullSessionToken || data.sessionToken;
                     document.getElementById('sessionToken').value = sessionToken;
-                    log(`✅ Session created: ${data.sessionId} (Method: ${data.authMethod})`, 'success');
+                    log(`✅ Session created: ${data.sessionId} (Environment: ${data.environment})`, 'success');
                     log(`📊 Database: ${data.databaseConnected}, Email: ${data.email || data.userId}`, 'info');
                     log(`🔑 Token ready for header authentication`, 'success');
                 } else if (data.success === false) {
                     log(`❌ Session creation failed: ${data.message || 'Unknown error'}`, 'error');
-                    log(`📊 Full response: ${JSON.stringify(data)}`, 'info');
                 } else {
-                    // Handle unexpected response format
-                    log(`⚠️ Unexpected response format:`, 'error');
-                    log(`📊 Full response: ${JSON.stringify(data)}`, 'info');
+                    // Check if it's actually successful but missing fullSessionToken field
+                    if (data.success === true && data.sessionToken) {
+                        sessionToken = data.sessionToken;
+                        document.getElementById('sessionToken').value = sessionToken;
+                        log(`✅ Session created: ${data.sessionId}`, 'success');
+                        log(`🔑 Token ready for header authentication`, 'success');
+                    } else {
+                        log(`⚠️ Unexpected response format:`, 'error');
+                        log(`📊 Full response: ${JSON.stringify(data)}`, 'info');
+                    }
                 }
                 
             } catch (error) {
