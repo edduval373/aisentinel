@@ -46,7 +46,10 @@ function Router() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const sessionToken = params.get('session');
+    const backupToken = params.get('backup-session');
+    const directSession = params.get('direct-session');
     
+    // Handle regular URL session transfer
     if (sessionToken && sessionToken.startsWith('prod-session-')) {
       console.log('🔄 [URL SESSION] Detected session token in URL, activating...');
       
@@ -64,6 +67,42 @@ function Router() {
           const cleanUrl = window.location.pathname;
           window.history.replaceState({}, document.title, cleanUrl);
         });
+    }
+    
+    // Handle backup session from localStorage
+    else if (backupToken && backupToken.startsWith('prod-session-')) {
+      console.log('🔄 [BACKUP SESSION] Using backup session token...');
+      
+      // Set cookie manually
+      document.cookie = `sessionToken=${backupToken}; path=/; secure; samesite=lax; max-age=2592000`;
+      
+      // Clean URL and reload
+      const cleanUrl = window.location.pathname + '?t=' + Date.now();
+      window.history.replaceState({}, document.title, cleanUrl);
+      window.location.reload();
+    }
+    
+    // Handle direct session flag
+    else if (directSession === 'true') {
+      console.log('🔄 [DIRECT SESSION] Direct session transfer detected, checking localStorage...');
+      
+      const backup = localStorage.getItem('aisentinel_session_backup');
+      if (backup) {
+        try {
+          const data = JSON.parse(backup);
+          if (data.sessionToken && data.sessionToken.startsWith('prod-session-')) {
+            console.log('✅ [DIRECT SESSION] Found backup session, setting cookie...');
+            document.cookie = `sessionToken=${data.sessionToken}; path=/; secure; samesite=lax; max-age=2592000`;
+          }
+        } catch (e) {
+          console.error('❌ [DIRECT SESSION] Invalid backup data:', e);
+        }
+      }
+      
+      // Clean URL and reload
+      const cleanUrl = window.location.pathname + '?t=' + Date.now();
+      window.history.replaceState({}, document.title, cleanUrl);
+      window.location.reload();
     }
   }, []);
   

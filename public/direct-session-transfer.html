@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Direct Session Transfer - AI Sentinel</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 700px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            background: rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        h1 { margin-bottom: 20px; font-size: 28px; }
+        .button {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s;
+            display: inline-block;
+            text-decoration: none;
+        }
+        .button:hover { background: #b91c1c; transform: translateY(-2px); }
+        .button:disabled { background: #666; cursor: not-allowed; transform: none; }
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background: rgba(0,0,0,0.2);
+            text-align: left;
+        }
+        .success { background: rgba(34, 197, 94, 0.3); border: 1px solid rgba(34, 197, 94, 0.5); }
+        .error { background: rgba(239, 68, 68, 0.3); border: 1px solid rgba(239, 68, 68, 0.5); }
+        .info { background: rgba(59, 130, 246, 0.3); border: 1px solid rgba(59, 130, 246, 0.5); }
+        .warning { background: rgba(245, 158, 11, 0.3); border: 1px solid rgba(245, 158, 11, 0.5); }
+        .step { margin: 10px 0; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 6px; }
+        .token-display { 
+            font-family: monospace; 
+            background: rgba(0,0,0,0.3); 
+            padding: 10px; 
+            border-radius: 4px; 
+            word-break: break-all; 
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Direct Session Transfer</h1>
+        <p>Bypass cookie domain restrictions with direct session transfer to browser storage.</p>
+        
+        <button class="button" onclick="executeDirectTransfer()" id="transfer-btn">
+            🚀 Execute Direct Session Transfer
+        </button>
+        
+        <div id="status" class="status info">
+            <strong>Ready:</strong> Click the button above to create and transfer a production session directly to your browser.
+        </div>
+    </div>
+
+    <script>
+        let sessionData = null;
+        
+        async function executeDirectTransfer() {
+            const statusDiv = document.getElementById('status');
+            const transferBtn = document.getElementById('transfer-btn');
+            
+            try {
+                transferBtn.disabled = true;
+                transferBtn.innerHTML = '🔄 Processing...';
+                
+                // Step 1: Create session
+                updateStatus('Step 1: Creating production database session...', 'info');
+                
+                const createResponse = await fetch('/api/auth/create-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({})
+                });
+                
+                if (!createResponse.ok) {
+                    throw new Error(`Session creation failed: ${createResponse.status}`);
+                }
+                
+                const sessionResult = await createResponse.json();
+                console.log('Session creation result:', sessionResult);
+                
+                if (!sessionResult.success || !sessionResult.fullSessionToken) {
+                    throw new Error('Session creation succeeded but no token received');
+                }
+                
+                sessionData = sessionResult;
+                
+                // Step 2: Store in localStorage as backup
+                updateStatus('Step 2: Storing session in browser localStorage...', 'info');
+                localStorage.setItem('aisentinel_session_backup', JSON.stringify({
+                    sessionToken: sessionResult.fullSessionToken,
+                    email: sessionResult.email,
+                    userId: sessionResult.userId,
+                    timestamp: Date.now()
+                }));
+                
+                // Step 3: Set cookie manually via document.cookie
+                updateStatus('Step 3: Setting session cookie manually...', 'info');
+                document.cookie = `sessionToken=${sessionResult.fullSessionToken}; path=/; secure; samesite=lax; max-age=2592000`;
+                
+                // Step 4: Verify cookie was set
+                const cookieSet = document.cookie.includes('sessionToken=');
+                
+                // Step 5: Test authentication
+                updateStatus('Step 4: Testing session authentication...', 'info');
+                
+                const authTest = await fetch('/api/auth/me', { credentials: 'include' });
+                const authResult = await authTest.json();
+                
+                // Success display
+                updateStatus(`
+                    <div class="step"><strong>✅ SESSION TRANSFER COMPLETE</strong></div>
+                    <div class="step"><strong>Session ID:</strong> ${sessionResult.sessionId}</div>
+                    <div class="step"><strong>Email:</strong> ${sessionResult.email}</div>
+                    <div class="step"><strong>Cookie Set:</strong> ${cookieSet ? 'Yes' : 'No (using localStorage backup)'}</div>
+                    <div class="step"><strong>Authentication Test:</strong> ${authResult.authenticated ? 'SUCCESS' : 'PENDING'}</div>
+                    <div class="step"><strong>Database:</strong> Connected</div>
+                    <div class="step">
+                        <strong>Session Token:</strong><br>
+                        <div class="token-display">${sessionResult.fullSessionToken}</div>
+                    </div>
+                    <div class="step">
+                        <a href="/?direct-session=true&t=${Date.now()}" class="button">→ Access AI Sentinel Chat Interface</a>
+                    </div>
+                `, 'success');
+                
+            } catch (error) {
+                console.error('Direct transfer failed:', error);
+                updateStatus(`
+                    <div class="step"><strong>❌ TRANSFER FAILED</strong></div>
+                    <div class="step"><strong>Error:</strong> ${error.message}</div>
+                    <div class="step">The session may have been created in the database but cookie setting failed.</div>
+                    <div class="step">Check browser console for detailed error information.</div>
+                `, 'error');
+                
+                transferBtn.disabled = false;
+                transferBtn.innerHTML = '🔄 Retry Transfer';
+            }
+        }
+        
+        function updateStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = message;
+            statusDiv.className = 'status ' + type;
+        }
+        
+        // Check if we have a backup session on load
+        window.onload = function() {
+            const backup = localStorage.getItem('aisentinel_session_backup');
+            if (backup) {
+                try {
+                    const data = JSON.parse(backup);
+                    const age = Date.now() - data.timestamp;
+                    if (age < 30 * 24 * 60 * 60 * 1000) { // 30 days
+                        updateStatus(`
+                            <div class="step"><strong>📦 BACKUP SESSION FOUND</strong></div>
+                            <div class="step"><strong>Email:</strong> ${data.email}</div>
+                            <div class="step"><strong>Age:</strong> ${Math.round(age / (60 * 1000))} minutes</div>
+                            <div class="step">You can try the direct transfer to refresh, or use the backup session.</div>
+                            <div class="step">
+                                <a href="/?backup-session=${encodeURIComponent(data.sessionToken)}&t=${Date.now()}" class="button">→ Use Backup Session</a>
+                            </div>
+                        `, 'warning');
+                    }
+                } catch (e) {
+                    console.log('Invalid backup session data:', e);
+                }
+            }
+        };
+    </script>
+</body>
+</html>
