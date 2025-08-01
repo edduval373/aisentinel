@@ -303,13 +303,13 @@ export default function SetupApiKeys() {
 
   const getConnectionStatus = (provider: any) => {
     const providerKey = provider.id || provider.provider || provider.name?.toLowerCase();
-    const configStatus = apiKeyConfig?.[providerKey];
+    const configStatus = (apiKeyConfig as Record<string, any>)?.[providerKey];
     const hasValidKey = (apiKeys[providerKey] && apiKeys[providerKey] !== '') || configStatus?.configured;
     return hasValidKey ? "connected" : "needs-key";
   };
 
   const isEnvironmentConfigured = (providerId: string) => {
-    const configStatus = apiKeyConfig?.[providerId];
+    const configStatus = (apiKeyConfig as Record<string, any>)?.[providerId];
     return configStatus?.configured && configStatus?.source === 'environment';
   };
 
