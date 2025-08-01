@@ -4,6 +4,8 @@ import {
   companyEmployees,
   companyRoles,
   aiModels,
+  aiModelTemplates,
+  companyApiKeys,
   activityTypes,
   permissions,
   userActivities,
@@ -32,6 +34,11 @@ import {
   type InsertCompanyRole,
   type AiModel,
   type InsertAiModel,
+  type AiModelTemplate,
+  type InsertAiModelTemplate,
+  type CompanyApiKey,
+  type InsertCompanyApiKey,
+  type AiModelWithApiKey,
   type ActivityType,
   type InsertActivityType,
   type Permission,
@@ -126,12 +133,29 @@ export interface IStorage {
   deleteCompanyRole(id: number): Promise<void>;
   getUserRoleLevel(userId: string): Promise<number>;
   
-  // AI Models operations
+  // AI Models operations (legacy)
   getAiModels(companyId: number): Promise<AiModel[]>;
   getWorkingAiModels(companyId: number): Promise<AiModel[]>;
   getEnabledAiModels(companyId: number): Promise<AiModel[]>;
   createAiModel(model: InsertAiModel): Promise<AiModel>;
   updateAiModel(id: number, model: Partial<InsertAiModel>): Promise<AiModel>;
+  
+  // AI Model Template operations (universal templates)
+  getAiModelTemplates(): Promise<AiModelTemplate[]>;
+  getAiModelTemplate(id: number): Promise<AiModelTemplate | undefined>;
+  createAiModelTemplate(template: InsertAiModelTemplate): Promise<AiModelTemplate>;
+  updateAiModelTemplate(id: number, template: Partial<InsertAiModelTemplate>): Promise<AiModelTemplate>;
+  deleteAiModelTemplate(id: number): Promise<void>;
+  
+  // Company API Key operations
+  getCompanyApiKeys(companyId: number): Promise<CompanyApiKey[]>;
+  getCompanyApiKey(companyId: number, templateId: number): Promise<CompanyApiKey | undefined>;
+  createCompanyApiKey(apiKey: InsertCompanyApiKey): Promise<CompanyApiKey>;
+  updateCompanyApiKey(id: number, apiKey: Partial<InsertCompanyApiKey>): Promise<CompanyApiKey>;
+  deleteCompanyApiKey(id: number): Promise<void>;
+  
+  // Combined AI Models with API Keys (what the frontend uses)
+  getAiModelsWithApiKeys(companyId: number): Promise<AiModelWithApiKey[]>;
   
   // Activity Types operations
   getActivityTypes(companyId: number): Promise<ActivityType[]>;
@@ -612,6 +636,94 @@ export class DatabaseStorage implements IStorage {
       .where(eq(aiModels.id, id))
       .returning();
     return updated;
+  }
+
+  // AI Model Template operations (universal templates)
+  async getAiModelTemplates(): Promise<AiModelTemplate[]> {
+    return await db.select().from(aiModelTemplates).where(eq(aiModelTemplates.isEnabled, true)).orderBy(aiModelTemplates.name);
+  }
+
+  async getAiModelTemplate(id: number): Promise<AiModelTemplate | undefined> {
+    const [template] = await db.select().from(aiModelTemplates).where(eq(aiModelTemplates.id, id));
+    return template;
+  }
+
+  async createAiModelTemplate(template: InsertAiModelTemplate): Promise<AiModelTemplate> {
+    const [created] = await db.insert(aiModelTemplates).values(template).returning();
+    return created;
+  }
+
+  async updateAiModelTemplate(id: number, template: Partial<InsertAiModelTemplate>): Promise<AiModelTemplate> {
+    const [updated] = await db
+      .update(aiModelTemplates)
+      .set(template)
+      .where(eq(aiModelTemplates.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteAiModelTemplate(id: number): Promise<void> {
+    await db.delete(aiModelTemplates).where(eq(aiModelTemplates.id, id));
+  }
+
+  // Company API Key operations
+  async getCompanyApiKeys(companyId: number): Promise<CompanyApiKey[]> {
+    return await db.select().from(companyApiKeys)
+      .where(eq(companyApiKeys.companyId, companyId))
+      .orderBy(companyApiKeys.createdAt);
+  }
+
+  async getCompanyApiKey(companyId: number, templateId: number): Promise<CompanyApiKey | undefined> {
+    const [apiKey] = await db.select().from(companyApiKeys)
+      .where(and(
+        eq(companyApiKeys.companyId, companyId),
+        eq(companyApiKeys.templateId, templateId)
+      ));
+    return apiKey;
+  }
+
+  async createCompanyApiKey(apiKey: InsertCompanyApiKey): Promise<CompanyApiKey> {
+    const [created] = await db.insert(companyApiKeys).values(apiKey).returning();
+    return created;
+  }
+
+  async updateCompanyApiKey(id: number, apiKey: Partial<InsertCompanyApiKey>): Promise<CompanyApiKey> {
+    const [updated] = await db
+      .update(companyApiKeys)
+      .set(apiKey)
+      .where(eq(companyApiKeys.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteCompanyApiKey(id: number): Promise<void> {
+    await db.delete(companyApiKeys).where(eq(companyApiKeys.id, id));
+  }
+
+  // Combined AI Models with API Keys (what the frontend uses)
+  async getAiModelsWithApiKeys(companyId: number): Promise<AiModelWithApiKey[]> {
+    // Get all templates
+    const templates = await this.getAiModelTemplates();
+    
+    // Get company's API keys
+    const apiKeys = await this.getCompanyApiKeys(companyId);
+    
+    // Combine templates with API keys
+    const modelsWithApiKeys: AiModelWithApiKey[] = templates.map(template => {
+      const companyApiKey = apiKeys.find(key => key.templateId === template.id);
+      
+      return {
+        ...template,
+        apiKey: companyApiKey?.apiKey,
+        organizationId: companyApiKey?.organizationId,
+        hasValidApiKey: !!(companyApiKey?.apiKey && companyApiKey.apiKey.length > 10 && !companyApiKey.apiKey.startsWith('placeholder')),
+        lastTested: companyApiKey?.lastTested,
+        isWorking: companyApiKey?.isWorking,
+      };
+    });
+    
+    // Only return models that have valid API keys OR are enabled templates (for display purposes)
+    return modelsWithApiKeys.filter(model => model.isEnabled);
   }
 
   // Activity Types operations

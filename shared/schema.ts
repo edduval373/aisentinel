@@ -188,7 +188,49 @@ export const trialUsage = pgTable("trial_usage", {
   index("idx_trial_device").on(table.deviceFingerprint),
 ]);
 
-// AI Models configuration
+// AI Model Templates - Universal templates managed by super-users
+export const aiModelTemplates = pgTable("ai_model_templates", {
+  id: serial("id").primaryKey(),
+  name: varchar("name").notNull(),
+  provider: varchar("provider").notNull(), // openai, anthropic, perplexity, google, cohere, custom
+  modelId: varchar("model_id").notNull(),
+  description: text("description"),
+  contextWindow: integer("context_window").default(4096).notNull(),
+  isEnabled: boolean("is_enabled").default(true).notNull(),
+  capabilities: jsonb("capabilities"), // ["text-generation", "code-generation", "multimodal", etc.]
+  // Default API Configuration (templates)
+  apiEndpoint: text("api_endpoint").notNull(),
+  authMethod: varchar("auth_method").default("bearer").notNull(), // bearer, api-key, x-api-key, basic, custom
+  requestHeaders: jsonb("request_headers"), // JSON object with headers
+  maxTokens: integer("max_tokens").default(1000).notNull(),
+  temperature: real("temperature").default(0.7).notNull(),
+  // Advanced settings
+  maxRetries: integer("max_retries").default(3).notNull(),
+  timeout: integer("timeout").default(30000).notNull(), // milliseconds
+  rateLimit: integer("rate_limit").default(100).notNull(), // requests per minute
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Company API Keys - Links companies to AI model templates with their API keys
+export const companyApiKeys = pgTable("company_api_keys", {
+  id: serial("id").primaryKey(),
+  companyId: integer("company_id").references(() => companies.id).notNull(),
+  templateId: integer("template_id").references(() => aiModelTemplates.id).notNull(),
+  apiKey: text("api_key").notNull(),
+  organizationId: varchar("organization_id"), // For providers like OpenAI that need org ID
+  isEnabled: boolean("is_enabled").default(true).notNull(),
+  // Status tracking
+  lastTested: timestamp("last_tested"),
+  isWorking: boolean("is_working"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => [
+  index("idx_company_api_key").on(table.companyId, table.templateId),
+  // Ensure unique template per company
+  unique("idx_company_template_unique").on(table.companyId, table.templateId),
+]);
+
+// Legacy AI Models table - keeping for backward compatibility during migration
 export const aiModels = pgTable("ai_models", {
   id: serial("id").primaryKey(),
   companyId: integer("company_id").references(() => companies.id).notNull(),
@@ -347,6 +389,8 @@ export const insertCompanySchema = createInsertSchema(companies).omit({ id: true
 export const insertCompanyEmployeeSchema = createInsertSchema(companyEmployees).omit({ id: true, addedAt: true });
 export const insertCompanyRoleSchema = createInsertSchema(companyRoles).omit({ id: true, createdAt: true });
 export const insertUserSchema = createInsertSchema(users).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertAiModelTemplateSchema = createInsertSchema(aiModelTemplates).omit({ id: true, createdAt: true });
+export const insertCompanyApiKeySchema = createInsertSchema(companyApiKeys).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertAiModelSchema = createInsertSchema(aiModels).omit({ id: true, createdAt: true });
 export const insertActivityTypeSchema = createInsertSchema(activityTypes).omit({ id: true, createdAt: true });
 export const insertPermissionSchema = createInsertSchema(permissions).omit({ id: true, createdAt: true });
@@ -384,8 +428,20 @@ export type CompanyRole = typeof companyRoles.$inferSelect;
 export type InsertCompanyRole = z.infer<typeof insertCompanyRoleSchema>;
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
+export type AiModelTemplate = typeof aiModelTemplates.$inferSelect;
+export type InsertAiModelTemplate = z.infer<typeof insertAiModelTemplateSchema>;
+export type CompanyApiKey = typeof companyApiKeys.$inferSelect;
+export type InsertCompanyApiKey = z.infer<typeof insertCompanyApiKeySchema>;
 export type AiModel = typeof aiModels.$inferSelect;
 export type InsertAiModel = z.infer<typeof insertAiModelSchema>;
+// Combined type for templates with API keys (what the frontend will work with)
+export type AiModelWithApiKey = AiModelTemplate & { 
+  apiKey?: string; 
+  organizationId?: string; 
+  hasValidApiKey: boolean;
+  lastTested?: Date | null;
+  isWorking?: boolean | null;
+};
 export type ActivityType = typeof activityTypes.$inferSelect;
 export type InsertActivityType = z.infer<typeof insertActivityTypeSchema>;
 export type Permission = typeof permissions.$inferSelect;
