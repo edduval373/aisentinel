@@ -549,27 +549,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                 <MessageSquare style={{ width: '14px', height: '14px' }} />
                 Landing Page
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowDebugPanel(true)}
-                style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: '4px',
-                  padding: '6px 10px',
-                  fontSize: '14px',
-                  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-                  fontWeight: '500',
-                  backgroundColor: '#fef3c7',
-                  borderColor: '#f59e0b',
-                  color: '#92400e'
-                }}
-                title="Debug Status Panel - View authentication and system information"
-              >
-                <Bug style={{ width: '14px', height: '14px' }} />
-                Debug
-              </Button>
+{/* Debug panel removed for production */}
             </div>
           </div>
         </div>
@@ -772,11 +752,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
         onOpenChange={closeDialog}
       />
       
-      {/* Debug Status Panel */}
-      <DebugStatusPanel
-        isOpen={showDebugPanel}
-        onClose={() => setShowDebugPanel(false)}
-      />
+{/* Debug Status Panel removed for production */}
     </div>
   );
 }

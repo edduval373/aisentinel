@@ -154,8 +154,12 @@ function Router() {
     console.log("[APP DEBUG] Logout detected, forcing landing page");
   }
   
-  // STRICT SECURITY: Only authenticated users can access chat
-  console.log("[APP DEBUG] STRICT MODE: No fallbacks, authentication required for all protected routes");
+  // If authenticated, show main interface (not landing page)
+  if (isAuthenticated && !hasLogoutFlag) {
+    console.log("[APP DEBUG] User is authenticated, showing main application interface");
+  } else {
+    console.log("[APP DEBUG] STRICT MODE: Not authenticated, showing landing page");
+  }
 
   // STRICT role-based route guard - NO DEMO FALLBACKS
   const RoleGuard = ({ children, requiredRole }: { children: React.ReactNode; requiredRole: 'admin' | 'owner' | 'super-user' }) => {
