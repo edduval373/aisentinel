@@ -1,29 +1,27 @@
 import * as React from "react"
 
-const alertVariants = (
-  "relative w-full rounded-lg border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground",
-  {
-    variants: {
-      variant: {
-        default: "bg-background text-foreground",
-        destructive:
-          "border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
-  }
-)
+const alertVariants = ({ variant = "default" }: { variant?: string } = {}) => {
+  return "" // Pure CSS inline styles approach - no classes
+}
 
 const Alert = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & VariantProps<typeof alertVariants>
->(({ className, variant, ...props }, ref) => (
+  React.HTMLAttributes<HTMLDivElement> & { variant?: "default" | "destructive" }
+>(({ className, variant = "default", ...props }, ref) => (
   <div
     ref={ref}
     role="alert"
-    className={cn(alertVariants({ variant }), className)}
+    className={className}
+    style={{
+      position: 'relative',
+      width: '100%',
+      borderRadius: '8px',
+      border: variant === 'destructive' ? '1px solid #fecaca' : '1px solid #e2e8f0',
+      padding: '16px',
+      backgroundColor: variant === 'destructive' ? '#fef2f2' : '#fff',
+      color: variant === 'destructive' ? '#dc2626' : '#374151',
+      ...props.style
+    }}
     {...props}
   />
 ))
@@ -35,7 +33,14 @@ const AlertTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <h5
     ref={ref}
-    className={cn("mb-1 font-medium leading-none tracking-tight", className)}
+    className={className}
+    style={{
+      marginBottom: '4px',
+      fontWeight: '500',
+      lineHeight: '1',
+      letterSpacing: '-0.025em',
+      ...props.style
+    }}
     {...props}
   />
 ))
@@ -47,7 +52,12 @@ const AlertDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("text-sm [&_p]:leading-relaxed", className)}
+    className={className}
+    style={{
+      fontSize: '14px',
+      lineHeight: '1.5',
+      ...props.style
+    }}
     {...props}
   />
 ))
