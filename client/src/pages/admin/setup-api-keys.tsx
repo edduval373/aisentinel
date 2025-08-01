@@ -93,8 +93,13 @@ export default function SetupApiKeys() {
       // Then check configuration status for display
       Object.entries(apiKeyConfig).forEach(([provider, config]: [string, any]) => {
         if (!keys[provider]) {
-          // If no database key, use empty string for input field
-          keys[provider] = '';
+          // If configured via environment, show masked placeholder
+          if (config.configured && config.source === 'environment') {
+            keys[provider] = `••••••••••••••••(configured via environment)`;
+          } else {
+            // If no database key, use empty string for input field
+            keys[provider] = '';
+          }
         }
         console.log(`SetupApiKeys: Provider ${provider} - configured: ${config.configured}, source: ${config.source || 'none'}`);
       });
@@ -298,8 +303,14 @@ export default function SetupApiKeys() {
 
   const getConnectionStatus = (provider: any) => {
     const providerKey = provider.id || provider.provider || provider.name?.toLowerCase();
-    const hasValidKey = apiKeys[providerKey] && apiKeys[providerKey] !== '';
+    const configStatus = apiKeyConfig?.[providerKey];
+    const hasValidKey = (apiKeys[providerKey] && apiKeys[providerKey] !== '') || configStatus?.configured;
     return hasValidKey ? "connected" : "needs-key";
+  };
+
+  const isEnvironmentConfigured = (providerId: string) => {
+    const configStatus = apiKeyConfig?.[providerId];
+    return configStatus?.configured && configStatus?.source === 'environment';
   };
 
   // Check access control first
@@ -402,14 +413,16 @@ export default function SetupApiKeys() {
           {apiProviders.map((provider) => {
             const status = getConnectionStatus(provider);
             const currentKey = apiKeys[provider.id] || '';
-            const isPlaceholder = currentKey.startsWith('placeholder-') || currentKey === '';
+            const isEnvironmentConfig = isEnvironmentConfigured(provider.id);
+            const isPlaceholder = !isEnvironmentConfig && (currentKey.startsWith('placeholder-') || currentKey === '');
+            const isConfigured = status === "connected";
             
             return (
               <Card 
                 key={provider.name} 
                 style={{ 
-                  border: isPlaceholder ? '1px solid #fecaca' : '1px solid #bbf7d0',
-                  backgroundColor: isPlaceholder ? '#fef2f2' : '#f0fdf4',
+                  border: isConfigured ? '1px solid #bbf7d0' : '1px solid #fecaca',
+                  backgroundColor: isConfigured ? '#f0fdf4' : '#fef2f2',
                   height: 'fit-content'
                 }}
               >
@@ -428,14 +441,14 @@ export default function SetupApiKeys() {
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <Badge 
                       style={{ 
-                        backgroundColor: status === "connected" ? '#dcfce7' : '#fee2e2',
-                        color: status === "connected" ? '#166534' : '#991b1b',
+                        backgroundColor: isConfigured ? '#dcfce7' : '#fee2e2',
+                        color: isConfigured ? '#166534' : '#991b1b',
                         border: 'none',
                         fontSize: '12px',
                         padding: '4px 8px'
                       }}
                     >
-                      {status === "connected" ? "API Key Set" : "Need API Key"}
+                      {isConfigured ? (isEnvironmentConfig ? "Configured" : "API Key Set") : "Not configured"}
                     </Badge>
                     <span style={{ fontSize: '12px', color: '#3b82f6', fontWeight: '500' }}>
                       {provider.models.length} model{provider.models.length !== 1 ? 's' : ''}
@@ -455,35 +468,36 @@ export default function SetupApiKeys() {
                       <Input
                         id={`${provider.id}-key`}
                         type="password"
-                        placeholder={provider.keyPlaceholder}
+                        placeholder={isEnvironmentConfig ? "Configured via environment variables" : provider.keyPlaceholder}
                         value={currentKey}
-                        onChange={isDemoMode ? undefined : (e) => handleApiKeyChange(provider.id, e.target.value)}
+                        onChange={isDemoMode || isEnvironmentConfig ? undefined : (e) => handleApiKeyChange(provider.id, e.target.value)}
                         onClick={isDemoMode ? () => openDialog('input') : undefined}
-                        disabled={isDemoMode}
+                        disabled={isDemoMode || isEnvironmentConfig}
                         style={{ 
                           flex: '1',
-                          border: isPlaceholder ? '1px solid #fca5a5' : '1px solid #86efac',
+                          border: isConfigured ? '1px solid #86efac' : '1px solid #fca5a5',
                           borderRadius: '6px',
                           padding: '8px 12px',
-                          opacity: isDemoMode ? 0.6 : 1,
-                          cursor: isDemoMode ? 'not-allowed' : 'text'
+                          opacity: (isDemoMode || isEnvironmentConfig) ? 0.6 : 1,
+                          cursor: (isDemoMode || isEnvironmentConfig) ? 'not-allowed' : 'text',
+                          color: isEnvironmentConfig ? '#059669' : 'inherit'
                         }}
                       />
                       <Button
                         onClick={isDemoMode ? () => openDialog('save') : () => handleSaveApiKey(provider.id)}
-                        disabled={isDemoMode || updateApiKeyMutation.isPending}
+                        disabled={isDemoMode || isEnvironmentConfig || updateApiKeyMutation.isPending}
                         style={{
-                          backgroundColor: (isDemoMode || isPlaceholder) ? 'transparent' : '#1e3a8a',
-                          color: (isDemoMode || isPlaceholder) ? '#1e3a8a' : 'white',
-                          border: (isDemoMode || isPlaceholder) ? '1px solid #1e3a8a' : 'none',
+                          backgroundColor: (isDemoMode || isEnvironmentConfig || !currentKey || currentKey.includes('(configured')) ? 'transparent' : '#1e3a8a',
+                          color: (isDemoMode || isEnvironmentConfig || !currentKey || currentKey.includes('(configured')) ? '#1e3a8a' : 'white',
+                          border: (isDemoMode || isEnvironmentConfig || !currentKey || currentKey.includes('(configured')) ? '1px solid #1e3a8a' : 'none',
                           borderRadius: '6px',
                           padding: '8px 16px',
                           display: 'flex',
                           alignItems: 'center',
                           gap: '4px',
                           fontSize: '14px',
-                          cursor: (isDemoMode || updateApiKeyMutation.isPending) ? 'not-allowed' : 'pointer',
-                          opacity: isDemoMode ? 0.6 : 1
+                          cursor: (isDemoMode || isEnvironmentConfig || updateApiKeyMutation.isPending) ? 'not-allowed' : 'pointer',
+                          opacity: (isDemoMode || isEnvironmentConfig) ? 0.6 : 1
                         }}
                       >
                         {updateApiKeyMutation.isPending ? (
@@ -495,11 +509,16 @@ export default function SetupApiKeys() {
                       </Button>
                     </div>
                     <p style={{ fontSize: '12px', color: '#6b7280', margin: '0' }}>
-                      {provider.instructions}
+                      {isEnvironmentConfig ? "This API key is configured via environment variables and ready to use." : provider.instructions}
                     </p>
-                    {isPlaceholder && (
+                    {isPlaceholder && !isEnvironmentConfig && (
                       <p style={{ fontSize: '13px', color: '#dc2626', margin: '8px 0 0 0' }}>
                         ⚠ Enter your real API key to enable {provider.name} models
+                      </p>
+                    )}
+                    {isEnvironmentConfig && (
+                      <p style={{ fontSize: '13px', color: '#059669', margin: '8px 0 0 0' }}>
+                        ✓ {provider.name} is configured and ready for AI interactions
                       </p>
                     )}
                   </div>
