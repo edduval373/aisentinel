@@ -83,6 +83,25 @@ export default function AccountDebugger() {
     refreshData();
   };
 
+  const saveCurrentAccount = () => {
+    // Get current session token from cookies or headers
+    const cookies = document.cookie.split(';');
+    const sessionCookie = cookies.find(c => c.trim().startsWith('sessionToken='));
+    const sessionToken = sessionCookie ? sessionCookie.split('=')[1] : `fallback-${Date.now()}`;
+
+    const currentAccount = {
+      email: 'ed.duval15@gmail.com',
+      sessionToken: sessionToken,
+      role: 'Super User',
+      roleLevel: 1000,
+      companyName: 'Duval Solutions'
+    };
+
+    console.log('📊 [DEBUG] Saving current authenticated account:', currentAccount);
+    AccountManager.saveAccount(currentAccount);
+    refreshData();
+  };
+
   return (
     <Card style={{ margin: '20px', maxWidth: '800px' }}>
       <CardHeader>
@@ -171,7 +190,10 @@ export default function AccountDebugger() {
             </Button>
           </div>
 
-          <div style={{ display: 'flex', gap: '10px' }}>
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            <Button onClick={saveCurrentAccount} variant="default">
+              Save Current Account
+            </Button>
             <Button onClick={manualAddSecondAccount} variant="outline">
               Add ed.duval@duvalsolutions.net
             </Button>

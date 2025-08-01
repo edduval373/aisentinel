@@ -745,6 +745,11 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
         open={showDialog}
         onOpenChange={closeDialog}
       />
+
+      {/* Account Debugger - only show for Super Users */}
+      {user?.roleLevel >= 1000 && (
+        <AccountDebugger />
+      )}
       
 {/* Debug Status Panel removed for production */}
     </div>
