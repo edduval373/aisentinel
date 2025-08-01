@@ -191,16 +191,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Demo and authenticated AI models route - returns company 1 for demo, user's company for authenticated
-  app.get('/api/ai-models', optionalAuth, async (req: any, res) => {
+  // AI models route with header authentication support
+  app.get('/api/ai-models', async (req, res) => {
     try {
       let companyId = 1; // Default to company 1 for demo users
+      let user: any = null;
 
-      // If user is authenticated and has a company, use their company
-      if (req.user && req.user.companyId) {
-        companyId = req.user.companyId;
-        console.log("Authenticated user requesting AI models:", { userId: req.user.userId, companyId });
-      } else {
+      // Check for header-based authentication first
+      const bearerToken = req.headers.authorization?.replace('Bearer ', '');
+      const sessionToken = req.headers['x-session-token'] as string;
+      const authToken = bearerToken || sessionToken;
+
+      if (authToken && authToken.startsWith('prod-session-')) {
+        const authService = await import('./services/authService');
+        const session = await authService.authService.verifySession(authToken);
+        if (session) {
+          user = { userId: session.userId, companyId: session.companyId };
+          companyId = session.companyId;
+          console.log(`✅ Header auth for AI models: userId=${user.userId}, companyId=${companyId}`);
+        }
+      }
+      
+      // Fallback to cookie auth if no header auth
+      else if (req.cookies?.sessionToken) {
+        const authService = await import('./services/authService');
+        const session = await authService.authService.verifySession(req.cookies.sessionToken);
+        if (session) {
+          user = { userId: session.userId, companyId: session.companyId };
+          companyId = session.companyId;
+          console.log("Authenticated user requesting AI models:", { userId: user.userId, companyId });
+        }
+      }
+
+      if (!user) {
         console.log("Demo mode AI models request");
       }
 
@@ -254,16 +277,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Demo and authenticated activity types route - returns company 1 for demo, user's company for authenticated
-  app.get('/api/activity-types', optionalAuth, async (req: any, res) => {
+  // Activity types route with header authentication support
+  app.get('/api/activity-types', async (req, res) => {
     try {
       let companyId = 1; // Default to company 1 for demo users
+      let user: any = null;
 
-      // If user is authenticated and has a company, use their company
-      if (req.user && req.user.companyId) {
-        companyId = req.user.companyId;
-        console.log("Authenticated user requesting activity types:", { userId: req.user.userId, companyId });
-      } else {
+      // Check for header-based authentication first
+      const bearerToken = req.headers.authorization?.replace('Bearer ', '');
+      const sessionToken = req.headers['x-session-token'] as string;
+      const authToken = bearerToken || sessionToken;
+
+      if (authToken && authToken.startsWith('prod-session-')) {
+        const authService = await import('./services/authService');
+        const session = await authService.authService.verifySession(authToken);
+        if (session) {
+          user = { userId: session.userId, companyId: session.companyId };
+          companyId = session.companyId;
+          console.log(`✅ Header auth for activity types: userId=${user.userId}, companyId=${companyId}`);
+        }
+      }
+      
+      // Fallback to cookie auth if no header auth
+      else if (req.cookies?.sessionToken) {
+        const authService = await import('./services/authService');
+        const session = await authService.authService.verifySession(req.cookies.sessionToken);
+        if (session) {
+          user = { userId: session.userId, companyId: session.companyId };
+          companyId = session.companyId;
+          console.log("Authenticated user requesting activity types:", { userId: user.userId, companyId });
+        }
+      }
+
+      if (!user) {
         console.log("Demo mode activity types request");
       }
 
@@ -2637,15 +2683,33 @@ Stack: \${error.stack || 'No stack trace available'}\`;
   });
 
   // Create new chat session
-  app.post('/api/chat/session', optionalAuth, async (req: AuthenticatedRequest, res) => {
+  app.post('/api/chat/session', async (req, res) => {
     try {
       let userId: string | undefined;
       let companyId: number | undefined;
 
       console.log('🔍 POST /api/chat/session - Creating new session');
 
-      // Try cookie auth first
-      if (req.cookies?.sessionToken) {
+      // Check header-based authentication first (for production)
+      const bearerToken = req.headers.authorization?.replace('Bearer ', '');
+      const sessionToken = req.headers['x-session-token'] as string;
+      const authToken = bearerToken || sessionToken;
+
+      if (authToken && authToken.startsWith('prod-session-')) {
+        console.log('🔄 Using header-based authentication for session creation');
+        const authService = await import('./services/authService');
+        const session = await authService.authService.verifySession(authToken);
+        if (session) {
+          userId = session.userId;
+          companyId = session.companyId;
+          console.log(`✅ Header auth successful: userId=${userId}, companyId=${companyId}`);
+        } else {
+          console.log(`❌ Header auth failed for token: ${authToken.substring(0, 20)}...`);
+        }
+      }
+      
+      // Fallback to cookie auth
+      else if (req.cookies?.sessionToken) {
         const authService = await import('./services/authService');
         const session = await authService.authService.verifySession(req.cookies.sessionToken);
         if (session) {
@@ -2656,10 +2720,8 @@ Stack: \${error.stack || 'No stack trace available'}\`;
           console.log(`❌ Cookie auth failed for token: ${req.cookies.sessionToken.substring(0, 20)}...`);
         }
       } else {
-        console.log(`❌ No session token found in cookies`);
+        console.log(`❌ No session token found in headers or cookies`);
       }
-
-      // PRODUCTION: Replit Auth fallback REMOVED - cookie sessions only
 
       if (!userId || !companyId) {
         console.log(`❌ No valid authentication found, returning 401`);
