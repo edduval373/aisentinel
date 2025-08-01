@@ -1664,51 +1664,37 @@ Stack: \${error.stack || 'No stack trace available'}\`;
     try {
       console.log('🚀 Production session creation requested');
       
-      // Use the authenticated user's email from current session or default
-      const email = 'ed.duval15@gmail.com'; // Production admin email
-      const userId = '42450602'; // Production admin user ID
+      const email = 'ed.duval15@gmail.com';
+      const userId = '42450602';
       
-      // Generate production session token
-      const sessionToken = `prod-session-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
-      const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+      // Import production auth
+      const { createProductionSession } = await import('./productionAuth');
       
-      console.log('🔧 Creating database session:', { email, userId, tokenLength: sessionToken.length });
+      // Create session using database-only approach
+      const sessionId = await createProductionSession(email, userId);
       
-      // Create session in database
-      await storage.createUserSession({
-        userId,
-        sessionToken,
-        email,
-        companyId: 1, // Default company
-        roleLevel: 1000, // Super-user level
-        expiresAt
-      });
-      
-      console.log('✅ Database session created successfully');
-      
-      // Set production cookie with Vercel-optimized settings
+      // Set cookie as backup (but don't rely on it)
       const isProduction = process.env.NODE_ENV === 'production';
-      res.cookie('sessionToken', sessionToken, {
+      res.cookie('sessionToken', sessionId, {
         httpOnly: true,
-        secure: isProduction, // Always secure in production
-        sameSite: 'lax', // Allows cross-page navigation in production
-        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-        path: '/' // Let Vercel handle domain automatically
-        // Removed explicit domain - Vercel handles this automatically
+        secure: isProduction,
+        sameSite: 'lax',
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        path: '/'
       });
       
-      console.log('✅ Production cookie set:', sessionToken.substring(0, 25) + '...');
+      console.log('✅ Production session created with database-only auth');
       
       res.json({
         success: true,
-        sessionId: sessionToken.substring(0, 25) + '...',
-        sessionToken: sessionToken.substring(0, 25) + '...', // Don't expose full token
-        fullSessionToken: sessionToken, // Provide full token for URL transfer workaround
+        sessionId: sessionId.substring(0, 25) + '...',
+        sessionToken: sessionId.substring(0, 25) + '...',
+        fullSessionToken: sessionId, // Full token for header-based auth
+        authMethod: 'database-only',
         email,
         userId,
         databaseConnected: true,
-        cookieSet: true,
-        message: 'Production session created successfully'
+        message: 'Production session created with database-only authentication'
       });
       
     } catch (error) {

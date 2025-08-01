@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Header-Based Authentication Test</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px; margin: 50px auto; padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; min-height: 100vh;
+        }
+        .container {
+            background: rgba(255,255,255,0.1); border-radius: 16px; padding: 30px;
+            backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);
+        }
+        h1 { margin-bottom: 20px; font-size: 28px; text-align: center; }
+        .button {
+            background: #dc2626; color: white; border: none; padding: 15px 30px;
+            border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;
+            margin: 10px; transition: all 0.3s; display: inline-block;
+        }
+        .button:hover { background: #b91c1c; transform: translateY(-2px); }
+        .result {
+            background: rgba(0,0,0,0.3); padding: 15px; margin: 10px 0;
+            border-radius: 8px; font-family: monospace; font-size: 14px;
+        }
+        .success { border-left: 4px solid #22c55e; }
+        .error { border-left: 4px solid #ef4444; }
+        .info { border-left: 4px solid #3b82f6; }
+        input { 
+            background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);
+            color: white; padding: 8px 12px; border-radius: 4px; width: 400px;
+            font-family: monospace;
+        }
+        input::placeholder { color: rgba(255,255,255,0.7); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Header-Based Authentication Test</h1>
+        <p>Test database-only authentication bypassing cookie restrictions entirely.</p>
+        
+        <button onclick="createSession()" class="button">1. Create Database Session</button>
+        <button onclick="testHeaderAuth()" class="button">2. Test Header Auth</button>
+        <button onclick="navigateWithHeader()" class="button">3. Navigate with Headers</button>
+        <button onclick="clearAll()" class="button">Clear All</button>
+        
+        <div style="margin: 20px 0;">
+            <label>Session Token:</label><br>
+            <input type="text" id="sessionToken" placeholder="Session token will appear here..." readonly>
+        </div>
+        
+        <div id="results"></div>
+    </div>
+
+    <script>
+        let sessionToken = null;
+        const results = document.getElementById('results');
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toISOString();
+            results.innerHTML += `<div class="result ${type}">${timestamp}: ${message}</div>`;
+            results.scrollTop = results.scrollHeight;
+        }
+
+        async function createSession() {
+            try {
+                log('🔄 Creating database-only session...', 'info');
+                
+                const response = await fetch('/api/auth/create-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({})
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.fullSessionToken) {
+                    sessionToken = data.fullSessionToken;
+                    document.getElementById('sessionToken').value = sessionToken;
+                    log(`✅ Session created: ${data.sessionId} (Method: ${data.authMethod})`, 'success');
+                    log(`📊 Database: ${data.databaseConnected}, Email: ${data.email}`, 'info');
+                } else {
+                    log(`❌ Session creation failed: ${data.message}`, 'error');
+                }
+                
+            } catch (error) {
+                log(`❌ Error creating session: ${error.message}`, 'error');
+            }
+        }
+
+        async function testHeaderAuth() {
+            if (!sessionToken) {
+                log('⚠️ No session token available. Create session first.', 'error');
+                return;
+            }
+            
+            try {
+                log('🔄 Testing header-based authentication...', 'info');
+                
+                // Test with Authorization header
+                const authResponse = await fetch('/api/auth/me', {
+                    headers: {
+                        'Authorization': `Bearer ${sessionToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const authData = await authResponse.json();
+                log(`📋 Auth Header Test: ${JSON.stringify(authData)}`, authData.authenticated ? 'success' : 'error');
+                
+                // Test with custom header
+                const customResponse = await fetch('/api/auth/me', {
+                    headers: {
+                        'X-Session-Token': sessionToken,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const customData = await customResponse.json();
+                log(`📋 Custom Header Test: ${JSON.stringify(customData)}`, customData.authenticated ? 'success' : 'error');
+                
+            } catch (error) {
+                log(`❌ Header auth test failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function navigateWithHeader() {
+            if (!sessionToken) {
+                log('⚠️ No session token available. Create session first.', 'error');
+                return;
+            }
+            
+            log('🚀 Navigating to main app with header authentication...', 'info');
+            
+            // Store token in localStorage for client-side header injection
+            localStorage.setItem('authToken', sessionToken);
+            
+            // Navigate with session as query parameter for initial setup
+            window.location.href = `/?auth-token=${encodeURIComponent(sessionToken)}&method=header&t=${Date.now()}`;
+        }
+
+        function clearAll() {
+            sessionToken = null;
+            document.getElementById('sessionToken').value = '';
+            localStorage.removeItem('authToken');
+            results.innerHTML = '';
+            log('🗑️ All data cleared', 'info');
+        }
+        
+        // Auto-populate if we have a stored token
+        window.onload = function() {
+            const stored = localStorage.getItem('authToken');
+            if (stored && stored.startsWith('prod-')) {
+                sessionToken = stored;
+                document.getElementById('sessionToken').value = sessionToken;
+                log('📦 Restored session token from localStorage', 'info');
+            }
+        };
+    </script>
+</body>
+</html>
