@@ -897,9 +897,9 @@ export default async function handler(req, res) {
         // For authenticated users in production, create REAL DATABASE SESSION
         console.log('Creating REAL authenticated session in production database');
         
-        // Extract session token from auth/me response
-        if (!sessionToken || (!sessionToken.startsWith('prod-session-') && !sessionToken.startsWith('dev-session-'))) {
-          sessionToken = `prod-session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        // Use existing session token or create new one
+        if (!sessionToken || (!sessionToken.startsWith('prod-') && !sessionToken.startsWith('dev-'))) {
+          sessionToken = `prod-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
         }
 
         // CONNECT TO REAL DATABASE - NO FALLBACKS
@@ -986,7 +986,7 @@ export default async function handler(req, res) {
               // Check for demo mode
               const sessionToken = req.headers.cookie?.match(/sessionToken=([^;]+)/)?.[1];
               const isDemoMode = sessionToken?.startsWith('demo-session-');
-              const isProdMode = sessionToken?.startsWith('prod-session-');
+              const isProdMode = sessionToken?.startsWith('prod-');
               
               if (isDemoMode) {
                 console.log('Demo mode message processing');
@@ -1047,8 +1047,8 @@ export default async function handler(req, res) {
                   
                   // Insert user message into database
                   const userMessageResult = await client.query(
-                    'INSERT INTO "chat_messages" (session_id, role, content, created_at) VALUES ($1, $2, $3, NOW()) RETURNING *',
-                    [messageData.sessionId, 'user', messageData.content]
+                    'INSERT INTO "chat_messages" (session_id, message, timestamp) VALUES ($1, $2, NOW()) RETURNING *',
+                    [messageData.sessionId, messageData.content]
                   );
                   
                   const userMessage = userMessageResult.rows[0];
@@ -1063,8 +1063,8 @@ export default async function handler(req, res) {
                   
                   // Insert AI response into database
                   const aiMessageResult = await client.query(
-                    'INSERT INTO "chat_messages" (session_id, role, content, created_at) VALUES ($1, $2, $3, NOW()) RETURNING *',
-                    [messageData.sessionId, 'assistant', aiResponse]
+                    'UPDATE "chat_messages" SET response = $1 WHERE id = $2 RETURNING *',
+                    [aiResponse, userMessage.id]
                   );
                   
                   const aiMessage = aiMessageResult.rows[0];
@@ -1075,16 +1075,16 @@ export default async function handler(req, res) {
                     userMessage: {
                       id: userMessage.id,
                       sessionId: userMessage.session_id,
-                      content: userMessage.content,
-                      role: userMessage.role,
-                      createdAt: userMessage.created_at
+                      content: userMessage.message,
+                      role: 'user',
+                      createdAt: userMessage.timestamp
                     },
                     assistantMessage: {
                       id: aiMessage.id,
                       sessionId: aiMessage.session_id,
-                      content: aiMessage.content,
-                      role: aiMessage.role,
-                      createdAt: aiMessage.created_at
+                      content: aiMessage.response,
+                      role: 'assistant',
+                      createdAt: aiMessage.timestamp
                     },
                     environment: 'production-real-database'
                   };
