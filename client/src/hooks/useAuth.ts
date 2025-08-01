@@ -50,8 +50,15 @@ export function useAuth() {
             lastName: authResponse.lastName,
             role: authResponse.role,
             roleLevel: authResponse.roleLevel || authResponse.effectiveRoleLevel,
-            companyId: authResponse.companyId
+            companyId: authResponse.companyId,
+            companyName: authResponse.companyName
           };
+          
+          // Ensure companyId is properly extracted from user object if it exists there
+          if (authResponse.user && authResponse.user.companyId) {
+            user.companyId = authResponse.user.companyId;
+            user.companyName = authResponse.user.companyName;
+          }
           
           console.log('✅ Authentication successful via headers:', user);
           return { 

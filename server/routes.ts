@@ -246,49 +246,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log("Demo mode AI models request");
       }
 
-      // Get working models first, fallback to all models if none are working
-      let models = await storage.getWorkingAiModels(companyId);
+      // Use new template-based system to get models with API keys
+      let models = await storage.getAiModelsWithApiKeys(companyId);
 
-      // If no working models, return all models but with a warning flag
-      if (models.length === 0) {
-        console.log("No working AI models found, returning all models with demo fallback");
-        const allModels = await storage.getEnabledAiModels(companyId);
-
-        // If still no models, create basic demo models
-        if (allModels.length === 0) {
-          console.log("No models found in database, providing demo models");
-          models = [
-            {
-              id: 1,
-              name: "GPT-4o (Demo)",
-              provider: "openai",
-              hasValidApiKey: false,
-              warning: "Demo mode - configure API keys to enable"
-            },
-            {
-              id: 2,
-              name: "Claude Sonnet 4 (Demo)",
-              provider: "anthropic", 
-              hasValidApiKey: false,
-              warning: "Demo mode - configure API keys to enable"
-            }
-          ];
-        } else {
-          models = allModels.map(model => ({
-            ...model,
-            hasValidApiKey: false,
-            warning: "API key not configured"
-          }));
-        }
-      } else {
-        // Mark working models as having valid API keys
-        models = models.map(model => ({
-          ...model,
-          hasValidApiKey: true
+      // If no models with API keys, provide demo templates
+      if (models.length === 0 || !models.some(model => model.hasValidApiKey)) {
+        console.log("No working AI models found, returning templates with demo warning");
+        
+        // Get all templates and mark them as demo
+        const templates = await storage.getAiModelTemplates();
+        models = templates.map(template => ({
+          ...template,
+          hasValidApiKey: false,
+          warning: "Demo mode - configure API keys to enable"
         }));
       }
 
-      console.log("Returning models for company", companyId + ":", models.length, "models");
+      console.log("Returning AI model templates for company", companyId + ":", models.length, "models");
       return res.json(models);
     } catch (error) {
       console.error("Error fetching AI models:", error);
@@ -2092,6 +2066,85 @@ Stack: \${error.stack || 'No stack trace available'}\`;
 
 
 
+  // AI Model Templates (Super-user only)
+  app.get('/api/admin/ai-model-templates', optionalAuth, async (req: any, res) => {
+    try {
+      // Check role level - only super-users can manage templates
+      if (req.user) {
+        const userRoleLevel = req.user.roleLevel || 1;
+        if (userRoleLevel < 1000) { // Must be super-user (1000+)
+          return res.status(403).json({ message: "Super-user access required" });
+        }
+      }
+      
+      const templates = await storage.getAiModelTemplates();
+      res.json(templates);
+    } catch (error) {
+      console.error("Error fetching AI model templates:", error);
+      res.status(500).json({ message: "Failed to fetch AI model templates" });
+    }
+  });
+
+  app.post('/api/admin/ai-model-templates', optionalAuth, async (req: any, res) => {
+    try {
+      // Check role level - only super-users can create templates
+      if (!req.user || req.user.roleLevel < 1000) {
+        return res.status(403).json({ message: "Super-user access required" });
+      }
+      
+      const template = await storage.createAiModelTemplate(req.body);
+      res.json(template);
+    } catch (error) {
+      console.error("Error creating AI model template:", error);
+      res.status(500).json({ message: "Failed to create AI model template" });
+    }
+  });
+
+  // Company API Keys (Owner level)
+  app.get('/api/admin/company-api-keys', optionalAuth, async (req: any, res) => {
+    try {
+      let companyId = 1; // Default for demo
+      
+      if (req.user) {
+        const userRoleLevel = req.user.roleLevel || 1;
+        if (userRoleLevel < 999) { // Must be owner (999+) or higher
+          return res.status(403).json({ message: "Owner access required" });
+        }
+        companyId = req.user.companyId || 1;
+      }
+      
+      const apiKeys = await storage.getCompanyApiKeys(companyId);
+      res.json(apiKeys);
+    } catch (error) {
+      console.error("Error fetching company API keys:", error);
+      res.status(500).json({ message: "Failed to fetch company API keys" });
+    }
+  });
+
+  app.post('/api/admin/company-api-keys', optionalAuth, async (req: any, res) => {
+    try {
+      let companyId = 1; // Default for demo
+      
+      if (req.user) {
+        const userRoleLevel = req.user.roleLevel || 1;
+        if (userRoleLevel < 999) { // Must be owner (999+) or higher
+          return res.status(403).json({ message: "Owner access required" });
+        }
+        companyId = req.user.companyId || 1;
+      }
+      
+      const apiKey = await storage.createCompanyApiKey({
+        ...req.body,
+        companyId
+      });
+      res.json(apiKey);
+    } catch (error) {
+      console.error("Error creating company API key:", error);
+      res.status(500).json({ message: "Failed to create company API key" });
+    }
+  });
+
+  // Legacy AI models endpoint (kept for backward compatibility)
   app.get('/api/admin/ai-models', isAuthenticated, async (req: any, res) => {
     try {
       const user = await storage.getUser(req.user.claims.sub);
@@ -2102,7 +2155,9 @@ Stack: \${error.stack || 'No stack trace available'}\`;
       if (!user?.companyId) {
         return res.status(400).json({ message: "No company associated with user" });
       }
-      const models = await storage.getAiModels(user.companyId);
+      
+      // Use new template system but return in legacy format
+      const models = await storage.getAiModelsWithApiKeys(user.companyId);
       res.json(models);
     } catch (error) {
       console.error("Error fetching AI models:", error);
