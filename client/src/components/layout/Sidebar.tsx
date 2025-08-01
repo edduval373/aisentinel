@@ -381,52 +381,6 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                 <Building style={{ width: '20px', height: '20px' }} />
                 <span>Company Management</span>
               </button>
-              
-              <button
-                onClick={() => {
-                  if (location === "/admin/setup-api-keys") {
-                    // If already on this page, just close the sidebar
-                    onToggle();
-                  } else {
-                    // Navigate to the page
-                    navigate("/admin/setup-api-keys");
-                    if (window.innerWidth < 1024) onToggle(); // Close on mobile
-                  }
-                }}
-                style={{
-                  width: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  textAlign: 'left',
-                  borderRadius: '8px',
-                  padding: '8px 12px',
-                  transition: 'all 0.2s',
-                  color: location === "/admin/setup-api-keys" ? 'white' : '#cbd5e1',
-                  backgroundColor: location === "/admin/setup-api-keys" ? '#374151' : 'transparent',
-                  border: 'none',
-                  cursor: 'pointer'
-                }}
-                onMouseEnter={(e) => {
-                  if (location !== "/admin/setup-api-keys") {
-                    e.currentTarget.style.backgroundColor = '#374151';
-                    e.currentTarget.style.color = 'white';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (location !== "/admin/setup-api-keys") {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = '#cbd5e1';
-                  }
-                }}
-              >
-                <Key style={{ 
-                  width: '20px', 
-                  height: '20px',
-                  color: location === "/admin/setup-api-keys" ? '#3b82f6' : '#94a3b8'
-                }} />
-                <span>Setup API Keys</span>
-              </button>
             </>
           )}
 
