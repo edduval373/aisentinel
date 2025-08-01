@@ -57,11 +57,32 @@ export default function VerificationSuccess() {
         <Card className="w-full max-w-md">
           <CardContent className="pt-6">
             <div className="text-center">
-              <div className="flex items-center justify-center mb-4">
-                <Loader2 className="w-12 h-12 text-blue-600 animate-spin" />
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
+                <div style={{ 
+                  width: '48px', 
+                  height: '48px', 
+                  animation: 'spin 2s linear infinite' 
+                }}>
+                  <img 
+                    src="/ai-sentinel-logo.png" 
+                    alt="AI Sentinel" 
+                    style={{ 
+                      width: '100%', 
+                      height: '100%', 
+                      objectFit: 'contain',
+                      filter: 'brightness(1.1) saturate(1.3) contrast(1.2)'
+                    }} 
+                  />
+                </div>
               </div>
               <h2 className="text-xl font-semibold mb-2">Verifying Your Email</h2>
               <p className="text-gray-600">Please wait while we verify your account...</p>
+              <style>{`
+                @keyframes spin {
+                  0% { transform: rotate(0deg); }
+                  100% { transform: rotate(360deg); }
+                }
+              `}</style>
             </div>
           </CardContent>
         </Card>

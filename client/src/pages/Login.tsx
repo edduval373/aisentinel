@@ -304,8 +304,29 @@ export default function Login() {
                 >
                   {isLoading ? (
                     <>
-                      <Loader2 style={{ width: '16px', height: '16px', animation: 'spin 1s linear infinite' }} />
+                      <div style={{ 
+                        width: '16px', 
+                        height: '16px', 
+                        animation: 'spin 1s linear infinite' 
+                      }}>
+                        <img 
+                          src="/ai-sentinel-logo.png" 
+                          alt="Loading" 
+                          style={{ 
+                            width: '100%', 
+                            height: '100%', 
+                            objectFit: 'contain',
+                            filter: 'brightness(1.1) saturate(1.3) contrast(1.2)'
+                          }} 
+                        />
+                      </div>
                       Resending...
+                      <style>{`
+                        @keyframes spin {
+                          0% { transform: rotate(0deg); }
+                          100% { transform: rotate(360deg); }
+                        }
+                      `}</style>
                     </>
                   ) : (
                     <>
@@ -516,8 +537,29 @@ export default function Login() {
                 >
                   {isLoading ? (
                     <>
-                      <Loader2 style={{ width: '16px', height: '16px', animation: 'spin 1s linear infinite' }} />
+                      <div style={{ 
+                        width: '16px', 
+                        height: '16px', 
+                        animation: 'spin 1s linear infinite' 
+                      }}>
+                        <img 
+                          src="/ai-sentinel-logo.png" 
+                          alt="Loading" 
+                          style={{ 
+                            width: '100%', 
+                            height: '100%', 
+                            objectFit: 'contain',
+                            filter: 'brightness(1.1) saturate(1.3) contrast(1.2)'
+                          }} 
+                        />
+                      </div>
                       Sending Verification...
+                      <style>{`
+                        @keyframes spin {
+                          0% { transform: rotate(0deg); }
+                          100% { transform: rotate(360deg); }
+                        }
+                      `}</style>
                     </>
                   ) : (
                     <>

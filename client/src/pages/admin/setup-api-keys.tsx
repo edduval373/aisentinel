@@ -499,11 +499,32 @@ export default function SetupApiKeys() {
                         }}
                       >
                         {updateApiKeyMutation.isPending ? (
-                          <Loader2 style={{ width: '16px', height: '16px', animation: 'spin 1s linear infinite' }} />
+                          <div style={{ 
+                            width: '16px', 
+                            height: '16px', 
+                            animation: 'spin 1s linear infinite' 
+                          }}>
+                            <img 
+                              src="/ai-sentinel-logo.png" 
+                              alt="Loading" 
+                              style={{ 
+                                width: '100%', 
+                                height: '100%', 
+                                objectFit: 'contain',
+                                filter: 'brightness(1.1) saturate(1.3) contrast(1.2)'
+                              }} 
+                            />
+                          </div>
                         ) : (
                           <Save style={{ width: '16px', height: '16px' }} />
                         )}
                         {updateApiKeyMutation.isPending ? 'Saving...' : 'Save'}
+                        <style>{`
+                          @keyframes spin {
+                            0% { transform: rotate(0deg); }
+                            100% { transform: rotate(360deg); }
+                          }
+                        `}</style>
                       </Button>
                     </div>
                     <p style={{ fontSize: '12px', color: '#6b7280', margin: '0' }}>

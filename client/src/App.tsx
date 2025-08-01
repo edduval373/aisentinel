@@ -130,10 +130,10 @@ function Router() {
             console.log('📋 [ACCOUNT SAVE] All saved accounts:', savedAccounts.map(acc => ({ email: acc.email, roleLevel: acc.roleLevel })));
           }
           
-          // Clean URL and reload
+          // Clean URL and invalidate auth
           const cleanUrl = window.location.pathname;
           window.history.replaceState({}, document.title, cleanUrl);
-          window.location.reload();
+          queryClient.invalidateQueries({ queryKey: ['/api/auth/me'] });
         } catch (error) {
           console.error('❌ [ACCOUNT SAVE] Failed to save account:', error);
         }
@@ -156,9 +156,7 @@ function Router() {
         window.history.replaceState({}, document.title, cleanUrl);
         
         // Force re-render by invalidating the auth query
-        setTimeout(() => {
-          window.location.reload();
-        }, 100);
+        queryClient.invalidateQueries({ queryKey: ['/api/auth/me'] });
       };
       
       handleAuthToken();
@@ -172,10 +170,10 @@ function Router() {
       apiRequest('/api/auth/activate-session', 'POST', { sessionToken })
         .then((result) => {
           console.log('✅ [URL SESSION] Session activated successfully:', result);
-          // Remove session param from URL and reload to trigger auth check
-          const cleanUrl = window.location.pathname + '?t=' + Date.now();
+          // Remove session param from URL and invalidate auth
+          const cleanUrl = window.location.pathname;
           window.history.replaceState({}, document.title, cleanUrl);
-          window.location.reload();
+          queryClient.invalidateQueries({ queryKey: ['/api/auth/me'] });
         })
         .catch((error) => {
           console.error('❌ [URL SESSION] Session activation failed:', error);
@@ -192,10 +190,10 @@ function Router() {
       // Set cookie manually
       document.cookie = `sessionToken=${backupToken}; path=/; secure; samesite=lax; max-age=2592000`;
       
-      // Clean URL and reload
-      const cleanUrl = window.location.pathname + '?t=' + Date.now();
+      // Clean URL and invalidate auth
+      const cleanUrl = window.location.pathname;
       window.history.replaceState({}, document.title, cleanUrl);
-      window.location.reload();
+      queryClient.invalidateQueries({ queryKey: ['/api/auth/me'] });
     }
     
     // Handle direct session flag
@@ -215,10 +213,10 @@ function Router() {
         }
       }
       
-      // Clean URL and reload
-      const cleanUrl = window.location.pathname + '?t=' + Date.now();
+      // Clean URL and invalidate auth
+      const cleanUrl = window.location.pathname;
       window.history.replaceState({}, document.title, cleanUrl);
-      window.location.reload();
+      queryClient.invalidateQueries({ queryKey: ['/api/auth/me'] });
     }
   }, []);
 
@@ -243,10 +241,8 @@ function Router() {
       
       setShowAccountSelector(false);
       
-      // Reload to trigger authentication
-      setTimeout(() => {
-        window.location.reload();
-      }, 100);
+      // Invalidate auth to trigger authentication
+      queryClient.invalidateQueries({ queryKey: ['/api/auth/me'] });
     } catch (error) {
       console.error('Error selecting account:', error);
     }
@@ -374,9 +370,9 @@ function Router() {
           
           if (isVerified && verifiedEmail) {
             console.log("[APP DEBUG] Email verification successful for:", verifiedEmail);
-            // Clear URL parameters and force page refresh to update auth state
+            // Clear URL parameters and invalidate auth to update state
             window.history.replaceState({}, document.title, '/');
-            setTimeout(() => window.location.reload(), 100);
+            queryClient.invalidateQueries({ queryKey: ['/api/auth/me'] });
             return (
               <div style={{ 
                 minHeight: '100vh', 
