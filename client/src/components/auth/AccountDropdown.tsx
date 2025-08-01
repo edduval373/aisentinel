@@ -355,6 +355,13 @@ export default function AccountDropdown() {
                           // Continue with switch anyway for testing
                         }
                         
+                        // Don't switch if it's the same account
+                        if (account.email === currentEmail) {
+                          console.log('🖱️ [ACCOUNT DROPDOWN] User clicked current account, ignoring');
+                          setIsOpen(false);
+                          return;
+                        }
+                        
                         switchAccount(account);
                       }}
                       onMouseEnter={(e) => {

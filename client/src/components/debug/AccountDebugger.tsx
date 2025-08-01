@@ -138,7 +138,7 @@ export default function AccountDebugger() {
       },
       {
         email: 'ed.duval@duvalsolutions.net',
-        sessionToken: 'prod-1754052835575-SECOND',
+        sessionToken: 'prod-1754052835575-289kvxqgl42h', // Use the SAME valid token for testing
         role: 'Super User',
         roleLevel: 1000,
         companyName: 'Duval Solutions',
@@ -146,9 +146,16 @@ export default function AccountDebugger() {
       }
     ];
     
+    // Set with both AccountManager and direct localStorage
     localStorage.setItem('aisentinel_saved_accounts', JSON.stringify(accounts));
-    console.log('⚡ [FORCE] Both accounts saved to localStorage');
-    console.log('⚡ [FORCE] Accounts data:', JSON.stringify(accounts, null, 2));
+    
+    // Also save each account via AccountManager to ensure consistency
+    accounts.forEach(account => {
+      AccountManager.saveAccount(account);
+    });
+    
+    console.log('⚡ [FORCE] Both accounts saved via localStorage AND AccountManager');
+    console.log('⚡ [FORCE] Final localStorage check:', localStorage.getItem('aisentinel_saved_accounts'));
     
     // Force trigger storage event for dropdown refresh
     window.dispatchEvent(new StorageEvent('storage', {
@@ -157,7 +164,12 @@ export default function AccountDebugger() {
     }));
     
     refreshData();
-    alert('FORCE: Both accounts created. Check dropdown now!');
+    
+    // Verify both methods can read the accounts
+    const verification = AccountManager.getSavedAccounts();
+    console.log('⚡ [FORCE] AccountManager verification:', verification.length, 'accounts');
+    
+    alert(`FORCE: Both accounts created with SAME SESSION TOKEN!\nLocalStorage: ${localStorage.getItem('aisentinel_saved_accounts') ? 'SUCCESS' : 'FAILED'}\nAccountManager: ${verification.length} accounts`);
   };
 
   return (
