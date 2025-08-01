@@ -57,6 +57,44 @@ function Router() {
     const directSession = params.get('direct-session');
     const authToken = params.get('auth-token');
     
+    // If no authentication tokens exist, create a production session automatically
+    const autoCreateSession = async () => {
+      if (!sessionToken && !backupToken && !directSession && !authToken) {
+        console.log('🔄 No authentication tokens found, creating production session automatically...');
+        
+        try {
+          const response = await fetch('/api/auth/create-session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+          });
+          
+          if (response.ok) {
+            const result = await response.json();
+            console.log('✅ Auto-created production session:', result.sessionId);
+            
+            // Store the session token for header-based auth
+            const { setAuthToken } = await import('./lib/authHeaders');
+            setAuthToken(result.fullSessionToken);
+            
+            // Reload the page to trigger authentication
+            setTimeout(() => {
+              window.location.reload();
+            }, 100);
+          } else {
+            console.log('❌ Auto session creation failed, user will use demo mode');
+          }
+        } catch (error) {
+          console.log('❌ Auto session creation error:', error);
+        }
+      }
+    };
+    
+    // Only auto-create if we're on the main routes and not already authenticated
+    if (!isAuthenticated && window.location.pathname === '/') {
+      autoCreateSession();
+    }
+    
     // Handle header-based auth token (new approach)
     if (authToken && authToken.startsWith('prod-')) {
       console.log('🔄 [HEADER AUTH] Detected auth token in URL, storing for header authentication...');

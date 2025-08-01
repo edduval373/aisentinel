@@ -119,14 +119,21 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
     enabled: showPreviousChats,
   });
 
-  // Create session mutation
+  // Create session mutation with authentication headers
   const createSessionMutation = useMutation({
     mutationFn: async () => {
-      console.log('Creating new chat session...');
+      console.log('🔄 Creating new chat session with authentication...');
+      
+      // Get auth headers for authenticated session creation
+      const { getAuthHeaders } = await import('@/lib/authHeaders');
+      const authHeaders = getAuthHeaders();
       
       const headers: Record<string, string> = {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        ...authHeaders
       };
+      
+      console.log('🔄 Session creation headers:', Object.keys(headers));
       
       const response = await fetch("/api/chat/session", {
         method: "POST",
@@ -136,20 +143,23 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('Session creation failed:', response.status, errorText);
+        console.error('❌ Session creation failed:', response.status, errorText);
         throw new Error(`Failed to create chat session: ${response.status} ${errorText}`);
       }
       
       const session = await response.json();
-      console.log('Session created successfully:', session);
+      console.log('✅ Session created successfully:', session);
       return session;
     },
     onSuccess: (session) => {
-      console.log('Setting current session to:', session.id);
+      console.log('✅ Setting current session to:', session.id);
       setCurrentSession(session.id);
+      queryClient.invalidateQueries({
+        queryKey: ['/api/chat/sessions']
+      });
     },
     onError: (error) => {
-      console.error('Failed to create session:', error);
+      console.error('❌ Failed to create session:', error);
       toast({
         title: "Failed to create chat session",
         description: "Unable to start a new chat. Please try again.",
