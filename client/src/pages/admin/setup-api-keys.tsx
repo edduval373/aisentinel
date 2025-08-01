@@ -92,14 +92,12 @@ export default function SetupApiKeys() {
       
       // Then check configuration status for display
       Object.entries(apiKeyConfig).forEach(([provider, config]: [string, any]) => {
-        if (!keys[provider]) {
-          // If configured via environment, show masked placeholder
-          if (config.configured && config.source === 'environment') {
-            keys[provider] = `••••••••••••••••(configured via environment)`;
-          } else {
-            // If no database key, use empty string for input field
-            keys[provider] = '';
-          }
+        // If configured via environment, show masked placeholder (even if we have DB keys)
+        if (config.configured && config.source === 'environment') {
+          keys[provider] = `••••••••••••••••(configured via environment)`;
+        } else if (!keys[provider]) {
+          // If no database key and not environment configured, use empty string for input field
+          keys[provider] = '';
         }
         console.log(`SetupApiKeys: Provider ${provider} - configured: ${config.configured}, source: ${config.source || 'none'}`);
       });
