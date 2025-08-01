@@ -14,7 +14,6 @@ import FeaturesBenefitsDialog from "@/components/FeaturesBenefitsDialog";
 import { DeveloperRoleSwitcher } from "@/components/developer/DeveloperRoleSwitcher";
 import { DebugStatusPanel } from "@/components/DebugStatusPanel";
 import VersionDisplay from "@/components/VersionDisplay";
-import AccountDropdown from "@/components/auth/AccountDropdown";
 import AccountDebugger from "@/components/debug/AccountDebugger";
 import { useFeaturesBenefits } from "@/hooks/useFeaturesBenefits";
 import { isDemoModeActive } from "@/utils/demoMode";
@@ -571,8 +570,6 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                 <Trash2 style={{ width: '14px', height: '14px' }} />
                 Clear
               </Button>
-              {/* Account Dropdown */}
-              <AccountDropdown />
 {/* Debug panel removed for production */}
             </div>
           </div>
