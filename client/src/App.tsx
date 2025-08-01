@@ -65,10 +65,14 @@ function Router() {
         const { setAuthToken } = await import('./lib/authHeaders');
         setAuthToken(authToken);
         
-        // Clean URL and refresh to trigger auth check
-        const cleanUrl = window.location.pathname + '?t=' + Date.now();
+        // Clean URL without refresh to allow immediate auth check
+        const cleanUrl = window.location.pathname;
         window.history.replaceState({}, document.title, cleanUrl);
-        window.location.reload();
+        
+        // Force re-render by invalidating the auth query
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
       };
       
       handleAuthToken();

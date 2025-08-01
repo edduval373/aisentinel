@@ -41,11 +41,22 @@ export function useAuth() {
         const authResponse = await apiRequest('/api/auth/me', 'GET', null, headers);
         console.log("Authentication response:", authResponse);
         
-        // STRICT: Only authenticated if server confirms valid session
-        if (authResponse.authenticated === true && authResponse.user) {
+        // Check for production authentication success
+        if (authResponse.authenticated === true || authResponse.isAuthenticated === true) {
+          const user = authResponse.user || {
+            id: authResponse.userId,
+            email: authResponse.email,
+            firstName: authResponse.firstName,
+            lastName: authResponse.lastName,
+            role: authResponse.role,
+            roleLevel: authResponse.roleLevel || authResponse.effectiveRoleLevel,
+            companyId: authResponse.companyId
+          };
+          
+          console.log('✅ Authentication successful via headers:', user);
           return { 
             authenticated: true, 
-            user: authResponse.user
+            user: user
           };
         } else {
           console.log('🔒 Server returned non-authenticated response');
