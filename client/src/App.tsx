@@ -57,8 +57,6 @@ function Router() {
     const directSession = params.get('direct-session');
     const authToken = params.get('auth-token');
     
-
-    
     // Handle header-based auth token (new approach)
     if (authToken && authToken.startsWith('prod-')) {
       console.log('🔄 [HEADER AUTH] Detected auth token in URL, storing for header authentication...');
