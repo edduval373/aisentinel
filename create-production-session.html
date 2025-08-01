@@ -42,10 +42,16 @@
                             User: ${data.email}<br>
                             Role Level: Super-User (1000)<br>
                             Database: Connected<br><br>
-                            <strong>You can now access the authenticated application:</strong><br>
-                            <a href="/" style="color: #dc2626; font-weight: bold;">→ Go to AI Sentinel Chat Interface</a>
+                            <strong>Synchronizing session across domain...</strong><br>
+                            <div id="sync-status">🔄 Preparing session transfer...</div><br>
+                            <button onclick="navigateToApp()" id="navigate-btn" disabled style="background: #666; color: white; padding: 8px 16px; border: none; border-radius: 4px;">
+                                Synchronizing...
+                            </button>
                         </div>
                     `;
+                    
+                    // Start session synchronization process
+                    setTimeout(syncSession, 1000);
                 } else {
                     statusDiv.innerHTML = `<div class="error">❌ Session creation failed: ${data.message}</div>`;
                 }
@@ -75,6 +81,56 @@
                 // Not authenticated - show create button
             }
         };
+        
+        // Session synchronization function
+        async function syncSession() {
+            const syncStatus = document.getElementById('sync-status');
+            const navigateBtn = document.getElementById('navigate-btn');
+            
+            try {
+                syncStatus.innerHTML = '🔄 Verifying session cookie...';
+                
+                // Check if session cookie is accessible
+                const cookies = document.cookie;
+                const sessionToken = cookies.match(/sessionToken=([^;]+)/)?.[1];
+                
+                if (sessionToken && sessionToken.startsWith('prod-session-')) {
+                    syncStatus.innerHTML = '✅ Session cookie found and verified!';
+                    
+                    // Test authentication endpoint to ensure session works
+                    const authTest = await fetch('/api/auth/me', { credentials: 'include' });
+                    const authData = await authTest.json();
+                    
+                    if (authData.authenticated) {
+                        syncStatus.innerHTML = '✅ Session authenticated successfully!';
+                        navigateBtn.disabled = false;
+                        navigateBtn.style.background = '#dc2626';
+                        navigateBtn.innerHTML = '→ Go to AI Sentinel Chat Interface';
+                    } else {
+                        syncStatus.innerHTML = '⚠️ Session created but authentication pending...';
+                        navigateBtn.disabled = false;
+                        navigateBtn.style.background = '#dc2626';
+                        navigateBtn.innerHTML = '→ Try AI Sentinel Chat Interface';
+                    }
+                } else {
+                    syncStatus.innerHTML = '⚠️ Session cookie not detected, but may work...';
+                    navigateBtn.disabled = false;
+                    navigateBtn.style.background = '#dc2626';
+                    navigateBtn.innerHTML = '→ Try AI Sentinel Chat Interface';
+                }
+            } catch (error) {
+                console.error('Session sync error:', error);
+                syncStatus.innerHTML = '⚠️ Session verification failed, but attempting navigation...';
+                navigateBtn.disabled = false;
+                navigateBtn.style.background = '#dc2626';
+                navigateBtn.innerHTML = '→ Try AI Sentinel Chat Interface';
+            }
+        }
+        
+        function navigateToApp() {
+            // Force a page reload to ensure fresh authentication check
+            window.location.href = '/?t=' + Date.now();
+        }
     </script>
 </body>
 </html>
