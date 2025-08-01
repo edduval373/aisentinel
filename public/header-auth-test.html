@@ -90,13 +90,18 @@
                     return;
                 }
                 
-                if (data.success && data.fullSessionToken) {
+                if (data.success === true && data.fullSessionToken) {
                     sessionToken = data.fullSessionToken;
                     document.getElementById('sessionToken').value = sessionToken;
                     log(`✅ Session created: ${data.sessionId} (Method: ${data.authMethod})`, 'success');
-                    log(`📊 Database: ${data.databaseConnected}, Email: ${data.email}`, 'info');
-                } else {
+                    log(`📊 Database: ${data.databaseConnected}, Email: ${data.email || data.userId}`, 'info');
+                    log(`🔑 Token ready for header authentication`, 'success');
+                } else if (data.success === false) {
                     log(`❌ Session creation failed: ${data.message || 'Unknown error'}`, 'error');
+                    log(`📊 Full response: ${JSON.stringify(data)}`, 'info');
+                } else {
+                    // Handle unexpected response format
+                    log(`⚠️ Unexpected response format:`, 'error');
                     log(`📊 Full response: ${JSON.stringify(data)}`, 'info');
                 }
                 

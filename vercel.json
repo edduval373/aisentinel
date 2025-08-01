@@ -81,6 +81,10 @@
       "destination": "/quick-session-test.html"
     },
     {
+      "source": "/test-session-direct.html",
+      "destination": "/test-session-direct.html"
+    },
+    {
       "source": "/((?!assets/|.*\\.html$).*)",
       "destination": "/index.html"
     }
