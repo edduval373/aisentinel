@@ -46,16 +46,27 @@ export default function AccountDropdown() {
   }, []);
 
   const loadSavedAccounts = () => {
+    console.log('🔄 [ACCOUNT DROPDOWN] Loading saved accounts...');
+    
+    // Direct localStorage check first
+    const rawData = localStorage.getItem('aisentinel_saved_accounts');
+    console.log('🔄 [ACCOUNT DROPDOWN] Raw localStorage data:', rawData);
+    
+    if (rawData) {
+      try {
+        const parsed = JSON.parse(rawData);
+        console.log('🔄 [ACCOUNT DROPDOWN] Parsed accounts:', parsed);
+        console.log('🔄 [ACCOUNT DROPDOWN] Account count:', parsed.length);
+        setSavedAccounts(parsed);
+        return;
+      } catch (e) {
+        console.error('🔄 [ACCOUNT DROPDOWN] Failed to parse localStorage data:', e);
+      }
+    }
+    
+    // Fallback to AccountManager
     const accounts = AccountManager.getSavedAccounts();
-    console.log('🔄 [ACCOUNT DROPDOWN] Loading saved accounts:', accounts);
-    console.log('🔄 [ACCOUNT DROPDOWN] Account count:', accounts.length);
-    accounts.forEach((acc, i) => {
-      console.log(`🔄 [ACCOUNT DROPDOWN] Account ${i+1}:`, {
-        email: acc.email,
-        roleLevel: acc.roleLevel,
-        lastUsed: acc.lastUsed
-      });
-    });
+    console.log('🔄 [ACCOUNT DROPDOWN] AccountManager fallback:', accounts);
     setSavedAccounts(accounts);
   };
 
@@ -322,6 +333,9 @@ export default function AccountDropdown() {
                         transition: 'background 0.2s ease'
                       }}
                       onClick={() => {
+                        console.log('🖱️ [ACCOUNT DROPDOWN] User clicked account:', account.email);
+                        console.log('🖱️ [ACCOUNT DROPDOWN] Account session token:', account.sessionToken);
+                        
                         // Check if account needs verification
                         if (account.sessionToken === 'needs-verification') {
                           toast({
@@ -331,6 +345,16 @@ export default function AccountDropdown() {
                           });
                           return;
                         }
+                        
+                        // Special handling for test token
+                        if (account.sessionToken === 'prod-1754052835575-SECOND') {
+                          toast({
+                            title: "Test Account",
+                            description: "This is a test account token. In production, you would verify via email first.",
+                          });
+                          // Continue with switch anyway for testing
+                        }
+                        
                         switchAccount(account);
                       }}
                       onMouseEnter={(e) => {
