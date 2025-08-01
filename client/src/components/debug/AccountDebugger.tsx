@@ -170,7 +170,7 @@ export default function AccountDebugger() {
     console.log('⚡ [FORCE] AccountManager verification:', verification.length, 'accounts');
     
     // Create a simple function for immediate testing
-    window.testSwitchAccount = function() {
+    (window as any).testSwitchAccount = function() {
       const targetEmail = 'ed.duval@duvalsolutions.net';
       console.log('🧪 [TEST] Manual account switch to:', targetEmail);
       

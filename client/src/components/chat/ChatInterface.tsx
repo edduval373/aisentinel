@@ -112,6 +112,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   // Fetch chat messages when session changes
   const { data: chatMessages, isLoading: messagesLoading } = useQuery<ChatMessageType[]>({
     queryKey: ['/api/chat/session', currentSession, 'messages'],
+    queryFn: () => apiRequest(`/api/chat/session/${currentSession}/messages`),
     enabled: !!currentSession,
   });
 
