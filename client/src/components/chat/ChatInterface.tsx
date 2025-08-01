@@ -15,6 +15,7 @@ import { DeveloperRoleSwitcher } from "@/components/developer/DeveloperRoleSwitc
 import { DebugStatusPanel } from "@/components/DebugStatusPanel";
 import VersionDisplay from "@/components/VersionDisplay";
 import AccountDropdown from "@/components/auth/AccountDropdown";
+import AccountDebugger from "@/components/debug/AccountDebugger";
 import { useFeaturesBenefits } from "@/hooks/useFeaturesBenefits";
 import { isDemoModeActive } from "@/utils/demoMode";
 import type { AiModel, ActivityType, ChatMessage as ChatMessageType, Company, ChatSession } from "@shared/schema";
