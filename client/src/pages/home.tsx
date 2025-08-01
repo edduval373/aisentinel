@@ -14,6 +14,7 @@ import FeaturesBenefitsDialog from "@/components/FeaturesBenefitsDialog";
 import { DeveloperRoleSwitcher } from "@/components/developer/DeveloperRoleSwitcher";
 import { useFeaturesBenefits } from "@/hooks/useFeaturesBenefits";
 import { useDeveloper } from "@/hooks/useDeveloper";
+import AccountDropdown from "@/components/auth/AccountDropdown";
 
 import { useCompanyContext } from "@/hooks/useCompanyContext";
 import { validateAndFixBase64Image, getCompanyInitial, createFallbackImageStyle } from "../utils/imageUtils";
@@ -602,45 +603,8 @@ export default function Home() {
               </button>
             )}
 
-            {/* Sign Out/Sign Up Button with Demo indicator */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-              <button
-                onClick={async () => {
-                  if (isDemoMode) {
-                    // Demo users go to email verification screen
-                    window.location.href = '/login';
-                  } else {
-                    // Regular users sign out - use the same thorough approach as handleClearCookies
-                    console.log('Signing out user...');
-                    handleClearCookies();
-                  }
-                }}
-                style={{
-                  fontSize: '14px',
-                  color: isDemoMode ? '#3b82f6' : '#64748b',
-                  textDecoration: 'underline',
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: '6px 8px',
-                  fontWeight: isDemoMode ? '600' : 'normal'
-                }}
-              >
-                <LogOut size={14} style={{ display: 'inline', marginRight: '4px' }} />
-                {isDemoMode ? 'Sign Up' : 'Sign Out'}
-              </button>
-              {isDemoMode && (
-                <div style={{
-                  fontSize: '12px',
-                  color: '#1e3a8a',
-                  fontWeight: '600',
-                  marginTop: '2px',
-                  padding: '0 8px'
-                }}>
-                  DEMO
-                </div>
-              )}
-            </div>
+            {/* Account Dropdown */}
+            <AccountDropdown />
           </div>
         </div>
         
