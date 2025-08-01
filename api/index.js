@@ -1462,6 +1462,256 @@ export default async function handler(req, res) {
       }
     }
 
+    // Permissions endpoint - Connect to real database
+    if (path === '/api/permissions' && req.method === 'GET') {
+      try {
+        console.log("Production permissions endpoint accessed");
+        
+        if (process.env.DATABASE_URL) {
+          let client = null;
+          try {
+            const { Client } = await import('pg');
+            client = new Client({
+              connectionString: process.env.DATABASE_URL,
+              ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+              connectionTimeoutMillis: 3000,
+              query_timeout: 3000
+            });
+            
+            await Promise.race([
+              client.connect(),
+              new Promise((_, reject) => setTimeout(() => reject(new Error('Connection timeout')), 3000))
+            ]);
+            
+            // Get all permissions for company 1 
+            const permissionsResult = await client.query('SELECT * FROM "permissions" WHERE "company_id" = $1 ORDER BY id', [1]);
+            
+            console.log(`Found ${permissionsResult.rows.length} permissions from database`);
+            return res.status(200).json(permissionsResult.rows);
+          } catch (dbError) {
+            console.warn(`Database connection failed: ${dbError.message}`);
+          } finally {
+            if (client) {
+              try {
+                await client.end();
+                console.log("Permissions database connection closed");
+              } catch (closeError) {
+                console.warn("Error closing permissions connection:", closeError.message);
+              }
+            }
+          }
+        }
+        
+        console.log("Database unavailable, returning empty permissions array");
+        return res.status(200).json([]);
+        
+      } catch (error) {
+        console.error('Permissions API Error:', error);
+        return res.status(500).json({
+          error: error.message,
+          message: 'Failed to fetch permissions'
+        });
+      }
+    }
+
+    // Model Fusion Configs endpoint - Connect to real database
+    if (path === '/api/model-fusion-configs' && req.method === 'GET') {
+      try {
+        console.log("Production model-fusion-configs endpoint accessed");
+        
+        if (process.env.DATABASE_URL) {
+          let client = null;
+          try {
+            const { Client } = await import('pg');
+            client = new Client({
+              connectionString: process.env.DATABASE_URL,
+              ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+              connectionTimeoutMillis: 3000,
+              query_timeout: 3000
+            });
+            
+            await Promise.race([
+              client.connect(),
+              new Promise((_, reject) => setTimeout(() => reject(new Error('Connection timeout')), 3000))
+            ]);
+            
+            // Get model fusion config for company 1 
+            const configResult = await client.query('SELECT * FROM "model_fusion_configs" WHERE "company_id" = $1 ORDER BY id', [1]);
+            
+            console.log(`Found ${configResult.rows.length} model fusion configs from database`);
+            
+            // If no config found, return a default config object (not array)
+            if (configResult.rows.length === 0) {
+              const defaultConfig = {
+                id: 1,
+                companyId: 1,
+                isEnabled: false,
+                summaryModelId: null,
+                createdAt: new Date(),
+                updatedAt: new Date()
+              };
+              return res.status(200).json(defaultConfig);
+            }
+            
+            return res.status(200).json(configResult.rows[0]); // Return single config object
+          } catch (dbError) {
+            console.warn(`Database connection failed: ${dbError.message}`);
+          } finally {
+            if (client) {
+              try {
+                await client.end();
+                console.log("Model fusion configs database connection closed");
+              } catch (closeError) {
+                console.warn("Error closing model fusion configs connection:", closeError.message);
+              }
+            }
+          }
+        }
+        
+        console.log("Database unavailable, returning default model fusion config");
+        return res.status(200).json({
+          id: 1,
+          companyId: 1,
+          isEnabled: false,
+          summaryModelId: null,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        });
+        
+      } catch (error) {
+        console.error('Model Fusion Configs API Error:', error);
+        return res.status(500).json({
+          error: error.message,
+          message: 'Failed to fetch model fusion configs'
+        });
+      }
+    }
+
+    // Model Fusion Config (singular) endpoint - Alias for configs
+    if (path === '/api/model-fusion-config' && req.method === 'GET') {
+      try {
+        console.log("Production model-fusion-config endpoint accessed (redirecting to configs)");
+        
+        if (process.env.DATABASE_URL) {
+          let client = null;
+          try {
+            const { Client } = await import('pg');
+            client = new Client({
+              connectionString: process.env.DATABASE_URL,
+              ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+              connectionTimeoutMillis: 3000,
+              query_timeout: 3000
+            });
+            
+            await Promise.race([
+              client.connect(),
+              new Promise((_, reject) => setTimeout(() => reject(new Error('Connection timeout')), 3000))
+            ]);
+            
+            // Get model fusion config for company 1 
+            const configResult = await client.query('SELECT * FROM "model_fusion_configs" WHERE "company_id" = $1 ORDER BY id', [1]);
+            
+            console.log(`Found ${configResult.rows.length} model fusion config from database`);
+            
+            // If no config found, return a default config object
+            if (configResult.rows.length === 0) {
+              const defaultConfig = {
+                id: 1,
+                companyId: 1,
+                isEnabled: false,
+                summaryModelId: null,
+                createdAt: new Date(),
+                updatedAt: new Date()
+              };
+              return res.status(200).json(defaultConfig);
+            }
+            
+            return res.status(200).json(configResult.rows[0]); // Return single config object
+          } catch (dbError) {
+            console.warn(`Database connection failed: ${dbError.message}`);
+          } finally {
+            if (client) {
+              try {
+                await client.end();
+                console.log("Model fusion config database connection closed");
+              } catch (closeError) {
+                console.warn("Error closing model fusion config connection:", closeError.message);
+              }
+            }
+          }
+        }
+        
+        console.log("Database unavailable, returning default model fusion config");
+        return res.status(200).json({
+          id: 1,
+          companyId: 1,
+          isEnabled: false,
+          summaryModelId: null,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        });
+        
+      } catch (error) {
+        console.error('Model Fusion Config API Error:', error);
+        return res.status(500).json({
+          error: error.message,
+          message: 'Failed to fetch model fusion config'
+        });
+      }
+    }
+
+    // Context Documents endpoint - Connect to real database
+    if (path === '/api/context-documents' && req.method === 'GET') {
+      try {
+        console.log("Production context-documents endpoint accessed");
+        
+        if (process.env.DATABASE_URL) {
+          let client = null;
+          try {
+            const { Client } = await import('pg');
+            client = new Client({
+              connectionString: process.env.DATABASE_URL,
+              ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+              connectionTimeoutMillis: 3000,
+              query_timeout: 3000
+            });
+            
+            await Promise.race([
+              client.connect(),
+              new Promise((_, reject) => setTimeout(() => reject(new Error('Connection timeout')), 3000))
+            ]);
+            
+            // Get all context documents for company 1 
+            const documentsResult = await client.query('SELECT * FROM "context_documents" WHERE "company_id" = $1 ORDER BY id', [1]);
+            
+            console.log(`Found ${documentsResult.rows.length} context documents from database`);
+            return res.status(200).json(documentsResult.rows);
+          } catch (dbError) {
+            console.warn(`Database connection failed: ${dbError.message}`);
+          } finally {
+            if (client) {
+              try {
+                await client.end();
+                console.log("Context documents database connection closed");
+              } catch (closeError) {
+                console.warn("Error closing context documents connection:", closeError.message);
+              }
+            }
+          }
+        }
+        
+        console.log("Database unavailable, returning empty context documents array");
+        return res.status(200).json([]);
+        
+      } catch (error) {
+        console.error('Context Documents API Error:', error);
+        return res.status(500).json({
+          error: error.message,
+          message: 'Failed to fetch context documents'
+        });
+      }
+    }
+
     // Demo session creation endpoint
     if (path === '/api/demo/session' && req.method === 'POST') {
       try {

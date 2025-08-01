@@ -376,6 +376,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Context documents endpoint
+  app.get('/api/context-documents', optionalAuth, async (req: any, res) => {
+    try {
+      let companyId = 1; // Default to company 1 for demo users
+
+      // If user is authenticated and has a company, use their company
+      if (req.user && req.user.companyId) {
+        companyId = req.user.companyId;
+        console.log("Authenticated user requesting context documents:", { userId: req.user.userId, companyId });
+      } else {
+        console.log("Demo mode context documents request");
+      }
+
+      const documents = await storage.getContextDocuments(companyId);
+      console.log("Returning context documents for company", companyId + ":", documents.length, "documents");
+      return res.json(documents);
+    } catch (error) {
+      console.error("Error fetching context documents:", error);
+      res.status(500).json({ message: "Failed to fetch context documents" });
+    }
+  });
+
   // Demo and authenticated users route - returns 3 demo users for demo mode, real users for authenticated
   app.get('/api/users', optionalAuth, async (req: any, res) => {
     try {
