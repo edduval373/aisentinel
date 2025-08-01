@@ -52,12 +52,14 @@ export function setupAuthRoutes(app: Express) {
 
       console.log("✅ Valid session found:", session.email, "- Setting cookie and redirecting");
 
-      // Set session cookie
+      // Set session cookie with Vercel-compatible settings
       res.cookie('sessionToken', session.sessionToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        secure: true, // Always secure in production
+        sameSite: 'lax', // More permissive for cross-page navigation
         maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        path: '/',
+        // Don't set domain explicitly - let Vercel handle it
       });
 
       // Get user details for response
@@ -589,12 +591,13 @@ export function setupAuthRoutes(app: Express) {
         console.log(`✅ DEMO SIGNUP: Created new demo user with ID ${demoUser.id}`);
       }
 
-      // Set session cookie
+      // Set session cookie with Vercel-compatible settings
       res.cookie('sessionToken', sessionToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        sameSite: 'lax', // Allow cross-page navigation
         maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        path: '/',
       });
 
       // Set demo return cookie for automatic redirect on future visits
@@ -649,12 +652,13 @@ export function setupAuthRoutes(app: Express) {
 
       console.log(`✅ DEV LOGIN: Created and stored development session in database`);
 
-      // Set session cookie
+      // Set session cookie with Vercel-compatible settings
       res.cookie('sessionToken', sessionToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        sameSite: 'lax', // More permissive for development
         maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        path: '/',
       });
 
       console.log(`✅ DEV LOGIN: Session created successfully`);
