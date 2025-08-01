@@ -133,14 +133,23 @@ export default async function handler(req, res) {
         console.log('🔑 [RAILWAY LOG] Generated session token:', sessionToken.substring(0, 20) + '...');
         
         try {
-          // Import pg for database connection
+          // Import pg for database connection with enhanced timeout handling
           const { Client } = await import('pg');
           const client = new Client({
             connectionString: process.env.DATABASE_URL,
-            ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+            ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+            connectionTimeoutMillis: 10000, // 10 second timeout
+            query_timeout: 10000,
+            statement_timeout: 10000
           });
           
-          await client.connect();
+          // Connect with timeout wrapper
+          await Promise.race([
+            client.connect(),
+            new Promise((_, reject) => 
+              setTimeout(() => reject(new Error('Database connection timeout after 10 seconds')), 10000)
+            )
+          ]);
           console.log('✅ [RAILWAY LOG] Connected to Railway PostgreSQL database');
           
           // Get or create user record
@@ -179,8 +188,29 @@ export default async function handler(req, res) {
         } catch (dbError) {
           console.error('❌ [RAILWAY LOG] Database operation failed:', dbError);
           console.error('❌ [RAILWAY LOG] Database error details:', dbError.message);
-          console.error('❌ [RAILWAY LOG] This is a critical failure - no fallback data will be used');
-          throw new Error(`Database session creation failed: ${dbError.message}`);
+          console.error('❌ [RAILWAY LOG] Database error type:', dbError.code || 'unknown');
+          
+          // For timeout errors, provide a user-friendly response
+          if (dbError.message.includes('timeout') || dbError.code === 'ETIMEDOUT') {
+            console.log('🔄 [RAILWAY LOG] Database timeout - returning user-friendly error');
+            return res.status(503).json({
+              success: false,
+              message: 'Database connection timeout. Please try the verification link again.',
+              error: 'DATABASE_TIMEOUT',
+              timestamp: new Date().toISOString(),
+              retryable: true
+            });
+          }
+          
+          // For other errors, still provide meaningful response
+          console.error('❌ [RAILWAY LOG] Non-timeout database error - returning generic error');
+          return res.status(500).json({
+            success: false,
+            message: 'Database session creation failed. Please contact support.',
+            error: 'DATABASE_ERROR',
+            timestamp: new Date().toISOString(),
+            details: dbError.message
+          });
         }
         
         // SERVERLESS COOKIE FIX: Manual header approach compatible with Vercel
