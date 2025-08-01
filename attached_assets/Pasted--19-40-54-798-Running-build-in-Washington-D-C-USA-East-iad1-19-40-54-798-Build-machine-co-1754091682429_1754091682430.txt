@@ -1,0 +1,69 @@
+[19:40:54.798] Running build in Washington, D.C., USA (East) – iad1
+[19:40:54.798] Build machine configuration: 4 cores, 8 GB
+[19:40:54.814] Cloning github.com/edduval373/aisentinel (Branch: main, Commit: a7ff8e6)
+[19:40:56.967] Cloning completed: 2.153s
+[19:40:57.069] Found .vercelignore
+[19:40:57.145] Removed 832 ignored files defined in .vercelignore
+[19:40:57.145]   /.git/config
+[19:40:57.145]   /.git/description
+[19:40:57.145]   /.git/FETCH_HEAD
+[19:40:57.145]   /.git/HEAD
+[19:40:57.146]   /.git/hooks/applypatch-msg.sample
+[19:40:57.146]   /.git/hooks/commit-msg.sample
+[19:40:57.146]   /.git/hooks/fsmonitor-watchman.sample
+[19:40:57.146]   /.git/hooks/post-update.sample
+[19:40:57.146]   /.git/hooks/pre-applypatch.sample
+[19:40:57.146]   /.git/hooks/pre-commit.sample
+[19:40:57.210] Restored build cache from previous deployment (6w6hAzKGb7HDWJ36jcbT2gzHhqHY)
+[19:40:59.385] Running "vercel build"
+[19:40:59.905] Vercel CLI 44.6.4
+[19:41:00.695] Running "install" command: `npm install`...
+[19:41:03.328] 
+[19:41:03.328] up to date, audited 741 packages in 2s
+[19:41:03.329] 
+[19:41:03.329] 166 packages are looking for funding
+[19:41:03.329]   run `npm fund` for details
+[19:41:03.344] 
+[19:41:03.344] 12 vulnerabilities (3 low, 5 moderate, 3 high, 1 critical)
+[19:41:03.344] 
+[19:41:03.344] To address issues that do not require attention, run:
+[19:41:03.344]   npm audit fix
+[19:41:03.344] 
+[19:41:03.344] To address all issues possible (including breaking changes), run:
+[19:41:03.344]   npm audit fix --force
+[19:41:03.344] 
+[19:41:03.344] Some issues need review, and may require choosing
+[19:41:03.344] a different dependency.
+[19:41:03.344] 
+[19:41:03.344] Run `npm audit` for details.
+[19:41:03.595] 
+[19:41:03.595] > rest-express@1.0.0 build
+[19:41:03.595] > vite build --config vite.config.production.ts && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist --external:../vite.config --external:vite
+[19:41:03.595] 
+[19:41:03.883] [36mvite v5.4.19 [32mbuilding for production...[36m[39m
+[19:41:03.938] transforming...
+[19:41:06.906] [32m✓[39m 2406 modules transformed.
+[19:41:06.908] [31mx[39m Build failed in 3.00s
+[19:41:06.909] [31merror during build:
+[19:41:06.909] [31mclient/src/components/ui/alert-dialog.tsx (5:9): "buttonVariants" is not exported by "client/src/components/ui/button.tsx", imported by "client/src/components/ui/alert-dialog.tsx".[31m
+[19:41:06.909] file: [36m/vercel/path0/client/src/components/ui/alert-dialog.tsx:5:9[31m
+[19:41:06.909] [33m
+[19:41:06.909] 3: 
+[19:41:06.909] 4: import { cn } from "@/lib/utils"
+[19:41:06.909] 5: import { buttonVariants } from "@/components/ui/button"
+[19:41:06.910]             ^
+[19:41:06.910] 6: 
+[19:41:06.910] 7: const AlertDialog = AlertDialogPrimitive.Root
+[19:41:06.910] [31m
+[19:41:06.910]     at getRollupError (file:///vercel/path0/node_modules/rollup/dist/es/shared/parseAst.js:396:41)
+[19:41:06.910]     at error (file:///vercel/path0/node_modules/rollup/dist/es/shared/parseAst.js:392:42)
+[19:41:06.910]     at Module.error (file:///vercel/path0/node_modules/rollup/dist/es/shared/node-entry.js:15588:16)
+[19:41:06.910]     at Module.traceVariable (file:///vercel/path0/node_modules/rollup/dist/es/shared/node-entry.js:16037:29)
+[19:41:06.910]     at ModuleScope.findVariable (file:///vercel/path0/node_modules/rollup/dist/es/shared/node-entry.js:13820:39)
+[19:41:06.911]     at ReturnValueScope.findVariable (file:///vercel/path0/node_modules/rollup/dist/es/shared/node-entry.js:5283:38)
+[19:41:06.911]     at FunctionBodyScope.findVariable (file:///vercel/path0/node_modules/rollup/dist/es/shared/node-entry.js:5283:38)
+[19:41:06.911]     at Identifier.bind (file:///vercel/path0/node_modules/rollup/dist/es/shared/node-entry.js:5066:40)
+[19:41:06.911]     at CallExpression.bind (file:///vercel/path0/node_modules/rollup/dist/es/shared/node-entry.js:2653:23)
+[19:41:06.911]     at CallExpression.bind (file:///vercel/path0/node_modules/rollup/dist/es/shared/node-entry.js:11284:15)[39m
+[19:41:06.939] Error: Command "rm -f public/index.html && npm run build" exited with 1
+[19:41:10.198] Exiting build container

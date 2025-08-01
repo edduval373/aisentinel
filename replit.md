@@ -40,6 +40,8 @@ Demo mode identification: Demo mode uses role level 0, shows orange "DEMO" badge
 - **Template Database**: Added 8 universal AI model templates (GPT-4o, Claude Sonnet 4, etc.) and company API key management
 - **Role-Based API Access**: Super-users manage universal templates via `/api/admin/ai-model-templates`, owners manage API keys via `/api/admin/company-api-keys`
 - **Chat Interface**: AI models now load based on company's configured API keys, defaulting to demo mode when no valid keys exist
+- **UI Layout**: Moved account dropdown to main header replacing Sign Out link, added deletion confirmation modal
+- **Production Build**: Fixed missing `buttonVariants` export causing Vercel deployment failures by adding class-variance-authority support
 
 ## External Dependencies
 **Core Services**:
