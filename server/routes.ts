@@ -67,6 +67,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Debug status endpoint for create-models page
+  app.get('/api/debug/status', async (req, res) => {
+    try {
+      res.json({
+        status: 'healthy',
+        environment: process.env.NODE_ENV || 'development',
+        database: 'connected',
+        timestamp: new Date().toISOString(),
+        version: '1.0.0'
+      });
+    } catch (error: any) {
+      res.status(500).json({
+        status: 'error',
+        error: error.message,
+        timestamp: new Date().toISOString()
+      });
+    }
+  });
+
   // Simple Version routes
   app.get('/api/version/current', async (req, res) => {
     try {
