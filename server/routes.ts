@@ -127,6 +127,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         secure: false, // Not secure for development  
         sameSite: 'lax',
         maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        path: '/', // Ensure cookie works across entire domain
+        domain: process.env.NODE_ENV === 'production' ? '.aisentinel.app' : undefined // Domain for production only
       });
 
       console.log('Developer session created with token:', sessionToken.substring(0, 20) + '...');
@@ -1646,7 +1648,8 @@ Stack: \${error.stack || 'No stack trace available'}\`;
         secure: true, // HTTPS required in production
         sameSite: 'lax', // Better browser compatibility
         maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-        path: '/' // Ensure cookie works across entire domain
+        path: '/', // Ensure cookie works across entire domain
+        domain: '.aisentinel.app' // Set for entire domain including subdomains
       });
       
       console.log('✅ Production cookie set:', sessionToken.substring(0, 25) + '...');
@@ -1763,7 +1766,8 @@ Stack: \${error.stack || 'No stack trace available'}\`;
         secure: true, // Must be true for production HTTPS
         sameSite: 'lax',
         maxAge: 30 * 24 * 60 * 60 * 1000,
-        path: '/'
+        path: '/',
+        domain: '.aisentinel.app' // Set for entire domain including subdomains
       });
 
       console.log('✅ [DIAGNOSTICS] Test session created and cookie set');
