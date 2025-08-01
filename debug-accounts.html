@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Accounts</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 8px; }
+        .account { background: #f8f9fa; padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .button { background: #007bff; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+        .error { color: red; }
+        .success { color: green; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 4px; overflow: auto; }
+    </style>
+</head>
+<body>
+    <h1>Account Management Debug Tool</h1>
+    
+    <div class="section">
+        <h2>Current LocalStorage Contents</h2>
+        <pre id="localStorage-content">Loading...</pre>
+        <button class="button" onclick="refreshLocalStorage()">Refresh</button>
+    </div>
+    
+    <div class="section">
+        <h2>Saved Accounts</h2>
+        <div id="accounts-list">Loading...</div>
+        <button class="button" onclick="refreshAccounts()">Refresh Accounts</button>
+    </div>
+    
+    <div class="section">
+        <h2>Test Account Functions</h2>
+        <button class="button" onclick="testSaveAccount()">Test Save Account</button>
+        <button class="button" onclick="clearAllAccounts()">Clear All Accounts</button>
+        <div id="test-results"></div>
+    </div>
+    
+    <div class="section">
+        <h2>Manual Account Addition</h2>
+        <input type="email" id="manual-email" placeholder="Email address" style="width: 200px; padding: 8px; margin: 5px;">
+        <input type="text" id="manual-token" placeholder="Session token" style="width: 300px; padding: 8px; margin: 5px;">
+        <select id="manual-role" style="padding: 8px; margin: 5px;">
+            <option value="1">User (1)</option>
+            <option value="98">Administrator (98)</option>
+            <option value="99">Owner (99)</option>
+            <option value="1000">Super User (1000)</option>
+        </select>
+        <br>
+        <button class="button" onclick="manualSaveAccount()">Manually Save Account</button>
+    </div>
+
+    <script>
+        // Account Manager implementation (copied from the app)
+        class AccountManager {
+            static STORAGE_KEY = 'aisentinel_saved_accounts';
+
+            static saveAccount(account) {
+                try {
+                    const savedAccounts = this.getSavedAccounts();
+                    
+                    // Remove existing account with same email
+                    const filteredAccounts = savedAccounts.filter(acc => acc.email !== account.email);
+                    
+                    // Add new account with current timestamp
+                    const newAccount = {
+                        ...account,
+                        lastUsed: new Date().toISOString()
+                    };
+                    
+                    filteredAccounts.unshift(newAccount); // Add to beginning
+                    
+                    // Keep only last 5 accounts
+                    const limitedAccounts = filteredAccounts.slice(0, 5);
+                    
+                    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(limitedAccounts));
+                    
+                    console.log('Account saved:', account.email);
+                    return true;
+                } catch (error) {
+                    console.error('Error saving account:', error);
+                    return false;
+                }
+            }
+
+            static getSavedAccounts() {
+                try {
+                    const stored = localStorage.getItem(this.STORAGE_KEY);
+                    if (!stored) return [];
+                    
+                    const accounts = JSON.parse(stored);
+                    
+                    // Sort by last used (most recent first)
+                    return accounts.sort((a, b) => 
+                        new Date(b.lastUsed).getTime() - new Date(a.lastUsed).getTime()
+                    );
+                } catch (error) {
+                    console.error('Error loading saved accounts:', error);
+                    return [];
+                }
+            }
+
+            static removeAccount(email) {
+                try {
+                    const savedAccounts = this.getSavedAccounts();
+                    const filteredAccounts = savedAccounts.filter(acc => acc.email !== email);
+                    
+                    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(filteredAccounts));
+                    console.log('Account removed:', email);
+                    return true;
+                } catch (error) {
+                    console.error('Error removing account:', error);
+                    return false;
+                }
+            }
+
+            static clearAllAccounts() {
+                try {
+                    localStorage.removeItem(this.STORAGE_KEY);
+                    console.log('All accounts cleared');
+                    return true;
+                } catch (error) {
+                    console.error('Error clearing accounts:', error);
+                    return false;
+                }
+            }
+        }
+
+        function refreshLocalStorage() {
+            const content = document.getElementById('localStorage-content');
+            const allKeys = Object.keys(localStorage);
+            const relevantData = {};
+            
+            allKeys.forEach(key => {
+                if (key.includes('aisentinel') || key.includes('session')) {
+                    relevantData[key] = localStorage.getItem(key);
+                }
+            });
+            
+            content.textContent = JSON.stringify(relevantData, null, 2);
+        }
+
+        function refreshAccounts() {
+            const accountsList = document.getElementById('accounts-list');
+            const accounts = AccountManager.getSavedAccounts();
+            
+            if (accounts.length === 0) {
+                accountsList.innerHTML = '<p>No saved accounts found</p>';
+                return;
+            }
+            
+            let html = `<p>Found ${accounts.length} saved accounts:</p>`;
+            accounts.forEach((account, index) => {
+                html += `
+                    <div class="account">
+                        <strong>Account ${index + 1}:</strong> ${account.email}<br>
+                        <strong>Role Level:</strong> ${account.roleLevel}<br>
+                        <strong>Last Used:</strong> ${new Date(account.lastUsed).toLocaleString()}<br>
+                        <strong>Session Token:</strong> ${account.sessionToken.substring(0, 20)}...<br>
+                        <button class="button" onclick="AccountManager.removeAccount('${account.email}'); refreshAccounts();">Remove</button>
+                    </div>
+                `;
+            });
+            
+            accountsList.innerHTML = html;
+        }
+
+        function testSaveAccount() {
+            const testEmail = 'test@example.com';
+            const testAccount = {
+                email: testEmail,
+                sessionToken: 'test-token-' + Date.now(),
+                role: 'user',
+                roleLevel: 1,
+                companyName: 'Test Company'
+            };
+            
+            const success = AccountManager.saveAccount(testAccount);
+            const results = document.getElementById('test-results');
+            
+            if (success) {
+                results.innerHTML = '<p class="success">✅ Test account saved successfully</p>';
+                refreshAccounts();
+            } else {
+                results.innerHTML = '<p class="error">❌ Failed to save test account</p>';
+            }
+        }
+
+        function clearAllAccounts() {
+            if (confirm('Are you sure you want to clear all saved accounts?')) {
+                const success = AccountManager.clearAllAccounts();
+                const results = document.getElementById('test-results');
+                
+                if (success) {
+                    results.innerHTML = '<p class="success">✅ All accounts cleared</p>';
+                    refreshAccounts();
+                    refreshLocalStorage();
+                } else {
+                    results.innerHTML = '<p class="error">❌ Failed to clear accounts</p>';
+                }
+            }
+        }
+
+        function manualSaveAccount() {
+            const email = document.getElementById('manual-email').value;
+            const token = document.getElementById('manual-token').value;
+            const roleLevel = parseInt(document.getElementById('manual-role').value);
+            
+            if (!email || !token) {
+                alert('Please enter both email and session token');
+                return;
+            }
+            
+            const account = {
+                email: email,
+                sessionToken: token,
+                role: roleLevel >= 1000 ? 'Super User' : roleLevel >= 99 ? 'Owner' : roleLevel >= 98 ? 'Administrator' : 'User',
+                roleLevel: roleLevel,
+                companyName: 'Manual Entry'
+            };
+            
+            const success = AccountManager.saveAccount(account);
+            const results = document.getElementById('test-results');
+            
+            if (success) {
+                results.innerHTML = `<p class="success">✅ Manually saved account: ${email}</p>`;
+                refreshAccounts();
+                // Clear form
+                document.getElementById('manual-email').value = '';
+                document.getElementById('manual-token').value = '';
+            } else {
+                results.innerHTML = '<p class="error">❌ Failed to save account manually</p>';
+            }
+        }
+
+        // Initialize on page load
+        window.onload = function() {
+            refreshLocalStorage();
+            refreshAccounts();
+        };
+    </script>
+</body>
+</html>

@@ -23,10 +23,21 @@ export default function AccountDropdown() {
 
   useEffect(() => {
     loadSavedAccounts();
+    
+    // Add event listener for storage changes (when another tab saves an account)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'aisentinel_saved_accounts') {
+        loadSavedAccounts();
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
   const loadSavedAccounts = () => {
     const accounts = AccountManager.getSavedAccounts();
+    console.log('Loading saved accounts:', accounts);
     setSavedAccounts(accounts);
   };
 
