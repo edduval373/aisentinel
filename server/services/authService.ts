@@ -408,6 +408,7 @@ export class AuthService {
       console.log('🔍 CHECKPOINT D - Raw session from database:', {
         userId: typedSession.userId,
         email: typedSession.email,
+        companyId: typedSession.companyId,
         roleLevel: typedSession.roleLevel,
         testRole: typedSession.testRole,
         timestamp: new Date().toISOString()
@@ -436,6 +437,7 @@ export class AuthService {
       
       console.log('🔍 CHECKPOINT F - Final session result before return:', {
         email: result.email,
+        companyId: result.companyId,
         roleLevel: result.roleLevel,
         isDeveloper: result.isDeveloper,
         testRole: result.testRole,
