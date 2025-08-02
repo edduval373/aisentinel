@@ -56,7 +56,8 @@ class AIService {
 
   async generateResponse(message: string, aiModelId: number, companyId: number, activityTypeId?: number): Promise<string> {
     try {
-      const models = await storage.getAiModels(companyId);
+      // Use the new template-based system with API keys
+      const models = await storage.getAiModelsWithApiKeys(companyId);
       const model = models.find(m => m.id === aiModelId);
 
       if (!model) {
@@ -65,6 +66,10 @@ class AIService {
 
       if (!model.isEnabled) {
         throw new Error("AI model is disabled");
+      }
+
+      if (!model.hasValidApiKey) {
+        throw new Error("AI model has no valid API key configured");
       }
 
       // Get activity type for pre-prompt and context documents
