@@ -78,22 +78,10 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       icon: Building,
     },
     {
-      id: "role-management",
-      name: "User Role Management",
-      href: "/admin/role-management",
-      icon: UserCog,
-    },
-    {
       id: "create-models",
       name: "Create AI Models",
       href: "/admin/create-models",
       icon: Bot,
-    },
-    {
-      id: "setup-api-keys",
-      name: "Setup API Keys", 
-      href: "/admin/setup-api-keys",
-      icon: Key,
     }
   ];
 
@@ -144,6 +132,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       items: [
         { name: "Users", href: "/admin/users", icon: Users },
         { name: "Roles", href: "/admin/roles", icon: Shield },
+        { name: "User Role Management", href: "/admin/role-management", icon: UserCog },
       ]
     },
     {
