@@ -12,10 +12,15 @@ export default function DeveloperControls() {
   const [showSystemDebug, setShowSystemDebug] = useState(false);
   const [showDeveloperMenu, setShowDeveloperMenu] = useState(false);
 
+  console.log('🔧 [DEVELOPER CONTROLS] Rendering - User:', user?.email, 'Role Level:', user?.roleLevel);
+
   // Only show for super users (role level 1000+)
   if (!user || user.roleLevel < 1000) {
+    console.log('🔧 [DEVELOPER CONTROLS] Hidden - insufficient role level:', user?.roleLevel);
     return null;
   }
+
+  console.log('🔧 [DEVELOPER CONTROLS] Visible for super user');
 
   return (
     <div style={{ position: 'relative' }}>
@@ -27,25 +32,25 @@ export default function DeveloperControls() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              width: '40px',
-              height: '40px',
-              backgroundColor: 'rgba(255, 255, 255, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              borderRadius: '8px',
+              width: '32px',
+              height: '32px',
+              backgroundColor: '#f1f5f9',
+              border: '1px solid #cbd5e1',
+              borderRadius: '6px',
               cursor: 'pointer',
               transition: 'all 0.2s ease'
             }}
             onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+              e.currentTarget.style.backgroundColor = '#e2e8f0';
               e.currentTarget.style.transform = 'scale(1.05)';
             }}
             onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+              e.currentTarget.style.backgroundColor = '#f1f5f9';
               e.currentTarget.style.transform = 'scale(1)';
             }}
-            title="Developer Controls"
+            title="Developer Tools"
           >
-            <Settings style={{ width: '18px', height: '18px', color: 'white' }} />
+            <Settings style={{ width: '16px', height: '16px', color: '#374151' }} />
           </button>
         </DialogTrigger>
         <DialogContent style={{ maxWidth: '500px' }}>
