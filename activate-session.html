@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Session Activation - AI Sentinel</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #f1f5f9;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+        .success { background: #dcfce7; color: #16a34a; padding: 15px; border-radius: 6px; margin: 10px 0; }
+        .error { background: #fee2e2; color: #dc2626; padding: 15px; border-radius: 6px; margin: 10px 0; }
+        .info { background: #dbeafe; color: #2563eb; padding: 15px; border-radius: 6px; margin: 10px 0; }
+        button {
+            background: #3b82f6;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-size: 14px;
+        }
+        button:hover { background: #2563eb; }
+        .session-display {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 13px;
+            margin: 15px 0;
+            border: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 AI Sentinel Session Activation</h1>
+        <p>This tool will activate your saved session and get you back to the chat interface.</p>
+        
+        <div id="status" class="info">
+            Initializing session activation...
+        </div>
+        
+        <div id="session-display" class="session-display" style="display:none;"></div>
+        
+        <div id="actions" style="margin-top: 20px;">
+            <button onclick="activateSession()" id="activate-btn">
+                Activate Session
+            </button>
+            <button onclick="testAuth()" id="test-btn" style="display:none;">
+                Test Authentication
+            </button>
+            <button onclick="goToApp()" id="app-btn" style="display:none;">
+                Go to Chat App
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function updateStatus(message, type = 'info') {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = message;
+            statusEl.className = type;
+        }
+        
+        function showElement(id) {
+            document.getElementById(id).style.display = 'inline-block';
+        }
+        
+        function hideElement(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+        
+        function displaySessionInfo(info) {
+            const displayEl = document.getElementById('session-display');
+            displayEl.innerHTML = info;
+            displayEl.style.display = 'block';
+        }
+        
+        function activateSession() {
+            updateStatus('Checking for saved accounts...', 'info');
+            hideElement('activate-btn');
+            
+            try {
+                const savedAccounts = localStorage.getItem('aisentinel_saved_accounts');
+                if (!savedAccounts) {
+                    updateStatus('No saved accounts found in localStorage.', 'error');
+                    showElement('activate-btn');
+                    return;
+                }
+                
+                const accounts = JSON.parse(savedAccounts);
+                if (accounts.length === 0) {
+                    updateStatus('No accounts in saved accounts list.', 'error');
+                    showElement('activate-btn');
+                    return;
+                }
+                
+                // Use the most recently used account
+                const account = accounts.find(a => a.email === 'ed.duval15@gmail.com') || accounts[0];
+                
+                displaySessionInfo(`
+                    <strong>Activating Session:</strong><br>
+                    Email: ${account.email}<br>
+                    Role: ${account.role}<br>
+                    Company: ${account.companyName}<br>
+                    Session Token: ${account.sessionToken.substring(0, 20)}...<br>
+                    Last Used: ${account.lastUsed}
+                `);
+                
+                // Set the session token cookie with proper settings
+                const expirationDate = new Date();
+                expirationDate.setDate(expirationDate.getDate() + 7); // 7 days
+                
+                document.cookie = `sessionToken=${account.sessionToken}; path=/; expires=${expirationDate.toUTCString()}; secure; samesite=lax`;
+                
+                // Also set auth token for compatibility
+                localStorage.setItem('authToken', account.sessionToken);
+                
+                updateStatus('✅ Session activated! Cookie set successfully.', 'success');
+                showElement('test-btn');
+                
+                // Auto-test after 1 second
+                setTimeout(testAuth, 1000);
+                
+            } catch (error) {
+                console.error('Session activation failed:', error);
+                updateStatus('❌ Failed to activate session: ' + error.message, 'error');
+                showElement('activate-btn');
+            }
+        }
+        
+        async function testAuth() {
+            updateStatus('Testing authentication with server...', 'info');
+            hideElement('test-btn');
+            
+            try {
+                const response = await fetch('/api/auth/me', {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Cache-Control': 'no-cache'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const authData = await response.json();
+                console.log('Auth test result:', authData);
+                
+                if (authData.authenticated && authData.user) {
+                    updateStatus('🎉 Authentication successful! You are logged in.', 'success');
+                    displaySessionInfo(`
+                        <strong>✅ Authenticated User:</strong><br>
+                        Email: ${authData.user.email}<br>
+                        Role: ${authData.user.role}<br>
+                        Role Level: ${authData.user.roleLevel}<br>
+                        Company: ${authData.user.companyName || authData.user.companyId}<br>
+                        User ID: ${authData.user.id}
+                    `);
+                    showElement('app-btn');
+                    
+                    // Auto-redirect after 3 seconds
+                    setTimeout(() => {
+                        goToApp();
+                    }, 3000);
+                    
+                } else {
+                    updateStatus('❌ Authentication failed. Session token may be invalid.', 'error');
+                    showElement('activate-btn');
+                }
+                
+            } catch (error) {
+                console.error('Auth test failed:', error);
+                updateStatus('❌ Authentication test failed: ' + error.message, 'error');
+                showElement('activate-btn');
+            }
+        }
+        
+        function goToApp() {
+            updateStatus('Redirecting to AI Sentinel chat interface...', 'success');
+            window.location.href = '/';
+        }
+        
+        // Start automatically
+        window.onload = () => {
+            updateStatus('Ready to activate your session. Click the button below.', 'info');
+        };
+    </script>
+</body>
+</html>
