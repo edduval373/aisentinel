@@ -76,8 +76,7 @@ export default function CreateModels() {
   const [showDebug, setShowDebug] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const authResult = useAuth();
-  const user = authResult?.user || null;
+  const { user, isAuthenticated, isSuperUser: authIsSuperUser } = useAuth();
   // Simple demo mode handler without complex dialog
   const showDialog = (config: any) => {
     console.log('Demo dialog would show:', config);
@@ -85,7 +84,7 @@ export default function CreateModels() {
   const DialogComponent = () => null;
   
   // SECURITY: Super-user access only (role level 1000+)
-  const isSuperUser = (user?.roleLevel ?? 0) >= 1000;
+  const isSuperUser = authIsSuperUser;
   if (!isSuperUser) {
     return (
       <AdminLayout 
@@ -160,7 +159,7 @@ export default function CreateModels() {
     modelsCount: models?.length || 0,
     isError,
     error: error?.message,
-    models: models?.slice(0, 2), // First 2 models for debug
+    models: models && Array.isArray(models) ? models.slice(0, 2) : [], // First 2 models for debug
     rawModels: models, // Full models array
     queryDataType: typeof models,
     isArray: Array.isArray(models),
