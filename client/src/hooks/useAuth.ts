@@ -43,7 +43,7 @@ export function useAuth() {
           const accounts = JSON.parse(savedAccounts);
           if (accounts.length > 0) {
             // Use the most recently used account
-            const account = accounts.find(acc => acc.email === 'ed.duval15@gmail.com') || accounts[0];
+            const account = accounts.find((acc: any) => acc.email === 'ed.duval15@gmail.com') || accounts[0];
             console.log('🔄 [SESSION RESTORE] Found saved session, setting cookie...');
             
             // Set session cookie

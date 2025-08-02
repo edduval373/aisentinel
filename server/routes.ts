@@ -1940,6 +1940,47 @@ Stack: \${error.stack || 'No stack trace available'}\`;
     }
   });
 
+  // Auth me endpoint - matches what the frontend useAuth hook expects
+  app.get('/api/auth/me', cookieAuth, async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.user) {
+        console.log("🔒 /api/auth/me - No authenticated user found");
+        return res.json({ 
+          authenticated: false, 
+          user: null 
+        });
+      }
+
+      console.log("✅ /api/auth/me - Authentication successful:", {
+        userId: req.user.userId,
+        email: req.user.email,
+        roleLevel: req.user.roleLevel,
+        companyId: req.user.companyId
+      });
+
+      res.json({
+        authenticated: true,
+        isAuthenticated: true, // Frontend expects this field too
+        user: {
+          id: req.user.userId,
+          email: req.user.email,
+          companyId: req.user.companyId,
+          companyName: req.user.companyName,
+          role: req.user.role,
+          roleLevel: req.user.roleLevel,
+          firstName: req.user.firstName,
+          lastName: req.user.lastName
+        }
+      });
+    } catch (error) {
+      console.error("❌ /api/auth/me error:", error);
+      res.json({ 
+        authenticated: false, 
+        user: null 
+      });
+    }
+  });
+
   // Current user route with proper authentication
   app.get('/api/user/current', requireAuth, async (req: any, res) => {
     try {
