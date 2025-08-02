@@ -43,6 +43,14 @@ function Router() {
   console.log("[APP DEBUG] Router component rendering...");
   
   const { isAuthenticated, isLoading, user, isSuperUser, isOwner, isAdmin } = useAuth();
+  
+  console.log("[APP DEBUG] Router state:", {
+    isAuthenticated,
+    isLoading,
+    hasUser: !!user,
+    userEmail: user?.email,
+    userRole: user?.role
+  });
   const [showAccountSelector, setShowAccountSelector] = useState(false);
   const [accountsChecked, setAccountsChecked] = useState(false);
   
