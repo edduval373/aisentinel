@@ -201,7 +201,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       return response.json();
     },
     onSuccess: (data) => {
-      console.log('Message sent successfully:', data);
+      console.log('✅ [MESSAGE SEND] Message sent successfully:', data);
       if (data.userMessage) {
         setMessages(prev => [...prev, data.userMessage]);
         setLastMessage(data.userMessage.message);
@@ -223,7 +223,12 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       }
     },
     onError: (error) => {
-      console.error('Failed to send message:', error);
+      console.error('❌ [MESSAGE SEND] Failed to send message:', error);
+      console.error('❌ [MESSAGE SEND] Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
       toast({
         title: "Failed to send message",
         description: "Your message could not be sent. Please try again.",
@@ -286,7 +291,10 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
 
   // Handle message submission
   const handleSendMessage = (message: string, attachments?: File[]) => {
+    console.log('🔄 [MESSAGE SEND] Starting message send:', { message, selectedModel, selectedActivityType, currentSession });
+    
     if (!selectedModel || !selectedActivityType) {
+      console.error('❌ [MESSAGE SEND] Missing configuration:', { selectedModel, selectedActivityType });
       toast({
         title: "Configuration Required",
         description: "Please select an AI model and activity type",
@@ -302,13 +310,22 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       
       // Store the message to send after session creation
       setTimeout(() => {
+        console.log('🔄 [MESSAGE SEND] Retry after session creation, currentSession:', currentSession);
         if (currentSession) {
           handleSendMessage(message, attachments);
+        } else {
+          console.error('❌ [MESSAGE SEND] Still no session after timeout');
+          toast({
+            title: "Session Error",
+            description: "Unable to create chat session. Please refresh and try again.",
+            variant: "destructive",
+          });
         }
-      }, 500);
+      }, 1000); // Increased timeout
       return;
     }
 
+    console.log('🔄 [MESSAGE SEND] Building FormData with session:', currentSession);
     const formData = new FormData();
     formData.append('message', message);
     formData.append('aiModelId', selectedModel.toString());
@@ -321,6 +338,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       });
     }
 
+    console.log('🔄 [MESSAGE SEND] Sending message via mutation');
     sendMessageMutation.mutate(formData);
   };
 
