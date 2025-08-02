@@ -56,8 +56,8 @@ class AIService {
 
   async generateResponse(message: string, aiModelId: number, companyId: number, activityTypeId?: number): Promise<string> {
     try {
-      // Use the new template-based system with API keys
-      const models = await storage.getAiModelsWithApiKeys(companyId);
+      // Get AI models with their configured API keys
+      const models = await storage.getAiModels(companyId);
       const model = models.find(m => m.id === aiModelId);
 
       if (!model) {
@@ -68,8 +68,9 @@ class AIService {
         throw new Error("AI model is disabled");
       }
 
-      if (!model.hasValidApiKey) {
-        throw new Error("AI model has no valid API key configured");
+      // Check if model has API key configured
+      if (!model.api_key || model.api_key.trim() === '') {
+        throw new Error("AI model has no API key configured");
       }
 
       // Get activity type for pre-prompt and context documents
@@ -94,13 +95,13 @@ class AIService {
       }
 
       if (model.provider === "openai") {
-        return await this.generateOpenAIResponse(message, model.modelId, systemPrompt);
+        return await this.generateOpenAIResponse(message, model.modelId, systemPrompt, model.api_key);
       } else if (model.provider === "anthropic") {
-        return await this.generateAnthropicResponse(message, model.modelId, systemPrompt);
+        return await this.generateAnthropicResponse(message, model.modelId, systemPrompt, model.api_key);
       } else if (model.provider === "perplexity") {
-        return await this.generatePerplexityResponse(message, model.modelId, systemPrompt);
+        return await this.generatePerplexityResponse(message, model.modelId, systemPrompt, model.api_key);
       } else if (model.provider === "google") {
-        return await this.generateGoogleResponse(message, model.modelId, systemPrompt);
+        return await this.generateGoogleResponse(message, model.modelId, systemPrompt, model.api_key);
       } else {
         throw new Error(`Unsupported AI provider: ${model.provider}`);
       }
@@ -224,9 +225,10 @@ Please provide a synthesized response that incorporates the best elements from a
     }
   }
 
-  private async generateOpenAIResponse(message: string, modelId: string, systemPrompt: string): Promise<string> {
+  private async generateOpenAIResponse(message: string, modelId: string, systemPrompt: string, apiKey?: string): Promise<string> {
     try {
-      const response = await getOpenAIClient().chat.completions.create({
+      const client = getOpenAIClient(apiKey);
+      const response = await client.chat.completions.create({
         model: modelId,
         messages: [
           {
@@ -249,9 +251,10 @@ Please provide a synthesized response that incorporates the best elements from a
     }
   }
 
-  private async generateAnthropicResponse(message: string, modelId: string, systemPrompt: string): Promise<string> {
+  private async generateAnthropicResponse(message: string, modelId: string, systemPrompt: string, apiKey?: string): Promise<string> {
     try {
-      const response = await getAnthropicClient().messages.create({
+      const client = apiKey ? new Anthropic({ apiKey }) : getAnthropicClient();
+      const response = await client.messages.create({
         model: modelId,
         system: systemPrompt,
         max_tokens: 1000,
@@ -274,12 +277,12 @@ Please provide a synthesized response that incorporates the best elements from a
     }
   }
 
-  private async generatePerplexityResponse(message: string, modelId: string, systemPrompt: string): Promise<string> {
+  private async generatePerplexityResponse(message: string, modelId: string, systemPrompt: string, apiKey?: string): Promise<string> {
     try {
       const response = await fetch('https://api.perplexity.ai/chat/completions', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${process.env.PERPLEXITY_API_KEY}`,
+          'Authorization': `Bearer ${apiKey || process.env.PERPLEXITY_API_KEY}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -313,15 +316,15 @@ Please provide a synthesized response that incorporates the best elements from a
     }
   }
 
-  async generateGoogleResponse(message: string, modelId: string, systemPrompt: string): Promise<string> {
+  async generateGoogleResponse(message: string, modelId: string, systemPrompt: string, apiKey?: string): Promise<string> {
     try {
-      const apiKey = process.env.GOOGLE_AI_API_KEY;
-      if (!apiKey || apiKey === "default_key") {
+      const googleApiKey = apiKey || process.env.GOOGLE_AI_API_KEY;
+      if (!googleApiKey || googleApiKey === "default_key") {
         throw new Error("Google AI API key not configured");
       }
 
       // Google AI Gemini API endpoint
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelId}:generateContent?key=${apiKey}`, {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelId}:generateContent?key=${googleApiKey}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
