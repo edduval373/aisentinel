@@ -99,23 +99,19 @@ export async function apiRequest(
 
   console.log(`🔄 [API ${method}] ${url} - Start`);
   console.log(`🔄 [API ${method}] Full URL: ${window.location.origin}${url}`);
-  console.log(`🔄 [API ${method}] Data type:`, data instanceof FormData ? 'FormData' : typeof data);
+  console.log(`🔄 [API ${method}] Data:`, data);
   console.log(`🔄 [API ${method}] Environment: ${import.meta.env.MODE}`);
 
   try {
-    // Handle FormData vs JSON differently
-    const isFormData = data instanceof FormData;
-    
     const headers = {
-      // Don't set Content-Type for FormData - browser will set it with boundary
-      ...(data && !isFormData ? { "Content-Type": "application/json" } : {}),
+      ...(data ? { "Content-Type": "application/json" } : {}),
       ...customHeaders
     };
     
     const res = await fetch(url, {
       method,
       headers,
-      body: isFormData ? data : (data ? JSON.stringify(data) : undefined),
+      body: data ? JSON.stringify(data) : undefined,
       credentials: "include",
     });
 

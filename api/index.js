@@ -967,40 +967,21 @@ export default async function handler(req, res) {
     }
 
     // Chat message sending endpoint - Enhanced for production
-    if (path === '/api/chat/message' && req.method === 'POST') {
+    if (path === '/api/chat/messages' && req.method === 'POST') {
       try {
         console.log('Production chat message endpoint accessed');
         
-        // Handle FormData parsing (for file uploads and consistency with dev server)
-        const formidable = await import('formidable');
-        const form = new formidable.IncomingForm();
+        // Parse request body
+        let body = '';
+        req.on('data', chunk => {
+          body += chunk.toString();
+        });
         
         return new Promise((resolve) => {
-          form.parse(req, async (err, fields, files) => {
+          req.on('end', async () => {
             try {
-              if (err) {
-                console.error('FormData parsing error:', err);
-                res.writeHead(400, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ error: 'Invalid form data' }));
-                resolve();
-                return;
-              }
-              
-              // Extract data from FormData fields (same format as dev server)
-              const message = Array.isArray(fields.message) ? fields.message[0] : fields.message;
-              const aiModelId = Array.isArray(fields.aiModelId) ? fields.aiModelId[0] : fields.aiModelId;
-              const activityTypeId = Array.isArray(fields.activityTypeId) ? fields.activityTypeId[0] : fields.activityTypeId;
-              const sessionId = Array.isArray(fields.sessionId) ? fields.sessionId[0] : fields.sessionId;
-              
-              console.log('FormData received:', { message, sessionId, aiModelId, activityTypeId });
-              
-              // Validate required fields
-              if (!message || !aiModelId || !activityTypeId) {
-                res.writeHead(400, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ error: 'Missing required fields: message, aiModelId, activityTypeId' }));
-                resolve();
-                return;
-              }
+              const messageData = JSON.parse(body);
+              console.log('Message data received:', messageData);
               
               // Check for demo mode
               const sessionToken = req.headers.cookie?.match(/sessionToken=([^;]+)/)?.[1];
@@ -1009,129 +990,38 @@ export default async function handler(req, res) {
               
               if (isDemoMode) {
                 console.log('Demo mode message processing');
-                
-                const userMessage = {
-                  id: Math.floor(Math.random() * 1000000),
-                  sessionId: parseInt(sessionId) || Math.floor(Math.random() * 100000),
-                  role: 'user',
-                  content: message,
-                  aiModelId: parseInt(aiModelId),
-                  activityTypeId: parseInt(activityTypeId),
-                  createdAt: new Date().toISOString(),
-                  isSecurityFlagged: false
-                };
-
-                const demoResponse = `I'm a demo AI assistant. You asked: "${message}"\n\nThis is a preview of our enterprise AI governance platform. In the full version, I would process your request using the selected AI model (${aiModelId}) and activity type (${activityTypeId}) with proper security monitoring and compliance tracking.`;
-
-                const assistantMessage = {
-                  id: Math.floor(Math.random() * 1000000),
-                  sessionId: parseInt(sessionId) || Math.floor(Math.random() * 100000),
+                const demoResponse = {
+                  id: Math.floor(Math.random() * 100000),
+                  sessionId: messageData.sessionId,
+                  content: `Demo Response: ${messageData.content}\n\nThis is a demo response. To access full AI capabilities, please sign up for a subscription.`,
                   role: 'assistant',
-                  content: demoResponse,
-                  aiModelId: parseInt(aiModelId),
-                  activityTypeId: parseInt(activityTypeId),
                   createdAt: new Date().toISOString(),
-                  isSecurityFlagged: false
+                  model: 'Demo Mode',
+                  environment: 'production-demo'
                 };
                 
                 res.writeHead(200, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ userMessage, assistantMessage }));
+                res.end(JSON.stringify(demoResponse));
                 resolve();
                 return;
               }
               
               if (isProdMode) {
-                console.log('Production authenticated message processing - Delegating to main server routes');
+                console.log('Production authenticated message processing - CONNECTING TO REAL DATABASE');
                 
-                // Import and use the main server routes for production
+                // CONNECT TO REAL DATABASE FOR MESSAGE PROCESSING
+                let client = null;
                 try {
-                  const { app } = await import('../server/index.js');
+                  const { Client } = await import('pg');
+                  client = new Client({
+                    connectionString: process.env.DATABASE_URL,
+                    ssl: { rejectUnauthorized: false },
+                    connectionTimeoutMillis: 5000,
+                    query_timeout: 5000
+                  });
                   
-                  // Create a mock request/response to pass to the main route handler
-                  const mockReq = {
-                    method: 'POST',
-                    url: '/api/chat/message',
-                    body: { message, aiModelId, activityTypeId, sessionId },
-                    cookies: req.headers.cookie ? 
-                      Object.fromEntries(req.headers.cookie.split('; ').map(c => c.split('='))) 
-                      : {},
-                    headers: req.headers
-                  };
-
-                  const mockRes = {
-                    status: (code) => ({ 
-                      json: (data) => {
-                        res.writeHead(code, { 'Content-Type': 'application/json' });
-                        res.end(JSON.stringify(data));
-                        resolve();
-                      }
-                    }),
-                    json: (data) => {
-                      res.writeHead(200, { 'Content-Type': 'application/json' });
-                      res.end(JSON.stringify(data));
-                      resolve();
-                    }
-                  };
-
-                  // Forward to main route handler
-                  console.log('Forwarding to main server route handler...');
-                  app._router.handle(mockReq, mockRes);
-                  
-                } catch (importError) {
-                  console.error('Failed to import main server routes:', importError);
-                  
-                  // Fallback: simple placeholder response for production
-                  const userMessage = {
-                    id: Math.floor(Math.random() * 1000000),
-                    sessionId: parseInt(sessionId),
-                    role: 'user',
-                    content: message,
-                    aiModelId: parseInt(aiModelId),
-                    activityTypeId: parseInt(activityTypeId),
-                    createdAt: new Date().toISOString(),
-                    isSecurityFlagged: false
-                  };
-
-                  const assistantMessage = {
-                    id: Math.floor(Math.random() * 1000000),
-                    sessionId: parseInt(sessionId),
-                    role: 'assistant',
-                    content: `Production response: I received your message "${message}" and would process it using AI model ${aiModelId} and activity type ${activityTypeId}. The main server route delegation will be available shortly.`,
-                    aiModelId: parseInt(aiModelId),
-                    activityTypeId: parseInt(activityTypeId),
-                    createdAt: new Date().toISOString(),
-                    isSecurityFlagged: false
-                  };
-
-                  res.writeHead(200, { 'Content-Type': 'application/json' });
-                  res.end(JSON.stringify({ userMessage, assistantMessage }));
-                  resolve();
-                }
-              } else {
-                // No valid session token
-                res.writeHead(401, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ error: 'Invalid or missing session token' }));
-                resolve();
-              }
-              
-            } catch (parseError) {
-              console.error('FormData processing error:', parseError);
-              res.writeHead(500, { 'Content-Type': 'application/json' });
-              res.end(JSON.stringify({ error: 'Internal server error during message processing' }));
-              resolve();
-            }
-          });
-        });
-        
-      } catch (error) {
-        console.error('Chat message endpoint error:', error);
-        return res.status(500).json({
-          success: false,
-          message: 'Failed to process chat message',
-          error: error.message
-        });
-      }
-    }
+                  await client.connect();
+                  console.log('✅ Connected to real database for message processing');
                   
                   // Get user from database
                   const userResult = await client.query(

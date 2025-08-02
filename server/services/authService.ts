@@ -393,51 +393,48 @@ export class AuthService {
         session = await dbOperation;
         console.log('🔍 CHECKPOINT B - AuthService: found session:', !!session);
       } catch (dbError) {
-        console.warn('🔍 CHECKPOINT ERROR - Database session verification failed:', dbError instanceof Error ? dbError.message : String(dbError));
+        console.warn('🔍 CHECKPOINT ERROR - Database session verification failed:', dbError.message);
         
         // Database unavailable, cannot verify session - authentication fails
         return null;
       }
 
-      if (!session || (session as any).expiresAt < new Date()) {
+      if (!session || session.expiresAt < new Date()) {
         console.log('🔍 CHECKPOINT C - AuthService: session invalid or expired');
         return null;
       }
 
-      const typedSession = session as any;
       console.log('🔍 CHECKPOINT D - Raw session from database:', {
-        userId: typedSession.userId,
-        email: typedSession.email,
-        companyId: typedSession.companyId,
-        roleLevel: typedSession.roleLevel,
-        testRole: typedSession.testRole,
+        userId: session.userId,
+        email: session.email,
+        roleLevel: session.roleLevel,
+        testRole: session.testRole,
         timestamp: new Date().toISOString()
       });
 
       // Try to update last accessed time, but don't fail if database is unavailable
       try {
-        await storage.updateUserSessionLastAccessed(typedSession.id);
+        await storage.updateUserSessionLastAccessed(session.id);
       } catch (updateError) {
-        console.warn('Failed to update session last accessed time:', updateError instanceof Error ? updateError.message : String(updateError));
+        console.warn('Failed to update session last accessed time:', updateError.message);
       }
 
       // Check if this is a developer email
-      const isDeveloper = this.isDeveloperEmail(typedSession.email);
-      console.log('🔍 CHECKPOINT E - Developer check result:', isDeveloper, 'for email:', typedSession.email);
+      const isDeveloper = this.isDeveloperEmail(session.email);
+      console.log('🔍 CHECKPOINT E - Developer check result:', isDeveloper, 'for email:', session.email);
 
       const result = {
-        userId: typedSession.userId,
-        email: typedSession.email,
-        companyId: typedSession.companyId,
-        roleLevel: typedSession.roleLevel || 0,
-        sessionToken: typedSession.sessionToken,
+        userId: session.userId,
+        email: session.email,
+        companyId: session.companyId,
+        roleLevel: session.roleLevel || 0,
+        sessionToken: session.sessionToken,
         isDeveloper,
-        testRole: typedSession.testRole || undefined,
+        testRole: session.testRole || undefined,
       };
       
       console.log('🔍 CHECKPOINT F - Final session result before return:', {
         email: result.email,
-        companyId: result.companyId,
         roleLevel: result.roleLevel,
         isDeveloper: result.isDeveloper,
         testRole: result.testRole,

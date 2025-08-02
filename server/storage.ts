@@ -24,9 +24,6 @@ import {
   versionFeatures,
   versionDeployments,
   appVersions,
-  subscriptionPlans,
-  userSubscriptions,
-  apiUsageTracking,
   type User,
   type UpsertUser,
   type Company,
@@ -78,12 +75,6 @@ import {
   type InsertVersionDeployment,
   type AppVersion,
   type InsertAppVersion,
-  type SubscriptionPlan,
-  type InsertSubscriptionPlan,
-  type UserSubscription,
-  type InsertUserSubscription,
-  type ApiUsageTracking,
-  type InsertApiUsageTracking,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, count, sql, sum, like, inArray, gte, asc, not, ilike } from "drizzle-orm";
@@ -234,16 +225,7 @@ export interface IStorage {
   incrementTrialUsage(userId: string): Promise<boolean>;
   
   // User update method
-  updateUser(id: string, userData: {
-    firstName?: string;
-    lastName?: string;
-    role?: string;
-    roleLevel?: number;
-    department?: string;
-    companyId?: number;
-    lastLoginAt?: Date;
-    isTrialUser?: boolean;
-  }): Promise<User>;
+  updateUser(id: string, userData: Partial<UpsertUser>): Promise<User>;
   
   // Versioning operations
   getCurrentVersion(): Promise<VersionRelease | undefined>;
@@ -913,9 +895,6 @@ export class DatabaseStorage implements IStorage {
     role?: string;
     roleLevel?: number;
     department?: string;
-    companyId?: number;
-    lastLoginAt?: Date;
-    isTrialUser?: boolean;
   }): Promise<any> {
     const [updated] = await db
       .update(users)
