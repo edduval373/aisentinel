@@ -43,24 +43,7 @@ function Router() {
   console.log("[APP DEBUG] Router component rendering...");
   
   const { isAuthenticated, isLoading, user, isSuperUser, isOwner, isAdmin } = useAuth();
-  
-  console.log("[APP DEBUG] Router state:", {
-    isAuthenticated,
-    isLoading,
-    hasUser: !!user,
-    userEmail: user?.email,
-    userRole: user?.role
-  });
-  
-  // Call all hooks before any conditional returns
   const [location, setLocation] = useLocation();
-  
-  // IMMEDIATE REDIRECT: If authenticated, force Home component render
-  if (isAuthenticated && !isLoading && user) {
-    console.log("[APP DEBUG] IMMEDIATE AUTHENTICATION DETECTED - Rendering Home directly");
-    document.title = "AI Sentinel - Dashboard";
-    return <Home />;
-  }
   const [showAccountSelector, setShowAccountSelector] = useState(false);
   const [accountsChecked, setAccountsChecked] = useState(false);
   
@@ -272,8 +255,22 @@ function Router() {
     window.location.href = '/login';
   };
   
+  console.log("[APP DEBUG] Router state:", {
+    isAuthenticated,
+    isLoading,
+    hasUser: !!user,
+    userEmail: user?.email,
+    userRole: user?.role
+  });
   console.log("[APP DEBUG] Authentication check:", { isAuthenticated, role: user?.role, roleLevel: user?.roleLevel, isAdmin, isOwner, isSuperUser });
   console.log("[APP DEBUG] useAuth hook returned:", { isAuthenticated, isLoading, user: !!user, isSuperUser, isOwner, isAdmin });
+
+  // IMMEDIATE REDIRECT: If authenticated, redirect to Home directly
+  if (isAuthenticated && !isLoading && user) {
+    console.log("[APP DEBUG] IMMEDIATE AUTHENTICATION DETECTED - Rendering Home directly");
+    document.title = "AI Sentinel - Dashboard";
+    return <Home />;
+  }
 
   // If still loading authentication, show nothing (let HTML loading screen continue)
   if (isLoading) {
