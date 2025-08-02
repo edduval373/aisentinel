@@ -76,7 +76,8 @@ export default function CreateModels() {
   const [showDebug, setShowDebug] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { user } = useAuth();
+  const authResult = useAuth();
+  const user = authResult?.user || null;
   // Simple demo mode handler without complex dialog
   const showDialog = (config: any) => {
     console.log('Demo dialog would show:', config);
