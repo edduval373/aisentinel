@@ -77,7 +77,11 @@ export default function CreateModels() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user } = useAuth();
-  const { showDialog, DialogComponent } = useDemoDialog();
+  // Simple demo mode handler without complex dialog
+  const showDialog = (config: any) => {
+    console.log('Demo dialog would show:', config);
+  };
+  const DialogComponent = () => null;
   
   // SECURITY: Super-user access only (role level 1000+)
   const isSuperUser = (user?.roleLevel ?? 0) >= 1000;
