@@ -412,6 +412,47 @@ function Router() {
           }
           
           // STRICT SECURITY: Only authenticated users can access chat
+          // Add extra safety check - if still loading, show loading state instead of landing
+          if (isLoading) {
+            console.log("[APP DEBUG] Auth still loading, showing spinner");
+            return (
+              <div style={{ 
+                minHeight: '100vh', 
+                backgroundColor: '#f9fafb', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center' 
+              }}>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ 
+                    width: '80px', 
+                    height: '80px', 
+                    animation: 'spin 2s linear infinite',
+                    margin: '0 auto 16px auto'
+                  }}>
+                    <img 
+                      src="/ai-sentinel-logo.png" 
+                      alt="AI Sentinel" 
+                      style={{ 
+                        width: '100%', 
+                        height: '100%', 
+                        objectFit: 'contain',
+                        filter: 'brightness(1.1) saturate(1.3) contrast(1.2)'
+                      }} 
+                    />
+                  </div>
+                  <p style={{ color: '#6b7280' }}>Verifying authentication...</p>
+                </div>
+                <style>{`
+                  @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                  }
+                `}</style>
+              </div>
+            );
+          }
+          
           if (!isAuthenticated) {
             console.log("[APP DEBUG] STRICT MODE: Not authenticated, showing landing page");
             document.title = "AI Sentinel - Enterprise AI Governance Platform";
