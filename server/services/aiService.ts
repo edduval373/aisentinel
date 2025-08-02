@@ -69,7 +69,7 @@ class AIService {
       }
 
       // Check if model has API key configured
-      if (!model.api_key || model.api_key.trim() === '') {
+      if (!model.apiKey || model.apiKey.trim() === '') {
         throw new Error("AI model has no API key configured");
       }
 
@@ -95,13 +95,13 @@ class AIService {
       }
 
       if (model.provider === "openai") {
-        return await this.generateOpenAIResponse(message, model.modelId, systemPrompt, model.api_key);
+        return await this.generateOpenAIResponse(message, model.modelId, systemPrompt, model.apiKey);
       } else if (model.provider === "anthropic") {
-        return await this.generateAnthropicResponse(message, model.modelId, systemPrompt, model.api_key);
+        return await this.generateAnthropicResponse(message, model.modelId, systemPrompt, model.apiKey);
       } else if (model.provider === "perplexity") {
-        return await this.generatePerplexityResponse(message, model.modelId, systemPrompt, model.api_key);
+        return await this.generatePerplexityResponse(message, model.modelId, systemPrompt, model.apiKey);
       } else if (model.provider === "google") {
-        return await this.generateGoogleResponse(message, model.modelId, systemPrompt, model.api_key);
+        return await this.generateGoogleResponse(message, model.modelId, systemPrompt, model.apiKey);
       } else {
         throw new Error(`Unsupported AI provider: ${model.provider}`);
       }
