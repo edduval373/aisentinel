@@ -340,47 +340,50 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                 </h3>
               </div>
               
-              <button
-                onClick={() => {
-                  if (location === "/admin") {
-                    // If already on this page, just close the sidebar
-                    onToggle();
-                  } else {
-                    // Navigate to the page
-                    navigate("/admin");
-                    if (window.innerWidth < 1024) onToggle(); // Close on mobile
-                  }
-                }}
-                style={{
-                  width: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  textAlign: 'left',
-                  borderRadius: '8px',
-                  padding: '8px 12px',
-                  transition: 'all 0.2s',
-                  color: location === "/admin" ? 'white' : '#e2e8f0',
-                  backgroundColor: location === "/admin" ? '#3b82f6' : 'transparent',
-                  border: 'none',
-                  cursor: 'pointer'
-                }}
-                onMouseEnter={(e) => {
-                  if (location !== "/admin") {
-                    e.currentTarget.style.backgroundColor = '#3b82f6';
-                    e.currentTarget.style.color = 'white';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (location !== "/admin") {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = '#e2e8f0';
-                  }
-                }}
-              >
-                <Building style={{ width: '20px', height: '20px' }} />
-                <span>Company Management</span>
-              </button>
+              {superUserSections.map((section) => (
+                <button
+                  key={section.id}
+                  onClick={() => {
+                    if (location === section.href) {
+                      // If already on this page, just close the sidebar
+                      onToggle();
+                    } else {
+                      // Navigate to the page
+                      navigate(section.href);
+                      if (window.innerWidth < 1024) onToggle(); // Close on mobile
+                    }
+                  }}
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    textAlign: 'left',
+                    borderRadius: '8px',
+                    padding: '8px 12px',
+                    transition: 'all 0.2s',
+                    color: location === section.href ? 'white' : '#e2e8f0',
+                    backgroundColor: location === section.href ? '#3b82f6' : 'transparent',
+                    border: 'none',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (location !== section.href) {
+                      e.currentTarget.style.backgroundColor = '#3b82f6';
+                      e.currentTarget.style.color = 'white';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (location !== section.href) {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                      e.currentTarget.style.color = '#e2e8f0';
+                    }
+                  }}
+                >
+                  <section.icon style={{ width: '20px', height: '20px' }} />
+                  <span>{section.name}</span>
+                </button>
+              ))}
             </>
           )}
 
