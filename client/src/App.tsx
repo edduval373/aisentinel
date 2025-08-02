@@ -454,13 +454,14 @@ function Router() {
           }
           
           if (!isAuthenticated) {
-            console.log("[APP DEBUG] STRICT MODE: Not authenticated, showing landing page");
+            console.log("[APP DEBUG] Not authenticated, showing landing page");
             document.title = "AI Sentinel - Enterprise AI Governance Platform";
             return <Landing />;
           }
           
-          // STRICT: Only show home if explicitly authenticated by server
-          console.log("[APP DEBUG] STRICT MODE: Authenticated user verified, showing home");
+          // Authenticated user - show the main application
+          console.log("[APP DEBUG] User authenticated, showing home interface");
+          document.title = "AI Sentinel - Dashboard";
           return <CompanyProvider><Home /></CompanyProvider>;
         }}
       </Route>
