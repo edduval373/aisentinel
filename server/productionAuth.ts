@@ -44,7 +44,7 @@ export async function createProductionSession(email: string, userId: string): Pr
 }
 
 export async function verifyProductionSession(sessionId: string): Promise<ProductionSession | null> {
-  if (!sessionId || (!sessionId.startsWith('prod-') && !sessionId.startsWith('prod-session-'))) {
+  if (!sessionId || !sessionId.startsWith('prod-')) {
     return null;
   }
   
@@ -85,25 +85,25 @@ export function getActiveSessionFromHeaders(req: any): string | null {
   
   // 1. Authorization header
   const authHeader = req.headers.authorization;
-  if (authHeader && (authHeader.startsWith('Bearer prod-') || authHeader.startsWith('Bearer prod-session-'))) {
+  if (authHeader && authHeader.startsWith('Bearer prod-')) {
     return authHeader.substring(7);
   }
   
   // 2. Custom session header
   const sessionHeader = req.headers['x-session-token'];
-  if (sessionHeader && (sessionHeader.startsWith('prod-') || sessionHeader.startsWith('prod-session-'))) {
+  if (sessionHeader && sessionHeader.startsWith('prod-')) {
     return sessionHeader;
   }
   
   // 3. Query parameter (for initial setup)
   const sessionQuery = req.query?.sessionToken || req.query?.session;
-  if (sessionQuery && (sessionQuery.startsWith('prod-') || sessionQuery.startsWith('prod-session-'))) {
+  if (sessionQuery && sessionQuery.startsWith('prod-')) {
     return sessionQuery;
   }
   
   // 4. Cookie fallback (if working)
   const sessionCookie = req.cookies?.sessionToken;
-  if (sessionCookie && (sessionCookie.startsWith('prod-') || sessionCookie.startsWith('prod-session-'))) {
+  if (sessionCookie && sessionCookie.startsWith('prod-')) {
     return sessionCookie;
   }
   

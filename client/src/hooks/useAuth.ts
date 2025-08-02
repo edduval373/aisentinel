@@ -22,13 +22,13 @@ interface AuthData {
 export function useAuth() {
   const queryClient = useQueryClient();
   
-  console.log('🔍 useAuth - PRODUCTION AUTHENTICATION - Multi-source token detection');
+  console.log('🔍 useAuth - Strict authentication mode - NO FALLBACKS');
   
   // Initialize authentication from URL parameters and saved accounts
   React.useEffect(() => {
     initializeAuthFromURL();
     
-    // Check for saved session in localStorage and set both cookie AND authToken
+    // Also check for saved session in localStorage if no cookie exists
     const sessionCookie = document.cookie
       .split('; ')
       .find(row => row.startsWith('sessionToken='))
@@ -44,28 +44,18 @@ export function useAuth() {
           if (accounts.length > 0) {
             // Use the most recently used account
             const account = accounts.find(acc => acc.email === 'ed.duval15@gmail.com') || accounts[0];
-            console.log('🔄 [SESSION RESTORE] Found saved session, setting cookie AND authToken...');
+            console.log('🔄 [SESSION RESTORE] Found saved session, setting cookie...');
             
             // Set session cookie
             const expirationDate = new Date();
             expirationDate.setDate(expirationDate.getDate() + 7);
             document.cookie = `sessionToken=${account.sessionToken}; path=/; expires=${expirationDate.toUTCString()}; secure; samesite=lax`;
             
-            // ALSO set authToken for header-based authentication
-            localStorage.setItem('authToken', account.sessionToken);
-            
-            console.log('✅ [SESSION RESTORE] Session cookie AND authToken restored from localStorage');
+            console.log('✅ [SESSION RESTORE] Session cookie restored from localStorage');
           }
         }
       } catch (error) {
         console.error('❌ [SESSION RESTORE] Failed to restore session:', error);
-      }
-    } else {
-      // If cookie exists but no authToken, sync them
-      const authToken = localStorage.getItem('authToken');
-      if (!authToken && sessionCookie.startsWith('prod-')) {
-        localStorage.setItem('authToken', sessionCookie);
-        console.log('🔄 [SESSION SYNC] Synced cookie to authToken for header-based auth');
       }
     }
   }, []);
