@@ -51,6 +51,13 @@ function Router() {
     userEmail: user?.email,
     userRole: user?.role
   });
+  
+  // IMMEDIATE REDIRECT: If authenticated, force Home component render
+  if (isAuthenticated && !isLoading && user) {
+    console.log("[APP DEBUG] IMMEDIATE AUTHENTICATION DETECTED - Rendering Home directly");
+    document.title = "AI Sentinel - Dashboard";
+    return <CompanyProvider><Home /></CompanyProvider>;
+  }
   const [showAccountSelector, setShowAccountSelector] = useState(false);
   const [accountsChecked, setAccountsChecked] = useState(false);
   
@@ -470,6 +477,13 @@ function Router() {
           // Authenticated user - show the main application
           console.log("[APP DEBUG] User authenticated, showing home interface");
           document.title = "AI Sentinel - Dashboard";
+          
+          // Force redirect to ensure proper rendering
+          if (window.location.pathname === '/' || window.location.pathname === '/landing') {
+            console.log("[APP DEBUG] Authenticated user on landing page, forcing navigation to chat");
+            window.history.replaceState({}, document.title, '/');
+          }
+          
           return <CompanyProvider><Home /></CompanyProvider>;
         }}
       </Route>
@@ -655,6 +669,8 @@ function Router() {
 }
 
 function App() {
+  console.log("[APP DEBUG] Main App component rendering");
+  
   return (
     <QueryClientProvider client={queryClient}>
       <CompanyProvider>
