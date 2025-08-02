@@ -76,7 +76,7 @@ export default function DeveloperControls() {
             <Button
               onClick={() => {
                 setShowDeveloperMenu(false);
-                setShowAccountDebug(true);
+                setShowSystemDebug(true);
               }}
               style={{
                 display: 'flex',
@@ -103,7 +103,7 @@ export default function DeveloperControls() {
             <Button
               onClick={() => {
                 setShowDeveloperMenu(false);
-                setShowSystemDebug(true);
+                setShowAccountDebug(true);
               }}
               style={{
                 display: 'flex',
