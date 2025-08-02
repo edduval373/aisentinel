@@ -14,7 +14,7 @@ import FeaturesBenefitsDialog from "@/components/FeaturesBenefitsDialog";
 import { DeveloperRoleSwitcher } from "@/components/developer/DeveloperRoleSwitcher";
 import { DebugStatusPanel } from "@/components/DebugStatusPanel";
 import VersionDisplay from "@/components/VersionDisplay";
-import DeveloperControls from "@/components/developer/DeveloperControls";
+
 import { useFeaturesBenefits } from "@/hooks/useFeaturesBenefits";
 import { isDemoModeActive } from "@/utils/demoMode";
 import type { AiModel, ActivityType, ChatMessage as ChatMessageType, Company, ChatSession } from "@shared/schema";
@@ -571,8 +571,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                 Clear
               </Button>
               
-              {/* Developer Controls - only show for Super Users */}
-              <DeveloperControls />
+
             </div>
           </div>
         </div>

@@ -34,18 +34,18 @@ export default function DeveloperControls() {
               justifyContent: 'center',
               width: '32px',
               height: '32px',
-              backgroundColor: '#f1f5f9',
+              backgroundColor: 'white',
               border: '1px solid #cbd5e1',
               borderRadius: '6px',
               cursor: 'pointer',
               transition: 'all 0.2s ease'
             }}
             onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = '#e2e8f0';
+              e.currentTarget.style.backgroundColor = '#f8f9fa';
               e.currentTarget.style.transform = 'scale(1.05)';
             }}
             onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = '#f1f5f9';
+              e.currentTarget.style.backgroundColor = 'white';
               e.currentTarget.style.transform = 'scale(1)';
             }}
             title="Developer Tools"

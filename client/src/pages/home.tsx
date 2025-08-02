@@ -11,7 +11,7 @@ import TutorialArrow from "@/components/tutorial/TutorialArrow";
 import { useTutorial } from "@/hooks/useTutorial";
 import { DemoUsageBanner } from "@/components/demo/DemoUsageBanner";
 import FeaturesBenefitsDialog from "@/components/FeaturesBenefitsDialog";
-import { DeveloperRoleSwitcher } from "@/components/developer/DeveloperRoleSwitcher";
+import DeveloperControls from "@/components/developer/DeveloperControls";
 import { useFeaturesBenefits } from "@/hooks/useFeaturesBenefits";
 import { useDeveloper } from "@/hooks/useDeveloper";
 import AccountDropdown from "@/components/auth/AccountDropdown";
@@ -574,7 +574,8 @@ export default function Home() {
               </Button>
             )}
             
-
+            {/* Developer Controls */}
+            <DeveloperControls />
 
             {/* Account Dropdown */}
             <AccountDropdown />
