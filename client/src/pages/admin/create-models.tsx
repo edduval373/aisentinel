@@ -79,6 +79,64 @@ export default function CreateModels() {
   const { user } = useAuth();
   const { showDialog, DialogComponent } = useDemoDialog();
   
+  // SECURITY: Super-user access only (role level 1000+)
+  const isSuperUser = (user?.roleLevel ?? 0) >= 1000;
+  if (!isSuperUser) {
+    return (
+      <AdminLayout 
+        title="Access Denied" 
+        subtitle="Super-user privileges required"
+      >
+        <div style={{ 
+          padding: '48px', 
+          textAlign: 'center',
+          backgroundColor: '#fef2f2',
+          borderRadius: '12px',
+          border: '1px solid #fecaca'
+        }}>
+          <div style={{ 
+            width: '64px', 
+            height: '64px', 
+            backgroundColor: '#dc2626',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 24px auto'
+          }}>
+            <Bot style={{ width: '32px', height: '32px', color: 'white' }} />
+          </div>
+          <h2 style={{ 
+            fontSize: '24px', 
+            fontWeight: '600', 
+            color: '#991b1b', 
+            margin: '0 0 12px 0' 
+          }}>
+            Access Restricted
+          </h2>
+          <p style={{ 
+            fontSize: '16px', 
+            color: '#7f1d1d', 
+            margin: '0 0 16px 0',
+            lineHeight: '1.5'
+          }}>
+            Creating AI model templates requires super-user privileges (role level 1000+).
+            <br />
+            Current role level: {user?.roleLevel || 0}
+          </p>
+          <p style={{ 
+            fontSize: '14px', 
+            color: '#991b1b', 
+            margin: 0,
+            fontStyle: 'italic'
+          }}>
+            Contact your system administrator to request elevated access.
+          </p>
+        </div>
+      </AdminLayout>
+    );
+  }
+  
   // Check if we're in demo mode
   const isDemoMode = isDemoModeActive(user);
   const isReadOnly = isReadOnlyMode(user);

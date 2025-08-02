@@ -84,6 +84,12 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       icon: UserCog,
     },
     {
+      id: "create-models",
+      name: "Create AI Models",
+      href: "/admin/create-models",
+      icon: Bot,
+    },
+    {
       id: "setup-api-keys",
       name: "Setup API Keys", 
       href: "/admin/setup-api-keys",
@@ -97,12 +103,6 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       name: "Company Setup",
       href: "/company-setup",
       icon: Building,
-    },
-    {
-      id: "create-models",
-      name: "Create AI Models",
-      href: "/admin/create-models",
-      icon: Bot,
     },
     {
       id: "model-fusion",
