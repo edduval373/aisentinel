@@ -18,7 +18,7 @@ import DemoSignup from "@/pages/demo-signup.tsx";
 import CompanyManagement from "@/pages/admin/company-management.tsx";
 import AdminModels from "@/pages/admin/models.tsx";
 import AdminActivityTypes from "@/pages/admin/activity-types.tsx";
-import AdminUsers from "@/pages/admin/users.tsx";
+
 import AdminPolicies from "@/pages/admin/policies.tsx";
 import AdminLogs from "@/pages/admin/logs.tsx";
 import AdminSecurity from "@/pages/admin/security.tsx";
@@ -465,13 +465,7 @@ function Router() {
         )}
       </Route>
       
-      <Route path="/admin/users">
-        {() => (
-          <RoleGuard requiredRole="admin">
-            <AdminUsers />
-          </RoleGuard>
-        )}
-      </Route>
+
       
       <Route path="/admin/policies">
         {() => (

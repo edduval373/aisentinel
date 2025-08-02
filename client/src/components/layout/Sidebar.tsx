@@ -130,9 +130,8 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       name: "User Management", 
       icon: Users,
       items: [
-        { name: "Users", href: "/admin/users", icon: Users },
-        { name: "Roles", href: "/admin/roles", icon: Shield },
         { name: "User Role Management", href: "/admin/role-management", icon: UserCog },
+        { name: "Roles", href: "/admin/roles", icon: Shield },
       ]
     },
     {
