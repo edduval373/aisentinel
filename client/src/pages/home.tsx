@@ -574,34 +574,7 @@ export default function Home() {
               </Button>
             )}
             
-            {/* Developer Controls Icon */}
-            {isDeveloper && (
-              <button
-                onClick={() => setShowDeveloperModal(true)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: '32px',
-                  height: '32px',
-                  backgroundColor: 'white',
-                  color: '#1e2851',
-                  border: 'none',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease'
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor = '#f8f9fa';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = 'white';
-                }}
-                title="Developer Controls"
-              >
-                <Settings size={16} color="#1e2851" />
-              </button>
-            )}
+
 
             {/* Account Dropdown */}
             <AccountDropdown />
