@@ -65,50 +65,44 @@ export function useAuth() {
     queryKey: ['/api/auth/me'],
     queryFn: async () => {
       try {
-        // Get auth headers for header-based authentication
-        const headers = getAuthHeaders();
-        console.log('🔄 Auth request headers:', Object.keys(headers));
+        console.log('🔄 Calling /api/auth/me with cookie authentication');
         
-        const authResponse = await apiRequest('/api/auth/me', 'GET', null, headers);
-        console.log("Authentication response:", authResponse);
+        // Use simple fetch with credentials to send cookies
+        const response = await fetch('/api/auth/me', {
+          method: 'GET',
+          credentials: 'include', // This sends cookies
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (!response.ok) {
+          console.log('🔒 Auth API returned non-ok status:', response.status);
+          return { 
+            authenticated: false, 
+            user: null
+          };
+        }
+        
+        const authResponse = await response.json();
+        console.log("✅ Authentication response:", authResponse);
         
         // Check for production authentication success
         if (authResponse.authenticated === true || authResponse.isAuthenticated === true) {
-          const user = authResponse.user || {
-            id: authResponse.userId,
-            email: authResponse.email,
-            firstName: authResponse.firstName,
-            lastName: authResponse.lastName,
-            role: authResponse.role,
-            roleLevel: authResponse.roleLevel || authResponse.effectiveRoleLevel,
-            companyId: authResponse.companyId,
-            companyName: authResponse.companyName
-          };
-          
-          // Ensure companyId is properly extracted from user object if it exists there
-          if (authResponse.user && authResponse.user.companyId) {
-            user.companyId = authResponse.user.companyId;
-            user.companyName = authResponse.user.companyName;
-          }
-          
-          console.log('✅ Authentication successful via headers:', user);
-          return { 
-            authenticated: true, 
-            user: user
-          };
+          console.log('✅ Authentication successful:', authResponse.user);
+          return authResponse;
         } else {
           console.log('🔒 Server returned non-authenticated response');
           return { 
             authenticated: false, 
-            user: undefined
+            user: null
           };
         }
       } catch (error) {
-        console.log("Authentication failed:", error);
-        // NO FALLBACKS - strict security
+        console.error("❌ Authentication failed:", error);
         return { 
           authenticated: false, 
-          user: undefined
+          user: null
         };
       }
     },
