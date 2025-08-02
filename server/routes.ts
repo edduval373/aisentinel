@@ -1941,10 +1941,30 @@ Stack: \${error.stack || 'No stack trace available'}\`;
   });
 
   // Auth me endpoint - matches what the frontend useAuth hook expects
-  app.get('/api/auth/me', cookieAuth, async (req: AuthenticatedRequest, res) => {
+  app.get('/api/auth/me', async (req: any, res) => {
     try {
-      if (!req.user) {
-        console.log("🔒 /api/auth/me - No authenticated user found");
+      console.log("🔍 /api/auth/me - Starting authentication check");
+      
+      // Get session token from cookies or headers
+      const sessionToken = req.cookies.sessionToken || req.headers['x-session-token'] || req.headers['authorization']?.replace('Bearer ', '');
+      
+      if (!sessionToken) {
+        console.log("🔒 /api/auth/me - No session token found");
+        return res.json({ 
+          authenticated: false, 
+          user: null 
+        });
+      }
+
+      console.log("🔍 /api/auth/me - Found session token:", sessionToken.substring(0, 20) + '...');
+
+      // Verify session using AuthService
+      const { AuthService } = await import('./services/authService');
+      const authService = new AuthService();
+      const session = await authService.verifySession(sessionToken);
+      
+      if (!session) {
+        console.log("🔒 /api/auth/me - Session verification failed");
         return res.json({ 
           authenticated: false, 
           user: null 
@@ -1952,31 +1972,33 @@ Stack: \${error.stack || 'No stack trace available'}\`;
       }
 
       console.log("✅ /api/auth/me - Authentication successful:", {
-        userId: req.user.userId,
-        email: req.user.email,
-        roleLevel: req.user.roleLevel,
-        companyId: req.user.companyId
+        email: session.email,
+        roleLevel: session.roleLevel,
+        companyId: session.companyId
       });
 
+      // Get company name
+      const company = await storage.getCompany(session.companyId);
+      
       res.json({
         authenticated: true,
-        isAuthenticated: true, // Frontend expects this field too
+        isAuthenticated: true,
         user: {
-          id: req.user.userId,
-          email: req.user.email,
-          companyId: req.user.companyId,
-          companyName: req.user.companyName,
-          role: req.user.role,
-          roleLevel: req.user.roleLevel,
-          firstName: req.user.firstName,
-          lastName: req.user.lastName
+          id: session.userId,
+          email: session.email,
+          companyId: session.companyId,
+          companyName: company?.name || 'Unknown Company',
+          role: session.roleLevel >= 1000 ? 'super-user' : session.roleLevel >= 999 ? 'owner' : session.roleLevel >= 998 ? 'admin' : 'user',
+          roleLevel: session.roleLevel,
+          firstName: session.email.split('@')[0], // Fallback
+          lastName: ''
         }
       });
     } catch (error) {
       console.error("❌ /api/auth/me error:", error);
-      res.json({ 
-        authenticated: false, 
-        user: null 
+      res.status(500).json({ 
+        error: 'Authentication check failed',
+        message: error instanceof Error ? error.message : 'Unknown error'
       });
     }
   });

@@ -1,0 +1,61 @@
+React app mounted successfully
+index-BHjykaEK.js:420 🔍 useAuth - Strict authentication mode - NO FALLBACKS
+index-BHjykaEK.js:420 Authentication check: ObjectisAdmin: falseisAuthenticated: falseisOwner: falseisSuperUser: falserole: undefinedroleLevel: 1[[Prototype]]: Object
+index-BHjykaEK.js:651 [APP DEBUG] Router component rendering...
+index-BHjykaEK.js:420 🔍 useAuth - Strict authentication mode - NO FALLBACKS
+index-BHjykaEK.js:420 Authentication check: ObjectisAdmin: falseisAuthenticated: falseisOwner: falseisSuperUser: falserole: undefinedroleLevel: 1[[Prototype]]: Object
+index-BHjykaEK.js:651 [APP DEBUG] Router state: ObjecthasUser: falseisAuthenticated: falseisLoading: trueuserEmail: undefineduserRole: undefined[[Prototype]]: Object
+index-BHjykaEK.js:651 [APP DEBUG] Authentication check: ObjectisAdmin: falseisAuthenticated: falseisOwner: falseisSuperUser: falserole: undefinedroleLevel: undefined[[Prototype]]: Object
+index-BHjykaEK.js:651 [APP DEBUG] useAuth hook returned: ObjectisAdmin: falseisAuthenticated: falseisLoading: trueisOwner: falseisSuperUser: falseuser: false[[Prototype]]: Object
+index-BHjykaEK.js:420 🔄 [SESSION RESTORE] No session cookie found, checking localStorage...
+index-BHjykaEK.js:420 🔄 [SESSION RESTORE] Found saved session, setting cookie...
+index-BHjykaEK.js:420 ✅ [SESSION RESTORE] Session cookie restored from localStorage
+index-BHjykaEK.js:420 🔄 Auth request with headers: Array(3)
+index-BHjykaEK.js:50 🔄 [API GET] /api/auth/me - Start
+index-BHjykaEK.js:50 🔄 [API GET] Full URL: https://www.aisentinel.app/api/auth/me
+index-BHjykaEK.js:50 🔄 [API GET] Data type: object
+index-BHjykaEK.js:50 🔄 [API GET] Environment: production
+index-BHjykaEK.js:651 Checking saved accounts: 1
+index-BHjykaEK.js:651 Single account found, auto-selecting
+index-BHjykaEK.js:651 Selecting account with token: prod-1754052835575-2...
+index-BHjykaEK.js:420 🔄 [SESSION RESTORE] No session cookie found, checking localStorage...
+index-BHjykaEK.js:420 🔄 [SESSION RESTORE] Found saved session, setting cookie...
+index-BHjykaEK.js:420 ✅ [SESSION RESTORE] Session cookie restored from localStorage
+index-BHjykaEK.js:420 Unauthenticated user: No company context
+index-BHjykaEK.js:420 🔧 [AUTH HEADERS] Token set in localStorage: prod-1754052835575-2...
+index-BHjykaEK.js:420 🔍 useAuth - Strict authentication mode - NO FALLBACKS
+index-BHjykaEK.js:420 Authentication check: ObjectisAdmin: falseisAuthenticated: falseisOwner: falseisSuperUser: falserole: undefinedroleLevel: 1[[Prototype]]: Object
+index-BHjykaEK.js:651 [APP DEBUG] Router component rendering...
+index-BHjykaEK.js:420 🔍 useAuth - Strict authentication mode - NO FALLBACKS
+index-BHjykaEK.js:420 Authentication check: ObjectisAdmin: falseisAuthenticated: falseisOwner: falseisSuperUser: falserole: undefinedroleLevel: 1[[Prototype]]: Object
+index-BHjykaEK.js:651 [APP DEBUG] Router state: ObjecthasUser: falseisAuthenticated: falseisLoading: trueuserEmail: undefineduserRole: undefined[[Prototype]]: Object
+index-BHjykaEK.js:651 [APP DEBUG] Authentication check: ObjectisAdmin: falseisAuthenticated: falseisOwner: falseisSuperUser: falserole: undefinedroleLevel: undefined[[Prototype]]: Object
+index-BHjykaEK.js:651 [APP DEBUG] useAuth hook returned: Object
+/api/auth/me:1  Failed to load resource: the server responded with a status of 500 ()Understand this error
+index-BHjykaEK.js:50 📊 [API GET] /api/auth/me - Status: 500 (268ms)
+index-BHjykaEK.js:50 📊 [API GET] Headers: Object
+index-BHjykaEK.js:50 ❌ [API GET] /api/auth/me - Failed (269ms): Error: 500: 
+    at TC (index-BHjykaEK.js:48:42957)
+    at async Ze (index-BHjykaEK.js:50:1404)
+    at async queryFn (index-BHjykaEK.js:420:39893)
+Ze @ index-BHjykaEK.js:50Understand this error
+index-BHjykaEK.js:48 🚫 [FALLBACK] Auth fallback disabled - must use real sessions
+index-BHjykaEK.js:420 ❌ Authentication failed: Error: 500: 
+    at TC (index-BHjykaEK.js:48:42957)
+    at async Ze (index-BHjykaEK.js:50:1404)
+    at async queryFn (index-BHjykaEK.js:420:39893)
+queryFn @ index-BHjykaEK.js:420Understand this error
+index-BHjykaEK.js:420 🔍 useAuth - Strict authentication mode - NO FALLBACKS
+index-BHjykaEK.js:420 Authentication check: Object
+index-BHjykaEK.js:651 [APP DEBUG] Router component rendering...
+index-BHjykaEK.js:420 🔍 useAuth - Strict authentication mode - NO FALLBACKS
+index-BHjykaEK.js:420 Authentication check: Object
+index-BHjykaEK.js:651 [APP DEBUG] Router state: Object
+index-BHjykaEK.js:651 [APP DEBUG] Authentication check: Object
+index-BHjykaEK.js:651 [APP DEBUG] useAuth hook returned: Object
+index-BHjykaEK.js:651 [APP DEBUG] STRICT MODE: Not authenticated, showing landing page
+index-BHjykaEK.js:661 [APP DEBUG] Not authenticated, showing landing page
+index-BHjykaEK.js:554 [LANDING DEBUG] Landing component rendering...
+index-BHjykaEK.js:554 [LANDING DEBUG] About to return JSX
+index-BHjykaEK.js:554 [LANDING DEBUG] Landing component mounted successfully
+/api/version/current:1  Failed to load resource: the server responded with a status of 500 ()

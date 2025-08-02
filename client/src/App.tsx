@@ -1,4 +1,4 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -52,11 +52,14 @@ function Router() {
     userRole: user?.role
   });
   
+  // Call all hooks before any conditional returns
+  const [location, setLocation] = useLocation();
+  
   // IMMEDIATE REDIRECT: If authenticated, force Home component render
   if (isAuthenticated && !isLoading && user) {
     console.log("[APP DEBUG] IMMEDIATE AUTHENTICATION DETECTED - Rendering Home directly");
     document.title = "AI Sentinel - Dashboard";
-    return <CompanyProvider><Home /></CompanyProvider>;
+    return <Home />;
   }
   const [showAccountSelector, setShowAccountSelector] = useState(false);
   const [accountsChecked, setAccountsChecked] = useState(false);
