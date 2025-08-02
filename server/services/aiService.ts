@@ -70,8 +70,11 @@ class AIService {
 
       // Check if model has API key configured
       if (!model.apiKey || model.apiKey.trim() === '') {
+        console.error('❌ AI model missing API key:', { modelId: model.id, provider: model.provider, name: model.name });
         throw new Error("AI model has no API key configured");
       }
+      
+      console.log('✅ AI model has API key:', { modelId: model.id, provider: model.provider, name: model.name, keyLength: model.apiKey.length });
 
       // Get activity type for pre-prompt and context documents
       let systemPrompt = "You are an AI assistant in a corporate environment. Provide helpful, professional responses while being mindful of data privacy and security. Do not process or store any sensitive information like financial data, personal identifiers, or proprietary company information.";

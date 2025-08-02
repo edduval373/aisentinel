@@ -3205,17 +3205,35 @@ Stack: \${error.stack || 'No stack trace available'}\`;
       }
 
       // Generate AI response - use Model Fusion if selected
+      console.log('🔄 [AI RESPONSE] Starting AI response generation:', { isModelFusion, aiModelId: parsedAiModelId, companyId });
       let aiResponse;
       try {
         if (isModelFusion) {
+          console.log('🔄 [AI RESPONSE] Using Model Fusion');
           // For Model Fusion, use a special method that runs across all models
           aiResponse = await aiService.generateModelFusionResponse(contextMessage, companyId, parsedActivityTypeId);
         } else {
-          // For demo/development, provide fallback response if AI service fails
+          console.log('🔄 [AI RESPONSE] Using single AI model:', parsedAiModelId);
+          // Call AI service with detailed error handling
           try {
             aiResponse = await aiService.generateResponse(contextMessage, parsedAiModelId, companyId, parsedActivityTypeId);
+            console.log('✅ [AI RESPONSE] AI service returned response successfully');
           } catch (error) {
-            console.log('AI service error, using demo response:', error.message);
+            console.error('❌ [AI RESPONSE] AI service error:', {
+              message: error.message,
+              stack: error.stack,
+              name: error.name,
+              aiModelId: parsedAiModelId,
+              companyId: companyId
+            });
+            
+            // Re-throw the error instead of using demo response in production
+            if (process.env.NODE_ENV === 'production' || process.env.REPLIT_DEPLOYMENT === '1') {
+              console.error('❌ [AI RESPONSE] Production error - not using demo fallback');
+              throw error;
+            }
+            
+            console.log('🔄 [AI RESPONSE] Development mode - using demo response fallback');
             // Generate demo response explaining the functionality
             const selectedModel = await storage.getAiModels(companyId).then(models => models.find(m => m.id === parsedAiModelId));
             const activityType = await storage.getActivityTypes(companyId).then(types => types.find(t => t.id === parsedActivityTypeId));
