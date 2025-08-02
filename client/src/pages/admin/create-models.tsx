@@ -277,7 +277,7 @@ export default function CreateModels() {
       description: model.description || "",
       contextWindow: model.contextWindow,
       isEnabled: model.isEnabled,
-      capabilities: (model.capabilities as string[]) || [],
+      capabilities: Array.isArray(model.capabilities) ? model.capabilities : [],
       apiKey: model.apiKey,
       apiEndpoint: model.apiEndpoint || "",
       maxTokens: model.maxTokens || 1000,
@@ -571,13 +571,13 @@ export default function CreateModels() {
           <div style={{ textAlign: 'center', padding: '40px' }}>
             <div>Loading AI models...</div>
           </div>
-        ) : (models && Array.isArray(models) && models?.length > 0) ? (
+        ) : (models && Array.isArray(models) && models.length > 0) ? (
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
             gap: '20px'
           }}>
-            {models?.map((model: AiModel) => (
+            {models.map((model: AiModel) => (
             <div
               key={model.id}
               style={{
@@ -1028,9 +1028,9 @@ function ModelForm({
                       <FormItem style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <FormControl>
                           <Switch
-                            checked={field.value?.includes(capability)}
+                            checked={Array.isArray(field.value) && field.value.includes(capability)}
                             onCheckedChange={(checked) => {
-                              const current = field.value || [];
+                              const current = Array.isArray(field.value) ? field.value : [];
                               if (checked) {
                                 field.onChange([...current, capability]);
                               } else {
