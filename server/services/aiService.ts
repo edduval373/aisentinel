@@ -18,9 +18,13 @@ const DEFAULT_ANTHROPIC_MODEL = "claude-sonnet-4-20250514";
 const DEFAULT_OPENAI_MODEL = "gpt-4o";
 
 // Create OpenAI clients dynamically to always use the latest API key
-const getOpenAIClient = () => {
+const getOpenAIClient = (customApiKey?: string) => {
+  const apiKey = customApiKey || process.env.OPENAI_API_KEY;
+  if (!apiKey || apiKey === "default_key") {
+    throw new Error("OpenAI API key not configured");
+  }
   return new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY || "default_key",
+    apiKey: apiKey,
   });
 };
 

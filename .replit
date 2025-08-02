@@ -43,3 +43,6 @@ mode = "sequential"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "ENABLE_REPLIT_AUTH=false NODE_ENV=development tsx server/index.ts"
+
+[agent]
+integrations = ["javascript_openai==1.0.0"]
