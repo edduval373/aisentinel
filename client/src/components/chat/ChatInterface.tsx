@@ -14,7 +14,7 @@ import FeaturesBenefitsDialog from "@/components/FeaturesBenefitsDialog";
 import { DeveloperRoleSwitcher } from "@/components/developer/DeveloperRoleSwitcher";
 import { DebugStatusPanel } from "@/components/DebugStatusPanel";
 import VersionDisplay from "@/components/VersionDisplay";
-import AccountDebugger from "@/components/debug/AccountDebugger";
+import DeveloperControls from "@/components/developer/DeveloperControls";
 import { useFeaturesBenefits } from "@/hooks/useFeaturesBenefits";
 import { isDemoModeActive } from "@/utils/demoMode";
 import type { AiModel, ActivityType, ChatMessage as ChatMessageType, Company, ChatSession } from "@shared/schema";
@@ -570,7 +570,9 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                 <Trash2 style={{ width: '14px', height: '14px' }} />
                 Clear
               </Button>
-{/* Debug panel removed for production */}
+              
+              {/* Developer Controls - only show for Super Users */}
+              <DeveloperControls />
             </div>
           </div>
         </div>
@@ -773,10 +775,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
         onOpenChange={closeDialog}
       />
 
-      {/* Account Debugger - only show for Super Users */}
-      {user?.roleLevel >= 1000 && (
-        <AccountDebugger />
-      )}
+
       
 {/* Debug Status Panel removed for production */}
     </div>
