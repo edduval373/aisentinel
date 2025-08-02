@@ -69,10 +69,10 @@ export default function DeveloperControls() {
           <div style={{ 
             display: 'flex', 
             flexDirection: 'column', 
-            gap: '12px',
-            padding: '16px 0'
+            gap: '8px',
+            padding: '8px 0'
           }}>
-            {/* Account Debug Tool */}
+            {/* Developer Controls */}
             <Button
               onClick={() => {
                 setShowDeveloperMenu(false);
@@ -82,29 +82,24 @@ export default function DeveloperControls() {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '12px',
-                padding: '16px',
+                padding: '12px 16px',
                 backgroundColor: '#f8fafc',
                 border: '1px solid #e2e8f0',
-                borderRadius: '8px',
+                borderRadius: '6px',
                 cursor: 'pointer',
                 textAlign: 'left' as const,
                 justifyContent: 'flex-start',
                 width: '100%',
-                color: '#374151'
+                color: '#374151',
+                fontSize: '14px',
+                fontWeight: '500'
               }}
             >
-              <User style={{ width: '20px', height: '20px', color: '#3b82f6' }} />
-              <div>
-                <div style={{ fontWeight: '600', fontSize: '14px' }}>
-                  Account Debug Tool
-                </div>
-                <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '2px' }}>
-                  View and manage saved account data, localStorage debugging
-                </div>
-              </div>
+              <Settings style={{ width: '18px', height: '18px', color: '#3b82f6' }} />
+              Developer Controls
             </Button>
 
-            {/* System Debug Panel */}
+            {/* User Toolkit */}
             <Button
               onClick={() => {
                 setShowDeveloperMenu(false);
@@ -114,59 +109,21 @@ export default function DeveloperControls() {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '12px',
-                padding: '16px',
+                padding: '12px 16px',
                 backgroundColor: '#f8fafc',
                 border: '1px solid #e2e8f0',
-                borderRadius: '8px',
+                borderRadius: '6px',
                 cursor: 'pointer',
                 textAlign: 'left' as const,
                 justifyContent: 'flex-start',
                 width: '100%',
-                color: '#374151'
+                color: '#374151',
+                fontSize: '14px',
+                fontWeight: '500'
               }}
             >
-              <Bug style={{ width: '20px', height: '20px', color: '#ef4444' }} />
-              <div>
-                <div style={{ fontWeight: '600', fontSize: '14px' }}>
-                  System Debug Panel
-                </div>
-                <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '2px' }}>
-                  Application status, API health, and system diagnostics
-                </div>
-              </div>
-            </Button>
-
-            {/* Database Tools */}
-            <Button
-              onClick={() => {
-                setShowDeveloperMenu(false);
-                // Could add database debugging tools here
-              }}
-              disabled
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                padding: '16px',
-                backgroundColor: '#f9fafb',
-                border: '1px solid #e5e7eb',
-                borderRadius: '8px',
-                cursor: 'not-allowed',
-                textAlign: 'left' as const,
-                justifyContent: 'flex-start',
-                width: '100%',
-                color: '#9ca3af'
-              }}
-            >
-              <Database style={{ width: '20px', height: '20px', color: '#9ca3af' }} />
-              <div>
-                <div style={{ fontWeight: '600', fontSize: '14px' }}>
-                  Database Tools
-                </div>
-                <div style={{ fontSize: '12px', color: '#9ca3af', marginTop: '2px' }}>
-                  Coming soon - Database diagnostics and management
-                </div>
-              </div>
+              <User style={{ width: '18px', height: '18px', color: '#22c55e' }} />
+              User Toolkit
             </Button>
           </div>
         </DialogContent>
