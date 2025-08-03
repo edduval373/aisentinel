@@ -26,30 +26,65 @@ export function useAuth() {
   
   // Initialize authentication from URL parameters and saved accounts
   React.useEffect(() => {
+    console.log('🔧 [AUTH DEBUG] useAuth initialization starting...');
+    
+    // Debug all cookies
+    console.log('🔧 [AUTH DEBUG] All cookies:', document.cookie);
+    
     initializeAuthFromURL();
     
-    // Also check for saved session in localStorage if no cookie exists
+    // Check for existing session cookie
     const sessionCookie = document.cookie
       .split('; ')
       .find(row => row.startsWith('sessionToken='))
       ?.split('=')[1];
+      
+    console.log('🔧 [AUTH DEBUG] Session cookie found:', sessionCookie ? 'YES' : 'NO');
+    if (sessionCookie) {
+      console.log('🔧 [AUTH DEBUG] Session cookie value:', sessionCookie.substring(0, 20) + '...');
+    }
       
     if (!sessionCookie) {
       console.log('🔄 [SESSION RESTORE] No session cookie found, checking localStorage...');
       
       try {
         const savedAccounts = localStorage.getItem('aisentinel_saved_accounts');
+        const authToken = localStorage.getItem('authToken');
+        
+        console.log('🔧 [AUTH DEBUG] localStorage authToken:', authToken ? 'EXISTS' : 'MISSING');
+        console.log('🔧 [AUTH DEBUG] localStorage savedAccounts:', savedAccounts ? 'EXISTS' : 'MISSING');
+        
         if (savedAccounts) {
           const accounts = JSON.parse(savedAccounts);
+          console.log('🔧 [AUTH DEBUG] Parsed accounts count:', accounts.length);
+          
           if (accounts.length > 0) {
             // Use the most recently used account
             const account = accounts.find((acc: any) => acc.email === 'ed.duval15@gmail.com') || accounts[0];
+            console.log('🔧 [AUTH DEBUG] Selected account:', account.email);
+            console.log('🔧 [AUTH DEBUG] Account session token:', account.sessionToken.substring(0, 20) + '...');
             console.log('🔄 [SESSION RESTORE] Found saved session, setting cookie...');
             
-            // Set session cookie
+            // Set session cookie with production-compatible settings
             const expirationDate = new Date();
             expirationDate.setDate(expirationDate.getDate() + 7);
-            document.cookie = `sessionToken=${account.sessionToken}; path=/; expires=${expirationDate.toUTCString()}; secure; samesite=lax`;
+            
+            // Try different cookie settings for production compatibility
+            const isProduction = window.location.hostname !== 'localhost';
+            const cookieSettings = isProduction 
+              ? `sessionToken=${account.sessionToken}; path=/; expires=${expirationDate.toUTCString()}; secure; samesite=strict`
+              : `sessionToken=${account.sessionToken}; path=/; expires=${expirationDate.toUTCString()}; samesite=lax`;
+            
+            document.cookie = cookieSettings;
+            console.log('🔧 [AUTH DEBUG] Cookie set with settings:', cookieSettings.substring(0, 80) + '...');
+            
+            // Verify cookie was set
+            const verifySessionCookie = document.cookie
+              .split('; ')
+              .find(row => row.startsWith('sessionToken='))
+              ?.split('=')[1];
+            
+            console.log('🔧 [AUTH DEBUG] Cookie verification:', verifySessionCookie ? 'SUCCESS' : 'FAILED');
             
             console.log('✅ [SESSION RESTORE] Session cookie restored from localStorage');
           }
@@ -65,11 +100,23 @@ export function useAuth() {
     queryKey: ['/api/auth/me'],
     queryFn: async () => {
       try {
+        console.log('🔧 [AUTH DEBUG] Starting authentication query...');
+        
+        // Debug current cookies before making request
+        const currentCookies = document.cookie;
+        console.log('🔧 [AUTH DEBUG] Current cookies before API call:', currentCookies);
+        
         // Get auth headers for header-based authentication (the working method)
         const headers = getAuthHeaders();
+        console.log('🔧 [AUTH DEBUG] Auth headers prepared:', headers);
         console.log('🔄 Auth request with headers:', Object.keys(headers));
         
+        // Check if we have any auth token in headers
+        const hasAuthHeader = headers['Authorization'] || headers['X-Session-Token'];
+        console.log('🔧 [AUTH DEBUG] Has auth token in headers:', hasAuthHeader ? 'YES' : 'NO');
+        
         const authResponse = await apiRequest('/api/auth/me', 'GET', null, headers);
+        console.log('🔧 [AUTH DEBUG] Raw authentication response:', authResponse);
         console.log("✅ Authentication response:", authResponse);
         
         // Check for production authentication success

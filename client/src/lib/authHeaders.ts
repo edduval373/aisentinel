@@ -46,16 +46,24 @@ export function clearAuthToken(): void {
 }
 
 export function getAuthHeaders(): Record<string, string> {
+  console.log('🔧 [AUTH HEADERS] getAuthHeaders called...');
+  
   const headers: Record<string, string> = {
     'Content-Type': 'application/json'
   };
   
   const token = getAuthToken();
+  console.log('🔧 [AUTH HEADERS] Retrieved token:', token ? token.substring(0, 20) + '...' : 'NULL');
+  
   if (token && token.startsWith('prod-')) {
     headers['Authorization'] = `Bearer ${token}`;
     headers['X-Session-Token'] = token;
+    console.log('🔧 [AUTH HEADERS] Production token added to headers');
+  } else {
+    console.log('🔧 [AUTH HEADERS] No valid production token found');
   }
   
+  console.log('🔧 [AUTH HEADERS] Final headers keys:', Object.keys(headers));
   return headers;
 }
 
