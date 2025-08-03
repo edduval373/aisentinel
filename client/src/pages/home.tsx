@@ -282,6 +282,15 @@ export default function Home() {
   // For developers: use effective role level that includes test role mapping
   const effectiveRoleLevel = userRoleLevel;
   
+  console.log('🔧 [HOME] Authentication status:', {
+    user: user ? 'exists' : 'missing',
+    userEmail: user?.email,
+    userRoleLevel: user?.roleLevel,
+    effectiveRoleLevel,
+    isAuthenticated,
+    isDemoMode
+  });
+  
   // Features & Benefits dialog for demo users
   const { showDialog, openDialog, closeDialog } = useFeaturesBenefits(isDemoMode);
   const { isDeveloper } = useDeveloper();
@@ -307,7 +316,8 @@ export default function Home() {
     isAdmin: effectiveRoleLevel >= 998,
     isOwner: effectiveRoleLevel >= 999,
     isSuperUser: effectiveRoleLevel >= 1000,
-    sidebarAccessReason: effectiveRoleLevel === 0 ? 'demo' : effectiveRoleLevel >= 998 ? 'admin+' : 'none'
+    sidebarAccessReason: effectiveRoleLevel === 0 ? 'demo' : effectiveRoleLevel >= 998 ? 'admin+' : 'none',
+    accessFormula: `${isAuthenticated} && (${effectiveRoleLevel} === 0 || ${effectiveRoleLevel} >= 998)`
   });
 
   // Fetch all companies for super-user company switching
