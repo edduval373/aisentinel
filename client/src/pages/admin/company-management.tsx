@@ -53,10 +53,11 @@ export default function CompanyManagement() {
   const queryClient = useQueryClient();
 
   // Fetch all companies (super-user only)
-  const { data: companies = [], isLoading: companiesLoading, error: companiesError } = useQuery<Company[]>({
+  const { data: companies = [], isLoading: companiesLoading, error: companiesError, refetch: refetchCompanies } = useQuery<Company[]>({
     queryKey: ["/api/admin/companies"],
     staleTime: 0, // Always fetch fresh data
     gcTime: 0, // Don't cache data
+    refetchInterval: false, // Disable automatic refetching
   });
 
   // Debug logging for companies query
@@ -106,10 +107,15 @@ export default function CompanyManagement() {
   const createCompanyMutation = useMutation({
     mutationFn: (data: z.infer<typeof companySchema>) =>
       apiRequest(`/api/admin/companies`, "POST", data),
-    onSuccess: () => {
-      console.log("✅ Company created successfully, refreshing list...");
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/companies"] });
-      queryClient.refetchQueries({ queryKey: ["/api/admin/companies"] });
+    onSuccess: (newCompany) => {
+      console.log("✅ Company created successfully:", newCompany);
+      console.log("🔄 Manually refreshing companies list...");
+      
+      // Force immediate refetch
+      refetchCompanies().then(() => {
+        console.log("✅ Companies list refreshed successfully");
+      });
+      
       setShowAddCompany(false);
       companyForm.reset();
       toast({ title: "Success", description: "Company created successfully" });
