@@ -259,12 +259,8 @@ function Router() {
   console.log("[APP DEBUG] Authentication check:", { isAuthenticated, role: user?.role, roleLevel: user?.roleLevel, isAdmin, isOwner, isSuperUser });
   console.log("[APP DEBUG] useAuth hook returned:", { isAuthenticated, isLoading, user: !!user, isSuperUser, isOwner, isAdmin });
 
-  // IMMEDIATE REDIRECT: If authenticated, redirect to Home directly
-  if (isAuthenticated && !isLoading && user) {
-    console.log("[APP DEBUG] IMMEDIATE AUTHENTICATION DETECTED - Rendering Home directly");
-    document.title = "AI Sentinel - Dashboard";
-    return <Home />;
-  }
+  // REMOVED IMMEDIATE REDIRECT - Allow proper routing for authenticated users
+  // Previously this was forcing all authenticated users to Home, preventing admin page access
 
   // If still loading authentication, show nothing (let HTML loading screen continue)
   if (isLoading) {
@@ -291,9 +287,9 @@ function Router() {
     );
   }
 
-  // If authenticated, show main interface (not landing page)
+  // If authenticated, allow routing to determine the correct page
   if (isAuthenticated && !hasLogoutFlag) {
-    console.log("[APP DEBUG] User is authenticated, showing main application interface");
+    console.log("[APP DEBUG] User is authenticated, proceeding with route-based navigation");
   } else {
     console.log("[APP DEBUG] STRICT MODE: Not authenticated, showing landing page");
   }
