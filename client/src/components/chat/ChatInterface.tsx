@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Wifi, WifiOff, History, RotateCcw, Trash2, MessageSquare, Brain, Bug } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Wifi, WifiOff, History, RotateCcw, Trash2, MessageSquare, Brain, Bug, Settings } from "lucide-react";
 import ChatMessage from "./ChatMessage";
 import ChatInput from "./ChatInput";
 import FeaturesBenefitsDialog from "@/components/FeaturesBenefitsDialog";
@@ -37,6 +38,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   const [showPreviousChats, setShowPreviousChats] = useState(false);
   const [prefillMessage, setPrefillMessage] = useState<string>("");
   const [showDebugPanel, setShowDebugPanel] = useState(false);
+  const [showChatDebugModal, setShowChatDebugModal] = useState(false);
   
   // Features & Benefits dialog for demo users
   const { showDialog, openDialog, closeDialog } = useFeaturesBenefits();
@@ -270,12 +272,23 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
     }
   }, [currentSession, createSessionMutation, user]);
 
+  // Fetch chat messages for current session
+  const { data: fetchedMessages, isLoading: messagesLoading, error: messagesError } = useQuery<ChatMessageType[]>({
+    queryKey: ['/api/chat/session', currentSession, 'messages'],
+    enabled: !!currentSession,
+  });
+
+  // Fetch chat sessions list
+  const { data: chatSessions, isLoading: sessionsLoading, error: sessionsError } = useQuery<ChatSession[]>({
+    queryKey: ['/api/chat/sessions'],
+  });
+
   // Update messages when chat data changes
   useEffect(() => {
-    if (chatMessages) {
-      setMessages(chatMessages);
+    if (fetchedMessages) {
+      setMessages(fetchedMessages);
     }
-  }, [chatMessages]);
+  }, [fetchedMessages]);
 
   // Load messages when session changes
   useEffect(() => {
@@ -591,6 +604,27 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                 Clear
               </Button>
               
+              {/* Chat Debug Panel Button - Only for super users */}
+              {user && user.roleLevel >= 1000 && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowChatDebugModal(true)}
+                  style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '4px',
+                    padding: '6px 10px',
+                    fontSize: '14px',
+                    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                    fontWeight: '500'
+                  }}
+                  title="Chat Debug Panel"
+                >
+                  <Settings style={{ width: '14px', height: '14px' }} />
+                  Debug
+                </Button>
+              )}
 
             </div>
           </div>
@@ -794,8 +828,218 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
         onOpenChange={closeDialog}
       />
 
+      {/* Chat Debug Modal */}
+      <Dialog open={showChatDebugModal} onOpenChange={setShowChatDebugModal}>
+        <DialogContent style={{ maxWidth: '800px', maxHeight: '80vh', overflow: 'auto' }}>
+          <DialogHeader>
+            <DialogTitle style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '8px',
+              fontSize: '18px',
+              fontWeight: '600'
+            }}>
+              <Settings style={{ width: '20px', height: '20px' }} />
+              Chat Debug Panel
+            </DialogTitle>
+          </DialogHeader>
+          <div style={{ padding: '8px 0' }}>
+            {/* Authentication Status */}
+            <div style={{ 
+              backgroundColor: '#f8fafc', 
+              border: '1px solid #e2e8f0', 
+              borderRadius: '8px', 
+              padding: '16px', 
+              marginBottom: '16px' 
+            }}>
+              <h3 style={{ 
+                fontSize: '16px', 
+                fontWeight: '600', 
+                marginBottom: '12px', 
+                color: '#374151',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                <div style={{ 
+                  width: '8px', 
+                  height: '8px', 
+                  borderRadius: '50%', 
+                  backgroundColor: user?.isAuthenticated ? '#22c55e' : '#ef4444' 
+                }} />
+                Authentication Status
+              </h3>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: '14px' }}>
+                <div><strong>Authenticated:</strong> {user?.isAuthenticated ? 'Yes' : 'No'}</div>
+                <div><strong>User ID:</strong> {user?.id || 'Not available'}</div>
+                <div><strong>Email:</strong> {user?.email || 'Not available'}</div>
+                <div><strong>Role:</strong> {user?.role || 'Not available'}</div>
+                <div><strong>Role Level:</strong> {user?.roleLevel || 'Not available'}</div>
+                <div><strong>Company ID:</strong> {user?.companyId || 'Not available'}</div>
+                <div><strong>Company Name:</strong> {user?.companyName || 'Not available'}</div>
+                <div><strong>Auth Token:</strong> {localStorage.getItem('authToken') ? 'Present' : 'Missing'}</div>
+              </div>
+            </div>
 
-      
+            {/* Session Status */}
+            <div style={{ 
+              backgroundColor: '#f8fafc', 
+              border: '1px solid #e2e8f0', 
+              borderRadius: '8px', 
+              padding: '16px', 
+              marginBottom: '16px' 
+            }}>
+              <h3 style={{ 
+                fontSize: '16px', 
+                fontWeight: '600', 
+                marginBottom: '12px', 
+                color: '#374151',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                <div style={{ 
+                  width: '8px', 
+                  height: '8px', 
+                  borderRadius: '50%', 
+                  backgroundColor: currentSession ? '#22c55e' : '#ef4444' 
+                }} />
+                Chat Session Status
+              </h3>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: '14px' }}>
+                <div><strong>Current Session ID:</strong> {currentSession || 'None'}</div>
+                <div><strong>Session Created:</strong> {currentSession ? 'Yes' : 'No'}</div>
+                <div><strong>Messages Count:</strong> {messages.length}</div>
+                <div><strong>Session Token:</strong> {JSON.parse(localStorage.getItem('aisentinel_saved_accounts') || '[]')?.[0]?.sessionToken ? 'Present' : 'Missing'}</div>
+              </div>
+            </div>
+
+            {/* AI Model Configuration */}
+            <div style={{ 
+              backgroundColor: '#f8fafc', 
+              border: '1px solid #e2e8f0', 
+              borderRadius: '8px', 
+              padding: '16px', 
+              marginBottom: '16px' 
+            }}>
+              <h3 style={{ 
+                fontSize: '16px', 
+                fontWeight: '600', 
+                marginBottom: '12px', 
+                color: '#374151',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                <div style={{ 
+                  width: '8px', 
+                  height: '8px', 
+                  borderRadius: '50%', 
+                  backgroundColor: selectedModel ? '#22c55e' : '#ef4444' 
+                }} />
+                AI Model Configuration
+              </h3>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: '14px' }}>
+                <div><strong>Selected Model ID:</strong> {selectedModel || 'None'}</div>
+                <div><strong>Selected Model Name:</strong> {aiModels?.find(m => m.id === selectedModel)?.name || 'None'}</div>
+                <div><strong>Available Models:</strong> {aiModels?.length || 0}</div>
+                <div><strong>Models Loading:</strong> {modelsLoading ? 'Yes' : 'No'}</div>
+                <div><strong>Activity Type ID:</strong> {selectedActivityType || 'None'}</div>
+                <div><strong>Activity Type Name:</strong> {activityTypes?.find(at => at.id === selectedActivityType)?.name || 'None'}</div>
+                <div><strong>Available Activity Types:</strong> {activityTypes?.length || 0}</div>
+                <div><strong>Types Loading:</strong> {typesLoading ? 'Yes' : 'No'}</div>
+              </div>
+            </div>
+
+            {/* Connection Status */}
+            <div style={{ 
+              backgroundColor: '#f8fafc', 
+              border: '1px solid #e2e8f0', 
+              borderRadius: '8px', 
+              padding: '16px', 
+              marginBottom: '16px' 
+            }}>
+              <h3 style={{ 
+                fontSize: '16px', 
+                fontWeight: '600', 
+                marginBottom: '12px', 
+                color: '#374151',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                <div style={{ 
+                  width: '8px', 
+                  height: '8px', 
+                  borderRadius: '50%', 
+                  backgroundColor: isConnected ? '#22c55e' : '#ef4444' 
+                }} />
+                Connection Status
+              </h3>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: '14px' }}>
+                <div><strong>API Connected:</strong> {isConnected ? 'Yes' : 'No'}</div>
+                <div><strong>Environment:</strong> {import.meta.env.MODE || 'Unknown'}</div>
+                <div><strong>Base URL:</strong> {window.location.origin}</div>
+                <div><strong>Send Message Pending:</strong> {sendMessageMutation.isPending ? 'Yes' : 'No'}</div>
+                <div><strong>Create Session Pending:</strong> {createSessionMutation.isPending ? 'Yes' : 'No'}</div>
+                <div><strong>Demo Mode:</strong> {isDemoMode ? 'Yes' : 'No'}</div>
+              </div>
+            </div>
+
+            {/* localStorage Debug */}
+            <div style={{ 
+              backgroundColor: '#f8fafc', 
+              border: '1px solid #e2e8f0', 
+              borderRadius: '8px', 
+              padding: '16px',
+              marginBottom: '16px'
+            }}>
+              <h3 style={{ 
+                fontSize: '16px', 
+                fontWeight: '600', 
+                marginBottom: '12px', 
+                color: '#374151' 
+              }}>
+                LocalStorage Variables
+              </h3>
+              <div style={{ fontSize: '12px', fontFamily: 'monospace', backgroundColor: 'white', padding: '12px', borderRadius: '4px', border: '1px solid #e2e8f0' }}>
+                <div><strong>authToken:</strong> {localStorage.getItem('authToken') || 'null'}</div>
+                <div><strong>currentCompanyId:</strong> {localStorage.getItem('currentCompanyId') || 'null'}</div>
+                <div style={{ marginTop: '8px' }}>
+                  <strong>aisentinel_saved_accounts:</strong>
+                  <pre style={{ marginTop: '4px', fontSize: '11px', overflow: 'auto', maxHeight: '100px' }}>
+                    {JSON.stringify(JSON.parse(localStorage.getItem('aisentinel_saved_accounts') || '[]'), null, 2)}
+                  </pre>
+                </div>
+              </div>
+            </div>
+
+            {/* Error Status */}
+            <div style={{ 
+              backgroundColor: '#f8fafc', 
+              border: '1px solid #e2e8f0', 
+              borderRadius: '8px', 
+              padding: '16px' 
+            }}>
+              <h3 style={{ 
+                fontSize: '16px', 
+                fontWeight: '600', 
+                marginBottom: '12px', 
+                color: '#374151' 
+              }}>
+                Error Status
+              </h3>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '8px', fontSize: '14px' }}>
+                <div><strong>Models Error:</strong> {modelsError ? JSON.stringify(modelsError) : 'None'}</div>
+                <div><strong>Types Error:</strong> {typesError ? JSON.stringify(typesError) : 'None'}</div>
+                <div><strong>Messages Error:</strong> {messagesError ? JSON.stringify(messagesError) : 'None'}</div>
+                <div><strong>Sessions Error:</strong> {sessionsError ? JSON.stringify(sessionsError) : 'None'}</div>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
 {/* Debug Status Panel removed for production */}
     </div>
   );
