@@ -362,7 +362,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                   key={section.id}
                   onClick={(e) => {
                     console.log('🚨 PRODUCTION CLICK DETECTED!', section.name, 'at', new Date().toISOString());
-                    alert(`PRODUCTION: Clicked ${section.name} - Check console for details!`);
+                    console.log(`🔧 Navigating to ${section.name}`);
                     e.preventDefault();
                     e.stopPropagation();
                     console.log('🔧 [SIDEBAR] PRODUCTION Super-user section clicked:', section.name, section.href);
