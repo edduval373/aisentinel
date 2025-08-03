@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Sentinel - Create Production Session</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .button {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: background-color 0.2s;
+        }
+        .button:hover {
+            background-color: #1d4ed8;
+        }
+        .success {
+            background-color: #10b981;
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+        .error {
+            background-color: #ef4444;
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+        .debug-info {
+            background-color: #f3f4f6;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            border-left: 4px solid #2563eb;
+        }
+        .code {
+            font-family: monospace;
+            background-color: #1f2937;
+            color: #f9fafb;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔒 AI Sentinel Production Authentication</h1>
+        
+        <div class="debug-info">
+            <h3>Current Status:</h3>
+            <div id="status">Checking authentication status...</div>
+        </div>
+
+        <div>
+            <button class="button" onclick="createProductionSession()">Create Production Session</button>
+            <button class="button" onclick="testAuthentication()">Test Authentication</button>
+            <button class="button" onclick="clearSession()">Clear Session</button>
+            <button class="button" onclick="showDebugInfo()">Show Debug Info</button>
+        </div>
+
+        <div id="result"></div>
+        <div id="debug"></div>
+    </div>
+
+    <script>
+        async function createProductionSession() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<div style="color: #2563eb;">Creating production session...</div>';
+            
+            try {
+                // Set the production session cookie directly
+                const sessionToken = 'prod-1754052835575-289kvxqgl42h';
+                const expirationDate = new Date();
+                expirationDate.setDate(expirationDate.getDate() + 30);
+                
+                // Set secure cookie for production
+                const isProduction = window.location.hostname.includes('aisentinel.app');
+                const cookieSettings = isProduction 
+                    ? `sessionToken=${sessionToken}; path=/; expires=${expirationDate.toUTCString()}; secure; samesite=strict`
+                    : `sessionToken=${sessionToken}; path=/; expires=${expirationDate.toUTCString()}; samesite=lax`;
+                
+                document.cookie = cookieSettings;
+                
+                // Also call the API endpoint
+                const response = await fetch('/api/auth/create-production-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: 'ed.duval15@gmail.com'
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            <h3>✅ Production Session Created Successfully!</h3>
+                            <p><strong>Session Token:</strong> ${sessionToken.substring(0, 20)}...</p>
+                            <p><strong>Email:</strong> ed.duval15@gmail.com</p>
+                            <p><strong>Role:</strong> Super User (Level 1000)</p>
+                            <p><strong>Cookie Set:</strong> Yes</p>
+                            <p><strong>Expires:</strong> ${expirationDate.toLocaleDateString()}</p>
+                        </div>
+                    `;
+                    
+                    // Test authentication immediately
+                    setTimeout(testAuthentication, 1000);
+                } else {
+                    throw new Error(data.error || 'Unknown error');
+                }
+                
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h3>❌ Session Creation Failed</h3>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function testAuthentication() {
+            const resultDiv = document.getElementById('result');
+            
+            try {
+                const response = await fetch('/api/auth/secure-me', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+
+                const data = await response.json();
+                
+                if (data.authenticated) {
+                    resultDiv.innerHTML += `
+                        <div class="success">
+                            <h3>✅ Authentication Test Successful!</h3>
+                            <p><strong>Email:</strong> ${data.user.email}</p>
+                            <p><strong>Role:</strong> ${data.user.role}</p>
+                            <p><strong>Role Level:</strong> ${data.user.roleLevel}</p>
+                            <p><strong>Company:</strong> ${data.user.companyName}</p>
+                        </div>
+                    `;
+                } else {
+                    throw new Error(data.error || 'Authentication failed');
+                }
+                
+            } catch (error) {
+                resultDiv.innerHTML += `
+                    <div class="error">
+                        <h3>❌ Authentication Test Failed</h3>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function clearSession() {
+            document.cookie = 'sessionToken=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+            document.getElementById('result').innerHTML = `
+                <div style="color: #2563eb;">
+                    <h3>🧹 Session Cleared</h3>
+                    <p>All session cookies have been removed.</p>
+                </div>
+            `;
+            updateStatus();
+        }
+
+        function showDebugInfo() {
+            const debugDiv = document.getElementById('debug');
+            const cookies = document.cookie;
+            const sessionToken = cookies
+                .split(';')
+                .find(cookie => cookie.trim().startsWith('sessionToken='))
+                ?.split('=')[1];
+            
+            debugDiv.innerHTML = `
+                <div class="debug-info">
+                    <h3>Debug Information:</h3>
+                    <div class="code">
+Domain: ${window.location.hostname}
+Protocol: ${window.location.protocol}
+URL: ${window.location.href}
+All Cookies: ${cookies || 'No cookies found'}
+Session Token: ${sessionToken || 'Not found'}
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateStatus() {
+            const statusDiv = document.getElementById('status');
+            const cookies = document.cookie;
+            const sessionToken = cookies
+                .split(';')
+                .find(cookie => cookie.trim().startsWith('sessionToken='))
+                ?.split('=')[1];
+            
+            const hasSession = !!sessionToken;
+            const isProduction = window.location.hostname.includes('aisentinel.app');
+            
+            statusDiv.innerHTML = `
+                <strong>Environment:</strong> ${isProduction ? 'Production' : 'Development'}<br>
+                <strong>Domain:</strong> ${window.location.hostname}<br>
+                <strong>Session Cookie:</strong> ${hasSession ? '✅ Found' : '❌ Not Found'}<br>
+                <strong>Session Token:</strong> ${sessionToken ? sessionToken.substring(0, 20) + '...' : 'None'}
+            `;
+        }
+
+        // Update status on page load
+        updateStatus();
+        
+        // Auto-update status every 5 seconds
+        setInterval(updateStatus, 5000);
+    </script>
+</body>
+</html>
