@@ -34,21 +34,33 @@ export function useAuth() {
         console.log('🔒 [SECURE AUTH] Starting secure database authentication...');
         
         // Use header-based authentication - get session token from saved accounts
+        console.log('🔍 [AUTH DEBUG] Starting authentication with detailed logging...');
+        console.log('🔍 [AUTH DEBUG] Current URL:', window.location.href);
+        console.log('🔍 [AUTH DEBUG] Current domain:', window.location.hostname);
+        
         const savedAccounts = localStorage.getItem('aisentinel_saved_accounts');
+        console.log('🔍 [AUTH DEBUG] Saved accounts raw:', savedAccounts);
+        
         if (!savedAccounts) {
-          console.log('🔒 [SECURE AUTH] No saved accounts found - authentication failed');
+          console.log('❌ [AUTH DEBUG] No saved accounts found in localStorage');
           throw new Error('No saved accounts found');
         }
 
         const accounts = JSON.parse(savedAccounts);
+        console.log('🔍 [AUTH DEBUG] Parsed accounts:', accounts.length, 'accounts found');
+        console.log('🔍 [AUTH DEBUG] Account emails:', accounts.map((acc: any) => acc.email));
+        
         const account = accounts.find((acc: any) => acc.email === 'ed.duval15@gmail.com') || accounts[0];
+        console.log('🔍 [AUTH DEBUG] Selected account:', account ? account.email : 'none');
         
         if (!account || !account.sessionToken) {
-          console.log('🔒 [SECURE AUTH] No valid account session token found');
+          console.log('❌ [AUTH DEBUG] No valid account session token found');
+          console.log('🔍 [AUTH DEBUG] Account data:', account);
           throw new Error('No valid session token found');
         }
 
         const sessionToken = account.sessionToken;
+        console.log('🔍 [AUTH DEBUG] Session token found:', sessionToken.substring(0, 20) + '...');
         
         console.log('🔒 [SECURE AUTH] Session token found, validating with header-based auth...');
         
