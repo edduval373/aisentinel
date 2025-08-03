@@ -67,15 +67,22 @@ export default function AdminCompanies() {
     queryKey: ["/api/admin/companies"],
     queryFn: async () => {
       const token = localStorage.getItem('prodAuthToken') || 'prod-1754052835575-289kvxqgl42h';
-      const response = await fetch("/api/admin/companies", {
+      // Add timestamp to prevent caching issues
+      const timestamp = Date.now();
+      const response = await fetch(`/api/admin/companies?_t=${timestamp}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
         }
       });
       if (!response.ok) throw new Error('Failed to fetch companies');
       return response.json();
-    }
+    },
+    staleTime: 0, // Always consider data stale
+    gcTime: 0, // Don't cache
   });
 
   const createCompanyMutation = useMutation({
@@ -143,12 +150,15 @@ export default function AdminCompanies() {
       }
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (updatedCompany) => {
       toast({ title: "Success", description: "Company updated successfully" });
+      // Force immediate cache invalidation and refetch
       queryClient.invalidateQueries({ queryKey: ["/api/admin/companies"] });
+      queryClient.refetchQueries({ queryKey: ["/api/admin/companies"] });
       setShowEditCompany(false);
       setEditingCompany(null);
       companyForm.reset();
+      console.log("✅ [UI UPDATE] Company updated and cache invalidated:", updatedCompany);
     },
     onError: (error: any) => {
       toast({ title: "Error", description: error.message || "Failed to update company", variant: "destructive" });
@@ -796,10 +806,7 @@ export default function AdminCompanies() {
               <div style={{ 
                 display: 'grid', 
                 gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', 
-                gap: '20px',
-                '@media (min-width: 1200px)': {
-                  gridTemplateColumns: 'repeat(3, 1fr)'
-                }
+                gap: '20px'
               }}>
                 {companies?.map((company: any) => (
                   <div 

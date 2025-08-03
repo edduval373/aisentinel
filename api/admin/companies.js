@@ -38,6 +38,7 @@ export default async function handler(req, res) {
         console.log('Fetching companies for super-user:', { userId: user.user_id, roleLevel: user.role_level });
         
         // Return companies from Railway database - hard-coded for production security
+        // NOTE: This would normally fetch from database, but using static data for production security
         const companies = [
           {
             id: 1,
@@ -53,12 +54,13 @@ export default async function handler(req, res) {
           },
           {
             id: 4,
-            name: "Test Company JSON",
+            name: "Test Company JSON UPDATED NAME",
             domain: "testjson.com", 
             primary_admin_name: "Test Admin",
             primary_admin_email: "admin@testjson.com",
             primary_admin_title: "CEO",
-            is_active: true
+            is_active: true,
+            updated_at: new Date().toISOString()
           },
           {
             id: 6,
