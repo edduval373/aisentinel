@@ -459,8 +459,8 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
             </>
           )}
 
-          {/* ADMINISTRATION Section - Only for role level 998+ (admins, owners, super-users) */}
-          {isAdmin && (
+          {/* ADMINISTRATION Section - For role level 998+ (admins, owners, super-users) and demo users (0) */}
+          {(isAdmin || isDemoUser) && (
             <>
               <div style={{ paddingTop: '16px', paddingBottom: '8px' }}>
                 <h3 style={{ 

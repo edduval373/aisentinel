@@ -290,12 +290,12 @@ export default function Home() {
   const isSuperUserLevel = effectiveRoleLevel >= 1000;
   
   // Determine if sidebar access is allowed based on role levels:
-  // 0 (Demo): No sidebar access, read-only company ID 1 options
+  // 0 (Demo): Sidebar access with company ID 1 options in read-only format
   // 1 (User): No sidebar access at all
   // 998+ (Admin): Sidebar access with Admin section only
   // 999+ (Owner): Sidebar access with Owners + Admin sections  
   // 1000+ (Super-user): Sidebar access with all sections
-  const canAccessSidebar = isAuthenticated && effectiveRoleLevel >= 998;
+  const canAccessSidebar = isAuthenticated && (effectiveRoleLevel === 0 || effectiveRoleLevel >= 998);
   
   console.log('🔧 [HOME] Sidebar access check:', {
     isAuthenticated,
@@ -306,7 +306,8 @@ export default function Home() {
     isUser: effectiveRoleLevel === 1,
     isAdmin: effectiveRoleLevel >= 998,
     isOwner: effectiveRoleLevel >= 999,
-    isSuperUser: effectiveRoleLevel >= 1000
+    isSuperUser: effectiveRoleLevel >= 1000,
+    sidebarAccessReason: effectiveRoleLevel === 0 ? 'demo' : effectiveRoleLevel >= 998 ? 'admin+' : 'none'
   });
 
   // Fetch all companies for super-user company switching
