@@ -99,8 +99,11 @@ export default function AdminCompanies() {
       setShowAddCompany(false);
       companyForm.reset();
     },
-    onError: () => {
-      toast({ title: "Error", description: "Failed to create company", variant: "destructive" });
+    onError: (error: any) => {
+      const errorMessage = error.message.includes('disabled in production') 
+        ? "Company creation is disabled in production for security. Contact system administrator."
+        : "Failed to create company";
+      toast({ title: "Notice", description: errorMessage, variant: "destructive" });
     },
   });
 
@@ -173,20 +176,56 @@ export default function AdminCompanies() {
                     Add Company
                   </button>
                 </DialogTrigger>
-                <DialogContent className="max-w-md">
-                  <DialogHeader>
-                    <DialogTitle>Add New Company</DialogTitle>
+                <DialogContent style={{ 
+                  maxWidth: '500px', 
+                  padding: '24px',
+                  borderRadius: '12px',
+                  maxHeight: '85vh',
+                  overflowY: 'auto'
+                }}>
+                  <DialogHeader style={{ marginBottom: '24px' }}>
+                    <DialogTitle style={{ 
+                      fontSize: '20px', 
+                      fontWeight: '600', 
+                      color: '#111827',
+                      margin: 0
+                    }}>
+                      Add New Company
+                    </DialogTitle>
                   </DialogHeader>
                   <Form {...companyForm}>
-                    <form onSubmit={companyForm.handleSubmit(onSubmitCompany)} className="space-y-4">
+                    <form onSubmit={companyForm.handleSubmit(onSubmitCompany)} style={{ 
+                      display: 'flex', 
+                      flexDirection: 'column', 
+                      gap: '20px' 
+                    }}>
                       <FormField
                         control={companyForm.control}
                         name="name"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Company Name</FormLabel>
+                            <FormLabel style={{ 
+                              fontSize: '14px', 
+                              fontWeight: '500', 
+                              color: '#374151',
+                              marginBottom: '6px',
+                              display: 'block'
+                            }}>
+                              Company Name
+                            </FormLabel>
                             <FormControl>
-                              <Input placeholder="Acme Corporation" {...field} />
+                              <Input 
+                                placeholder="Acme Corporation" 
+                                {...field} 
+                                style={{
+                                  padding: '12px',
+                                  borderRadius: '8px',
+                                  border: '1px solid #d1d5db',
+                                  fontSize: '14px',
+                                  width: '100%',
+                                  boxSizing: 'border-box'
+                                }}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -197,9 +236,28 @@ export default function AdminCompanies() {
                         name="domain"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Email Domain</FormLabel>
+                            <FormLabel style={{ 
+                              fontSize: '14px', 
+                              fontWeight: '500', 
+                              color: '#374151',
+                              marginBottom: '6px',
+                              display: 'block'
+                            }}>
+                              Email Domain
+                            </FormLabel>
                             <FormControl>
-                              <Input placeholder="acme.com" {...field} />
+                              <Input 
+                                placeholder="acme.com" 
+                                {...field} 
+                                style={{
+                                  padding: '12px',
+                                  borderRadius: '8px',
+                                  border: '1px solid #d1d5db',
+                                  fontSize: '14px',
+                                  width: '100%',
+                                  boxSizing: 'border-box'
+                                }}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -210,7 +268,15 @@ export default function AdminCompanies() {
                         name="logo"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Company Logo (Optional)</FormLabel>
+                            <FormLabel style={{ 
+                              fontSize: '14px', 
+                              fontWeight: '500', 
+                              color: '#374151',
+                              marginBottom: '6px',
+                              display: 'block'
+                            }}>
+                              Company Logo (Optional)
+                            </FormLabel>
                             <FormControl>
                               <Input 
                                 type="file" 
@@ -225,6 +291,14 @@ export default function AdminCompanies() {
                                     reader.readAsDataURL(file);
                                   }
                                 }}
+                                style={{
+                                  padding: '12px',
+                                  borderRadius: '8px',
+                                  border: '1px solid #d1d5db',
+                                  fontSize: '14px',
+                                  width: '100%',
+                                  boxSizing: 'border-box'
+                                }}
                               />
                             </FormControl>
                             <FormMessage />
@@ -232,17 +306,51 @@ export default function AdminCompanies() {
                         )}
                       />
                       
-                      <div className="border-t pt-4">
-                        <h4 className="font-medium text-sm mb-3">Primary Company Administrator</h4>
-                        <div className="space-y-3">
+                      <div style={{ 
+                        borderTop: '1px solid #e5e7eb', 
+                        paddingTop: '20px',
+                        marginTop: '20px'
+                      }}>
+                        <h4 style={{ 
+                          fontSize: '16px', 
+                          fontWeight: '600', 
+                          color: '#111827',
+                          marginBottom: '16px'
+                        }}>
+                          Primary Company Administrator
+                        </h4>
+                        <div style={{ 
+                          display: 'flex', 
+                          flexDirection: 'column', 
+                          gap: '16px' 
+                        }}>
                           <FormField
                             control={companyForm.control}
                             name="primaryAdminName"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Full Name</FormLabel>
+                                <FormLabel style={{ 
+                                  fontSize: '14px', 
+                                  fontWeight: '500', 
+                                  color: '#374151',
+                                  marginBottom: '6px',
+                                  display: 'block'
+                                }}>
+                                  Full Name
+                                </FormLabel>
                                 <FormControl>
-                                  <Input placeholder="John Smith" {...field} />
+                                  <Input 
+                                    placeholder="John Smith" 
+                                    {...field} 
+                                    style={{
+                                      padding: '12px',
+                                      borderRadius: '8px',
+                                      border: '1px solid #d1d5db',
+                                      fontSize: '14px',
+                                      width: '100%',
+                                      boxSizing: 'border-box'
+                                    }}
+                                  />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -253,9 +361,28 @@ export default function AdminCompanies() {
                             name="primaryAdminEmail"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Email Address</FormLabel>
+                                <FormLabel style={{ 
+                                  fontSize: '14px', 
+                                  fontWeight: '500', 
+                                  color: '#374151',
+                                  marginBottom: '6px',
+                                  display: 'block'
+                                }}>
+                                  Email Address
+                                </FormLabel>
                                 <FormControl>
-                                  <Input placeholder="john.smith@acme.com" {...field} />
+                                  <Input 
+                                    placeholder="john.smith@acme.com" 
+                                    {...field} 
+                                    style={{
+                                      padding: '12px',
+                                      borderRadius: '8px',
+                                      border: '1px solid #d1d5db',
+                                      fontSize: '14px',
+                                      width: '100%',
+                                      boxSizing: 'border-box'
+                                    }}
+                                  />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -266,9 +393,28 @@ export default function AdminCompanies() {
                             name="primaryAdminTitle"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Job Title</FormLabel>
+                                <FormLabel style={{ 
+                                  fontSize: '14px', 
+                                  fontWeight: '500', 
+                                  color: '#374151',
+                                  marginBottom: '6px',
+                                  display: 'block'
+                                }}>
+                                  Job Title
+                                </FormLabel>
                                 <FormControl>
-                                  <Input placeholder="IT Director" {...field} />
+                                  <Input 
+                                    placeholder="IT Director" 
+                                    {...field} 
+                                    style={{
+                                      padding: '12px',
+                                      borderRadius: '8px',
+                                      border: '1px solid #d1d5db',
+                                      fontSize: '14px',
+                                      width: '100%',
+                                      boxSizing: 'border-box'
+                                    }}
+                                  />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -277,9 +423,42 @@ export default function AdminCompanies() {
                         </div>
                       </div>
                       
-                      <Button type="submit" className="w-full" disabled={createCompanyMutation.isPending}>
+                      <button 
+                        type="submit" 
+                        disabled={createCompanyMutation.isPending}
+                        style={{
+                          width: '100%',
+                          background: createCompanyMutation.isPending 
+                            ? '#9ca3af' 
+                            : 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                          color: 'white',
+                          border: 'none',
+                          padding: '14px 20px',
+                          borderRadius: '8px',
+                          fontSize: '16px',
+                          fontWeight: '600',
+                          cursor: createCompanyMutation.isPending ? 'not-allowed' : 'pointer',
+                          transition: 'all 0.2s ease',
+                          boxShadow: createCompanyMutation.isPending 
+                            ? 'none' 
+                            : '0 2px 4px rgba(16, 185, 129, 0.3)',
+                          marginTop: '8px'
+                        }}
+                        onMouseOver={(e) => {
+                          if (!createCompanyMutation.isPending) {
+                            e.currentTarget.style.transform = 'translateY(-1px)';
+                            e.currentTarget.style.boxShadow = '0 4px 8px rgba(16, 185, 129, 0.4)';
+                          }
+                        }}
+                        onMouseOut={(e) => {
+                          if (!createCompanyMutation.isPending) {
+                            e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.boxShadow = '0 2px 4px rgba(16, 185, 129, 0.3)';
+                          }
+                        }}
+                      >
                         {createCompanyMutation.isPending ? "Creating..." : "Create Company"}
-                      </Button>
+                      </button>
                     </form>
                   </Form>
                 </DialogContent>
