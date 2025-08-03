@@ -32,6 +32,8 @@ const ownerSchema = z.object({
 
 export default function AdminCompanies() {
   const [showAddCompany, setShowAddCompany] = useState(false);
+  const [showEditCompany, setShowEditCompany] = useState(false);
+  const [editingCompany, setEditingCompany] = useState<any>(null);
   const [selectedCompany, setSelectedCompany] = useState<any>(null);
   const [showAddOwner, setShowAddOwner] = useState(false);
   const [owners, setOwners] = useState<Array<z.infer<typeof ownerSchema>>>([]);
@@ -121,6 +123,86 @@ export default function AdminCompanies() {
   const removeOwner = (index: number) => {
     setOwners(owners.filter((_, i) => i !== index));
     toast({ title: "Owner Removed", description: "Owner has been removed from the list" });
+  };
+
+  // Edit company mutation
+  const editCompanyMutation = useMutation({
+    mutationFn: async (data: z.infer<typeof companySchema>) => {
+      const token = localStorage.getItem('prodAuthToken') || 'prod-1754052835575-289kvxqgl42h';
+      const response = await fetch(`/api/admin/companies?id=${editingCompany.id}`, {
+        method: "PATCH",
+        headers: { 
+          "Content-Type": "application/json",
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || "Failed to update company");
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Success", description: "Company updated successfully" });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/companies"] });
+      setShowEditCompany(false);
+      setEditingCompany(null);
+      companyForm.reset();
+    },
+    onError: (error: any) => {
+      toast({ title: "Error", description: error.message || "Failed to update company", variant: "destructive" });
+    },
+  });
+
+  // Delete company mutation
+  const deleteCompanyMutation = useMutation({
+    mutationFn: async (companyId: number) => {
+      const token = localStorage.getItem('prodAuthToken') || 'prod-1754052835575-289kvxqgl42h';
+      const response = await fetch(`/api/admin/companies?id=${companyId}`, {
+        method: "DELETE",
+        headers: { 
+          "Content-Type": "application/json",
+          'Authorization': `Bearer ${token}`
+        },
+      });
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || "Failed to delete company");
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Success", description: "Company deleted successfully" });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/companies"] });
+    },
+    onError: (error: any) => {
+      toast({ title: "Error", description: error.message || "Failed to delete company", variant: "destructive" });
+    },
+  });
+
+  const handleEditCompany = (company: any) => {
+    setEditingCompany(company);
+    companyForm.reset({
+      name: company.name,
+      domain: company.domain,
+      primaryAdminName: company.primary_admin_name || company.primaryAdminName,
+      primaryAdminEmail: company.primary_admin_email || company.primaryAdminEmail,
+      primaryAdminTitle: company.primary_admin_title || company.primaryAdminTitle,
+      logo: company.logo || "",
+      isActive: company.is_active || company.isActive,
+    });
+    setShowEditCompany(true);
+  };
+
+  const handleDeleteCompany = (companyId: number, companyName: string) => {
+    if (window.confirm(`Are you sure you want to delete "${companyName}"? This action cannot be undone.`)) {
+      deleteCompanyMutation.mutate(companyId);
+    }
+  };
+
+  const onSubmitEditCompany = (data: z.infer<typeof companySchema>) => {
+    editCompanyMutation.mutate(data);
   };
 
   return (
@@ -463,6 +545,233 @@ export default function AdminCompanies() {
                   </Form>
                 </DialogContent>
               </Dialog>
+              
+              {/* Edit Company Dialog */}
+              <Dialog open={showEditCompany} onOpenChange={setShowEditCompany}>
+                <DialogContent style={{ 
+                  maxWidth: '500px', 
+                  padding: '24px',
+                  borderRadius: '12px',
+                  maxHeight: '85vh',
+                  overflowY: 'auto'
+                }}>
+                  <DialogHeader style={{ marginBottom: '24px' }}>
+                    <DialogTitle style={{ 
+                      fontSize: '20px', 
+                      fontWeight: '600', 
+                      color: '#111827',
+                      margin: 0
+                    }}>
+                      Edit Company
+                    </DialogTitle>
+                  </DialogHeader>
+                  <Form {...companyForm}>
+                    <form onSubmit={companyForm.handleSubmit(onSubmitEditCompany)} style={{ 
+                      display: 'flex', 
+                      flexDirection: 'column', 
+                      gap: '20px' 
+                    }}>
+                      <FormField
+                        control={companyForm.control}
+                        name="name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel style={{ 
+                              fontSize: '14px', 
+                              fontWeight: '500', 
+                              color: '#374151',
+                              marginBottom: '6px',
+                              display: 'block'
+                            }}>
+                              Company Name
+                            </FormLabel>
+                            <FormControl>
+                              <Input 
+                                placeholder="Acme Corporation" 
+                                {...field} 
+                                style={{
+                                  padding: '12px',
+                                  borderRadius: '8px',
+                                  border: '1px solid #d1d5db',
+                                  fontSize: '14px',
+                                  width: '100%',
+                                  boxSizing: 'border-box'
+                                }}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={companyForm.control}
+                        name="domain"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel style={{ 
+                              fontSize: '14px', 
+                              fontWeight: '500', 
+                              color: '#374151',
+                              marginBottom: '6px',
+                              display: 'block'
+                            }}>
+                              Email Domain
+                            </FormLabel>
+                            <FormControl>
+                              <Input 
+                                placeholder="acme.com" 
+                                {...field} 
+                                style={{
+                                  padding: '12px',
+                                  borderRadius: '8px',
+                                  border: '1px solid #d1d5db',
+                                  fontSize: '14px',
+                                  width: '100%',
+                                  boxSizing: 'border-box'
+                                }}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={companyForm.control}
+                        name="primaryAdminName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel style={{ 
+                              fontSize: '14px', 
+                              fontWeight: '500', 
+                              color: '#374151',
+                              marginBottom: '6px',
+                              display: 'block'
+                            }}>
+                              Primary Admin Name
+                            </FormLabel>
+                            <FormControl>
+                              <Input 
+                                placeholder="John Smith" 
+                                {...field} 
+                                style={{
+                                  padding: '12px',
+                                  borderRadius: '8px',
+                                  border: '1px solid #d1d5db',
+                                  fontSize: '14px',
+                                  width: '100%',
+                                  boxSizing: 'border-box'
+                                }}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={companyForm.control}
+                        name="primaryAdminEmail"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel style={{ 
+                              fontSize: '14px', 
+                              fontWeight: '500', 
+                              color: '#374151',
+                              marginBottom: '6px',
+                              display: 'block'
+                            }}>
+                              Primary Admin Email
+                            </FormLabel>
+                            <FormControl>
+                              <Input 
+                                placeholder="john.smith@acme.com" 
+                                {...field} 
+                                style={{
+                                  padding: '12px',
+                                  borderRadius: '8px',
+                                  border: '1px solid #d1d5db',
+                                  fontSize: '14px',
+                                  width: '100%',
+                                  boxSizing: 'border-box'
+                                }}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={companyForm.control}
+                        name="primaryAdminTitle"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel style={{ 
+                              fontSize: '14px', 
+                              fontWeight: '500', 
+                              color: '#374151',
+                              marginBottom: '6px',
+                              display: 'block'
+                            }}>
+                              Primary Admin Title
+                            </FormLabel>
+                            <FormControl>
+                              <Input 
+                                placeholder="IT Director" 
+                                {...field} 
+                                style={{
+                                  padding: '12px',
+                                  borderRadius: '8px',
+                                  border: '1px solid #d1d5db',
+                                  fontSize: '14px',
+                                  width: '100%',
+                                  boxSizing: 'border-box'
+                                }}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <button 
+                        type="submit" 
+                        disabled={editCompanyMutation.isPending}
+                        style={{
+                          width: '100%',
+                          background: editCompanyMutation.isPending 
+                            ? '#9ca3af' 
+                            : 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                          color: 'white',
+                          border: 'none',
+                          padding: '14px 20px',
+                          borderRadius: '8px',
+                          fontSize: '16px',
+                          fontWeight: '600',
+                          cursor: editCompanyMutation.isPending ? 'not-allowed' : 'pointer',
+                          transition: 'all 0.2s ease',
+                          boxShadow: editCompanyMutation.isPending 
+                            ? 'none' 
+                            : '0 2px 4px rgba(245, 158, 11, 0.3)',
+                          marginTop: '8px'
+                        }}
+                        onMouseOver={(e) => {
+                          if (!editCompanyMutation.isPending) {
+                            e.currentTarget.style.transform = 'translateY(-1px)';
+                            e.currentTarget.style.boxShadow = '0 4px 8px rgba(245, 158, 11, 0.4)';
+                          }
+                        }}
+                        onMouseOut={(e) => {
+                          if (!editCompanyMutation.isPending) {
+                            e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.boxShadow = '0 2px 4px rgba(245, 158, 11, 0.3)';
+                          }
+                        }}
+                      >
+                        {editCompanyMutation.isPending ? "Updating..." : "Update Company"}
+                      </button>
+                    </form>
+                  </Form>
+                </DialogContent>
+              </Dialog>
             </div>
           </CardHeader>
           <CardContent>
@@ -570,6 +879,58 @@ export default function AdminCompanies() {
                       </div>
                       
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end' }}>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <button
+                            onClick={() => handleEditCompany(company)}
+                            style={{
+                              background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                              color: 'white',
+                              border: 'none',
+                              padding: '8px 12px',
+                              borderRadius: '6px',
+                              fontSize: '12px',
+                              fontWeight: '500',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s ease',
+                              boxShadow: '0 2px 4px rgba(245, 158, 11, 0.3)'
+                            }}
+                            onMouseOver={(e) => {
+                              e.currentTarget.style.transform = 'translateY(-1px)';
+                              e.currentTarget.style.boxShadow = '0 4px 8px rgba(245, 158, 11, 0.4)';
+                            }}
+                            onMouseOut={(e) => {
+                              e.currentTarget.style.transform = 'translateY(0)';
+                              e.currentTarget.style.boxShadow = '0 2px 4px rgba(245, 158, 11, 0.3)';
+                            }}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteCompany(company.id, company.name)}
+                            style={{
+                              background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                              color: 'white',
+                              border: 'none',
+                              padding: '8px 12px',
+                              borderRadius: '6px',
+                              fontSize: '12px',
+                              fontWeight: '500',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s ease',
+                              boxShadow: '0 2px 4px rgba(239, 68, 68, 0.3)'
+                            }}
+                            onMouseOver={(e) => {
+                              e.currentTarget.style.transform = 'translateY(-1px)';
+                              e.currentTarget.style.boxShadow = '0 4px 8px rgba(239, 68, 68, 0.4)';
+                            }}
+                            onMouseOut={(e) => {
+                              e.currentTarget.style.transform = 'translateY(0)';
+                              e.currentTarget.style.boxShadow = '0 2px 4px rgba(239, 68, 68, 0.3)';
+                            }}
+                          >
+                            Delete
+                          </button>
+                        </div>
                         <button
                           className="manage-button"
                           style={{

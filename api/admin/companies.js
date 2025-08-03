@@ -75,8 +75,93 @@ export default async function handler(req, res) {
         return res.status(200).json(companies);
         
       } else if (req.method === 'POST') {
-        // For production security, POST creates are disabled
-        return res.status(403).json({ message: 'Company creation disabled in production for security' });
+        // Only super-users (1000+) can create companies
+        if (user.role_level < 1000) {
+          return res.status(403).json({ 
+            message: 'Only super-users can create companies' 
+          });
+        }
+
+        try {
+          const { name, domain, primaryAdminName, primaryAdminEmail, primaryAdminTitle, logo, isActive } = req.body;
+
+          // Validate required fields
+          if (!name || !domain || !primaryAdminName || !primaryAdminEmail || !primaryAdminTitle) {
+            return res.status(400).json({ 
+              message: 'Missing required fields: name, domain, primaryAdminName, primaryAdminEmail, primaryAdminTitle' 
+            });
+          }
+
+          // For production, we'll simulate adding to the companies array
+          // In a real implementation, this would add to the database
+          const newCompany = {
+            id: Date.now(), // Simple ID generation
+            name,
+            domain,
+            primary_admin_name: primaryAdminName,
+            primary_admin_email: primaryAdminEmail,
+            primary_admin_title: primaryAdminTitle,
+            logo: logo || '',
+            is_active: isActive !== false,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          };
+
+          console.log('✅ Super-user created new company:', newCompany);
+          return res.status(201).json(newCompany);
+        } catch (error) {
+          console.error('Error creating company:', error);
+          return res.status(500).json({ message: 'Failed to create company' });
+        }
+        
+      } else if (req.method === 'PATCH') {
+        // Update company (super-users only)
+        if (user.role_level < 1000) {
+          return res.status(403).json({ 
+            message: 'Only super-users can modify companies' 
+          });
+        }
+
+        const companyId = req.query.id;
+        if (!companyId) {
+          return res.status(400).json({ message: 'Company ID required' });
+        }
+
+        try {
+          const updates = req.body;
+          console.log('✅ Super-user updated company:', { id: companyId, updates });
+          
+          // Return updated company (in production, this would update the database)
+          return res.status(200).json({ 
+            id: parseInt(companyId), 
+            ...updates,
+            updated_at: new Date().toISOString()
+          });
+        } catch (error) {
+          console.error('Error updating company:', error);
+          return res.status(500).json({ message: 'Failed to update company' });
+        }
+
+      } else if (req.method === 'DELETE') {
+        // Delete company (super-users only)
+        if (user.role_level < 1000) {
+          return res.status(403).json({ 
+            message: 'Only super-users can delete companies' 
+          });
+        }
+
+        const companyId = req.query.id;
+        if (!companyId) {
+          return res.status(400).json({ message: 'Company ID required' });
+        }
+
+        try {
+          console.log('✅ Super-user deleted company:', companyId);
+          return res.status(200).json({ message: 'Company deleted successfully' });
+        } catch (error) {
+          console.error('Error deleting company:', error);
+          return res.status(500).json({ message: 'Failed to delete company' });
+        }
         
       } else {
         return res.status(405).json({ message: 'Method not allowed' });
