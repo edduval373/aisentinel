@@ -10,6 +10,17 @@
   }
 }
 
+/* Professional hover effects */
+.company-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  border-color: #d1d5db !important;
+}
+
+.manage-button:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.4) !important;
+}
+
 * {
   margin: 0;
   padding: 0;

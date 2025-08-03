@@ -63,16 +63,34 @@ export default function AdminCompanies() {
 
   const { data: companies, isLoading: companiesLoading } = useQuery({
     queryKey: ["/api/admin/companies"],
+    queryFn: async () => {
+      const token = localStorage.getItem('prodAuthToken') || 'prod-1754052835575-289kvxqgl42h';
+      const response = await fetch("/api/admin/companies", {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      if (!response.ok) throw new Error('Failed to fetch companies');
+      return response.json();
+    }
   });
 
   const createCompanyMutation = useMutation({
     mutationFn: async (data: z.infer<typeof companySchema>) => {
+      const token = localStorage.getItem('prodAuthToken') || 'prod-1754052835575-289kvxqgl42h';
       const response = await fetch("/api/admin/companies", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(data),
       });
-      if (!response.ok) throw new Error("Failed to create company");
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || "Failed to create company");
+      }
       return response.json();
     },
     onSuccess: () => {
@@ -234,43 +252,132 @@ export default function AdminCompanies() {
           </CardHeader>
           <CardContent>
             {companiesLoading ? (
-              <div className="flex items-center justify-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                padding: '40px',
+                color: '#6b7280' 
+              }}>
+                <div style={{
+                  width: '32px',
+                  height: '32px',
+                  border: '3px solid #e5e7eb',
+                  borderTop: '3px solid #3b82f6',
+                  borderRadius: '50%',
+                  animation: 'spin 1s linear infinite'
+                }}></div>
               </div>
             ) : (
-              <div className="grid gap-4">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {companies?.map((company: any) => (
-                  <div key={company.id} className="p-4 rounded-lg border">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
+                  <div 
+                    key={company.id} 
+                    className="company-card"
+                    style={{
+                      padding: '24px',
+                      borderRadius: '12px',
+                      border: '1px solid #e5e7eb',
+                      backgroundColor: '#ffffff',
+                      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px', flex: 1 }}>
                         {company.logo && (
                           <img 
                             src={company.logo} 
                             alt={`${company.name} logo`}
-                            className="w-10 h-10 object-contain rounded"
+                            style={{
+                              width: '48px',
+                              height: '48px',
+                              objectFit: 'contain',
+                              borderRadius: '8px',
+                              border: '1px solid #e5e7eb'
+                            }}
                           />
                         )}
-                        <div>
-                          <h3 className="font-semibold">{company.name}</h3>
-                          <p className="text-sm text-gray-600">{company.domain}</p>
-                          {company.primaryAdminName && (
-                            <p className="text-xs text-gray-500">Admin: {company.primaryAdminName}</p>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-2 mt-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setSelectedCompany(company)}
-                          >
-                            <Users className="w-4 h-4 mr-1" />
-                            Manage Owners
-                          </Button>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                            <h3 style={{ 
+                              fontSize: '20px', 
+                              fontWeight: '600', 
+                              color: '#111827',
+                              margin: 0
+                            }}>
+                              {company.name}
+                            </h3>
+                            <span style={{
+                              backgroundColor: (company.is_active || company.isActive) ? '#10b981' : '#6b7280',
+                              color: 'white',
+                              padding: '4px 12px',
+                              borderRadius: '20px',
+                              fontSize: '12px',
+                              fontWeight: '500',
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.5px'
+                            }}>
+                              {(company.is_active || company.isActive) ? 'Active' : 'Inactive'}
+                            </span>
+                          </div>
+                          
+                          <div style={{ 
+                            fontSize: '15px', 
+                            color: '#4b5563',
+                            marginBottom: '12px',
+                            fontWeight: '500'
+                          }}>
+                            🌐 {company.domain}
+                          </div>
+                          
+                          <div style={{ 
+                            display: 'flex', 
+                            flexDirection: 'column', 
+                            gap: '6px',
+                            fontSize: '14px',
+                            color: '#6b7280'
+                          }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <Users style={{ width: '16px', height: '16px', color: '#9ca3af' }} />
+                              <span style={{ fontWeight: '500', color: '#374151' }}>
+                                {company.primary_admin_name || company.primaryAdminName}
+                              </span>
+                              <span style={{ color: '#9ca3af' }}>•</span>
+                              <span>{company.primary_admin_title || company.primaryAdminTitle}</span>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <Mail style={{ width: '16px', height: '16px', color: '#9ca3af' }} />
+                              <span>{company.primary_admin_email || company.primaryAdminEmail}</span>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                      <Badge variant={company.isActive ? "default" : "secondary"}>
-                        {company.isActive ? "Active" : "Inactive"}
-                      </Badge>
+                      
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end' }}>
+                        <button
+                          className="manage-button"
+                          style={{
+                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                            color: 'white',
+                            border: 'none',
+                            padding: '10px 16px',
+                            borderRadius: '8px',
+                            fontSize: '14px',
+                            fontWeight: '500',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            transition: 'all 0.2s ease',
+                            boxShadow: '0 2px 4px rgba(102, 126, 234, 0.3)'
+                          }}
+                          onClick={() => setSelectedCompany(company)}
+                        >
+                          <Users style={{ width: '16px', height: '16px' }} />
+                          Manage Owners
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
