@@ -117,6 +117,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Chat sessions endpoint - handle 404 errors
+  app.get('/api/chat/sessions', optionalAuth, async (req: AuthenticatedRequest, res) => {
+    try {
+      console.log('🔍 GET /api/chat/sessions - Request received');
+      
+      if (!req.user) {
+        console.log('❌ No authenticated user for chat sessions');
+        return res.status(401).json({ error: 'Authentication required' });
+      }
+
+      console.log('✅ Authenticated user:', req.user.id, req.user.email);
+      
+      // Return empty array for now to stop 404 errors
+      const sessions: any[] = [];
+      console.log('📊 Returning empty sessions array to stop 404 errors');
+      
+      res.json(sessions);
+    } catch (error) {
+      console.error('❌ Error fetching chat sessions:', error);
+      res.status(500).json({ error: 'Failed to fetch chat sessions' });
+    }
+  });
+
   // SECURE AUTHENTICATION ENDPOINT - Header-based token validation
   app.get('/api/auth/secure-me', async (req, res) => {
     try {

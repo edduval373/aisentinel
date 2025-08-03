@@ -1,0 +1,75 @@
+index-lYcY1E2Z.js:50 ❌ [QUERY] /api/chat/sessions - Failed (120ms): Error: 404: 
+    at wC (index-lYcY1E2Z.js:48:42957)
+    at async index-lYcY1E2Z.js:50:3041
+index-lYcY1E2Z.js:50 ❌ [QUERY] /api/chat/sessions - Failed (127ms): Error: 404: 
+    at wC (index-lYcY1E2Z.js:48:42957)
+    at async index-lYcY1E2Z.js:50:3041
+index-lYcY1E2Z.js:50 ❌ [QUERY] /api/chat/sessions - Failed (108ms): Error: 404: 
+    at wC (index-lYcY1E2Z.js:48:42957)
+    at async index-lYcY1E2Z.js:50:3041
+index-lYcY1E2Z.js:50 ❌ [QUERY] /api/chat/sessions - Failed (116ms): Error: 404: 
+    at wC (index-lYcY1E2Z.js:48:42957)
+    at async index-lYcY1E2Z.js:50:3041
+index-lYcY1E2Z.js:50 ❌ [QUERY] /api/chat/sessions - Failed (224ms): Error: 404: 
+    at wC (index-lYcY1E2Z.js:48:42957)
+    at async index-lYcY1E2Z.js:50:3041
+index-lYcY1E2Z.js:50 ❌ [QUERY] /api/chat/sessions - Failed (141ms): Error: 404: 
+    at wC (index-lYcY1E2Z.js:48:42957)
+    at async index-lYcY1E2Z.js:50:3041
+index-lYcY1E2Z.js:50 ❌ [QUERY] /api/chat/sessions - Failed (117ms): Error: 404: 
+    at wC (index-lYcY1E2Z.js:48:42957)
+    at async index-lYcY1E2Z.js:50:3041
+index-lYcY1E2Z.js:50 ❌ [QUERY] /api/chat/sessions - Failed (179ms): Error: 404: 
+    at wC (index-lYcY1E2Z.js:48:42957)
+    at async index-lYcY1E2Z.js:50:3041
+index-lYcY1E2Z.js:50 ❌ [QUERY] /api/chat/sessions - Failed (93ms): Error: 404: 
+    at wC (index-lYcY1E2Z.js:48:42957)
+    at async index-lYcY1E2Z.js:50:3041
+index-lYcY1E2Z.js:50 ❌ [QUERY] /api/chat/sessions - Failed (130ms): Error: 404: 
+    at wC (index-lYcY1E2Z.js:48:42957)
+    at async index-lYcY1E2Z.js:50:3041
+index-lYcY1E2Z.js:50 ❌ [QUERY] /api/chat/sessions - Failed (96ms): Error: 404: 
+    at wC (index-lYcY1E2Z.js:48:42957)
+    at async index-lYcY1E2Z.js:50:3041
+index-lYcY1E2Z.js:50 ❌ [QUERY] /api/chat/sessions - Failed (101ms): Error: 404: 
+    at wC (index-lYcY1E2Z.js:48:42957)
+    at async index-lYcY1E2Z.js:50:3041
+index-lYcY1E2Z.js:50 ❌ [QUERY] /api/chat/sessions - Failed (125ms): Error: 404: 
+    at wC (index-lYcY1E2Z.js:48:42957)
+    at async index-lYcY1E2Z.js:50:3041
+index-lYcY1E2Z.js:50 ❌ [QUERY] /api/chat/sessions - Failed (129ms): Error: 404: 
+    at wC (index-lYcY1E2Z.js:48:42957)
+    at async index-lYcY1E2Z.js:50:3041
+index-lYcY1E2Z.js:50 ❌ [QUERY] /api/chat/sessions - Failed (103ms): Error: 404: 
+    at wC (index-lYcY1E2Z.js:48:42957)
+    at async index-lYcY1E2Z.js:50:3041
+index-lYcY1E2Z.js:50 ❌ [QUERY] /api/chat/sessions - Failed (112ms): Error: 404: 
+    at wC (index-lYcY1E2Z.js:48:42957)
+    at async index-lYcY1E2Z.js:50:3041
+index-lYcY1E2Z.js:50 ❌ [QUERY] /api/chat/sessions - Failed (98ms): Error: 404: 
+    at wC (index-lYcY1E2Z.js:48:42957)
+    at async index-lYcY1E2Z.js:50:3041
+index-lYcY1E2Z.js:50 ❌ [QUERY] /api/chat/sessions - Failed (93ms): Error: 404: 
+    at wC (index-lYcY1E2Z.js:48:42957)
+    at async index-lYcY1E2Z.js:50:3041
+index-lYcY1E2Z.js:50 ❌ [QUERY] /api/chat/sessions - Failed (107ms): Error: 404: 
+    at wC (index-lYcY1E2Z.js:48:42957)
+    at async index-lYcY1E2Z.js:50:3041
+index-lYcY1E2Z.js:50 ❌ [QUERY] /api/chat/sessions - Failed (214ms): Error: 404: 
+    at wC (index-lYcY1E2Z.js:48:42957)
+    at async index-lYcY1E2Z.js:50:3041
+index-lYcY1E2Z.js:50 ❌ [QUERY] /api/chat/sessions - Failed (173ms): Error: 404: 
+    at wC (index-lYcY1E2Z.js:48:42957)
+    at async index-lYcY1E2Z.js:50:3041
+index-lYcY1E2Z.js:50 ❌ [QUERY] /api/chat/sessions - Failed (101ms): Error: 404: 
+    at wC (index-lYcY1E2Z.js:48:42957)
+    at async index-lYcY1E2Z.js:50:3041
+index-lYcY1E2Z.js:50 ❌ [QUERY] /api/chat/sessions - Failed (251ms): Error: 404: 
+    at wC (index-lYcY1E2Z.js:48:42957)
+    at async index-lYcY1E2Z.js:50:3041
+index-lYcY1E2Z.js:50 ❌ [QUERY] /api/chat/sessions - Failed (101ms): Error: 404: 
+    at wC (index-lYcY1E2Z.js:48:42957)
+    at async index-lYcY1E2Z.js:50:3041
+index-lYcY1E2Z.js:50 ❌ [QUERY] /api/chat/sessions - Failed (128ms): Error: 404: 
+    at wC (index-lYcY1E2Z.js:48:42957)
+    at async index-lYcY1E2Z.js:50:3041
