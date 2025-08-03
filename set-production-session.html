@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Set Production Session Cookie</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .container { max-width: 600px; }
+        .button { padding: 10px 20px; background: #007cba; color: white; border: none; cursor: pointer; margin: 5px; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔒 Set Secure Production Session Cookie</h1>
+        <p>This page creates a secure session cookie for database authentication on www.aisentinel.app</p>
+        
+        <div id="status"></div>
+        
+        <button class="button" onclick="setSecureCookie()">Set Secure Session Cookie</button>
+        <button class="button" onclick="testAuthentication()">Test Database Authentication</button>
+        <button class="button" onclick="clearCookie()">Clear Session Cookie</button>
+        
+        <h3>Current Status:</h3>
+        <div id="cookieStatus"></div>
+        
+        <h3>Authentication Log:</h3>
+        <div id="authLog" style="font-family: monospace; background: #f5f5f5; padding: 10px; height: 300px; overflow-y: scroll;"></div>
+    </div>
+
+    <script>
+        function log(message) {
+            const authLog = document.getElementById('authLog');
+            const timestamp = new Date().toLocaleTimeString();
+            authLog.innerHTML += `[${timestamp}] ${message}\n`;
+            authLog.scrollTop = authLog.scrollHeight;
+        }
+
+        function updateStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        function updateCookieStatus() {
+            const cookies = document.cookie;
+            const sessionCookie = cookies
+                .split(';')
+                .find(cookie => cookie.trim().startsWith('sessionToken='))
+                ?.split('=')[1];
+            
+            const cookieStatus = document.getElementById('cookieStatus');
+            if (sessionCookie) {
+                cookieStatus.innerHTML = `<div class="status success">✅ Session cookie exists: ${sessionCookie.substring(0, 20)}...</div>`;
+                log(`Session cookie found: ${sessionCookie.substring(0, 20)}...`);
+            } else {
+                cookieStatus.innerHTML = `<div class="status error">❌ No session cookie found</div>`;
+                log('No session cookie found');
+            }
+        }
+
+        function setSecureCookie() {
+            log('🔒 Setting secure session cookie...');
+            
+            // Use the production session token from localStorage accounts
+            const sessionToken = 'prod-1754052835575-289kvxqgl42h';
+            const expirationDate = new Date();
+            expirationDate.setDate(expirationDate.getDate() + 30); // 30 days
+            
+            // Set secure cookie for production
+            const isProduction = window.location.hostname.includes('aisentinel.app');
+            const cookieSettings = isProduction 
+                ? `sessionToken=${sessionToken}; path=/; expires=${expirationDate.toUTCString()}; secure; samesite=strict`
+                : `sessionToken=${sessionToken}; path=/; expires=${expirationDate.toUTCString()}; samesite=lax`;
+            
+            document.cookie = cookieSettings;
+            log(`Cookie set with settings: ${cookieSettings.substring(0, 80)}...`);
+            
+            // Verify cookie was set
+            setTimeout(() => {
+                updateCookieStatus();
+                if (document.cookie.includes('sessionToken=')) {
+                    updateStatus('✅ Secure session cookie set successfully!', 'success');
+                    log('✅ Session cookie set successfully');
+                } else {
+                    updateStatus('❌ Failed to set session cookie', 'error');
+                    log('❌ Failed to set session cookie');
+                }
+            }, 100);
+        }
+
+        async function testAuthentication() {
+            log('🔒 Testing secure database authentication...');
+            updateStatus('Testing authentication...', 'info');
+            
+            try {
+                const response = await fetch('/api/auth/secure-me', {
+                    method: 'GET',
+                    credentials: 'include', // Include cookies
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                
+                const data = await response.json();
+                log(`Authentication response: ${JSON.stringify(data, null, 2)}`);
+                
+                if (response.ok && data.authenticated) {
+                    updateStatus(`✅ Authentication successful! Welcome ${data.user.email}`, 'success');
+                    log(`✅ Authentication successful for: ${data.user.email}`);
+                    log(`Role: ${data.user.role}, Level: ${data.user.roleLevel}`);
+                } else {
+                    updateStatus(`❌ Authentication failed: ${data.error}`, 'error');
+                    log(`❌ Authentication failed: ${data.error}`);
+                }
+            } catch (error) {
+                updateStatus(`❌ Authentication error: ${error.message}`, 'error');
+                log(`❌ Authentication error: ${error.message}`);
+            }
+        }
+
+        function clearCookie() {
+            log('🗑️ Clearing session cookie...');
+            document.cookie = 'sessionToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+            setTimeout(() => {
+                updateCookieStatus();
+                updateStatus('Session cookie cleared', 'info');
+                log('Session cookie cleared');
+            }, 100);
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🔒 Secure session management page loaded');
+            updateCookieStatus();
+            
+            // Auto-set cookie if none exists and we're on production
+            const sessionCookie = document.cookie
+                .split(';')
+                .find(cookie => cookie.trim().startsWith('sessionToken='));
+            
+            if (!sessionCookie && window.location.hostname.includes('aisentinel.app')) {
+                log('🔄 No session cookie found on production, auto-setting...');
+                setTimeout(setSecureCookie, 1000);
+            }
+        });
+    </script>
+</body>
+</html>
