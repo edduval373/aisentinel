@@ -17,50 +17,40 @@ export default async function handler(req, res) {
     console.log(`[MINIMAL API] ${req.method} ${path}`);
 
     // Critical auth/me endpoint
-    if (path.includes('/auth/me') && req.method === 'GET') {
-      console.log('[AUTH] Processing auth/me request');
+    if (path === '/api/auth/me' && req.method === 'GET') {
+      // Check for session token
+      let sessionToken = null;
       
-      try {
-        // Check for session token
-        let sessionToken = null;
-        
-        if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
-          sessionToken = req.headers.authorization.substring(7);
-        } else if (req.headers['x-session-token']) {
-          sessionToken = req.headers['x-session-token'];
-        } else if (req.headers.cookie) {
-          const match = req.headers.cookie.match(/sessionToken=([^;]+)/);
-          if (match) sessionToken = match[1];
-        }
-
-        console.log('[AUTH] Session token found:', !!sessionToken);
-
-        if (!sessionToken) {
-          return res.json({ authenticated: false, message: 'No session token' });
-        }
-
-        if (sessionToken.startsWith('prod-')) {
-          console.log('[AUTH] Valid production session token');
-          return res.json({
-            authenticated: true,
-            user: {
-              id: 1,
-              email: 'user@example.com',
-              firstName: 'Demo',
-              lastName: 'User',
-              companyId: 1,
-              companyName: 'Demo Company',
-              role: 'super-user',
-              roleLevel: 1000
-            }
-          });
-        }
-
-        return res.json({ authenticated: false, message: 'Invalid session token' });
-      } catch (authError) {
-        console.error('[AUTH] Error:', authError);
-        return res.json({ authenticated: false, error: authError.message });
+      if (req.headers.authorization?.startsWith('Bearer ')) {
+        sessionToken = req.headers.authorization.substring(7);
+      } else if (req.headers['x-session-token']) {
+        sessionToken = req.headers['x-session-token'];
+      } else if (req.headers.cookie) {
+        const match = req.headers.cookie.match(/sessionToken=([^;]+)/);
+        if (match) sessionToken = match[1];
       }
+
+      if (!sessionToken) {
+        return res.json({ authenticated: false });
+      }
+
+      if (sessionToken.startsWith('prod-')) {
+        return res.json({
+          authenticated: true,
+          user: {
+            id: 1,
+            email: 'user@example.com',
+            firstName: 'Demo',
+            lastName: 'User',
+            companyId: 1,
+            companyName: 'Demo Company',
+            role: 'super-user',
+            roleLevel: 1000
+          }
+        });
+      }
+
+      return res.json({ authenticated: false });
     }
 
     // Chat session endpoint
