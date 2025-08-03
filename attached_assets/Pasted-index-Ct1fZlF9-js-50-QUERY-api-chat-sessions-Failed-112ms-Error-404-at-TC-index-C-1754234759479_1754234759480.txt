@@ -1,0 +1,69 @@
+index-Ct1fZlF9.js:50 ❌ [QUERY] /api/chat/sessions - Failed (112ms): Error: 404: 
+    at TC (index-Ct1fZlF9.js:48:42957)
+    at async index-Ct1fZlF9.js:50:3041
+index-Ct1fZlF9.js:50 ❌ [QUERY] /api/chat/sessions - Failed (143ms): Error: 404: 
+    at TC (index-Ct1fZlF9.js:48:42957)
+    at async index-Ct1fZlF9.js:50:3041
+index-Ct1fZlF9.js:50 ❌ [QUERY] /api/chat/sessions - Failed (155ms): Error: 404: 
+    at TC (index-Ct1fZlF9.js:48:42957)
+    at async index-Ct1fZlF9.js:50:3041
+index-Ct1fZlF9.js:50 ❌ [QUERY] /api/chat/sessions - Failed (94ms): Error: 404: 
+    at TC (index-Ct1fZlF9.js:48:42957)
+    at async index-Ct1fZlF9.js:50:3041
+index-Ct1fZlF9.js:50 ❌ [QUERY] /api/chat/sessions - Failed (104ms): Error: 404: 
+    at TC (index-Ct1fZlF9.js:48:42957)
+    at async index-Ct1fZlF9.js:50:3041
+index-Ct1fZlF9.js:50 ❌ [QUERY] /api/chat/sessions - Failed (99ms): Error: 404: 
+    at TC (index-Ct1fZlF9.js:48:42957)
+    at async index-Ct1fZlF9.js:50:3041
+index-Ct1fZlF9.js:50 ❌ [QUERY] /api/chat/sessions - Failed (84ms): Error: 404: 
+    at TC (index-Ct1fZlF9.js:48:42957)
+    at async index-Ct1fZlF9.js:50:3041
+index-Ct1fZlF9.js:50 ❌ [QUERY] /api/chat/sessions - Failed (116ms): Error: 404: 
+    at TC (index-Ct1fZlF9.js:48:42957)
+    at async index-Ct1fZlF9.js:50:3041
+index-Ct1fZlF9.js:50 ❌ [QUERY] /api/chat/sessions - Failed (129ms): Error: 404: 
+    at TC (index-Ct1fZlF9.js:48:42957)
+    at async index-Ct1fZlF9.js:50:3041
+index-Ct1fZlF9.js:50 ❌ [QUERY] /api/chat/sessions - Failed (190ms): Error: 404: 
+    at TC (index-Ct1fZlF9.js:48:42957)
+    at async index-Ct1fZlF9.js:50:3041
+index-Ct1fZlF9.js:50 ❌ [QUERY] /api/chat/sessions - Failed (132ms): Error: 404: 
+    at TC (index-Ct1fZlF9.js:48:42957)
+    at async index-Ct1fZlF9.js:50:3041
+index-Ct1fZlF9.js:50 ❌ [QUERY] /api/chat/sessions - Failed (100ms): Error: 404: 
+    at TC (index-Ct1fZlF9.js:48:42957)
+    at async index-Ct1fZlF9.js:50:3041
+index-Ct1fZlF9.js:50 ❌ [QUERY] /api/chat/sessions - Failed (129ms): Error: 404: 
+    at TC (index-Ct1fZlF9.js:48:42957)
+    at async index-Ct1fZlF9.js:50:3041
+index-Ct1fZlF9.js:50 ❌ [QUERY] /api/chat/sessions - Failed (106ms): Error: 404: 
+    at TC (index-Ct1fZlF9.js:48:42957)
+    at async index-Ct1fZlF9.js:50:3041
+index-Ct1fZlF9.js:50 ❌ [QUERY] /api/chat/sessions - Failed (118ms): Error: 404: 
+    at TC (index-Ct1fZlF9.js:48:42957)
+    at async index-Ct1fZlF9.js:50:3041
+index-Ct1fZlF9.js:50 ❌ [QUERY] /api/chat/sessions - Failed (151ms): Error: 404: 
+    at TC (index-Ct1fZlF9.js:48:42957)
+    at async index-Ct1fZlF9.js:50:3041
+index-Ct1fZlF9.js:50 ❌ [QUERY] /api/chat/sessions - Failed (658ms): Error: 404: 
+    at TC (index-Ct1fZlF9.js:48:42957)
+    at async index-Ct1fZlF9.js:50:3041
+index-Ct1fZlF9.js:50 ❌ [QUERY] /api/chat/sessions - Failed (194ms): Error: 404: 
+    at TC (index-Ct1fZlF9.js:48:42957)
+    at async index-Ct1fZlF9.js:50:3041
+index-Ct1fZlF9.js:50 ❌ [QUERY] /api/chat/sessions - Failed (126ms): Error: 404: 
+    at TC (index-Ct1fZlF9.js:48:42957)
+    at async index-Ct1fZlF9.js:50:3041
+index-Ct1fZlF9.js:50 ❌ [QUERY] /api/chat/sessions - Failed (128ms): Error: 404: 
+    at TC (index-Ct1fZlF9.js:48:42957)
+    at async index-Ct1fZlF9.js:50:3041
+index-Ct1fZlF9.js:50 ❌ [QUERY] /api/chat/sessions - Failed (100ms): Error: 404: 
+    at TC (index-Ct1fZlF9.js:48:42957)
+    at async index-Ct1fZlF9.js:50:3041
+index-Ct1fZlF9.js:50 ❌ [QUERY] /api/chat/sessions - Failed (110ms): Error: 404: 
+    at TC (index-Ct1fZlF9.js:48:42957)
+    at async index-Ct1fZlF9.js:50:3041
+index-Ct1fZlF9.js:50 ❌ [QUERY] /api/chat/sessions - Failed (113ms): Error: 404: 
+    at TC (index-Ct1fZlF9.js:48:42957)
+    at async index-Ct1fZlF9.js:50:3041

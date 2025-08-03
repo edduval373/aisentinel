@@ -56,6 +56,49 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
     ownerVisible: isOwner, 
     adminVisible: isAdmin || isDemoUser 
   });
+  // Section definitions moved here to fix declaration order
+  const superUserSections = [
+    {
+      id: "company-management",
+      name: "Company Management",
+      href: "/admin/companies",
+      icon: Building,
+    },
+    {
+      id: "create-models", 
+      name: "Create AI Models",
+      href: "/admin/create-models",
+      icon: Brain,
+    }
+  ];
+
+  const ownersSections = [
+    {
+      id: "company-setup",
+      name: "Company Setup", 
+      href: "/admin/company-setup",
+      icon: Building,
+    },
+    {
+      id: "model-fusion",
+      name: "Setup Model Fusion",
+      href: "/admin/model-fusion", 
+      icon: Brain,
+    },
+    {
+      id: "api-keys",
+      name: "Setup API Keys",
+      href: "/admin/setup-api-keys",
+      icon: Key,
+    }
+  ];
+
+  console.log('🔧 [SIDEBAR] Rendering with sections:', {
+    superUserSectionsCount: isSuperUser ? superUserSections.length : 0,
+    ownerSectionsCount: isOwner ? ownersSections.length : 0,
+    isOpen,
+    location
+  });
   
   console.log('🔧 [SIDEBAR] Role detection:', {
     userEmail: user?.email,
@@ -89,42 +132,6 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 
   // Remove AI Chat navigation item - logo will handle chat navigation now
   const navigation: Array<{name: string, href: string, current: boolean}> = [];
-
-  const superUserSections = [
-    {
-      id: "company-management",
-      name: "Company Management",
-      href: "/admin/companies",
-      icon: Building,
-    },
-    {
-      id: "create-models",
-      name: "Create AI Models",
-      href: "/admin/create-models",
-      icon: Bot,
-    }
-  ];
-
-  const ownersSections = [
-    {
-      id: "company-setup",
-      name: "Company Setup",
-      href: "/company-setup",
-      icon: Building,
-    },
-    {
-      id: "model-fusion",
-      name: "Setup Model Fusion",
-      href: "/admin/model-fusion",
-      icon: Brain,
-    },
-    {
-      id: "setup-api-keys",
-      name: "Setup API Keys",
-      href: "/admin/setup-api-keys",
-      icon: Key,
-    }
-  ];
 
   const adminSections = [
     {
@@ -344,14 +351,18 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                   letterSpacing: '0.05em',
                   margin: 0
                 }}>
-                  SUPER-USER
+                  SUPER-USER ({superUserSections.length} items)
                 </h3>
               </div>
               
-              {superUserSections.map((section) => (
+              {superUserSections.map((section) => {
+                console.log('🔧 [SIDEBAR] Rendering super-user section:', section.name, section.id);
+                return (
                 <button
                   key={section.id}
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
                     console.log('🔧 [SIDEBAR] Super-user section clicked:', section.name, section.href);
                     console.log('🔧 [SIDEBAR] Current location:', location);
                     console.log('🔧 [SIDEBAR] Navigating to:', section.href);
@@ -397,7 +408,8 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                   <section.icon style={{ width: '20px', height: '20px' }} />
                   <span>{section.name}</span>
                 </button>
-              ))}
+                );
+              })}
             </>
           )}
 
