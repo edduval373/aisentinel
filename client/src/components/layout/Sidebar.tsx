@@ -36,8 +36,11 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const [location, navigate] = useLocation();
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
-  // Company data comes directly from authenticated user - no separate API call needed
-  // This ensures we only show real company data from the user record
+  // Fetch current company data from companies table using user's companyId
+  const { data: currentCompany } = useQuery({
+    queryKey: ['/api/user/current-company'],
+    enabled: !!user?.companyId, // Only fetch if user has a company ID
+  });
 
   const isDemoUser = user?.roleLevel === 0 || window.location.pathname === '/demo' || !document.cookie.includes('sessionToken=');
   const isSuperUser = user?.role === 'super-user' || (user?.roleLevel ?? 0) >= 1000;
@@ -563,8 +566,8 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 
       {/* Bottom section */}
       <div style={{ borderTop: '1px solid #3b82f6', padding: '12px' }}>
-        {/* Current Company Display - shows authenticated user's company data only */}
-        {user?.companyName && user?.companyId && (
+        {/* Current Company Display - shows company data from database or fallback to user data */}
+        {((currentCompany && currentCompany.name) || (user?.companyName && user?.companyId)) && (
           <div style={{ 
             marginBottom: '12px',
             paddingBottom: '12px',
@@ -600,13 +603,13 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap'
                 }}>
-                  {user.companyName}
+                  {(currentCompany && currentCompany.name) || user?.companyName || 'Current Company'}
                 </div>
                 <div style={{
                   color: '#94a3b8',
                   fontSize: '10px'
                 }}>
-                  ID: {user.companyId}
+                  ID: {(currentCompany && currentCompany.id) || user?.companyId || 1}
                 </div>
               </div>
             </div>
