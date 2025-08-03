@@ -504,10 +504,11 @@ export default function Home() {
     <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', backgroundColor: '#f8fafc' }}>
       {/* DEBUGGING: Show sidebar status */}
       <div style={{ position: 'fixed', top: '10px', left: '10px', zIndex: 9999, background: 'red', color: 'white', padding: '5px', fontSize: '12px' }}>
-        Auth: {String(isAuthenticated)} | Role: {effectiveRoleLevel} | Sidebar: {String(canAccessSidebar)}
+        Auth: {String(isAuthenticated)} | Role: {effectiveRoleLevel} | Sidebar: {String(canAccessSidebar)} | Demo: {String(isDemoMode)}
       </div>
       
-      {canAccessSidebar && <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />}
+      {/* Force sidebar to always render for debugging */}
+      <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
       
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
         {/* Compact Header with Company Branding and Menu Controls */}
