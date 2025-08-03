@@ -51,6 +51,11 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const isSuperUser = roleLevel >= 1000;
   
   console.log('🔧 [SIDEBAR] Role check:', { roleLevel, isDemoUser, isRegularUser, isAdmin, isOwner, isSuperUser });
+  console.log('🔧 [SIDEBAR] Section visibility:', { 
+    superUserVisible: isSuperUser, 
+    ownerVisible: isOwner, 
+    adminVisible: isAdmin || isDemoUser 
+  });
   
   console.log('🔧 [SIDEBAR] Role detection:', {
     userEmail: user?.email,
