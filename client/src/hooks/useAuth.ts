@@ -62,7 +62,9 @@ export function useAuth() {
         const sessionToken = account.sessionToken;
         console.log('🔍 [AUTH DEBUG] Session token found:', sessionToken.substring(0, 20) + '...');
         
-        console.log('🔒 [SECURE AUTH] Session token found, validating with header-based auth...');
+        console.log('🔍 [AUTH DEBUG] Making API request with headers...');
+        console.log('🔍 [AUTH DEBUG] Authorization header:', `Bearer ${sessionToken.substring(0, 20)}...`);
+        console.log('🔍 [AUTH DEBUG] X-Session-Token header:', sessionToken.substring(0, 20) + '...');
         
         // Call secure authentication endpoint using header-based authentication
         const authResponse = await fetch('/api/auth/secure-me', {
@@ -74,8 +76,11 @@ export function useAuth() {
           },
         });
         
+        console.log('🔍 [AUTH DEBUG] Response status:', authResponse.status);
+        console.log('🔍 [AUTH DEBUG] Response headers:', Object.fromEntries(authResponse.headers.entries()));
+        
         const data = await authResponse.json();
-        console.log('🔒 [SECURE AUTH] Database validation response:', data);
+        console.log('🔍 [AUTH DEBUG] Response data:', data);
         
         if (!authResponse.ok || !data.authenticated) {
           console.log('🔒 [SECURE AUTH] Database validation failed:', data.error);

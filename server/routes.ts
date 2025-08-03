@@ -120,29 +120,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // SECURE AUTHENTICATION ENDPOINT - Header-based token validation
   app.get('/api/auth/secure-me', async (req, res) => {
     try {
-      console.log('🔒 [CLEAN AUTH] Starting header-based authentication...');
+      console.log('🔍 [SERVER DEBUG] ===== AUTHENTICATION REQUEST START =====');
+      console.log('🔍 [SERVER DEBUG] Request method:', req.method);
+      console.log('🔍 [SERVER DEBUG] Request URL:', req.url);
+      console.log('🔍 [SERVER DEBUG] Request headers:', JSON.stringify(req.headers, null, 2));
       
       // Extract session token from headers
       const authHeader = req.headers.authorization;
       const sessionTokenHeader = req.headers['x-session-token'];
       
+      console.log('🔍 [SERVER DEBUG] Authorization header:', authHeader);
+      console.log('🔍 [SERVER DEBUG] X-Session-Token header:', sessionTokenHeader);
+      
       let sessionToken = null;
       
       if (authHeader && authHeader.startsWith('Bearer ')) {
         sessionToken = authHeader.substring(7);
+        console.log('🔍 [SERVER DEBUG] Extracted token from Authorization header');
       } else if (sessionTokenHeader) {
         sessionToken = sessionTokenHeader;
+        console.log('🔍 [SERVER DEBUG] Using token from X-Session-Token header');
       }
 
       if (!sessionToken) {
-        console.log('🔒 [CLEAN AUTH] No session token found in headers');
+        console.log('❌ [SERVER DEBUG] No session token found in headers');
         return res.status(401).json({ 
           authenticated: false, 
           error: 'No session token in headers' 
         });
       }
 
-      console.log('🔒 [CLEAN AUTH] Session token found:', sessionToken.substring(0, 20) + '...');
+      console.log('🔍 [SERVER DEBUG] Session token found:', sessionToken.substring(0, 20) + '...');
+      console.log('🔍 [SERVER DEBUG] Expected token starts with:', 'prod-1754052835575-289kvxqgl42h'.substring(0, 20) + '...');
 
       // Validate session token against expected production token
       if (sessionToken === 'prod-1754052835575-289kvxqgl42h') {
