@@ -1,0 +1,116 @@
+Select Activity Type Value (string): 1
+index--MPmNU5t.js:492 Activity Types for Select: Array(2)
+index--MPmNU5t.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index--MPmNU5t.js:492 currentSession: undefined
+index--MPmNU5t.js:492 createSessionMutation.isPending: true
+index--MPmNU5t.js:492 Should create session: false
+index--MPmNU5t.js:492 AI Models loaded: 2 models
+index--MPmNU5t.js:492 Activity Types loaded: 2 types
+index--MPmNU5t.js:492 User auth: Object
+index--MPmNU5t.js:492 === END SESSION TRIGGER DEBUG ===
+index--MPmNU5t.js:492 🔄 [SESSION CREATE] Response status: 200
+index--MPmNU5t.js:492 🔄 [SESSION CREATE] Response headers: Object
+index--MPmNU5t.js:492 ✅ [SESSION CREATE] Session created successfully: Object
+index--MPmNU5t.js:492 ✅ Setting current session to: undefined
+index--MPmNU5t.js:50 🔄 [QUERY] /api/chat/sessions - Start
+index--MPmNU5t.js:50 🔄 [QUERY] Full URL: https://www.aisentinel.app/api/chat/sessions
+index--MPmNU5t.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index--MPmNU5t.js:415 Authentication check: Object
+index--MPmNU5t.js:504 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+index--MPmNU5t.js:504 🔧 [DEVELOPER CONTROLS] Visible for super user
+index--MPmNU5t.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index--MPmNU5t.js:415 Authentication check: Object
+index--MPmNU5t.js:492 AI Models loaded: 2 models
+index--MPmNU5t.js:492 Selected Model ID: 1
+index--MPmNU5t.js:492 Selected Model Object: Object
+index--MPmNU5t.js:492 Select Model Value (string): 1
+index--MPmNU5t.js:492 AI Models for Select: Array(2)
+index--MPmNU5t.js:492 Activity Types loaded: 2 types
+index--MPmNU5t.js:492 Selected Activity Type ID: 1
+index--MPmNU5t.js:492 Selected Activity Type Object: Object
+index--MPmNU5t.js:492 Select Activity Type Value (string): 1
+index--MPmNU5t.js:492 Activity Types for Select: Array(2)
+index--MPmNU5t.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index--MPmNU5t.js:492 currentSession: undefined
+index--MPmNU5t.js:492 createSessionMutation.isPending: false
+index--MPmNU5t.js:492 Should create session: true
+index--MPmNU5t.js:492 AI Models loaded: 2 models
+index--MPmNU5t.js:492 Activity Types loaded: 2 types
+index--MPmNU5t.js:492 User auth: Object
+index--MPmNU5t.js:492 === END SESSION TRIGGER DEBUG ===
+index--MPmNU5t.js:492 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+index--MPmNU5t.js:492 🔄 [SESSION CREATE] Starting chat session creation...
+index--MPmNU5t.js:492 🔄 [SESSION CREATE] User auth status: Object
+authHeaders-CIshTAes.js:1 🔍 [AUTH HEADERS] Getting authentication headers...
+authHeaders-CIshTAes.js:1 ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+index--MPmNU5t.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index--MPmNU5t.js:415 Authentication check: Object
+index--MPmNU5t.js:492 AI Models loaded: 2 models
+index--MPmNU5t.js:492 Selected Model ID: 1
+index--MPmNU5t.js:492 Selected Model Object: Object
+index--MPmNU5t.js:492 Select Model Value (string): 1
+index--MPmNU5t.js:492 AI Models for Select: Array(2)
+index--MPmNU5t.js:492 Activity Types loaded: 2 types
+index--MPmNU5t.js:492 Selected Activity Type ID: 1
+index--MPmNU5t.js:492 Selected Activity Type Object: Object
+index--MPmNU5t.js:492 Select Activity Type Value (string): 1
+index--MPmNU5t.js:492 Activity Types for Select: Array(2)
+index--MPmNU5t.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index--MPmNU5t.js:492 currentSession: undefined
+index--MPmNU5t.js:492 createSessionMutation.isPending: true
+index--MPmNU5t.js:492 Should create session: false
+index--MPmNU5t.js:492 AI Models loaded: 2 models
+index--MPmNU5t.js:492 Activity Types loaded: 2 types
+index--MPmNU5t.js:492 User auth: Object
+index--MPmNU5t.js:492 === END SESSION TRIGGER DEBUG ===
+authHeaders-CIshTAes.js:1 🔍 [AUTH HEADERS] Getting authentication headers...
+authHeaders-CIshTAes.js:1 ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+index--MPmNU5t.js:492 🔄 [SESSION CREATE] Using header-based authentication
+index--MPmNU5t.js:492 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+index--MPmNU5t.js:492 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+index--MPmNU5t.js:50 📊 [QUERY] /api/chat/sessions - Status: 404 (78ms)
+index--MPmNU5t.js:50 📊 [QUERY] Headers: Object
+index--MPmNU5t.js:50 ❌ [QUERY] /api/chat/sessions - Failed (79ms): Error: 404: 
+    at wC (index--MPmNU5t.js:48:42957)
+    at async index--MPmNU5t.js:50:3041
+(anonymous) @ index--MPmNU5t.js:50Understand this error
+index--MPmNU5t.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index--MPmNU5t.js:415 Authentication check: Object
+index--MPmNU5t.js:504 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+index--MPmNU5t.js:504 🔧 [DEVELOPER CONTROLS] Visible for super user
+index--MPmNU5t.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index--MPmNU5t.js:415 Authentication check: Object
+index--MPmNU5t.js:492 AI Models loaded: 2 models
+index--MPmNU5t.js:492 Selected Model ID: 1
+index--MPmNU5t.js:492 Selected Model Object: Object
+index--MPmNU5t.js:492 Select Model Value (string): 1
+index--MPmNU5t.js:492 AI Models for Select: Array(2)
+index--MPmNU5t.js:492 Activity Types loaded: 2 types
+index--MPmNU5t.js:492 Selected Activity Type ID: 1
+index--MPmNU5t.js:492 Selected Activity Type Object: Object
+index--MPmNU5t.js:492 Select Activity Type Value (string): 1
+index--MPmNU5t.js:492 Activity Types for Select: Array(2)
+index--MPmNU5t.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index--MPmNU5t.js:492 currentSession: undefined
+index--MPmNU5t.js:492 createSessionMutation.isPending: true
+index--MPmNU5t.js:492 Should create session: false
+index--MPmNU5t.js:492 AI Models loaded: 2 models
+index--MPmNU5t.js:492 Activity Types loaded: 2 types
+index--MPmNU5t.js:492 User auth: Object
+index--MPmNU5t.js:492 === END SESSION TRIGGER DEBUG ===
+index--MPmNU5t.js:492 🔄 [SESSION CREATE] Response status: 200
+index--MPmNU5t.js:492 🔄 [SESSION CREATE] Response headers: Object
+index--MPmNU5t.js:492 ✅ [SESSION CREATE] Session created successfully: Object
+index--MPmNU5t.js:492 ✅ Setting current session to: undefined
+index--MPmNU5t.js:50 🔄 [QUERY] /api/chat/sessions - Start
+index--MPmNU5t.js:50 🔄 [QUERY] Full URL: https://www.aisentinel.app/api/chat/sessions
+index--MPmNU5t.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index--MPmNU5t.js:415 Authentication check: Object
+index--MPmNU5t.js:504 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+index--MPmNU5t.js:504 🔧 [DEVELOPER CONTROLS] Visible for super user
+index--MPmNU5t.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index--MPmNU5t.js:415 Authentication check: Object
+index--MPmNU5t.js:492 AI Models loaded: 2 models
+index--MPmNU5t.js:492 Selected Model ID: 1
+index--MPmNU5t.js:492 Selected Model Object: Object
+index--MPmNU5t.js:492 Select Model Value (string): 1

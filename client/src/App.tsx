@@ -15,7 +15,7 @@ import Login from "@/pages/Login.tsx";
 import VerificationSuccess from "@/pages/VerificationSuccess.tsx";
 import PricingPage from "@/pages/pricing.tsx";
 import DemoSignup from "@/pages/demo-signup.tsx";
-import CompanyManagement from "@/pages/admin/company-management.tsx";
+import AdminCompanies from "@/pages/admin/companies.tsx";
 import AdminModels from "@/pages/admin/models.tsx";
 import AdminActivityTypes from "@/pages/admin/activity-types.tsx";
 
@@ -634,7 +634,7 @@ function Router() {
       <Route path="/admin/companies">
         {() => (
           <RoleGuard requiredRole="super-user">
-            <CompanyManagement />
+            <AdminCompanies />
           </RoleGuard>
         )}
       </Route>

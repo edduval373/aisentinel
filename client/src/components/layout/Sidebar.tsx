@@ -375,9 +375,15 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                       onToggle();
                     } else {
                       console.log('🔧 [SIDEBAR] PRODUCTION Calling navigate function...');
-                      navigate(section.href);
-                      console.log('🔧 [SIDEBAR] PRODUCTION Navigate called successfully');
-                      if (window.innerWidth < 1024) onToggle(); // Close on mobile
+                      try {
+                        navigate(section.href);
+                        console.log('🔧 [SIDEBAR] PRODUCTION Navigate called successfully to:', section.href);
+                        console.log('🔧 [SIDEBAR] PRODUCTION Current location should now be:', section.href);
+                        if (window.innerWidth < 1024) onToggle(); // Close on mobile
+                      } catch (error) {
+                        console.error('🔧 [SIDEBAR] PRODUCTION Navigate error:', error);
+                        alert(`Navigation error: ${error}`);
+                      }
                     }
                   }}
                   style={{
