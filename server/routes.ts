@@ -129,9 +129,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       console.log('✅ Authenticated user:', req.user.id, req.user.email);
       
-      // Return empty array for now to stop 404 errors
-      const sessions: any[] = [];
-      console.log('📊 Returning empty sessions array to stop 404 errors');
+      // Fetch real chat sessions from Railway PostgreSQL database
+      const sessions = await storage.getUserChatSessions(req.user.id, req.user.companyId);
+      console.log('📊 Retrieved chat sessions from database:', sessions.length);
       
       res.json(sessions);
     } catch (error) {
