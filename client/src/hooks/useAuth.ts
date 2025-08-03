@@ -24,56 +24,7 @@ export function useAuth() {
   
   console.log('🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY');
   
-  // Initialize session cookie from saved accounts if none exists - PRODUCTION FIRST
-  React.useEffect(() => {
-    const sessionCookie = document.cookie
-      .split('; ')
-      .find(row => row.startsWith('sessionToken='))
-      ?.split('=')[1];
-    
-    if (!sessionCookie) {
-      console.log('🔒 [SESSION INIT] No session cookie found, creating production session...');
-      
-      // Create production session directly for ed.duval15@gmail.com
-      const createProductionSession = async () => {
-        try {
-          // Set the known working production token
-          const sessionToken = 'prod-1754052835575-289kvxqgl42h';
-          const expirationDate = new Date();
-          expirationDate.setDate(expirationDate.getDate() + 30);
-          
-          const isProduction = window.location.hostname.includes('aisentinel.app');
-          const cookieSettings = isProduction 
-            ? `sessionToken=${sessionToken}; path=/; expires=${expirationDate.toUTCString()}; secure; samesite=strict`
-            : `sessionToken=${sessionToken}; path=/; expires=${expirationDate.toUTCString()}; samesite=lax`;
-          
-          document.cookie = cookieSettings;
-          console.log('🔒 [SESSION INIT] Production session cookie set:', sessionToken.substring(0, 20) + '...');
-          
-          // Verify cookie was set
-          const verifySessionCookie = document.cookie
-            .split('; ')
-            .find(row => row.startsWith('sessionToken='))
-            ?.split('=')[1];
-          
-          if (verifySessionCookie) {
-            console.log('✅ [SESSION INIT] Session cookie verified, triggering authentication...');
-            // Small delay to ensure cookie is available for the next request
-            setTimeout(() => {
-              queryClient.invalidateQueries({ queryKey: ['/api/auth/secure-me'] });
-            }, 100);
-          } else {
-            console.error('❌ [SESSION INIT] Session cookie was not set properly');
-          }
-          
-        } catch (error) {
-          console.error('🔒 [SESSION INIT] Failed to create production session:', error);
-        }
-      };
-      
-      createProductionSession();
-    }
-  }, [queryClient]);
+  // No cookie initialization - using header-based authentication strategy
   
   // SECURE AUTHENTICATION - COOKIE VALIDATION AGAINST RAILWAY DATABASE ONLY
   const { data, isLoading, error } = useQuery<AuthData>({
@@ -82,25 +33,32 @@ export function useAuth() {
       try {
         console.log('🔒 [SECURE AUTH] Starting secure database authentication...');
         
-        // Check if session cookie exists
-        const sessionCookie = document.cookie
-          .split('; ')
-          .find(row => row.startsWith('sessionToken='))
-          ?.split('=')[1];
-          
-        if (!sessionCookie) {
-          console.log('🔒 [SECURE AUTH] No session cookie found - authentication failed');
-          throw new Error('No session cookie found');
+        // Use header-based authentication - get session token from saved accounts
+        const savedAccounts = localStorage.getItem('aisentinel_saved_accounts');
+        if (!savedAccounts) {
+          console.log('🔒 [SECURE AUTH] No saved accounts found - authentication failed');
+          throw new Error('No saved accounts found');
         }
+
+        const accounts = JSON.parse(savedAccounts);
+        const account = accounts.find((acc: any) => acc.email === 'ed.duval15@gmail.com') || accounts[0];
         
-        console.log('🔒 [SECURE AUTH] Session cookie found, validating against database...');
+        if (!account || !account.sessionToken) {
+          console.log('🔒 [SECURE AUTH] No valid account session token found');
+          throw new Error('No valid session token found');
+        }
+
+        const sessionToken = account.sessionToken;
         
-        // Call secure authentication endpoint that validates against Railway database
+        console.log('🔒 [SECURE AUTH] Session token found, validating with header-based auth...');
+        
+        // Call secure authentication endpoint using header-based authentication
         const authResponse = await fetch('/api/auth/secure-me', {
           method: 'GET',
-          credentials: 'include', // Include cookies
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${sessionToken}`,
+            'X-Session-Token': sessionToken,
           },
         });
         

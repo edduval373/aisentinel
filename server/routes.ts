@@ -122,24 +122,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       console.log('🔒 [SECURE AUTH] Starting database validation...');
       
-      // Extract session token from cookies
-      const cookies = req.headers.cookie;
-      if (!cookies) {
-        return res.status(401).json({ 
-          authenticated: false, 
-          error: 'No session cookie found' 
-        });
+      // Extract session token from headers (header-based auth strategy)
+      const authHeader = req.headers.authorization;
+      const sessionTokenHeader = req.headers['x-session-token'];
+      
+      let sessionToken = null;
+      
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        sessionToken = authHeader.substring(7);
+      } else if (sessionTokenHeader) {
+        sessionToken = sessionTokenHeader;
       }
-
-      const sessionToken = cookies
-        .split(';')
-        .find((cookie: string) => cookie.trim().startsWith('sessionToken='))
-        ?.split('=')[1];
 
       if (!sessionToken) {
         return res.status(401).json({ 
           authenticated: false, 
-          error: 'No session token in cookies' 
+          error: 'No session token in headers' 
         });
       }
 
