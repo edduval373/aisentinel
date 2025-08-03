@@ -1,4 +1,61 @@
 // Vercel API endpoint for admin companies management
+
+// In-memory storage for demo (in production this would be database)
+let companiesData = [
+  {
+    id: 1,
+    name: "Duval AI Solutions",
+    domain: "duvaialsolutions.com",
+    primary_admin_name: "Ed Duval",
+    primary_admin_email: "ed.duval15@gmail.com",
+    primary_admin_title: "Chief Executive Officer",
+    logo: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
+    is_active: true,
+    created_at: "2024-01-01T00:00:00.000Z",
+    updated_at: "2024-01-01T00:00:00.000Z"
+  },
+  {
+    id: 4,
+    name: "Test Company JSON",
+    domain: "testjson.com", 
+    primary_admin_name: "Test Admin",
+    primary_admin_email: "admin@testjson.com",
+    primary_admin_title: "CEO",
+    is_active: true,
+    created_at: "2024-01-01T00:00:00.000Z",
+    updated_at: "2024-01-01T00:00:00.000Z"
+  },
+  {
+    id: 6,
+    name: "Test Quick Fix",
+    domain: "testquick.com",
+    primary_admin_name: "Test Admin", 
+    primary_admin_email: "admin@testquick.com",
+    primary_admin_title: "CEO",
+    is_active: true,
+    created_at: "2024-01-01T00:00:00.000Z",
+    updated_at: "2024-01-01T00:00:00.000Z"
+  }
+];
+
+function getCompaniesData() {
+  return [...companiesData]; // Return copy to prevent direct mutation
+}
+
+function updateCompanyData(id, updates) {
+  const index = companiesData.findIndex(c => c.id === id);
+  if (index !== -1) {
+    companiesData[index] = {
+      ...companiesData[index],
+      ...updates,
+      updated_at: new Date().toISOString()
+    };
+    console.log('✅ [PERSISTENT UPDATE] Company data updated:', companiesData[index]);
+    return companiesData[index];
+  }
+  return null;
+}
+
 export default async function handler(req, res) {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -37,41 +94,8 @@ export default async function handler(req, res) {
         // Fetch all companies
         console.log('Fetching companies for super-user:', { userId: user.user_id, roleLevel: user.role_level });
         
-        // Return companies from Railway database - hard-coded for production security
-        // NOTE: This would normally fetch from database, but using static data for production security
-        const companies = [
-          {
-            id: 1,
-            name: "Duval AI Solutions",
-            domain: "duvaialsolutions.com",
-            primary_admin_name: "Ed Duval",
-            primary_admin_email: "ed.duval15@gmail.com",
-            primary_admin_title: "Chief Executive Officer",
-            logo: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
-            is_active: true,
-            created_at: "2024-01-01T00:00:00.000Z",
-            updated_at: "2024-01-01T00:00:00.000Z"
-          },
-          {
-            id: 4,
-            name: "Test Company JSON UPDATED NAME",
-            domain: "testjson.com", 
-            primary_admin_name: "Test Admin",
-            primary_admin_email: "admin@testjson.com",
-            primary_admin_title: "CEO",
-            is_active: true,
-            updated_at: new Date().toISOString()
-          },
-          {
-            id: 6,
-            name: "Test Quick Fix",
-            domain: "testquick.com",
-            primary_admin_name: "Test Admin", 
-            primary_admin_email: "admin@testquick.com",
-            primary_admin_title: "CEO",
-            is_active: true
-          }
-        ];
+        // Return companies with persistent updates
+        const companies = getCompaniesData();
 
         console.log('Found companies:', companies.length);
         return res.status(200).json(companies);
@@ -131,14 +155,28 @@ export default async function handler(req, res) {
 
         try {
           const updates = req.body;
-          console.log('✅ Super-user updated company:', { id: companyId, updates });
+          console.log('✅ [COMPANY UPDATE] Updating company:', { id: companyId, updates });
           
-          // Return updated company (in production, this would update the database)
-          return res.status(200).json({ 
-            id: parseInt(companyId), 
-            ...updates,
-            updated_at: new Date().toISOString()
-          });
+          // Map frontend field names to backend field names
+          const mappedUpdates = {
+            name: updates.name,
+            domain: updates.domain,
+            primary_admin_name: updates.primaryAdminName,
+            primary_admin_email: updates.primaryAdminEmail,
+            primary_admin_title: updates.primaryAdminTitle,
+            is_active: updates.isActive,
+            logo: updates.logo
+          };
+          
+          // Update the persistent data
+          const updatedCompany = updateCompanyData(parseInt(companyId), mappedUpdates);
+          
+          if (!updatedCompany) {
+            return res.status(404).json({ message: 'Company not found' });
+          }
+          
+          console.log('✅ [COMPANY UPDATE] Company successfully updated:', updatedCompany);
+          return res.status(200).json(updatedCompany);
         } catch (error) {
           console.error('Error updating company:', error);
           return res.status(500).json({ message: 'Failed to update company' });
