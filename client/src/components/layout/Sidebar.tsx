@@ -74,7 +74,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
     {
       id: "company-management",
       name: "Company Management",
-      href: "/admin/company-management",
+      href: "/admin/companies",
       icon: Building,
     },
     {

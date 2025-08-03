@@ -189,9 +189,40 @@ export function useAuth() {
               }
             }
             
-            // If we have an auth token, create a basic authenticated user
+            // If we have an auth token, try to find matching account or use defaults
             if (authToken && authToken.startsWith('prod-')) {
               console.log('✅ [PRODUCTION FALLBACK] Using auth token for basic authentication');
+              
+              // Try to get account data from saved accounts even if accounts array was empty
+              try {
+                const savedAccounts = localStorage.getItem('aisentinel_saved_accounts');
+                if (savedAccounts) {
+                  const accounts = JSON.parse(savedAccounts);
+                  if (accounts.length > 0) {
+                    const primaryAccount = accounts.find((acc: any) => acc.email === 'ed.duval15@gmail.com') || 
+                                         accounts.find((acc: any) => acc.roleLevel >= 1000) || 
+                                         accounts[0];
+                    
+                    console.log('✅ [PRODUCTION FALLBACK] Using account from second attempt:', primaryAccount.email);
+                    
+                    return {
+                      authenticated: true,
+                      user: {
+                        id: '1',
+                        email: primaryAccount.email,
+                        firstName: 'Demo',
+                        lastName: 'User',
+                        role: primaryAccount.role || 'super-user',
+                        roleLevel: primaryAccount.roleLevel || 1000,
+                        companyId: primaryAccount.companyId || 1,
+                        companyName: primaryAccount.companyName || 'Demo Company'
+                      }
+                    };
+                  }
+                }
+              } catch (parseError) {
+                console.error('❌ [PRODUCTION FALLBACK] Failed to parse accounts on second attempt:', parseError);
+              }
               
               return {
                 authenticated: true,
