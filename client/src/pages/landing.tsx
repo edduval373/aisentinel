@@ -341,6 +341,42 @@ export default function Landing() {
               <CheckCircle style={{marginLeft: '8px', color: 'white', width: '18px', height: '18px'}} />
             </button>
             <button
+              onClick={handleDevAuthentication}
+              className="ai-sentinel-button-dev-auth"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '12px 20px',
+                backgroundColor: '#dc2626',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '15px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                textDecoration: 'none',
+                transition: 'all 0.2s ease',
+                minWidth: '250px',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                flex: '1',
+                maxWidth: '280px'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = '#b91c1c';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 6px 12px -1px rgba(0, 0, 0, 0.15)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = '#dc2626';
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+              }}
+            >
+              Create Production Session
+              <Shield style={{marginLeft: '8px', color: 'white', width: '18px', height: '18px'}} />
+            </button>
+            <button
               onClick={handleDemoMode}
               className="ai-sentinel-button-demo"
               style={{
