@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import type { AiModel, ActivityType, ChatMessage, ChatSession } from "@shared/schema";
 
 export default function DeveloperControls() {
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const [showChatDebug, setShowChatDebug] = useState(false);
   const [showDeveloperMenu, setShowDeveloperMenu] = useState(false);
 
@@ -157,12 +157,12 @@ export default function DeveloperControls() {
                   width: '8px', 
                   height: '8px', 
                   borderRadius: '50%', 
-                  backgroundColor: user?.isAuthenticated ? '#22c55e' : '#ef4444' 
+                  backgroundColor: isAuthenticated ? '#22c55e' : '#ef4444' 
                 }} />
                 Authentication Status
               </h3>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: '14px' }}>
-                <div><strong>Authenticated:</strong> {user?.isAuthenticated ? 'Yes' : 'No'}</div>
+                <div><strong>Authenticated:</strong> {isAuthenticated ? 'Yes' : 'No'}</div>
                 <div><strong>User ID:</strong> {user?.id || 'Not available'}</div>
                 <div><strong>Email:</strong> {user?.email || 'Not available'}</div>
                 <div><strong>Role:</strong> {user?.role || 'Not available'}</div>
