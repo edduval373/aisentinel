@@ -1,13 +1,12 @@
-// Vercel API endpoint for current company
-import { Pool } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-serverless';
-import * as schema from '../../shared/schema.js';
-import { eq } from 'drizzle-orm';
+const { Pool } = require('pg');
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-const db = drizzle({ client: pool, schema });
+// Create database connection
+const pool = new Pool({ 
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
+});
 
-export default async function handler(req, res) {
+module.exports = async (req, res) => {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -22,7 +21,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Try to get authentication info (optional for this endpoint)
+    // Get authentication token (optional for this endpoint)
     const authHeader = req.headers.authorization;
     const sessionToken = req.headers['x-session-token'] || 
                         (authHeader && authHeader.startsWith('Bearer ') ? authHeader.substring(7) : null);
@@ -30,25 +29,21 @@ export default async function handler(req, res) {
     let user = null;
     if (sessionToken) {
       try {
-        // Query the database to validate the session
-        const [session] = await db
-          .select()
-          .from(schema.userSessions)
-          .where(eq(schema.userSessions.sessionToken, sessionToken))
-          .limit(1);
-
-        if (session) {
-          // Get user details
-          const [userData] = await db
-            .select()
-            .from(schema.users)
-            .where(eq(schema.users.id, session.userId))
-            .limit(1);
-
-          if (userData) {
-            user = userData;
-            console.log('Authenticated user requesting current company:', user.id);
-          }
+        // Validate session token against database
+        const sessionQuery = `
+          SELECT us.*, u.company_id, u.id as user_id
+          FROM user_sessions us 
+          JOIN users u ON us.user_id = u.id 
+          WHERE us.session_token = $1 
+          AND us.expires_at > NOW()
+          LIMIT 1
+        `;
+        
+        const result = await pool.query(sessionQuery, [sessionToken]);
+        
+        if (result.rows.length > 0) {
+          user = result.rows[0];
+          console.log('✅ [SECURE AUTH] Database-validated user requesting current company:', user.user_id);
         }
       } catch (authError) {
         console.log('Optional auth failed, proceeding with demo mode:', authError.message);
@@ -56,14 +51,12 @@ export default async function handler(req, res) {
     }
 
     // If authenticated user with company
-    if (user && user.companyId) {
-      const [company] = await db
-        .select()
-        .from(schema.companies)
-        .where(eq(schema.companies.id, user.companyId))
-        .limit(1);
+    if (user && user.company_id) {
+      const companyQuery = 'SELECT * FROM companies WHERE id = $1 LIMIT 1';
+      const companyResult = await pool.query(companyQuery, [user.company_id]);
 
-      if (company) {
+      if (companyResult.rows.length > 0) {
+        const company = companyResult.rows[0];
         console.log('Returning user company:', company.name, 'ID:', company.id);
         return res.status(200).json(company);
       }
@@ -71,13 +64,11 @@ export default async function handler(req, res) {
 
     // Default to demo company (ID 1)
     console.log('Demo mode: Returning company ID 1');
-    const [demoCompany] = await db
-      .select()
-      .from(schema.companies)
-      .where(eq(schema.companies.id, 1))
-      .limit(1);
+    const demoQuery = 'SELECT * FROM companies WHERE id = 1 LIMIT 1';
+    const demoResult = await pool.query(demoQuery);
 
-    if (demoCompany) {
+    if (demoResult.rows.length > 0) {
+      const demoCompany = demoResult.rows[0];
       console.log('Returning demo company:', demoCompany.name, 'ID:', demoCompany.id);
       return res.status(200).json(demoCompany);
     }
@@ -92,4 +83,4 @@ export default async function handler(req, res) {
       error: error.message 
     });
   }
-}
+};

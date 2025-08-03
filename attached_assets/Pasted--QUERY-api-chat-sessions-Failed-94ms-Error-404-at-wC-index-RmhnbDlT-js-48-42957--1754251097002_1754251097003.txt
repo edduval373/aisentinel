@@ -1,0 +1,41 @@
+❌ [QUERY] /api/chat/sessions - Failed (94ms): Error: 404: 
+    at wC (index-RmhnbDlT.js:48:42957)
+    at async index-RmhnbDlT.js:50:3041
+index-RmhnbDlT.js:50 ❌ [QUERY] /api/chat/sessions - Failed (83ms): Error: 404: 
+    at wC (index-RmhnbDlT.js:48:42957)
+    at async index-RmhnbDlT.js:50:3041
+
+index-RmhnbDlT.js:50 ❌ [QUERY] /api/chat/sessions - Failed (114ms): Error: 404: 
+    at wC (index-RmhnbDlT.js:48:42957)
+    at async index-RmhnbDlT.js:50:3041
+index-RmhnbDlT.js:50 ❌ [QUERY] /api/chat/sessions - Failed (118ms): Error: 404: 
+    at wC (index-RmhnbDlT.js:48:42957)
+    at async index-RmhnbDlT.js:50:3041
+index-RmhnbDlT.js:50 ❌ [QUERY] /api/chat/sessions - Failed (107ms): Error: 404: 
+    at wC (index-RmhnbDlT.js:48:42957)
+    at async index-RmhnbDlT.js:50:3041
+index-RmhnbDlT.js:50 ❌ [QUERY] /api/chat/sessions - Failed (92ms): Error: 404: 
+    at wC (index-RmhnbDlT.js:48:42957)
+    at async index-RmhnbDlT.js:50:3041
+index-RmhnbDlT.js:50 ❌ [QUERY] /api/chat/sessions - Failed (99ms): Error: 404: 
+    at wC (index-RmhnbDlT.js:48:42957)
+    at async index-RmhnbDlT.js:50:3041
+index-RmhnbDlT.js:50 ❌ [QUERY] /api/chat/sessions - Failed (110ms): Error: 404: 
+    at wC (index-RmhnbDlT.js:48:42957)
+    at async index-RmhnbDlT.js:50:3041
+index-RmhnbDlT.js:50 ❌ [QUERY] /api/chat/sessions - Failed (104ms): Error: 404: 
+    at wC (index-RmhnbDlT.js:48:42957)
+    at async index-RmhnbDlT.js:50:3041
+index-RmhnbDlT.js:50 ❌ [QUERY] /api/chat/sessions - Failed (98ms): Error: 404: 
+    at wC (index-RmhnbDlT.js:48:42957)
+    at async index-RmhnbDlT.js:50:3041
+(anonymous)	@	index-RmhnbDlT.js:50
+index-RmhnbDlT.js:50 ❌ [QUERY] /api/admin/companies - Failed (807ms): Error: 500: 
+    at wC (index-RmhnbDlT.js:48:42957)
+    at async index-RmhnbDlT.js:50:3041
+(anonymous)	@	index-RmhnbDlT.js:50
+index-RmhnbDlT.js:50 ❌ [QUERY] /api/user/current-company - Failed (852ms): Error: 500: 
+    at wC (index-RmhnbDlT.js:48:42957)
+    at async index-RmhnbDlT.js:50:3041
+(anonymous)	@	index-RmhnbDlT.js:50
+
