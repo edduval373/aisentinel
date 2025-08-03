@@ -42,11 +42,15 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
     enabled: !!user?.companyId, // Only fetch if user has a company ID
   });
 
-  const isDemoUser = user?.roleLevel === 0 || window.location.pathname === '/demo' || !document.cookie.includes('sessionToken=');
-  const isSuperUser = user?.role === 'super-user' || (user?.roleLevel ?? 0) >= 1000;
-  const isOwner = user?.role === 'owner' || (user?.roleLevel ?? 0) >= 999;
-  const isAdmin = user?.role === 'admin' || (user?.roleLevel ?? 0) >= 998;
-  const isRegularUser = user?.role === 'user' || user?.roleLevel === 1;
+  // Role-based access levels
+  const roleLevel = user?.roleLevel ?? 1;
+  const isDemoUser = roleLevel === 0;
+  const isRegularUser = roleLevel === 1;
+  const isAdmin = roleLevel >= 998;
+  const isOwner = roleLevel >= 999;
+  const isSuperUser = roleLevel >= 1000;
+  
+  console.log('🔧 [SIDEBAR] Role check:', { roleLevel, isDemoUser, isRegularUser, isAdmin, isOwner, isSuperUser });
   
   console.log('🔧 [SIDEBAR] Role detection:', {
     userEmail: user?.email,
@@ -323,7 +327,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
             </button>
           ))}
 
-          {/* SUPER-USER Section */}
+          {/* SUPER-USER Section - Only for role level 1000+ */}
           {isSuperUser && (
             <>
               <div style={{ paddingTop: '16px', paddingBottom: '8px' }}>
@@ -387,8 +391,8 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
             </>
           )}
 
-          {/* OWNERS Section - visible to super-user, owners, and demo users */}
-          {(isSuperUser || isOwner || isDemoUser) && (
+          {/* OWNERS Section - Only for role level 999+ (owners and super-users) */}
+          {isOwner && (
             <>
               <div style={{ paddingTop: '16px', paddingBottom: '8px' }}>
                 <h3 style={{ 
@@ -455,8 +459,8 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
             </>
           )}
 
-          {/* ADMINISTRATION Section - visible to super-user, owners, admins, and demo users */}
-          {(isSuperUser || isOwner || isAdmin || isDemoUser) && (
+          {/* ADMINISTRATION Section - Only for role level 998+ (admins, owners, super-users) */}
+          {isAdmin && (
             <>
               <div style={{ paddingTop: '16px', paddingBottom: '8px' }}>
                 <h3 style={{ 

@@ -289,14 +289,23 @@ export default function Home() {
   // Check if user is super-user (role level 1000+)
   const isSuperUserLevel = effectiveRoleLevel >= 1000;
   
-  // Determine if sidebar access is allowed - super-users (1000+) should always have access
-  const canAccessSidebar = isAuthenticated && (effectiveRoleLevel === 0 || effectiveRoleLevel >= 2 || effectiveRoleLevel >= 1000);
+  // Determine if sidebar access is allowed based on role levels:
+  // 0 (Demo): No sidebar access, read-only company ID 1 options
+  // 1 (User): No sidebar access at all
+  // 998+ (Admin): Sidebar access with Admin section only
+  // 999+ (Owner): Sidebar access with Owners + Admin sections  
+  // 1000+ (Super-user): Sidebar access with all sections
+  const canAccessSidebar = isAuthenticated && effectiveRoleLevel >= 998;
   
   console.log('🔧 [HOME] Sidebar access check:', {
     isAuthenticated,
     effectiveRoleLevel,
     canAccessSidebar,
     userRoleLevel: user?.roleLevel,
+    isDemo: effectiveRoleLevel === 0,
+    isUser: effectiveRoleLevel === 1,
+    isAdmin: effectiveRoleLevel >= 998,
+    isOwner: effectiveRoleLevel >= 999,
     isSuperUser: effectiveRoleLevel >= 1000
   });
 
