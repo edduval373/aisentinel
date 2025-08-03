@@ -2,7 +2,29 @@
 export function getAuthToken(): string | null {
   // Check localStorage for stored auth token
   if (typeof window !== 'undefined') {
-    return localStorage.getItem('authToken');
+    // First check direct authToken storage
+    const directToken = localStorage.getItem('authToken');
+    if (directToken) {
+      return directToken;
+    }
+    
+    // Fallback: check saved accounts for production session token
+    try {
+      const savedAccounts = localStorage.getItem('aisentinel_saved_accounts');
+      if (savedAccounts) {
+        const accounts = JSON.parse(savedAccounts);
+        if (accounts.length > 0) {
+          // Look for ed.duval15@gmail.com first, then any account
+          const primaryAccount = accounts.find((acc: any) => acc.email === 'ed.duval15@gmail.com') || accounts[0];
+          if (primaryAccount && primaryAccount.sessionToken && primaryAccount.sessionToken.startsWith('prod-')) {
+            console.log('🔧 [AUTH HEADERS] Using session token from saved accounts:', primaryAccount.email);
+            return primaryAccount.sessionToken;
+          }
+        }
+      }
+    } catch (error) {
+      console.error('❌ [AUTH HEADERS] Failed to parse saved accounts:', error);
+    }
   }
   return null;
 }
