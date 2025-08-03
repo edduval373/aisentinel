@@ -351,30 +351,32 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                   letterSpacing: '0.05em',
                   margin: 0
                 }}>
-                  SUPER-USER ({superUserSections.length} items)
+                  SUPER-USER ({superUserSections.length} items) - PRODUCTION
                 </h3>
               </div>
               
               {superUserSections.map((section) => {
-                console.log('🔧 [SIDEBAR] Rendering super-user section:', section.name, section.id);
+                console.log('🔧 [SIDEBAR] PRODUCTION - Rendering super-user section:', section.name, section.id);
                 return (
                 <button
                   key={section.id}
                   onClick={(e) => {
+                    console.log('🚨 PRODUCTION CLICK DETECTED!', section.name, 'at', new Date().toISOString());
+                    alert(`PRODUCTION: Clicked ${section.name} - Check console for details!`);
                     e.preventDefault();
                     e.stopPropagation();
-                    console.log('🔧 [SIDEBAR] Super-user section clicked:', section.name, section.href);
-                    console.log('🔧 [SIDEBAR] Current location:', location);
-                    console.log('🔧 [SIDEBAR] Navigating to:', section.href);
-                    console.log('🔧 [SIDEBAR] Navigation function:', typeof navigate);
+                    console.log('🔧 [SIDEBAR] PRODUCTION Super-user section clicked:', section.name, section.href);
+                    console.log('🔧 [SIDEBAR] PRODUCTION Current location:', location);
+                    console.log('🔧 [SIDEBAR] PRODUCTION Navigating to:', section.href);
+                    console.log('🔧 [SIDEBAR] PRODUCTION Navigation function:', typeof navigate);
                     
                     if (location === section.href) {
-                      console.log('🔧 [SIDEBAR] Already on this page, closing sidebar');
+                      console.log('🔧 [SIDEBAR] PRODUCTION Already on this page, closing sidebar');
                       onToggle();
                     } else {
-                      console.log('🔧 [SIDEBAR] Calling navigate function...');
+                      console.log('🔧 [SIDEBAR] PRODUCTION Calling navigate function...');
                       navigate(section.href);
-                      console.log('🔧 [SIDEBAR] Navigate called successfully');
+                      console.log('🔧 [SIDEBAR] PRODUCTION Navigate called successfully');
                       if (window.innerWidth < 1024) onToggle(); // Close on mobile
                     }
                   }}
