@@ -343,6 +343,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                 <button
                   key={section.id}
                   onClick={() => {
+                    console.log('🔧 [SIDEBAR] Super-user section clicked:', section.name, section.href);
                     if (location === section.href) {
                       // If already on this page, just close the sidebar
                       onToggle();
