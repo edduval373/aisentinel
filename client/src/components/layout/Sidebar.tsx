@@ -407,6 +407,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                 <button
                   key={section.id}
                   onClick={() => {
+                    console.log('🔧 [SIDEBAR] Owner section clicked:', section.name, section.href);
                     if (location === section.href) {
                       // If already on this page, just close the sidebar
                       onToggle();
@@ -473,7 +474,10 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
               {adminSections.map((section) => (
                 <div key={section.id} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                   <button
-                    onClick={() => toggleSection(section.id)}
+                    onClick={() => {
+                      console.log('🔧 [SIDEBAR] Admin section toggle clicked:', section.name, section.id);
+                      toggleSection(section.id);
+                    }}
                     style={{
                       width: '100%',
                       display: 'flex',
@@ -516,6 +520,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                         <button
                           key={item.href}
                           onClick={() => {
+                            console.log('🔧 [SIDEBAR] Admin item clicked:', item.name, item.href);
                             if (location === item.href) {
                               // If already on this page, just close the sidebar
                               onToggle();
