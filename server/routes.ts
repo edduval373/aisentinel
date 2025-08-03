@@ -158,7 +158,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log('✅ [CLEAN AUTH] Production token validated successfully');
         
         const secureUserData = {
-          id: '42450603',
+          id: '42450602',
           email: 'ed.duval15@gmail.com',
           firstName: 'Edward',
           lastName: 'Duval',
@@ -2945,7 +2945,7 @@ Stack: \${error.stack || 'No stack trace available'}\`;
       // Check for our production session token
       if (authToken === 'prod-1754052835575-289kvxqgl42h') {
         console.log('✅ [CHAT SESSION] Production session token validated');
-        userId = '42450603';
+        userId = '42450602';
         companyId = 1;
         console.log(`✅ [CHAT SESSION] Header auth successful: userId=${userId}, companyId=${companyId}`);
       } else if (authToken && authToken.startsWith('prod-session-')) {

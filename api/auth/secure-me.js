@@ -29,7 +29,7 @@ export default async function handler(req, res) {
       console.log('✅ [SECURE AUTH] Production authentication successful');
 
       const secureUserData = {
-        id: '42450603',
+        id: '42450602',
         email: 'ed.duval15@gmail.com',
         firstName: 'Edward',
         lastName: 'Duval',

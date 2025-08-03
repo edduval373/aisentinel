@@ -121,7 +121,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
       console.log('🔄 [SESSION CREATE] User auth status:', user);
       
       // Get authentication headers for API call
-      const { getAuthHeaders } = await import('../../../lib/authHeaders');
+      const { getAuthHeaders } = await import('@/lib/authHeaders');
       const authHeaders = getAuthHeaders();
       
       console.log('🔄 [SESSION CREATE] Using header-based authentication');
