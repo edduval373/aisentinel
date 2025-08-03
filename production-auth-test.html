@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Production Authentication Test</title>
+</head>
+<body>
+    <h1>Production Authentication Bypass Test</h1>
+    <button onclick="testAuth()">Test Authentication Bypass</button>
+    <div id="results"></div>
+
+    <script>
+        function testAuth() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<p>Testing authentication bypass...</p>';
+            
+            try {
+                // Check if we're in production
+                const isProduction = window.location.hostname === 'www.aisentinel.app';
+                results.innerHTML += `<p>Production environment: ${isProduction}</p>`;
+                
+                // Check saved accounts
+                const savedAccounts = localStorage.getItem('aisentinel_saved_accounts');
+                if (savedAccounts) {
+                    const accounts = JSON.parse(savedAccounts);
+                    results.innerHTML += `<p>Found ${accounts.length} saved accounts</p>`;
+                    
+                    if (accounts.length > 0) {
+                        const account = accounts[0];
+                        results.innerHTML += `<p>Primary account: ${account.email} (${account.role})</p>`;
+                        
+                        // Set session cookie
+                        const expirationDate = new Date();
+                        expirationDate.setDate(expirationDate.getDate() + 7);
+                        const cookieSettings = `sessionToken=${account.sessionToken}; path=/; expires=${expirationDate.toUTCString()}; ${isProduction ? 'secure; samesite=strict' : 'samesite=lax'}`;
+                        document.cookie = cookieSettings;
+                        
+                        results.innerHTML += '<p>✅ Session cookie set successfully</p>';
+                        results.innerHTML += '<p><strong>Authentication bypass working! Refresh the page to access the chat interface.</strong></p>';
+                    }
+                } else {
+                    results.innerHTML += '<p>❌ No saved accounts found</p>';
+                }
+                
+                // Check auth token
+                const authToken = localStorage.getItem('authToken');
+                if (authToken) {
+                    results.innerHTML += `<p>Auth token found: ${authToken.substring(0, 20)}...</p>`;
+                }
+                
+            } catch (error) {
+                results.innerHTML += `<p>❌ Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
