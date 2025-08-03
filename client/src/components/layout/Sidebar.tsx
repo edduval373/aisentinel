@@ -36,11 +36,8 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const [location, navigate] = useLocation();
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
-  // Fetch current company data - always enabled since API handles both authenticated and demo users
-  const { data: currentCompany } = useQuery({
-    queryKey: ['/api/user/current-company'],
-    enabled: true, // Always fetch - API handles both authenticated and demo users
-  });
+  // Company data comes directly from authenticated user - no separate API call needed
+  // This ensures we only show real company data from the user record
 
   const isDemoUser = user?.roleLevel === 0 || window.location.pathname === '/demo' || !document.cookie.includes('sessionToken=');
   const isSuperUser = user?.role === 'super-user' || (user?.roleLevel ?? 0) >= 1000;
@@ -566,8 +563,8 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 
       {/* Bottom section */}
       <div style={{ borderTop: '1px solid #3b82f6', padding: '12px' }}>
-        {/* Current Company Display - fallback to user data if API fails */}
-        {((currentCompany && typeof currentCompany === 'object' && 'name' in currentCompany) || user?.companyName) && (
+        {/* Current Company Display - shows authenticated user's company data only */}
+        {user?.companyName && user?.companyId && (
           <div style={{ 
             marginBottom: '12px',
             paddingBottom: '12px',
@@ -588,19 +585,12 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
               alignItems: 'center',
               gap: '8px'
             }}>
-              {currentCompany.logo && 'logo' in currentCompany && (
-                <img 
-                  src={currentCompany.logo as string} 
-                  alt={currentCompany.name as string}
-                  style={{
-                    width: '20px',
-                    height: '20px',
-                    borderRadius: '4px',
-                    objectFit: 'cover',
-                    flexShrink: 0
-                  }}
-                />
-              )}
+              <Building style={{ 
+                width: '20px', 
+                height: '20px', 
+                color: '#94a3b8',
+                flexShrink: 0
+              }} />
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{
                   color: '#f1f5f9',
@@ -610,13 +600,13 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap'
                 }}>
-                  {(currentCompany && 'name' in currentCompany ? currentCompany.name as string : user?.companyName) || 'Current Company'}
+                  {user.companyName}
                 </div>
                 <div style={{
                   color: '#94a3b8',
                   fontSize: '10px'
                 }}>
-                  ID: {(currentCompany as any)?.id || user?.companyId || 1}
+                  ID: {user.companyId}
                 </div>
               </div>
             </div>
