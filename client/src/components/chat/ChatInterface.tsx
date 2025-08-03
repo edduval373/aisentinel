@@ -119,18 +119,20 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
     mutationFn: async () => {
       console.log('🔄 [SESSION CREATE] Starting chat session creation...');
       console.log('🔄 [SESSION CREATE] User auth status:', user);
-      console.log('🔄 [SESSION CREATE] Current cookies:', document.cookie);
-      console.log('🔄 [SESSION CREATE] Current URL:', window.location.href);
       
-      // The session token should already be in cookies for the authenticated user
-      // No need for additional headers since we're using cookie-based auth
-      console.log('🔄 [SESSION CREATE] Using cookie-based authentication');
+      // Get authentication headers for API call
+      const { getAuthHeaders } = await import('../../../lib/authHeaders');
+      const authHeaders = getAuthHeaders();
+      
+      console.log('🔄 [SESSION CREATE] Using header-based authentication');
+      console.log('🔄 [SESSION CREATE] Auth headers prepared:', Object.keys(authHeaders));
       console.log('🔄 [SESSION CREATE] Making POST request to /api/chat/session');
       
       const response = await fetch("/api/chat/session", {
         method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          ...authHeaders
         },
         credentials: "include"
       });

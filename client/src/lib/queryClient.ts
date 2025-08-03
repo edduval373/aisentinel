@@ -103,12 +103,23 @@ export async function apiRequest(
   console.log(`🔄 [API ${method}] Environment: ${import.meta.env.MODE}`);
 
   try {
+    // Get auth headers for header-based authentication
+    let authHeaders = {};
+    try {
+      const { getAuthHeaders } = await import('./authHeaders');
+      authHeaders = getAuthHeaders();
+      console.log(`🔄 [API ${method}] Auth headers added:`, Object.keys(authHeaders));
+    } catch (importError) {
+      console.warn(`🔄 [API ${method}] Auth headers not available:`, importError);
+    }
+
     // Handle FormData vs JSON differently
     const isFormData = data instanceof FormData;
     
     const headers = {
       // Don't set Content-Type for FormData - browser will set it with boundary
       ...(data && !isFormData ? { "Content-Type": "application/json" } : {}),
+      ...authHeaders,
       ...customHeaders
     };
     
