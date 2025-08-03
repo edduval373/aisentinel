@@ -291,6 +291,13 @@ export default function Home() {
   
   // Determine if sidebar access is allowed (authenticated users with role level 0+ for demo, 2+ for others)
   const canAccessSidebar = isAuthenticated && (effectiveRoleLevel === 0 || effectiveRoleLevel >= 2);
+  
+  console.log('🔧 [HOME] Sidebar access check:', {
+    isAuthenticated,
+    effectiveRoleLevel,
+    canAccessSidebar,
+    userRoleLevel: user?.roleLevel
+  });
 
   // Fetch all companies for super-user company switching
   const { data: allCompanies = [] } = useQuery<Array<{ id: number; name: string; description?: string }>>({

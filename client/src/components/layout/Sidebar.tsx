@@ -48,6 +48,17 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const isAdmin = user?.role === 'admin' || (user?.roleLevel ?? 0) >= 998;
   const isRegularUser = user?.role === 'user' || user?.roleLevel === 1;
   
+  console.log('🔧 [SIDEBAR] Role detection:', {
+    userEmail: user?.email,
+    userRole: user?.role,
+    userRoleLevel: user?.roleLevel,
+    isDemoUser,
+    isSuperUser,
+    isOwner,
+    isAdmin,
+    isRegularUser
+  });
+  
   // Always show sidebar - no authentication restrictions
   // const isUnauthenticated = !user;
   
@@ -555,8 +566,8 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
 
       {/* Bottom section */}
       <div style={{ borderTop: '1px solid #3b82f6', padding: '12px' }}>
-        {/* Current Company Display */}
-        {currentCompany && typeof currentCompany === 'object' && 'name' in currentCompany && (
+        {/* Current Company Display - fallback to user data if API fails */}
+        {((currentCompany && typeof currentCompany === 'object' && 'name' in currentCompany) || user?.companyName) && (
           <div style={{ 
             marginBottom: '12px',
             paddingBottom: '12px',
@@ -599,13 +610,13 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap'
                 }}>
-                  {currentCompany.name as string}
+                  {(currentCompany && 'name' in currentCompany ? currentCompany.name as string : user?.companyName) || 'Current Company'}
                 </div>
                 <div style={{
                   color: '#94a3b8',
                   fontSize: '10px'
                 }}>
-                  ID: {(currentCompany as any).id}
+                  ID: {(currentCompany as any)?.id || user?.companyId || 1}
                 </div>
               </div>
             </div>
