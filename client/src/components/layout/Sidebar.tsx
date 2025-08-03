@@ -361,28 +361,17 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                 <button
                   key={section.id}
                   onClick={(e) => {
-                    console.log('🚨 PRODUCTION CLICK DETECTED!', section.name, 'at', new Date().toISOString());
-                    console.log(`🔧 Navigating to ${section.name}`);
                     e.preventDefault();
                     e.stopPropagation();
-                    console.log('🔧 [SIDEBAR] PRODUCTION Super-user section clicked:', section.name, section.href);
-                    console.log('🔧 [SIDEBAR] PRODUCTION Current location:', location);
-                    console.log('🔧 [SIDEBAR] PRODUCTION Navigating to:', section.href);
-                    console.log('🔧 [SIDEBAR] PRODUCTION Navigation function:', typeof navigate);
                     
                     if (location === section.href) {
-                      console.log('🔧 [SIDEBAR] PRODUCTION Already on this page, closing sidebar');
                       onToggle();
                     } else {
-                      console.log('🔧 [SIDEBAR] PRODUCTION Calling navigate function...');
                       try {
                         navigate(section.href);
-                        console.log('🔧 [SIDEBAR] PRODUCTION Navigate called successfully to:', section.href);
-                        console.log('🔧 [SIDEBAR] PRODUCTION Current location should now be:', section.href);
                         if (window.innerWidth < 1024) onToggle(); // Close on mobile
                       } catch (error) {
-                        console.error('🔧 [SIDEBAR] PRODUCTION Navigate error:', error);
-                        alert(`Navigation error: ${error}`);
+                        console.error('Navigation error:', error);
                       }
                     }
                   }}
