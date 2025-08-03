@@ -71,12 +71,6 @@ function Router() {
 
   // Handle URL-based session activation and header authentication
   useEffect(() => {
-    // Initialize auth token from URL if present
-    const initializeAuth = async () => {
-      const { initializeAuthFromURL } = await import('./lib/authHeaders');
-      initializeAuthFromURL();
-    };
-    initializeAuth();
 
     const params = new URLSearchParams(window.location.search);
     const sessionToken = params.get('session_token') || params.get('session');

@@ -604,27 +604,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
                 Clear
               </Button>
               
-              {/* Chat Debug Panel Button - Only for super users */}
-              {user && user.roleLevel >= 1000 && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowChatDebugModal(true)}
-                  style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: '4px',
-                    padding: '6px 10px',
-                    fontSize: '14px',
-                    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-                    fontWeight: '500'
-                  }}
-                  title="Chat Debug Panel"
-                >
-                  <Settings style={{ width: '14px', height: '14px' }} />
-                  Debug
-                </Button>
-              )}
+
 
             </div>
           </div>
