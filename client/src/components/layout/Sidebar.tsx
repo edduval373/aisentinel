@@ -364,15 +364,15 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                     e.preventDefault();
                     e.stopPropagation();
                     
+                    console.log('🔧 [SIDEBAR] Button clicked:', section.name, 'href:', section.href);
+                    
                     if (location === section.href) {
+                      console.log('🔧 [SIDEBAR] Already on this page, closing sidebar');
                       onToggle();
                     } else {
-                      try {
-                        navigate(section.href);
-                        if (window.innerWidth < 1024) onToggle(); // Close on mobile
-                      } catch (error) {
-                        console.error('Navigation error:', error);
-                      }
+                      console.log('🔧 [SIDEBAR] Navigating to:', section.href);
+                      navigate(section.href);
+                      if (window.innerWidth < 1024) onToggle(); // Close on mobile
                     }
                   }}
                   style={{
