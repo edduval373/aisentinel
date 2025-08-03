@@ -2372,8 +2372,8 @@ Stack: \${error.stack || 'No stack trace available'}\`;
   // Company Management routes (Super-user only)
   app.post('/api/admin/companies', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
-      // Check if user is super-user (role level 100)
-      if (!req.user || req.user.roleLevel < 100) {
+      // Check if user is super-user (role level 1000)
+      if (!req.user || req.user.roleLevel < 1000) {
         console.log("Company create denied - insufficient permissions:", { 
           userId: req.user?.userId, 
           roleLevel: req.user?.roleLevel 
@@ -2393,8 +2393,8 @@ Stack: \${error.stack || 'No stack trace available'}\`;
 
   app.get('/api/admin/companies', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
-      // Check if user is super-user (role level 100)
-      if (!req.user || req.user.roleLevel < 100) {
+      // Check if user is super-user (role level 1000)
+      if (!req.user || req.user.roleLevel < 1000) {
         console.log("Company fetch denied - insufficient permissions:", { 
           userId: req.user?.userId, 
           roleLevel: req.user?.roleLevel 
@@ -2413,8 +2413,8 @@ Stack: \${error.stack || 'No stack trace available'}\`;
 
   app.patch('/api/admin/companies/:id', cookieAuth, async (req: AuthenticatedRequest, res) => {
     try {
-      // Check if user is super-user (role level 100)
-      if (!req.user || req.user.roleLevel < 100) {
+      // Check if user is super-user (role level 1000)
+      if (!req.user || req.user.roleLevel < 1000) {
         console.log("Company update denied - insufficient permissions:", { 
           userId: req.user?.userId, 
           roleLevel: req.user?.roleLevel 

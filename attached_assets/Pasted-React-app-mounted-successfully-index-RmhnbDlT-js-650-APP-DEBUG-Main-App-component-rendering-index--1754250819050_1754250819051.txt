@@ -1,0 +1,86 @@
+React app mounted successfully
+index-RmhnbDlT.js:650 [APP DEBUG] Main App component rendering
+index-RmhnbDlT.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-RmhnbDlT.js:415 Authentication check: Object
+index-RmhnbDlT.js:640 [APP DEBUG] Router component rendering...
+index-RmhnbDlT.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-RmhnbDlT.js:415 Authentication check: Object
+index-RmhnbDlT.js:640 [APP DEBUG] Router state: Object
+index-RmhnbDlT.js:640 [APP DEBUG] Authentication check: Object
+index-RmhnbDlT.js:640 [APP DEBUG] useAuth hook returned: Object
+index-RmhnbDlT.js:415 🔒 [SECURE AUTH] Starting secure database authentication...
+index-RmhnbDlT.js:415 🔍 [AUTH DEBUG] Starting authentication with detailed logging...
+index-RmhnbDlT.js:415 🔍 [AUTH DEBUG] Current URL: https://www.aisentinel.app/admin/companies
+index-RmhnbDlT.js:415 🔍 [AUTH DEBUG] Current domain: www.aisentinel.app
+index-RmhnbDlT.js:415 🔍 [AUTH DEBUG] Saved accounts raw: [{"email":"ed.duval@duvalsolutions.net","sessionToken":"prod-1754052835575-289kvxqgl42h","role":"Super User","roleLevel":1000,"companyName":"Duval Solutions","lastUsed":"2025-08-03T14:27:42.586Z"},{"email":"ed.duval15@gmail.com","sessionToken":"prod-1754052835575-289kvxqgl42h","role":"Super User","roleLevel":1000,"companyName":"Duval Solutions","lastUsed":"2025-08-03T14:27:42.585Z"}]
+index-RmhnbDlT.js:415 🔍 [AUTH DEBUG] Parsed accounts: 2 accounts found
+index-RmhnbDlT.js:415 🔍 [AUTH DEBUG] Account emails: Array(2)
+index-RmhnbDlT.js:415 🔍 [AUTH DEBUG] Selected account: ed.duval15@gmail.com
+index-RmhnbDlT.js:415 🔍 [AUTH DEBUG] Session token found: prod-1754052835575-2...
+index-RmhnbDlT.js:415 🔍 [AUTH DEBUG] Making API request with headers...
+index-RmhnbDlT.js:415 🔍 [AUTH DEBUG] Authorization header: Bearer prod-1754052835575-2...
+index-RmhnbDlT.js:415 🔍 [AUTH DEBUG] X-Session-Token header: prod-1754052835575-2...
+index-RmhnbDlT.js:640 Checking saved accounts: 2
+index-RmhnbDlT.js:640 Multiple accounts found, showing selector
+index-RmhnbDlT.js:415 Unauthenticated user: No company context
+index-RmhnbDlT.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-RmhnbDlT.js:415 Authentication check: Object
+index-RmhnbDlT.js:640 [APP DEBUG] Router component rendering...
+index-RmhnbDlT.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-RmhnbDlT.js:415 Authentication check: Object
+index-RmhnbDlT.js:640 [APP DEBUG] Router state: Object
+index-RmhnbDlT.js:640 [APP DEBUG] Authentication check: Object
+index-RmhnbDlT.js:640 [APP DEBUG] useAuth hook returned: Object
+index-RmhnbDlT.js:415 🔍 [AUTH DEBUG] Response status: 200
+index-RmhnbDlT.js:415 🔍 [AUTH DEBUG] Response headers: Object
+index-RmhnbDlT.js:415 🔍 [AUTH DEBUG] Response data: Object
+index-RmhnbDlT.js:415 ✅ [SECURE AUTH] Database validation successful for: ed.duval15@gmail.com
+index-RmhnbDlT.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-RmhnbDlT.js:415 Authentication check: Object
+index-RmhnbDlT.js:640 [APP DEBUG] Router component rendering...
+index-RmhnbDlT.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-RmhnbDlT.js:415 Authentication check: Object
+index-RmhnbDlT.js:640 [APP DEBUG] Router state: Object
+index-RmhnbDlT.js:640 [APP DEBUG] Authentication check: Object
+index-RmhnbDlT.js:640 [APP DEBUG] useAuth hook returned: Object
+index-RmhnbDlT.js:640 [APP DEBUG] User is authenticated, proceeding with route-based navigation
+index-RmhnbDlT.js:640 🔐 [ROLE GUARD] Checking access for super-user (level 1000): Object
+index-RmhnbDlT.js:640 [ROLE GUARD] Access granted - user level 1000 >= required level 1000
+index-RmhnbDlT.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-RmhnbDlT.js:415 Authentication check: Object
+index-RmhnbDlT.js:415 🔧 [SIDEBAR] Role check: Object
+index-RmhnbDlT.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-RmhnbDlT.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-RmhnbDlT.js:415 🔧 [SIDEBAR] Role detection: Object
+index-RmhnbDlT.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-RmhnbDlT.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-RmhnbDlT.js:50 🔄 [QUERY] /api/user/current-company - Start
+index-RmhnbDlT.js:50 🔄 [QUERY] Full URL: https://www.aisentinel.app/api/user/current-company
+index-RmhnbDlT.js:50 🔄 [QUERY] /api/admin/companies - Start
+index-RmhnbDlT.js:50 🔄 [QUERY] Full URL: https://www.aisentinel.app/api/admin/companies
+index-RmhnbDlT.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-RmhnbDlT.js:415 Authentication check: Object
+authHeaders-CIshTAes.js:1 🔍 [AUTH HEADERS] Getting authentication headers...
+authHeaders-CIshTAes.js:1 ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+authHeaders-CIshTAes.js:1 🔍 [AUTH HEADERS] Getting authentication headers...
+authHeaders-CIshTAes.js:1 ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+index-RmhnbDlT.js:50 📊 [QUERY] /api/admin/companies - Status: 404 (288ms)
+index-RmhnbDlT.js:50 📊 [QUERY] Headers: Object
+index-RmhnbDlT.js:50 ❌ [QUERY] /api/admin/companies - Failed (289ms): Error: 404: 
+    at wC (index-RmhnbDlT.js:48:42957)
+    at async index-RmhnbDlT.js:50:3041
+(anonymous) @ index-RmhnbDlT.js:50Understand this error
+index-RmhnbDlT.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-RmhnbDlT.js:415 Authentication check: Object
+index-RmhnbDlT.js:415 🔧 [SIDEBAR] Role check: Object
+index-RmhnbDlT.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-RmhnbDlT.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-RmhnbDlT.js:415 🔧 [SIDEBAR] Role detection: Object
+index-RmhnbDlT.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-RmhnbDlT.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-RmhnbDlT.js:50 📊 [QUERY] /api/user/current-company - Status: 404 (320ms)
+index-RmhnbDlT.js:50 📊 [QUERY] Headers: Object
+index-RmhnbDlT.js:50 ❌ [QUERY] /api/user/current-company - Failed (321ms): Error: 404: 
+    at wC (index-RmhnbDlT.js:48:42957)
+    at async index-RmhnbDlT.js:50:3041
+(anonymous) @ index-RmhnbDlT.js:50Understand this error
