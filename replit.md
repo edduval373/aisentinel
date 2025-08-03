@@ -38,6 +38,9 @@ Demo mode identification: Demo mode uses role level 0, shows orange "DEMO" badge
 - **Three-Column Grid Layout (Aug 3, 2025)**: Transformed company management from single column to responsive three-column grid layout for efficient management of multiple companies. Added compact card design with hover effects and optimized spacing.
 - **Complete CRUD Operations (Aug 3, 2025)**: Enabled full Create, Read, Update, Delete operations for super-users (1000+ level) with proper authentication, field mapping, and automatic UI refresh after updates.
 - **CRITICAL: Production Authentication Fixed (Aug 3, 2025)**: Implemented dual authentication system with production fallback to resolve Vercel serverless function failures. Chat interface now accessible in production via localStorage account restoration.
+- **Company Creation Cache Fix (Aug 3, 2025)**: Resolved frontend cache invalidation issue where newly created companies weren't appearing in UI. Implemented direct refetch() calls and improved React Query configuration for immediate UI updates.
+- **Dialog Accessibility Warnings Fixed (Aug 3, 2025)**: Added missing DialogDescription components to all DialogContent instances to resolve React accessibility warnings for screen readers.
+- **Vercel Build Conflict Resolution (Aug 3, 2025)**: Removed duplicate api/chat/sessions.ts file that was causing Vercel deployment conflicts with existing sessions.js endpoint.
 - **Universal AI Model Template System**: Implemented template-based AI model architecture where super-users (1000+) create universal templates, owners (999+) manage company API keys
 - **Authentication Data Flow**: Fixed companyId inclusion in `/api/auth/me` response and useAuth hook to properly support company-specific features
 - **Account Dropdown**: Fixed localStorage parsing logic to properly recognize saved accounts instead of creating test accounts
