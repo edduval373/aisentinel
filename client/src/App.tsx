@@ -312,9 +312,11 @@ function Router() {
     const requiredLevel = roleThresholds[requiredRole];
     const hasAccess = userRoleLevel >= requiredLevel;
 
-    console.log(`[ROLE GUARD] Checking access for ${requiredRole} (level ${requiredLevel}):`, {
+    console.log(`🔐 [ROLE GUARD] Checking access for ${requiredRole} (level ${requiredLevel}):`, {
       isAuthenticated, userRoleLevel, requiredLevel, hasAccess,
-      userRole: user?.role
+      userRole: user?.role,
+      userEmail: user?.email,
+      calculation: `${userRoleLevel} >= ${requiredLevel} = ${hasAccess}`
     });
 
     // STRICT: Must be authenticated, no exceptions
