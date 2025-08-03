@@ -125,17 +125,53 @@ export default function AdminCompanies() {
       <div className="space-y-6">
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2">
-                <Building className="h-5 w-5" />
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'space-between',
+              width: '100%',
+              gap: '20px'
+            }}>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px',
+                fontSize: '20px',
+                fontWeight: '600',
+                color: '#111827'
+              }}>
+                <Building style={{ width: '20px', height: '20px' }} />
                 Companies
-              </CardTitle>
+              </div>
+              
               <Dialog open={showAddCompany} onOpenChange={setShowAddCompany}>
                 <DialogTrigger asChild>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
+                  <button style={{
+                    background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '10px 16px',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    transition: 'all 0.2s ease',
+                    boxShadow: '0 2px 4px rgba(59, 130, 246, 0.3)'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-1px)';
+                    e.currentTarget.style.boxShadow = '0 4px 8px rgba(59, 130, 246, 0.4)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 2px 4px rgba(59, 130, 246, 0.3)';
+                  }}>
+                    <Plus style={{ width: '16px', height: '16px' }} />
                     Add Company
-                  </Button>
+                  </button>
                 </DialogTrigger>
                 <DialogContent className="max-w-md">
                   <DialogHeader>
