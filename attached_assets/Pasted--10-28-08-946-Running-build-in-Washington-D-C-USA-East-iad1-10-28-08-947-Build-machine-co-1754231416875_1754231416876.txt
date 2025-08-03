@@ -1,0 +1,80 @@
+[10:28:08.946] Running build in Washington, D.C., USA (East) – iad1
+[10:28:08.947] Build machine configuration: 4 cores, 8 GB
+[10:28:08.963] Cloning github.com/edduval373/aisentinel (Branch: main, Commit: 355472e)
+[10:28:11.219] Cloning completed: 2.256s
+[10:28:11.331] Found .vercelignore
+[10:28:11.405] Removed 884 ignored files defined in .vercelignore
+[10:28:11.405]   /.git/config
+[10:28:11.405]   /.git/description
+[10:28:11.405]   /.git/FETCH_HEAD
+[10:28:11.405]   /.git/HEAD
+[10:28:11.405]   /.git/hooks/applypatch-msg.sample
+[10:28:11.405]   /.git/hooks/commit-msg.sample
+[10:28:11.406]   /.git/hooks/fsmonitor-watchman.sample
+[10:28:11.406]   /.git/hooks/post-update.sample
+[10:28:11.406]   /.git/hooks/pre-applypatch.sample
+[10:28:11.406]   /.git/hooks/pre-commit.sample
+[10:28:11.469] Restored build cache from previous deployment (6f3WCy7f37kwXrKsaPuqopoygY4q)
+[10:28:13.606] Running "vercel build"
+[10:28:14.090] Vercel CLI 44.6.4
+[10:28:15.243] Running "install" command: `npm install`...
+[10:28:17.655] 
+[10:28:17.656] up to date, audited 746 packages in 2s
+[10:28:17.656] 
+[10:28:17.656] 168 packages are looking for funding
+[10:28:17.656]   run `npm fund` for details
+[10:28:17.671] 
+[10:28:17.671] 12 vulnerabilities (3 low, 5 moderate, 3 high, 1 critical)
+[10:28:17.671] 
+[10:28:17.671] To address issues that do not require attention, run:
+[10:28:17.671]   npm audit fix
+[10:28:17.671] 
+[10:28:17.671] To address all issues possible (including breaking changes), run:
+[10:28:17.672]   npm audit fix --force
+[10:28:17.672] 
+[10:28:17.672] Some issues need review, and may require choosing
+[10:28:17.672] a different dependency.
+[10:28:17.672] 
+[10:28:17.672] Run `npm audit` for details.
+[10:28:17.914] 
+[10:28:17.914] > rest-express@1.0.0 build
+[10:28:17.914] > vite build --config vite.config.production.ts && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist --external:../vite.config --external:vite
+[10:28:17.914] 
+[10:28:18.211] [36mvite v5.4.19 [32mbuilding for production...[36m[39m
+[10:28:18.266] transforming...
+[10:28:19.059] [32m✓[39m 101 modules transformed.
+[10:28:19.060] [31mx[39m Build failed in 823ms
+[10:28:19.060] [31merror during build:
+[10:28:19.061] [31m[vite:esbuild] Transform failed with 2 errors:
+[10:28:19.061] /vercel/path0/client/src/components/chat/ChatInterface.tsx:276:8: ERROR: The symbol "messagesLoading" has already been declared
+[10:28:19.061] /vercel/path0/client/src/components/chat/ChatInterface.tsx:282:8: ERROR: The symbol "sessionsLoading" has already been declared[31m
+[10:28:19.061] file: [36m/vercel/path0/client/src/components/chat/ChatInterface.tsx:276:8[31m
+[10:28:19.061] [33m
+[10:28:19.061] [33mThe symbol "messagesLoading" has already been declared[33m
+[10:28:19.061] 274|  
+[10:28:19.061] 275|    // Fetch chat messages for current session
+[10:28:19.061] 276|    const { data: fetchedMessages, isLoading: messagesLoading, error: messagesError } = useQuery<ChatMessageType[]>({
+[10:28:19.061]    |          ^
+[10:28:19.061] 277|      queryKey: ['/api/chat/session', currentSession, 'messages'],
+[10:28:19.061] 278|      enabled: !!currentSession,
+[10:28:19.062] 
+[10:28:19.062] [33mThe symbol "sessionsLoading" has already been declared[33m
+[10:28:19.062] 280|  
+[10:28:19.062] 281|    // Fetch chat sessions list
+[10:28:19.062] 282|    const { data: chatSessions, isLoading: sessionsLoading, error: sessionsError } = useQuery<ChatSession[]>({
+[10:28:19.062]    |          ^
+[10:28:19.062] 283|      queryKey: ['/api/chat/sessions'],
+[10:28:19.062] 284|    });
+[10:28:19.062] [31m
+[10:28:19.062]     at failureErrorWithLog (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:1472:15)
+[10:28:19.062]     at /vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:755:50
+[10:28:19.062]     at responseCallbacks.<computed> (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:622:9)
+[10:28:19.062]     at handleIncomingPacket (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:677:12)
+[10:28:19.062]     at Socket.readFromStdout (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:600:7)
+[10:28:19.063]     at Socket.emit (node:events:518:28)
+[10:28:19.063]     at addChunk (node:internal/streams/readable:561:12)
+[10:28:19.063]     at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+[10:28:19.063]     at Readable.push (node:internal/streams/readable:392:5)
+[10:28:19.063]     at Pipe.onStreamRead (node:internal/stream_base_commons:189:23)[39m
+[10:28:19.081] Error: Command "rm -f public/index.html && npm run build" exited with 1
+[10:28:22.717] Exiting build container

@@ -272,14 +272,14 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
     }
   }, [currentSession, createSessionMutation, user]);
 
-  // Fetch chat messages for current session
-  const { data: fetchedMessages, isLoading: messagesLoading, error: messagesError } = useQuery<ChatMessageType[]>({
+  // Fetch chat messages for current session (for debug panel)
+  const { data: fetchedMessages, isLoading: debugMessagesLoading, error: messagesError } = useQuery<ChatMessageType[]>({
     queryKey: ['/api/chat/session', currentSession, 'messages'],
     enabled: !!currentSession,
   });
 
-  // Fetch chat sessions list
-  const { data: chatSessions, isLoading: sessionsLoading, error: sessionsError } = useQuery<ChatSession[]>({
+  // Fetch chat sessions list (for debug panel)
+  const { data: debugChatSessions, isLoading: debugSessionsLoading, error: sessionsError } = useQuery<ChatSession[]>({
     queryKey: ['/api/chat/sessions'],
   });
 
