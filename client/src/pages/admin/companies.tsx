@@ -793,29 +793,47 @@ export default function AdminCompanies() {
                 }}></div>
               </div>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', 
+                gap: '20px',
+                '@media (min-width: 1200px)': {
+                  gridTemplateColumns: 'repeat(3, 1fr)'
+                }
+              }}>
                 {companies?.map((company: any) => (
                   <div 
                     key={company.id} 
                     className="company-card"
                     style={{
-                      padding: '24px',
+                      padding: '20px',
                       borderRadius: '12px',
                       border: '1px solid #e5e7eb',
                       backgroundColor: '#ffffff',
-                      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
-                      transition: 'all 0.2s ease'
+                      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                      transition: 'all 0.2s ease',
+                      height: 'fit-content',
+                      minHeight: '280px'
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+                      e.currentTarget.style.transform = 'translateY(0)';
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px', flex: 1 }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                      {/* Header with logo and title */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
                         {company.logo && (
                           <img 
                             src={company.logo} 
                             alt={`${company.name} logo`}
                             style={{
-                              width: '48px',
-                              height: '48px',
+                              width: '40px',
+                              height: '40px',
                               objectFit: 'contain',
                               borderRadius: '8px',
                               border: '1px solid #e5e7eb'
@@ -823,84 +841,96 @@ export default function AdminCompanies() {
                           />
                         )}
                         <div style={{ flex: 1 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-                            <h3 style={{ 
-                              fontSize: '20px', 
-                              fontWeight: '600', 
-                              color: '#111827',
-                              margin: 0
-                            }}>
-                              {company.name}
-                            </h3>
-                            <span style={{
-                              backgroundColor: (company.is_active || company.isActive) ? '#10b981' : '#6b7280',
-                              color: 'white',
-                              padding: '4px 12px',
-                              borderRadius: '20px',
-                              fontSize: '12px',
-                              fontWeight: '500',
-                              textTransform: 'uppercase',
-                              letterSpacing: '0.5px'
-                            }}>
-                              {(company.is_active || company.isActive) ? 'Active' : 'Inactive'}
-                            </span>
-                          </div>
-                          
-                          <div style={{ 
-                            fontSize: '15px', 
-                            color: '#4b5563',
-                            marginBottom: '12px',
-                            fontWeight: '500'
+                          <h3 style={{ 
+                            fontSize: '18px', 
+                            fontWeight: '600', 
+                            color: '#111827',
+                            margin: 0,
+                            lineHeight: '1.3',
+                            wordBreak: 'break-word'
                           }}>
-                            🌐 {company.domain}
-                          </div>
-                          
-                          <div style={{ 
-                            display: 'flex', 
-                            flexDirection: 'column', 
-                            gap: '6px',
-                            fontSize: '14px',
-                            color: '#6b7280'
-                          }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                              <Users style={{ width: '16px', height: '16px', color: '#9ca3af' }} />
-                              <span style={{ fontWeight: '500', color: '#374151' }}>
-                                {company.primary_admin_name || company.primaryAdminName}
-                              </span>
-                              <span style={{ color: '#9ca3af' }}>•</span>
-                              <span>{company.primary_admin_title || company.primaryAdminTitle}</span>
-                            </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                              <Mail style={{ width: '16px', height: '16px', color: '#9ca3af' }} />
-                              <span>{company.primary_admin_email || company.primaryAdminEmail}</span>
-                            </div>
-                          </div>
+                            {company.name}
+                          </h3>
+                        </div>
+                        <span style={{
+                          backgroundColor: (company.is_active || company.isActive) ? '#10b981' : '#6b7280',
+                          color: 'white',
+                          padding: '3px 8px',
+                          borderRadius: '12px',
+                          fontSize: '10px',
+                          fontWeight: '500',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.5px'
+                        }}>
+                          {(company.is_active || company.isActive) ? 'Active' : 'Inactive'}
+                        </span>
+                      </div>
+                      
+                      {/* Domain */}
+                      <div style={{ 
+                        fontSize: '14px', 
+                        color: '#4b5563',
+                        marginBottom: '16px',
+                        fontWeight: '500',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}>
+                        🌐 {company.domain}
+                      </div>
+                      
+                      {/* Admin Info */}
+                      <div style={{ 
+                        display: 'flex', 
+                        flexDirection: 'column', 
+                        gap: '8px',
+                        fontSize: '13px',
+                        color: '#6b7280',
+                        flex: 1,
+                        marginBottom: '16px'
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <Users style={{ width: '14px', height: '14px', color: '#9ca3af' }} />
+                          <span style={{ fontWeight: '500', color: '#374151' }}>
+                            {company.primary_admin_name || company.primaryAdminName}
+                          </span>
+                        </div>
+                        <div style={{ fontSize: '12px', color: '#9ca3af', marginLeft: '20px' }}>
+                          {company.primary_admin_title || company.primaryAdminTitle}
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <Mail style={{ width: '14px', height: '14px', color: '#9ca3af' }} />
+                          <span style={{ fontSize: '12px', wordBreak: 'break-all' }}>
+                            {company.primary_admin_email || company.primaryAdminEmail}
+                          </span>
                         </div>
                       </div>
                       
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end' }}>
-                        <div style={{ display: 'flex', gap: '8px' }}>
+                      {/* Action Buttons */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <div style={{ display: 'flex', gap: '6px' }}>
                           <button
                             onClick={() => handleEditCompany(company)}
                             style={{
                               background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
                               color: 'white',
                               border: 'none',
-                              padding: '8px 12px',
+                              padding: '6px 10px',
                               borderRadius: '6px',
-                              fontSize: '12px',
+                              fontSize: '11px',
                               fontWeight: '500',
                               cursor: 'pointer',
                               transition: 'all 0.2s ease',
-                              boxShadow: '0 2px 4px rgba(245, 158, 11, 0.3)'
+                              boxShadow: '0 1px 3px rgba(245, 158, 11, 0.3)',
+                              flex: 1
                             }}
                             onMouseOver={(e) => {
                               e.currentTarget.style.transform = 'translateY(-1px)';
-                              e.currentTarget.style.boxShadow = '0 4px 8px rgba(245, 158, 11, 0.4)';
+                              e.currentTarget.style.boxShadow = '0 2px 6px rgba(245, 158, 11, 0.4)';
                             }}
                             onMouseOut={(e) => {
                               e.currentTarget.style.transform = 'translateY(0)';
-                              e.currentTarget.style.boxShadow = '0 2px 4px rgba(245, 158, 11, 0.3)';
+                              e.currentTarget.style.boxShadow = '0 1px 3px rgba(245, 158, 11, 0.3)';
                             }}
                           >
                             Edit
@@ -911,46 +941,56 @@ export default function AdminCompanies() {
                               background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
                               color: 'white',
                               border: 'none',
-                              padding: '8px 12px',
+                              padding: '6px 10px',
                               borderRadius: '6px',
-                              fontSize: '12px',
+                              fontSize: '11px',
                               fontWeight: '500',
                               cursor: 'pointer',
                               transition: 'all 0.2s ease',
-                              boxShadow: '0 2px 4px rgba(239, 68, 68, 0.3)'
+                              boxShadow: '0 1px 3px rgba(239, 68, 68, 0.3)',
+                              flex: 1
                             }}
                             onMouseOver={(e) => {
                               e.currentTarget.style.transform = 'translateY(-1px)';
-                              e.currentTarget.style.boxShadow = '0 4px 8px rgba(239, 68, 68, 0.4)';
+                              e.currentTarget.style.boxShadow = '0 2px 6px rgba(239, 68, 68, 0.4)';
                             }}
                             onMouseOut={(e) => {
                               e.currentTarget.style.transform = 'translateY(0)';
-                              e.currentTarget.style.boxShadow = '0 2px 4px rgba(239, 68, 68, 0.3)';
+                              e.currentTarget.style.boxShadow = '0 1px 3px rgba(239, 68, 68, 0.3)';
                             }}
                           >
                             Delete
                           </button>
                         </div>
                         <button
-                          className="manage-button"
+                          onClick={() => setSelectedCompany(company)}
                           style={{
                             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                             color: 'white',
                             border: 'none',
-                            padding: '10px 16px',
-                            borderRadius: '8px',
-                            fontSize: '14px',
+                            padding: '8px 12px',
+                            borderRadius: '6px',
+                            fontSize: '12px',
                             fontWeight: '500',
                             cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '8px',
+                            justifyContent: 'center',
+                            gap: '6px',
                             transition: 'all 0.2s ease',
-                            boxShadow: '0 2px 4px rgba(102, 126, 234, 0.3)'
+                            boxShadow: '0 1px 3px rgba(102, 126, 234, 0.3)',
+                            width: '100%'
                           }}
-                          onClick={() => setSelectedCompany(company)}
+                          onMouseOver={(e) => {
+                            e.currentTarget.style.transform = 'translateY(-1px)';
+                            e.currentTarget.style.boxShadow = '0 2px 6px rgba(102, 126, 234, 0.4)';
+                          }}
+                          onMouseOut={(e) => {
+                            e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.boxShadow = '0 1px 3px rgba(102, 126, 234, 0.3)';
+                          }}
                         >
-                          <Users style={{ width: '16px', height: '16px' }} />
+                          <Users style={{ width: '14px', height: '14px' }} />
                           Manage Owners
                         </button>
                       </div>
