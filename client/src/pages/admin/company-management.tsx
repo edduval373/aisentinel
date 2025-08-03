@@ -772,7 +772,7 @@ export default function CompanyManagement() {
           </DialogContent>
         </Dialog>
 
-        {/* Enhanced Delete Confirmation Modal */}
+        {/* Beautiful Centered Delete Confirmation Modal */}
         <Dialog open={deleteConfirmDialog.isOpen} onOpenChange={(open) => {
           console.log("🗑️ [DELETE] Delete Dialog onOpenChange called with:", open);
           console.log("🗑️ [DELETE] Company in dialog:", deleteConfirmDialog.company?.name);
@@ -781,101 +781,117 @@ export default function CompanyManagement() {
             handleDeleteCancel();
           }
         }}>
-          <DialogContent style={{ maxWidth: '500px' }}>
-            <DialogHeader>
-              <DialogTitle style={{ 
-                color: '#dc2626',
-                fontSize: '20px',
-                fontWeight: '700',
+          <DialogContent style={{ 
+            maxWidth: '480px',
+            margin: '0 auto',
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            backgroundColor: 'white',
+            borderRadius: '16px',
+            padding: '32px',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+            border: '1px solid #e5e7eb',
+            zIndex: 1000
+          }}>
+            <DialogHeader style={{ textAlign: 'center', marginBottom: '24px' }}>
+              {/* Warning Icon */}
+              <div style={{
+                width: '64px',
+                height: '64px',
+                backgroundColor: '#fef2f2',
+                borderRadius: '50%',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '8px'
+                justifyContent: 'center',
+                margin: '0 auto 16px',
+                border: '4px solid #fecaca'
               }}>
-                ⚠️ Delete Company - Are You Sure?
+                <svg 
+                  width="28" 
+                  height="28" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="#dc2626" 
+                  strokeWidth="2.5" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                >
+                  <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                  <path d="M12 9v4"/>
+                  <path d="m12 17 .01 0"/>
+                </svg>
+              </div>
+              
+              <DialogTitle style={{ 
+                color: '#1f2937',
+                fontSize: '24px',
+                fontWeight: '700',
+                marginBottom: '8px',
+                lineHeight: '1.3'
+              }}>
+                Delete Company?
               </DialogTitle>
-              <DialogDescription style={{ fontSize: '14px', color: '#6b7280' }}>
-                This action cannot be undone. All company data will be permanently removed from the database.
+              <DialogDescription style={{ 
+                fontSize: '16px', 
+                color: '#6b7280',
+                lineHeight: '1.5',
+                marginBottom: '0'
+              }}>
+                This action cannot be undone. All company data will be permanently removed.
               </DialogDescription>
             </DialogHeader>
             
-            {/* Company Details Section */}
+            {/* Company Details in Beautiful Card */}
             <div style={{ 
-              padding: '16px',
-              backgroundColor: '#fef2f2',
-              border: '1px solid #fecaca',
-              borderRadius: '8px',
-              margin: '16px 0'
+              padding: '20px',
+              backgroundColor: '#f9fafb',
+              border: '2px solid #e5e7eb',
+              borderRadius: '12px',
+              margin: '24px 0',
+              textAlign: 'center'
             }}>
-              <h4 style={{ 
-                margin: '0 0 8px 0',
-                color: '#991b1b',
-                fontSize: '16px',
-                fontWeight: '600'
+              <div style={{
+                fontSize: '18px',
+                fontWeight: '600',
+                color: '#1f2937',
+                marginBottom: '4px'
               }}>
-                Company to be deleted:
-              </h4>
-              <p style={{ margin: '0 0 4px 0', fontSize: '14px' }}>
-                <strong>Name:</strong> {deleteConfirmDialog.company?.name}
-              </p>
-              <p style={{ margin: '0 0 4px 0', fontSize: '14px' }}>
-                <strong>Domain:</strong> {deleteConfirmDialog.company?.domain}
-              </p>
-              <p style={{ margin: '0', fontSize: '14px' }}>
-                <strong>ID:</strong> {deleteConfirmDialog.company?.id}
-              </p>
-            </div>
-
-            {/* Warning Section */}
-            <div style={{ padding: '16px 0' }}>
-              <p style={{ 
-                margin: '0 0 12px 0', 
-                lineHeight: '1.5',
-                color: '#374151',
-                fontWeight: '500'
-              }}>
-                This will permanently delete all data associated with this company:
-              </p>
-              <ul style={{ 
-                margin: '0 0 0 20px', 
-                padding: 0,
-                color: '#6b7280',
-                fontSize: '14px'
-              }}>
-                <li>All AI models and configurations</li>
-                <li>All activity types and settings</li>
-                <li>All chat sessions and messages</li>
-                <li>All user activities and logs</li>
-                <li>All API keys and integrations</li>
-                <li>All company-specific customizations</li>
-              </ul>
-            </div>
-
-            {/* Confirmation Text */}
-            <div style={{
-              padding: '12px',
-              backgroundColor: '#fffbeb',
-              border: '1px solid #fbbf24',
-              borderRadius: '6px',
-              marginBottom: '16px'
-            }}>
-              <p style={{ 
-                margin: 0,
+                {deleteConfirmDialog.company?.name}
+              </div>
+              <div style={{
                 fontSize: '14px',
-                color: '#92400e',
-                fontWeight: '500',
-                textAlign: 'center'
+                color: '#6b7280'
               }}>
-                Type the company name to confirm: <strong>{deleteConfirmDialog.company?.name}</strong>
+                {deleteConfirmDialog.company?.domain}
+              </div>
+            </div>
+
+            {/* Simplified Warning */}
+            <div style={{ 
+              textAlign: 'center',
+              padding: '16px 0',
+              borderTop: '1px solid #e5e7eb',
+              borderBottom: '1px solid #e5e7eb',
+              margin: '20px 0'
+            }}>
+              <p style={{ 
+                margin: '0', 
+                fontSize: '15px',
+                color: '#6b7280',
+                lineHeight: '1.6'
+              }}>
+                This will permanently delete all company data including AI models, chat sessions, and user activities.
               </p>
             </div>
 
-            {/* Action Buttons */}
+            {/* Beautiful Action Buttons */}
             <div style={{ 
               display: 'flex', 
               gap: '12px', 
-              justifyContent: 'flex-end',
-              paddingTop: '16px',
-              borderTop: '1px solid #e5e7eb'
+              justifyContent: 'center',
+              paddingTop: '8px'
             }}>
               <Button
                 variant="outline"
