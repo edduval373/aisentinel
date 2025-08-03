@@ -1,0 +1,1027 @@
+AI Models loaded: 2 models
+index-B4TNapae.js:492 Selected Model ID: 1
+index-B4TNapae.js:492 Selected Model Object: Object
+index-B4TNapae.js:492 Select Model Value (string): 1
+index-B4TNapae.js:492 AI Models for Select: Array(2)
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 Selected Activity Type ID: 1
+index-B4TNapae.js:492 Selected Activity Type Object: Object
+index-B4TNapae.js:492 Select Activity Type Value (string): 1
+index-B4TNapae.js:492 Activity Types for Select: Array(2)
+index-B4TNapae.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-B4TNapae.js:492 currentSession: undefined
+index-B4TNapae.js:492 createSessionMutation.isPending: true
+index-B4TNapae.js:492 Should create session: false
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 User auth: Object
+index-B4TNapae.js:492 === END SESSION TRIGGER DEBUG ===
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Response status: 200
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Response headers: Object
+index-B4TNapae.js:492 ✅ [SESSION CREATE] Session created successfully: Object
+index-B4TNapae.js:492 ✅ Setting current session to: undefined
+index-B4TNapae.js:50 🔄 [QUERY] /api/chat/sessions - Start
+index-B4TNapae.js:50 🔄 [QUERY] Full URL: https://www.aisentinel.app/api/chat/sessions
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:504 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+index-B4TNapae.js:504 🔧 [DEVELOPER CONTROLS] Visible for super user
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Selected Model ID: 1
+index-B4TNapae.js:492 Selected Model Object: Object
+index-B4TNapae.js:492 Select Model Value (string): 1
+index-B4TNapae.js:492 AI Models for Select: Array(2)
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 Selected Activity Type ID: 1
+index-B4TNapae.js:492 Selected Activity Type Object: Object
+index-B4TNapae.js:492 Select Activity Type Value (string): 1
+index-B4TNapae.js:492 Activity Types for Select: Array(2)
+index-B4TNapae.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-B4TNapae.js:492 currentSession: undefined
+index-B4TNapae.js:492 createSessionMutation.isPending: false
+index-B4TNapae.js:492 Should create session: true
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 User auth: Object
+index-B4TNapae.js:492 === END SESSION TRIGGER DEBUG ===
+index-B4TNapae.js:492 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Starting chat session creation...
+index-B4TNapae.js:492 🔄 [SESSION CREATE] User auth status: Object
+authHeaders-CIshTAes.js:1 🔍 [AUTH HEADERS] Getting authentication headers...
+authHeaders-CIshTAes.js:1 ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Selected Model ID: 1
+index-B4TNapae.js:492 Selected Model Object: Object
+index-B4TNapae.js:492 Select Model Value (string): 1
+index-B4TNapae.js:492 AI Models for Select: Array(2)
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 Selected Activity Type ID: 1
+index-B4TNapae.js:492 Selected Activity Type Object: Object
+index-B4TNapae.js:492 Select Activity Type Value (string): 1
+index-B4TNapae.js:492 Activity Types for Select: Array(2)
+index-B4TNapae.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-B4TNapae.js:492 currentSession: undefined
+index-B4TNapae.js:492 createSessionMutation.isPending: true
+index-B4TNapae.js:492 Should create session: false
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 User auth: Object
+index-B4TNapae.js:492 === END SESSION TRIGGER DEBUG ===
+authHeaders-CIshTAes.js:1 🔍 [AUTH HEADERS] Getting authentication headers...
+authHeaders-CIshTAes.js:1 ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Using header-based authentication
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+index-B4TNapae.js:50 📊 [QUERY] /api/chat/sessions - Status: 404 (84ms)
+index-B4TNapae.js:50 📊 [QUERY] Headers: Object
+index-B4TNapae.js:50 ❌ [QUERY] /api/chat/sessions - Failed (85ms): Error: 404: 
+    at wC (index-B4TNapae.js:48:42957)
+    at async index-B4TNapae.js:50:3041
+(anonymous) @ index-B4TNapae.js:50Understand this error
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:504 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+index-B4TNapae.js:504 🔧 [DEVELOPER CONTROLS] Visible for super user
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Selected Model ID: 1
+index-B4TNapae.js:492 Selected Model Object: Object
+index-B4TNapae.js:492 Select Model Value (string): 1
+index-B4TNapae.js:492 AI Models for Select: Array(2)
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 Selected Activity Type ID: 1
+index-B4TNapae.js:492 Selected Activity Type Object: Object
+index-B4TNapae.js:492 Select Activity Type Value (string): 1
+index-B4TNapae.js:492 Activity Types for Select: Array(2)
+index-B4TNapae.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-B4TNapae.js:492 currentSession: undefined
+index-B4TNapae.js:492 createSessionMutation.isPending: true
+index-B4TNapae.js:492 Should create session: false
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 User auth: Object
+index-B4TNapae.js:492 === END SESSION TRIGGER DEBUG ===
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Response status: 200
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Response headers: Object
+index-B4TNapae.js:492 ✅ [SESSION CREATE] Session created successfully: Object
+index-B4TNapae.js:492 ✅ Setting current session to: undefined
+index-B4TNapae.js:50 🔄 [QUERY] /api/chat/sessions - Start
+index-B4TNapae.js:50 🔄 [QUERY] Full URL: https://www.aisentinel.app/api/chat/sessions
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:504 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+index-B4TNapae.js:504 🔧 [DEVELOPER CONTROLS] Visible for super user
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Selected Model ID: 1
+index-B4TNapae.js:492 Selected Model Object: Object
+index-B4TNapae.js:492 Select Model Value (string): 1
+index-B4TNapae.js:492 AI Models for Select: Array(2)
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 Selected Activity Type ID: 1
+index-B4TNapae.js:492 Selected Activity Type Object: Object
+index-B4TNapae.js:492 Select Activity Type Value (string): 1
+index-B4TNapae.js:492 Activity Types for Select: Array(2)
+index-B4TNapae.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-B4TNapae.js:492 currentSession: undefined
+index-B4TNapae.js:492 createSessionMutation.isPending: false
+index-B4TNapae.js:492 Should create session: true
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 User auth: Object
+index-B4TNapae.js:492 === END SESSION TRIGGER DEBUG ===
+index-B4TNapae.js:492 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Starting chat session creation...
+index-B4TNapae.js:492 🔄 [SESSION CREATE] User auth status: Object
+authHeaders-CIshTAes.js:1 🔍 [AUTH HEADERS] Getting authentication headers...
+authHeaders-CIshTAes.js:1 ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Selected Model ID: 1
+index-B4TNapae.js:492 Selected Model Object: Object
+index-B4TNapae.js:492 Select Model Value (string): 1
+index-B4TNapae.js:492 AI Models for Select: Array(2)
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 Selected Activity Type ID: 1
+index-B4TNapae.js:492 Selected Activity Type Object: Object
+index-B4TNapae.js:492 Select Activity Type Value (string): 1
+index-B4TNapae.js:492 Activity Types for Select: Array(2)
+index-B4TNapae.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-B4TNapae.js:492 currentSession: undefined
+index-B4TNapae.js:492 createSessionMutation.isPending: true
+index-B4TNapae.js:492 Should create session: false
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 User auth: Object
+index-B4TNapae.js:492 === END SESSION TRIGGER DEBUG ===
+authHeaders-CIshTAes.js:1 🔍 [AUTH HEADERS] Getting authentication headers...
+authHeaders-CIshTAes.js:1 ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Using header-based authentication
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+index-B4TNapae.js:50 📊 [QUERY] /api/chat/sessions - Status: 404 (90ms)
+index-B4TNapae.js:50 📊 [QUERY] Headers: Object
+index-B4TNapae.js:50 ❌ [QUERY] /api/chat/sessions - Failed (91ms): Error: 404: 
+    at wC (index-B4TNapae.js:48:42957)
+    at async index-B4TNapae.js:50:3041
+(anonymous) @ index-B4TNapae.js:50Understand this error
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:504 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+index-B4TNapae.js:504 🔧 [DEVELOPER CONTROLS] Visible for super user
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Selected Model ID: 1
+index-B4TNapae.js:492 Selected Model Object: Object
+index-B4TNapae.js:492 Select Model Value (string): 1
+index-B4TNapae.js:492 AI Models for Select: Array(2)
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 Selected Activity Type ID: 1
+index-B4TNapae.js:492 Selected Activity Type Object: Object
+index-B4TNapae.js:492 Select Activity Type Value (string): 1
+index-B4TNapae.js:492 Activity Types for Select: Array(2)
+index-B4TNapae.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-B4TNapae.js:492 currentSession: undefined
+index-B4TNapae.js:492 createSessionMutation.isPending: true
+index-B4TNapae.js:492 Should create session: false
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 User auth: Object
+index-B4TNapae.js:492 === END SESSION TRIGGER DEBUG ===
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Response status: 200
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Response headers: Object
+index-B4TNapae.js:492 ✅ [SESSION CREATE] Session created successfully: Object
+index-B4TNapae.js:492 ✅ Setting current session to: undefined
+index-B4TNapae.js:50 🔄 [QUERY] /api/chat/sessions - Start
+index-B4TNapae.js:50 🔄 [QUERY] Full URL: https://www.aisentinel.app/api/chat/sessions
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:504 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+index-B4TNapae.js:504 🔧 [DEVELOPER CONTROLS] Visible for super user
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Selected Model ID: 1
+index-B4TNapae.js:492 Selected Model Object: Object
+index-B4TNapae.js:492 Select Model Value (string): 1
+index-B4TNapae.js:492 AI Models for Select: Array(2)
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 Selected Activity Type ID: 1
+index-B4TNapae.js:492 Selected Activity Type Object: Object
+index-B4TNapae.js:492 Select Activity Type Value (string): 1
+index-B4TNapae.js:492 Activity Types for Select: Array(2)
+index-B4TNapae.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-B4TNapae.js:492 currentSession: undefined
+index-B4TNapae.js:492 createSessionMutation.isPending: false
+index-B4TNapae.js:492 Should create session: true
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 User auth: Object
+index-B4TNapae.js:492 === END SESSION TRIGGER DEBUG ===
+index-B4TNapae.js:492 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Starting chat session creation...
+index-B4TNapae.js:492 🔄 [SESSION CREATE] User auth status: Object
+authHeaders-CIshTAes.js:1 🔍 [AUTH HEADERS] Getting authentication headers...
+authHeaders-CIshTAes.js:1 ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Selected Model ID: 1
+index-B4TNapae.js:492 Selected Model Object: Object
+index-B4TNapae.js:492 Select Model Value (string): 1
+index-B4TNapae.js:492 AI Models for Select: Array(2)
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 Selected Activity Type ID: 1
+index-B4TNapae.js:492 Selected Activity Type Object: Object
+index-B4TNapae.js:492 Select Activity Type Value (string): 1
+index-B4TNapae.js:492 Activity Types for Select: Array(2)
+index-B4TNapae.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-B4TNapae.js:492 currentSession: undefined
+index-B4TNapae.js:492 createSessionMutation.isPending: true
+index-B4TNapae.js:492 Should create session: false
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 User auth: Object
+index-B4TNapae.js:492 === END SESSION TRIGGER DEBUG ===
+authHeaders-CIshTAes.js:1 🔍 [AUTH HEADERS] Getting authentication headers...
+authHeaders-CIshTAes.js:1 ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Using header-based authentication
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+index-B4TNapae.js:50 📊 [QUERY] /api/chat/sessions - Status: 404 (120ms)
+index-B4TNapae.js:50 📊 [QUERY] Headers: Object
+index-B4TNapae.js:50 ❌ [QUERY] /api/chat/sessions - Failed (123ms): Error: 404: 
+    at wC (index-B4TNapae.js:48:42957)
+    at async index-B4TNapae.js:50:3041
+(anonymous) @ index-B4TNapae.js:50Understand this error
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:504 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+index-B4TNapae.js:504 🔧 [DEVELOPER CONTROLS] Visible for super user
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Selected Model ID: 1
+index-B4TNapae.js:492 Selected Model Object: Object
+index-B4TNapae.js:492 Select Model Value (string): 1
+index-B4TNapae.js:492 AI Models for Select: Array(2)
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 Selected Activity Type ID: 1
+index-B4TNapae.js:492 Selected Activity Type Object: Object
+index-B4TNapae.js:492 Select Activity Type Value (string): 1
+index-B4TNapae.js:492 Activity Types for Select: Array(2)
+index-B4TNapae.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-B4TNapae.js:492 currentSession: undefined
+index-B4TNapae.js:492 createSessionMutation.isPending: true
+index-B4TNapae.js:492 Should create session: false
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 User auth: Object
+index-B4TNapae.js:492 === END SESSION TRIGGER DEBUG ===
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Response status: 200
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Response headers: Object
+index-B4TNapae.js:492 ✅ [SESSION CREATE] Session created successfully: Object
+index-B4TNapae.js:492 ✅ Setting current session to: undefined
+index-B4TNapae.js:50 🔄 [QUERY] /api/chat/sessions - Start
+index-B4TNapae.js:50 🔄 [QUERY] Full URL: https://www.aisentinel.app/api/chat/sessions
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:504 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+index-B4TNapae.js:504 🔧 [DEVELOPER CONTROLS] Visible for super user
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Selected Model ID: 1
+index-B4TNapae.js:492 Selected Model Object: Object
+index-B4TNapae.js:492 Select Model Value (string): 1
+index-B4TNapae.js:492 AI Models for Select: Array(2)
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 Selected Activity Type ID: 1
+index-B4TNapae.js:492 Selected Activity Type Object: Object
+index-B4TNapae.js:492 Select Activity Type Value (string): 1
+index-B4TNapae.js:492 Activity Types for Select: Array(2)
+index-B4TNapae.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-B4TNapae.js:492 currentSession: undefined
+index-B4TNapae.js:492 createSessionMutation.isPending: false
+index-B4TNapae.js:492 Should create session: true
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 User auth: Object
+index-B4TNapae.js:492 === END SESSION TRIGGER DEBUG ===
+index-B4TNapae.js:492 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Starting chat session creation...
+index-B4TNapae.js:492 🔄 [SESSION CREATE] User auth status: Object
+authHeaders-CIshTAes.js:1 🔍 [AUTH HEADERS] Getting authentication headers...
+authHeaders-CIshTAes.js:1 ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Selected Model ID: 1
+index-B4TNapae.js:492 Selected Model Object: Object
+index-B4TNapae.js:492 Select Model Value (string): 1
+index-B4TNapae.js:492 AI Models for Select: Array(2)
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 Selected Activity Type ID: 1
+index-B4TNapae.js:492 Selected Activity Type Object: Object
+index-B4TNapae.js:492 Select Activity Type Value (string): 1
+index-B4TNapae.js:492 Activity Types for Select: Array(2)
+index-B4TNapae.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-B4TNapae.js:492 currentSession: undefined
+index-B4TNapae.js:492 createSessionMutation.isPending: true
+index-B4TNapae.js:492 Should create session: false
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 User auth: Object
+index-B4TNapae.js:492 === END SESSION TRIGGER DEBUG ===
+authHeaders-CIshTAes.js:1 🔍 [AUTH HEADERS] Getting authentication headers...
+authHeaders-CIshTAes.js:1 ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Using header-based authentication
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+index-B4TNapae.js:50 📊 [QUERY] /api/chat/sessions - Status: 404 (92ms)
+index-B4TNapae.js:50 📊 [QUERY] Headers: Object
+index-B4TNapae.js:50 ❌ [QUERY] /api/chat/sessions - Failed (102ms): Error: 404: 
+    at wC (index-B4TNapae.js:48:42957)
+    at async index-B4TNapae.js:50:3041
+(anonymous) @ index-B4TNapae.js:50Understand this error
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:504 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+index-B4TNapae.js:504 🔧 [DEVELOPER CONTROLS] Visible for super user
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Selected Model ID: 1
+index-B4TNapae.js:492 Selected Model Object: Object
+index-B4TNapae.js:492 Select Model Value (string): 1
+index-B4TNapae.js:492 AI Models for Select: Array(2)
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 Selected Activity Type ID: 1
+index-B4TNapae.js:492 Selected Activity Type Object: Object
+index-B4TNapae.js:492 Select Activity Type Value (string): 1
+index-B4TNapae.js:492 Activity Types for Select: Array(2)
+index-B4TNapae.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-B4TNapae.js:492 currentSession: undefined
+index-B4TNapae.js:492 createSessionMutation.isPending: true
+index-B4TNapae.js:492 Should create session: false
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 User auth: Object
+index-B4TNapae.js:492 === END SESSION TRIGGER DEBUG ===
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Response status: 200
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Response headers: Object
+index-B4TNapae.js:492 ✅ [SESSION CREATE] Session created successfully: Object
+index-B4TNapae.js:492 ✅ Setting current session to: undefined
+index-B4TNapae.js:50 🔄 [QUERY] /api/chat/sessions - Start
+index-B4TNapae.js:50 🔄 [QUERY] Full URL: https://www.aisentinel.app/api/chat/sessions
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:504 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+index-B4TNapae.js:504 🔧 [DEVELOPER CONTROLS] Visible for super user
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Selected Model ID: 1
+index-B4TNapae.js:492 Selected Model Object: Object
+index-B4TNapae.js:492 Select Model Value (string): 1
+index-B4TNapae.js:492 AI Models for Select: Array(2)
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 Selected Activity Type ID: 1
+index-B4TNapae.js:492 Selected Activity Type Object: Object
+index-B4TNapae.js:492 Select Activity Type Value (string): 1
+index-B4TNapae.js:492 Activity Types for Select: Array(2)
+index-B4TNapae.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-B4TNapae.js:492 currentSession: undefined
+index-B4TNapae.js:492 createSessionMutation.isPending: false
+index-B4TNapae.js:492 Should create session: true
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 User auth: Object
+index-B4TNapae.js:492 === END SESSION TRIGGER DEBUG ===
+index-B4TNapae.js:492 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Starting chat session creation...
+index-B4TNapae.js:492 🔄 [SESSION CREATE] User auth status: Object
+authHeaders-CIshTAes.js:1 🔍 [AUTH HEADERS] Getting authentication headers...
+authHeaders-CIshTAes.js:1 ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Selected Model ID: 1
+index-B4TNapae.js:492 Selected Model Object: Object
+index-B4TNapae.js:492 Select Model Value (string): 1
+index-B4TNapae.js:492 AI Models for Select: Array(2)
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 Selected Activity Type ID: 1
+index-B4TNapae.js:492 Selected Activity Type Object: Object
+index-B4TNapae.js:492 Select Activity Type Value (string): 1
+index-B4TNapae.js:492 Activity Types for Select: Array(2)
+index-B4TNapae.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-B4TNapae.js:492 currentSession: undefined
+index-B4TNapae.js:492 createSessionMutation.isPending: true
+index-B4TNapae.js:492 Should create session: false
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 User auth: Object
+index-B4TNapae.js:492 === END SESSION TRIGGER DEBUG ===
+authHeaders-CIshTAes.js:1 🔍 [AUTH HEADERS] Getting authentication headers...
+authHeaders-CIshTAes.js:1 ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Using header-based authentication
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+index-B4TNapae.js:50 📊 [QUERY] /api/chat/sessions - Status: 404 (91ms)
+index-B4TNapae.js:50 📊 [QUERY] Headers: Object
+index-B4TNapae.js:50 ❌ [QUERY] /api/chat/sessions - Failed (92ms): Error: 404: 
+    at wC (index-B4TNapae.js:48:42957)
+    at async index-B4TNapae.js:50:3041
+(anonymous) @ index-B4TNapae.js:50Understand this error
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:504 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+index-B4TNapae.js:504 🔧 [DEVELOPER CONTROLS] Visible for super user
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Selected Model ID: 1
+index-B4TNapae.js:492 Selected Model Object: Object
+index-B4TNapae.js:492 Select Model Value (string): 1
+index-B4TNapae.js:492 AI Models for Select: Array(2)
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 Selected Activity Type ID: 1
+index-B4TNapae.js:492 Selected Activity Type Object: Object
+index-B4TNapae.js:492 Select Activity Type Value (string): 1
+index-B4TNapae.js:492 Activity Types for Select: Array(2)
+index-B4TNapae.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-B4TNapae.js:492 currentSession: undefined
+index-B4TNapae.js:492 createSessionMutation.isPending: true
+index-B4TNapae.js:492 Should create session: false
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 User auth: Object
+index-B4TNapae.js:492 === END SESSION TRIGGER DEBUG ===
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Response status: 200
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Response headers: Object
+index-B4TNapae.js:492 ✅ [SESSION CREATE] Session created successfully: Object
+index-B4TNapae.js:492 ✅ Setting current session to: undefined
+index-B4TNapae.js:50 🔄 [QUERY] /api/chat/sessions - Start
+index-B4TNapae.js:50 🔄 [QUERY] Full URL: https://www.aisentinel.app/api/chat/sessions
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:504 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+index-B4TNapae.js:504 🔧 [DEVELOPER CONTROLS] Visible for super user
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Selected Model ID: 1
+index-B4TNapae.js:492 Selected Model Object: Object
+index-B4TNapae.js:492 Select Model Value (string): 1
+index-B4TNapae.js:492 AI Models for Select: Array(2)
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 Selected Activity Type ID: 1
+index-B4TNapae.js:492 Selected Activity Type Object: Object
+index-B4TNapae.js:492 Select Activity Type Value (string): 1
+index-B4TNapae.js:492 Activity Types for Select: Array(2)
+index-B4TNapae.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-B4TNapae.js:492 currentSession: undefined
+index-B4TNapae.js:492 createSessionMutation.isPending: false
+index-B4TNapae.js:492 Should create session: true
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 User auth: Object
+index-B4TNapae.js:492 === END SESSION TRIGGER DEBUG ===
+index-B4TNapae.js:492 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Starting chat session creation...
+index-B4TNapae.js:492 🔄 [SESSION CREATE] User auth status: Object
+authHeaders-CIshTAes.js:1 🔍 [AUTH HEADERS] Getting authentication headers...
+authHeaders-CIshTAes.js:1 ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Selected Model ID: 1
+index-B4TNapae.js:492 Selected Model Object: Object
+index-B4TNapae.js:492 Select Model Value (string): 1
+index-B4TNapae.js:492 AI Models for Select: Array(2)
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 Selected Activity Type ID: 1
+index-B4TNapae.js:492 Selected Activity Type Object: Object
+index-B4TNapae.js:492 Select Activity Type Value (string): 1
+index-B4TNapae.js:492 Activity Types for Select: Array(2)
+index-B4TNapae.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-B4TNapae.js:492 currentSession: undefined
+index-B4TNapae.js:492 createSessionMutation.isPending: true
+index-B4TNapae.js:492 Should create session: false
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 User auth: Object
+index-B4TNapae.js:492 === END SESSION TRIGGER DEBUG ===
+authHeaders-CIshTAes.js:1 🔍 [AUTH HEADERS] Getting authentication headers...
+authHeaders-CIshTAes.js:1 ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Using header-based authentication
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+index-B4TNapae.js:50 📊 [QUERY] /api/chat/sessions - Status: 404 (82ms)
+index-B4TNapae.js:50 📊 [QUERY] Headers: Object
+index-B4TNapae.js:50 ❌ [QUERY] /api/chat/sessions - Failed (83ms): Error: 404: 
+    at wC (index-B4TNapae.js:48:42957)
+    at async index-B4TNapae.js:50:3041
+(anonymous) @ index-B4TNapae.js:50Understand this error
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:504 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+index-B4TNapae.js:504 🔧 [DEVELOPER CONTROLS] Visible for super user
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Selected Model ID: 1
+index-B4TNapae.js:492 Selected Model Object: Object
+index-B4TNapae.js:492 Select Model Value (string): 1
+index-B4TNapae.js:492 AI Models for Select: Array(2)
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 Selected Activity Type ID: 1
+index-B4TNapae.js:492 Selected Activity Type Object: Object
+index-B4TNapae.js:492 Select Activity Type Value (string): 1
+index-B4TNapae.js:492 Activity Types for Select: Array(2)
+index-B4TNapae.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-B4TNapae.js:492 currentSession: undefined
+index-B4TNapae.js:492 createSessionMutation.isPending: true
+index-B4TNapae.js:492 Should create session: false
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 User auth: Object
+index-B4TNapae.js:492 === END SESSION TRIGGER DEBUG ===
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Response status: 200
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Response headers: Object
+index-B4TNapae.js:492 ✅ [SESSION CREATE] Session created successfully: Object
+index-B4TNapae.js:492 ✅ Setting current session to: undefined
+index-B4TNapae.js:50 🔄 [QUERY] /api/chat/sessions - Start
+index-B4TNapae.js:50 🔄 [QUERY] Full URL: https://www.aisentinel.app/api/chat/sessions
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:504 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+index-B4TNapae.js:504 🔧 [DEVELOPER CONTROLS] Visible for super user
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Selected Model ID: 1
+index-B4TNapae.js:492 Selected Model Object: Object
+index-B4TNapae.js:492 Select Model Value (string): 1
+index-B4TNapae.js:492 AI Models for Select: Array(2)
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 Selected Activity Type ID: 1
+index-B4TNapae.js:492 Selected Activity Type Object: Object
+index-B4TNapae.js:492 Select Activity Type Value (string): 1
+index-B4TNapae.js:492 Activity Types for Select: Array(2)
+index-B4TNapae.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-B4TNapae.js:492 currentSession: undefined
+index-B4TNapae.js:492 createSessionMutation.isPending: false
+index-B4TNapae.js:492 Should create session: true
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 User auth: Object
+index-B4TNapae.js:492 === END SESSION TRIGGER DEBUG ===
+index-B4TNapae.js:492 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Starting chat session creation...
+index-B4TNapae.js:492 🔄 [SESSION CREATE] User auth status: Object
+authHeaders-CIshTAes.js:1 🔍 [AUTH HEADERS] Getting authentication headers...
+authHeaders-CIshTAes.js:1 ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Selected Model ID: 1
+index-B4TNapae.js:492 Selected Model Object: Object
+index-B4TNapae.js:492 Select Model Value (string): 1
+index-B4TNapae.js:492 AI Models for Select: Array(2)
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 Selected Activity Type ID: 1
+index-B4TNapae.js:492 Selected Activity Type Object: Object
+index-B4TNapae.js:492 Select Activity Type Value (string): 1
+index-B4TNapae.js:492 Activity Types for Select: Array(2)
+index-B4TNapae.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-B4TNapae.js:492 currentSession: undefined
+index-B4TNapae.js:492 createSessionMutation.isPending: true
+index-B4TNapae.js:492 Should create session: false
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 User auth: Object
+index-B4TNapae.js:492 === END SESSION TRIGGER DEBUG ===
+authHeaders-CIshTAes.js:1 🔍 [AUTH HEADERS] Getting authentication headers...
+authHeaders-CIshTAes.js:1 ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Using header-based authentication
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+index-B4TNapae.js:50 📊 [QUERY] /api/chat/sessions - Status: 404 (107ms)
+index-B4TNapae.js:50 📊 [QUERY] Headers: Object
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Response status: 200
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Response headers: Object
+index-B4TNapae.js:492 ✅ [SESSION CREATE] Session created successfully: Object
+index-B4TNapae.js:492 ✅ Setting current session to: undefined
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Selected Model ID: 1
+index-B4TNapae.js:492 Selected Model Object: Object
+index-B4TNapae.js:492 Select Model Value (string): 1
+index-B4TNapae.js:492 AI Models for Select: Array(2)
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 Selected Activity Type ID: 1
+index-B4TNapae.js:492 Selected Activity Type Object: Object
+index-B4TNapae.js:492 Select Activity Type Value (string): 1
+index-B4TNapae.js:492 Activity Types for Select: Array(2)
+index-B4TNapae.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-B4TNapae.js:492 currentSession: undefined
+index-B4TNapae.js:492 createSessionMutation.isPending: false
+index-B4TNapae.js:492 Should create session: true
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 User auth: Object
+index-B4TNapae.js:492 === END SESSION TRIGGER DEBUG ===
+index-B4TNapae.js:492 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Starting chat session creation...
+index-B4TNapae.js:492 🔄 [SESSION CREATE] User auth status: Object
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Selected Model ID: 1
+index-B4TNapae.js:492 Selected Model Object: Object
+index-B4TNapae.js:492 Select Model Value (string): 1
+index-B4TNapae.js:492 AI Models for Select: Array(2)
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 Selected Activity Type ID: 1
+index-B4TNapae.js:492 Selected Activity Type Object: Object
+index-B4TNapae.js:492 Select Activity Type Value (string): 1
+index-B4TNapae.js:492 Activity Types for Select: Array(2)
+index-B4TNapae.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-B4TNapae.js:492 currentSession: undefined
+index-B4TNapae.js:492 createSessionMutation.isPending: true
+index-B4TNapae.js:492 Should create session: false
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 User auth: Object
+index-B4TNapae.js:492 === END SESSION TRIGGER DEBUG ===
+authHeaders-CIshTAes.js:1 🔍 [AUTH HEADERS] Getting authentication headers...
+authHeaders-CIshTAes.js:1 ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Using header-based authentication
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+index-B4TNapae.js:50 ❌ [QUERY] /api/chat/sessions - Failed (125ms): Error: 404: 
+    at wC (index-B4TNapae.js:48:42957)
+    at async index-B4TNapae.js:50:3041
+(anonymous) @ index-B4TNapae.js:50Understand this error
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:504 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+index-B4TNapae.js:504 🔧 [DEVELOPER CONTROLS] Visible for super user
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Selected Model ID: 1
+index-B4TNapae.js:492 Selected Model Object: Object
+index-B4TNapae.js:492 Select Model Value (string): 1
+index-B4TNapae.js:492 AI Models for Select: Array(2)
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 Selected Activity Type ID: 1
+index-B4TNapae.js:492 Selected Activity Type Object: Object
+index-B4TNapae.js:492 Select Activity Type Value (string): 1
+index-B4TNapae.js:492 Activity Types for Select: Array(2)
+index-B4TNapae.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-B4TNapae.js:492 currentSession: undefined
+index-B4TNapae.js:492 createSessionMutation.isPending: true
+index-B4TNapae.js:492 Should create session: false
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 User auth: Object
+index-B4TNapae.js:492 === END SESSION TRIGGER DEBUG ===
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Response status: 200
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Response headers: Object
+index-B4TNapae.js:492 ✅ [SESSION CREATE] Session created successfully: Object
+index-B4TNapae.js:492 ✅ Setting current session to: undefined
+index-B4TNapae.js:50 🔄 [QUERY] /api/chat/sessions - Start
+index-B4TNapae.js:50 🔄 [QUERY] Full URL: https://www.aisentinel.app/api/chat/sessions
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:504 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+index-B4TNapae.js:504 🔧 [DEVELOPER CONTROLS] Visible for super user
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Selected Model ID: 1
+index-B4TNapae.js:492 Selected Model Object: Object
+index-B4TNapae.js:492 Select Model Value (string): 1
+index-B4TNapae.js:492 AI Models for Select: Array(2)
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 Selected Activity Type ID: 1
+index-B4TNapae.js:492 Selected Activity Type Object: Object
+index-B4TNapae.js:492 Select Activity Type Value (string): 1
+index-B4TNapae.js:492 Activity Types for Select: Array(2)
+index-B4TNapae.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-B4TNapae.js:492 currentSession: undefined
+index-B4TNapae.js:492 createSessionMutation.isPending: false
+index-B4TNapae.js:492 Should create session: true
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 User auth: Object
+index-B4TNapae.js:492 === END SESSION TRIGGER DEBUG ===
+index-B4TNapae.js:492 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Starting chat session creation...
+index-B4TNapae.js:492 🔄 [SESSION CREATE] User auth status: Object
+authHeaders-CIshTAes.js:1 🔍 [AUTH HEADERS] Getting authentication headers...
+authHeaders-CIshTAes.js:1 ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Selected Model ID: 1
+index-B4TNapae.js:492 Selected Model Object: Object
+index-B4TNapae.js:492 Select Model Value (string): 1
+index-B4TNapae.js:492 AI Models for Select: Array(2)
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 Selected Activity Type ID: 1
+index-B4TNapae.js:492 Selected Activity Type Object: Object
+index-B4TNapae.js:492 Select Activity Type Value (string): 1
+index-B4TNapae.js:492 Activity Types for Select: Array(2)
+index-B4TNapae.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-B4TNapae.js:492 currentSession: undefined
+index-B4TNapae.js:492 createSessionMutation.isPending: true
+index-B4TNapae.js:492 Should create session: false
+index-B4TNapae.js:492 AI Models loaded: 2 models
+index-B4TNapae.js:492 Activity Types loaded: 2 types
+index-B4TNapae.js:492 User auth: Object
+index-B4TNapae.js:492 === END SESSION TRIGGER DEBUG ===
+authHeaders-CIshTAes.js:1 🔍 [AUTH HEADERS] Getting authentication headers...
+authHeaders-CIshTAes.js:1 ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Using header-based authentication
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+index-B4TNapae.js:415 🚨 PRODUCTION CLICK DETECTED! Company Management at 2025-08-03T21:05:01.799Z
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION Super-user section clicked: Company Management /admin/companies
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION Current location: /
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION Navigating to: /admin/companies
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION Navigation function: function
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION Calling navigate function...
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION Navigate called successfully to: /admin/companies
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION Current location should now be: /admin/companies
+index-B4TNapae.js:640 [APP DEBUG] Router component rendering...
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:640 [APP DEBUG] Router state: Object
+index-B4TNapae.js:640 [APP DEBUG] Authentication check: Object
+index-B4TNapae.js:640 [APP DEBUG] useAuth hook returned: Object
+index-B4TNapae.js:640 [APP DEBUG] User is authenticated, proceeding with route-based navigation
+index-B4TNapae.js:640 🔐 [ROLE GUARD] Checking access for super-user (level 1000): Object
+index-B4TNapae.js:640 [ROLE GUARD] Access granted - user level 1000 >= required level 1000
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role detection: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Response status: 200
+index-B4TNapae.js:492 🔄 [SESSION CREATE] Response headers: Object
+index-B4TNapae.js:50 📊 [QUERY] /api/chat/sessions - Status: 404 (40876ms)
+index-B4TNapae.js:50 📊 [QUERY] Headers: Object
+index-B4TNapae.js:492 ✅ [SESSION CREATE] Session created successfully: Object
+index-B4TNapae.js:492 ✅ Setting current session to: undefined
+index-B4TNapae.js:50 ❌ [QUERY] /api/chat/sessions - Failed (40891ms): Error: 404: 
+    at wC (index-B4TNapae.js:48:42957)
+    at async index-B4TNapae.js:50:3041
+(anonymous) @ index-B4TNapae.js:50Understand this error
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role detection: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role detection: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-B4TNapae.js:459 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ index-B4TNapae.js:459Understand this warning
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role detection: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role detection: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role detection: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role detection: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role detection: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role detection: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-B4TNapae.js:570 ✅ [UI UPDATE] Company updated and cache invalidated: Object
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role detection: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role detection: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role detection: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role detection: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-B4TNapae.js:459 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ index-B4TNapae.js:459Understand this warning
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role detection: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role detection: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role detection: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role detection: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role detection: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role detection: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role detection: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role detection: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role detection: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role detection: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-B4TNapae.js:459 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ index-B4TNapae.js:459Understand this warning
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role detection: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role detection: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role detection: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role detection: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-B4TNapae.js:570 ✅ [UI UPDATE] Company updated and cache invalidated: Object
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role detection: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-B4TNapae.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-B4TNapae.js:415 Authentication check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role check: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] Role detection: Object
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-B4TNapae.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
