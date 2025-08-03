@@ -43,6 +43,7 @@ Demo mode identification: Demo mode uses role level 0, shows orange "DEMO" badge
 - **Vercel Build Conflict Resolution (Aug 3, 2025)**: Removed duplicate api/chat/sessions.ts file that was causing Vercel deployment conflicts with existing sessions.js endpoint.
 - **Red Debug Banner Removal (Aug 3, 2025)**: Eliminated red authentication debug banner from home.tsx for clean professional UI without debug overlays.
 - **Database Cleanup (Aug 3, 2025)**: Removed all legacy Replit database tables (activity_types, ai_models, chat_messages, sessions, users, user_activities, chat_sessions) to ensure exclusive Railway PostgreSQL usage.
+- **Railway Database Migration (Aug 3, 2025)**: Updated DATABASE_URL from Neon to Railway PostgreSQL (postgresql://postgres:jLRyjlZdtiUgpcyQACUuUxOYcpnmWNbB@yamanote.proxy.rlwy.net:12153/railway). All company data now exclusively stored in Railway with 28 production tables.
 - **Universal AI Model Template System**: Implemented template-based AI model architecture where super-users (1000+) create universal templates, owners (999+) manage company API keys
 - **Authentication Data Flow**: Fixed companyId inclusion in `/api/auth/me` response and useAuth hook to properly support company-specific features
 - **Account Dropdown**: Fixed localStorage parsing logic to properly recognize saved accounts instead of creating test accounts
