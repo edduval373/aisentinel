@@ -42,83 +42,33 @@ export default function DeveloperControls() {
 
   return (
     <div style={{ position: 'relative' }}>
-      {/* Developer Menu Trigger */}
-      <Dialog open={showDeveloperMenu} onOpenChange={setShowDeveloperMenu}>
-        <DialogTrigger asChild>
-          <button
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '32px',
-              height: '32px',
-              backgroundColor: 'white',
-              border: '1px solid #cbd5e1',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease'
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = '#f8f9fa';
-              e.currentTarget.style.transform = 'scale(1.05)';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = 'white';
-              e.currentTarget.style.transform = 'scale(1)';
-            }}
-            title="Settings"
-          >
-            <Settings style={{ width: '16px', height: '16px', color: '#374151' }} />
-          </button>
-        </DialogTrigger>
-        <DialogContent style={{ maxWidth: '500px' }}>
-          <DialogHeader>
-            <DialogTitle style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '8px',
-              fontSize: '18px',
-              fontWeight: '600'
-            }}>
-              <Settings style={{ width: '20px', height: '20px' }} />
-              Settings
-            </DialogTitle>
-          </DialogHeader>
-          <div style={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            gap: '8px',
-            padding: '8px 0'
-          }}>
-            {/* Chat Debug Panel */}
-            <Button
-              onClick={() => {
-                setShowDeveloperMenu(false);
-                setShowChatDebug(true);
-              }}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                padding: '12px 16px',
-                backgroundColor: '#f8fafc',
-                border: '1px solid #e2e8f0',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                textAlign: 'left' as const,
-                justifyContent: 'flex-start',
-                width: '100%',
-                color: '#374151',
-                fontSize: '14px',
-                fontWeight: '500'
-              }}
-            >
-              <Bug style={{ width: '18px', height: '18px', color: '#ef4444' }} />
-              Chat Debug Panel
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Debug Panel Direct Access */}
+      <button
+        onClick={() => setShowChatDebug(true)}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: '32px',
+          height: '32px',
+          backgroundColor: 'white',
+          border: '1px solid #cbd5e1',
+          borderRadius: '6px',
+          cursor: 'pointer',
+          transition: 'all 0.2s ease'
+        }}
+        onMouseOver={(e) => {
+          e.currentTarget.style.backgroundColor = '#f8f9fa';
+          e.currentTarget.style.transform = 'scale(1.05)';
+        }}
+        onMouseOut={(e) => {
+          e.currentTarget.style.backgroundColor = 'white';
+          e.currentTarget.style.transform = 'scale(1)';
+        }}
+        title="Chat Debug Panel"
+      >
+        <Settings style={{ width: '16px', height: '16px', color: '#374151' }} />
+      </button>
 
       {/* Chat Debug Panel Modal */}
       <Dialog open={showChatDebug} onOpenChange={setShowChatDebug}>
@@ -129,10 +79,57 @@ export default function DeveloperControls() {
               alignItems: 'center', 
               gap: '8px',
               fontSize: '18px',
-              fontWeight: '600'
+              fontWeight: '600',
+              justifyContent: 'space-between',
+              width: '100%'
             }}>
-              <Bug style={{ width: '20px', height: '20px' }} />
-              Chat Debug Panel
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Bug style={{ width: '20px', height: '20px' }} />
+                Chat Debug Panel
+              </div>
+              <Button
+                onClick={() => {
+                  const debugData = {
+                    authentication: {
+                      authenticated: isAuthenticated,
+                      userId: user?.id,
+                      email: user?.email,
+                      role: user?.role,
+                      roleLevel: user?.roleLevel,
+                      companyId: user?.companyId,
+                      companyName: user?.companyName,
+                      authToken: localStorage.getItem('authToken') ? 'Present' : 'Missing'
+                    },
+                    aiModels: {
+                      loaded: aiModels?.length || 0,
+                      modelsLoading,
+                      modelsError: modelsError?.message || 'None'
+                    },
+                    activityTypes: {
+                      loaded: activityTypes?.length || 0,
+                      typesLoading,
+                      typesError: typesError?.message || 'None'
+                    },
+                    localStorage: Object.keys(localStorage).reduce((acc, key) => {
+                      acc[key] = localStorage.getItem(key);
+                      return acc;
+                    }, {} as Record<string, string | null>),
+                    timestamp: new Date().toISOString()
+                  };
+                  navigator.clipboard.writeText(JSON.stringify(debugData, null, 2));
+                }}
+                style={{
+                  padding: '4px 8px',
+                  fontSize: '12px',
+                  backgroundColor: '#3b82f6',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer'
+                }}
+              >
+                Copy Status
+              </Button>
             </DialogTitle>
           </DialogHeader>
           <div style={{ padding: '8px 0' }}>
