@@ -41,6 +41,8 @@ Demo mode identification: Demo mode uses role level 0, shows orange "DEMO" badge
 - **Company Creation Cache Fix (Aug 3, 2025)**: Resolved frontend cache invalidation issue where newly created companies weren't appearing in UI. Implemented direct refetch() calls and improved React Query configuration for immediate UI updates.
 - **Dialog Accessibility Warnings Fixed (Aug 3, 2025)**: Added missing DialogDescription components to all DialogContent instances to resolve React accessibility warnings for screen readers.
 - **Vercel Build Conflict Resolution (Aug 3, 2025)**: Removed duplicate api/chat/sessions.ts file that was causing Vercel deployment conflicts with existing sessions.js endpoint.
+- **Red Debug Banner Removal (Aug 3, 2025)**: Eliminated red authentication debug banner from home.tsx for clean professional UI without debug overlays.
+- **Database Cleanup (Aug 3, 2025)**: Removed all legacy Replit database tables (activity_types, ai_models, chat_messages, sessions, users, user_activities, chat_sessions) to ensure exclusive Railway PostgreSQL usage.
 - **Universal AI Model Template System**: Implemented template-based AI model architecture where super-users (1000+) create universal templates, owners (999+) manage company API keys
 - **Authentication Data Flow**: Fixed companyId inclusion in `/api/auth/me` response and useAuth hook to properly support company-specific features
 - **Account Dropdown**: Fixed localStorage parsing logic to properly recognize saved accounts instead of creating test accounts
