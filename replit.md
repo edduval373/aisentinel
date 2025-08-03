@@ -34,6 +34,7 @@ Demo mode identification: Demo mode uses role level 0, shows orange "DEMO" badge
 - **Deployment Strategy**: Configured for Vercel with serverless functions for API routes and static file serving for the client. Uses Vite for client builds, ESBuild for server, and Drizzle Kit for database migrations. Environment variables manage secrets. Comprehensive monitoring and logging are integrated.
 
 ## Recent Fixes (August 2025)
+- **AUTHENTICATION REDIRECT FIXED (Aug 3, 2025)**: Fixed production authentication flow where verification endpoint was returning JSON instead of redirecting to chat interface. Updated `/api/auth/verify` to save session data to localStorage and automatically redirect users to `/chat` after successful authentication. Company Management screen now fully accessible.
 - **PRODUCTION DEPLOYMENT ACTIVE (Aug 3, 2025)**: Successfully deployed to Vercel production at `aisentinel-5zffcsj-ed-duvals-projects.vercel.app`. Landing page loading correctly with AI Sentinel branding and authentication flow.
 - **ENHANCED COMPANY CRUD DEBUGGING (Aug 3, 2025)**: Added comprehensive debugging for all company operations with [CREATE], [UPDATE], [DELETE] console logging. Enhanced delete confirmation modal with detailed warnings and company information display.
 - **CRITICAL: Railway PostgreSQL Database Integration (Aug 3, 2025)**: REMOVED ALL MOCK DATA - Complete integration with Railway PostgreSQL database for all company CRUD operations. Company updates now persist directly to database with proper SQL queries, field mapping, and transaction handling.
