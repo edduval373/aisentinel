@@ -1,0 +1,71 @@
+[07:50:27.347] Running build in Washington, D.C., USA (East) – iad1
+[07:50:27.348] Build machine configuration: 4 cores, 8 GB
+[07:50:27.383] Cloning github.com/edduval373/aisentinel (Branch: test, Commit: d4911b5)
+[07:50:29.914] Cloning completed: 2.531s
+[07:50:30.043] Found .vercelignore
+[07:50:30.134] Removed 959 ignored files defined in .vercelignore
+[07:50:30.134]   /.git/config
+[07:50:30.134]   /.git/description
+[07:50:30.134]   /.git/FETCH_HEAD
+[07:50:30.134]   /.git/HEAD
+[07:50:30.134]   /.git/hooks/applypatch-msg.sample
+[07:50:30.134]   /.git/hooks/commit-msg.sample
+[07:50:30.134]   /.git/hooks/fsmonitor-watchman.sample
+[07:50:30.134]   /.git/hooks/post-update.sample
+[07:50:30.134]   /.git/hooks/pre-applypatch.sample
+[07:50:30.134]   /.git/hooks/pre-commit.sample
+[07:50:30.194] Restored build cache from previous deployment (HJu83XQWggJueFKHkP72V3K3cDXS)
+[07:50:32.557] Running "vercel build"
+[07:50:33.022] Vercel CLI 44.6.4
+[07:50:33.779] Running "install" command: `npm install`...
+[07:50:36.232] 
+[07:50:36.233] up to date, audited 746 packages in 2s
+[07:50:36.233] 
+[07:50:36.233] 168 packages are looking for funding
+[07:50:36.233]   run `npm fund` for details
+[07:50:36.248] 
+[07:50:36.248] 12 vulnerabilities (3 low, 5 moderate, 3 high, 1 critical)
+[07:50:36.248] 
+[07:50:36.248] To address issues that do not require attention, run:
+[07:50:36.248]   npm audit fix
+[07:50:36.248] 
+[07:50:36.249] To address all issues possible (including breaking changes), run:
+[07:50:36.249]   npm audit fix --force
+[07:50:36.249] 
+[07:50:36.249] Some issues need review, and may require choosing
+[07:50:36.249] a different dependency.
+[07:50:36.249] 
+[07:50:36.249] Run `npm audit` for details.
+[07:50:36.906] 
+[07:50:36.907] > rest-express@1.0.0 build
+[07:50:36.907] > vite build --config vite.config.production.ts && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist --external:../vite.config --external:vite
+[07:50:36.907] 
+[07:50:37.197] [36mvite v5.4.19 [32mbuilding for production...[36m[39m
+[07:50:37.252] transforming...
+[07:50:37.708] [32m✓[39m 66 modules transformed.
+[07:50:37.709] [31mx[39m Build failed in 486ms
+[07:50:37.709] [31merror during build:
+[07:50:37.709] [31m[vite:esbuild] Transform failed with 1 error:
+[07:50:37.709] /vercel/path0/client/src/pages/admin/create-models.tsx:228:92: ERROR: Expected ">" but found ")"[31m
+[07:50:37.709] file: [36m/vercel/path0/client/src/pages/admin/create-models.tsx:228:92[31m
+[07:50:37.709] [33m
+[07:50:37.709] [33mExpected ">" but found ")"[33m
+[07:50:37.709] 226|    if (templatesLoading) {
+[07:50:37.709] 227|      return (
+[07:50:37.710] 228|        <AdminLayout title="AI Model Templates" subtitle="Create universal AI model templates")
+[07:50:37.710]    |                                                                                              ^
+[07:50:37.710] 229|          <style>{spinKeyframes}</style>
+[07:50:37.710] 230|          <div style={{ 
+[07:50:37.710] [31m
+[07:50:37.710]     at failureErrorWithLog (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:1472:15)
+[07:50:37.710]     at /vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:755:50
+[07:50:37.710]     at responseCallbacks.<computed> (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:622:9)
+[07:50:37.710]     at handleIncomingPacket (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:677:12)
+[07:50:37.710]     at Socket.readFromStdout (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:600:7)
+[07:50:37.710]     at Socket.emit (node:events:518:28)
+[07:50:37.710]     at addChunk (node:internal/streams/readable:561:12)
+[07:50:37.710]     at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+[07:50:37.710]     at Readable.push (node:internal/streams/readable:392:5)
+[07:50:37.711]     at Pipe.onStreamRead (node:internal/stream_base_commons:189:23)[39m
+[07:50:37.726] Error: Command "rm -f public/index.html && npm run build" exited with 1
+[07:50:41.144] Exiting build container
