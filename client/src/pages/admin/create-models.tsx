@@ -336,7 +336,7 @@ export default function CreateModels() {
 
   if (templatesLoading) {
     return (
-      <AdminLayout>
+      <AdminLayout title="AI Model Templates" subtitle="Loading templates...">
         <style>{spinKeyframes}</style>
         <div style={{ 
           display: 'flex', 
@@ -389,7 +389,7 @@ export default function CreateModels() {
 
   if (isError) {
     return (
-      <AdminLayout>
+      <AdminLayout title="AI Model Templates" subtitle="Error loading templates">
         <div style={{ 
           padding: '48px', 
           textAlign: 'center',
@@ -433,44 +433,16 @@ export default function CreateModels() {
   }
 
   return (
-    <AdminLayout>
+    <AdminLayout title="AI Model Templates" subtitle="Create universal AI model templates for companies to use (no API keys required)">
       <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
         
         {/* Header Section */}
         <div style={{ 
           display: 'flex', 
-          justifyContent: 'space-between', 
+          justifyContent: 'flex-end', 
           alignItems: 'center',
           marginBottom: '8px'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <img 
-              src="/ai-sentinel-logo.png" 
-              alt="AI Sentinel" 
-              style={{
-                width: '32px',
-                height: '32px',
-                objectFit: 'contain'
-              }}
-            />
-            <div>
-              <h2 style={{ 
-                fontSize: '28px', 
-                fontWeight: '700', 
-                color: '#1e293b', 
-                margin: '0 0 4px 0' 
-              }}>
-                AI Model Templates
-              </h2>
-              <p style={{ 
-                fontSize: '16px', 
-                color: '#64748b', 
-                margin: 0 
-              }}>
-                Create universal AI model templates for companies to use (no API keys required)
-              </p>
-            </div>
-          </div>
           <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
             <DialogTrigger asChild>
               <button style={{
@@ -889,7 +861,7 @@ function TemplateForm({
             fontSize: '14px',
             fontWeight: '500'
           }}>
-            {isSubmitting ? (editingTemplate ? "Updating..." : "Creating...") : (editingTemplate ? "Update Template" : "Create Template")}
+            {isSubmitting ? "Processing..." : "Save Template"}
           </button>
         </div>
       </form>
