@@ -187,10 +187,9 @@ export default function AccountDropdown() {
       
       console.log('🔄 [ACCOUNT SWITCH] Cookies after setting:', document.cookie);
       
-      // Method 2: Set headers for immediate API calls
-      console.log('🔧 [ACCOUNT SWITCH] Step 3: Setting auth headers');
-      const { setAuthToken } = await import('@/lib/authHeaders');
-      setAuthToken(account.sessionToken);
+      // Method 2: Set auth token for immediate API calls
+      console.log('🔧 [ACCOUNT SWITCH] Step 3: Setting auth token in localStorage');
+      localStorage.setItem('authToken', account.sessionToken);
       
       // Method 3: Force reload to apply session changes
       console.log('🔄 [ACCOUNT SWITCH] Step 4: Force reload in 1 second...');

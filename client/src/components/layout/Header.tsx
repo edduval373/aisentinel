@@ -39,14 +39,14 @@ export default function Header({
           {/* Company Logo and Name */}
           {userCompany && (
             <div className="flex items-center space-x-3">
-              {userCompany.logo && (
+              {(userCompany as any)?.logo && (
                 <img 
-                  src={userCompany.logo} 
-                  alt={`${userCompany.name} logo`}
+                  src={(userCompany as any).logo} 
+                  alt={`${(userCompany as any).name} logo`}
                   className="w-8 h-8 object-contain rounded"
                 />
               )}
-              <span className="font-semibold text-slate-800">{userCompany.name}</span>
+              <span className="font-semibold text-slate-800">{(userCompany as any)?.name}</span>
             </div>
           )}
           
