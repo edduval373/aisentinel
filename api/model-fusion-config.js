@@ -1,12 +1,16 @@
-// Vercel serverless function for model fusion configuration
-import { storage } from '../server/storage.js';
-
+// Simple fallback for model fusion configuration
 export default async function handler(req, res) {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Session-Token');
+  
   if (req.method !== 'GET') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
   try {
+    
     let companyId = 1; // Default to company 1 for demo users
 
     // Check for header-based authentication first
@@ -27,25 +31,20 @@ export default async function handler(req, res) {
       }
     }
 
-    let config = await storage.getModelFusionConfig(companyId);
-
-    // If no config found, provide demo fallback
-    if (!config) {
-      console.log("No model fusion config found, providing demo fallback");
-      config = {
-        id: 1,
-        companyId,
-        isEnabled: false,
-        summaryModelId: null,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      };
-    }
+    // Provide demo fallback for model fusion config
+    const config = {
+      id: 1,
+      companyId,
+      isEnabled: false,
+      summaryModelId: null,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
 
     console.log("Returning model fusion config for company", companyId + ":", config);
     return res.json(config);
   } catch (error) {
     console.error("Error fetching model fusion config:", error);
-    res.status(500).json({ message: "Failed to fetch model fusion config" });
+    res.status(500).json({ message: "Failed to fetch model fusion config", error: error.message });
   }
 }
