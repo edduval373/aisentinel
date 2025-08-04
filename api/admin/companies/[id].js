@@ -110,7 +110,18 @@ export default async function handler(req, res) {
         try {
           // Delete related records in proper order to avoid foreign key violations
           
-          // 1. Delete chat messages first (they reference chat_sessions)
+          // 1. Delete chat attachments first (they may reference chat_sessions)
+          console.log(`🗑️ [DELETE] Deleting chat attachments for company ${companyId}...`);
+          const deleteAttachmentsQuery = `
+            DELETE FROM chat_attachments 
+            WHERE session_id IN (
+              SELECT id FROM chat_sessions WHERE company_id = $1
+            )
+          `;
+          const attachmentsResult = await client.query(deleteAttachmentsQuery, [companyId]);
+          console.log(`✅ [DELETE] Deleted ${attachmentsResult.rowCount} chat attachments`);
+          
+          // 2. Delete chat messages (they reference chat_sessions)
           console.log(`🗑️ [DELETE] Deleting chat messages for company ${companyId}...`);
           const deleteMessagesQuery = `
             DELETE FROM chat_messages 
@@ -121,49 +132,55 @@ export default async function handler(req, res) {
           const messagesResult = await client.query(deleteMessagesQuery, [companyId]);
           console.log(`✅ [DELETE] Deleted ${messagesResult.rowCount} chat messages`);
           
-          // 2. Delete chat sessions
+          // 3. Delete chat sessions
           console.log(`🗑️ [DELETE] Deleting chat sessions for company ${companyId}...`);
           const deleteSessionsQuery = 'DELETE FROM chat_sessions WHERE company_id = $1';
           const sessionsResult = await client.query(deleteSessionsQuery, [companyId]);
           console.log(`✅ [DELETE] Deleted ${sessionsResult.rowCount} chat sessions`);
           
-          // 3. Delete user activities
+          // 4. Delete user activities
           console.log(`🗑️ [DELETE] Deleting user activities for company ${companyId}...`);
           const deleteActivitiesQuery = 'DELETE FROM user_activities WHERE company_id = $1';
           const activitiesResult = await client.query(deleteActivitiesQuery, [companyId]);
           console.log(`✅ [DELETE] Deleted ${activitiesResult.rowCount} user activities`);
           
-          // 4. Delete AI models
+          // 5. Delete company API keys
+          console.log(`🗑️ [DELETE] Deleting company API keys for company ${companyId}...`);
+          const deleteApiKeysQuery = 'DELETE FROM company_api_keys WHERE company_id = $1';
+          const apiKeysResult = await client.query(deleteApiKeysQuery, [companyId]);
+          console.log(`✅ [DELETE] Deleted ${apiKeysResult.rowCount} company API keys`);
+          
+          // 6. Delete AI models
           console.log(`🗑️ [DELETE] Deleting AI models for company ${companyId}...`);
           const deleteModelsQuery = 'DELETE FROM ai_models WHERE company_id = $1';
           const modelsResult = await client.query(deleteModelsQuery, [companyId]);
           console.log(`✅ [DELETE] Deleted ${modelsResult.rowCount} AI models`);
           
-          // 5. Delete activity types
+          // 7. Delete activity types
           console.log(`🗑️ [DELETE] Deleting activity types for company ${companyId}...`);
           const deleteTypesQuery = 'DELETE FROM activity_types WHERE company_id = $1';
           const typesResult = await client.query(deleteTypesQuery, [companyId]);
           console.log(`✅ [DELETE] Deleted ${typesResult.rowCount} activity types`);
           
-          // 6. Delete model fusion configs
+          // 8. Delete model fusion configs
           console.log(`🗑️ [DELETE] Deleting model fusion configs for company ${companyId}...`);
           const deleteFusionQuery = 'DELETE FROM model_fusion_configs WHERE company_id = $1';
           const fusionResult = await client.query(deleteFusionQuery, [companyId]);
           console.log(`✅ [DELETE] Deleted ${fusionResult.rowCount} model fusion configs`);
           
-          // 7. Delete company employees
+          // 9. Delete company employees
           console.log(`🗑️ [DELETE] Deleting company employees for company ${companyId}...`);
           const deleteEmployeesQuery = 'DELETE FROM company_employees WHERE company_id = $1';
           const employeesResult = await client.query(deleteEmployeesQuery, [companyId]);
           console.log(`✅ [DELETE] Deleted ${employeesResult.rowCount} company employees`);
           
-          // 8. Delete company roles
+          // 10. Delete company roles
           console.log(`🗑️ [DELETE] Deleting company roles for company ${companyId}...`);
           const deleteRolesQuery = 'DELETE FROM company_roles WHERE company_id = $1';
           const rolesResult = await client.query(deleteRolesQuery, [companyId]);
           console.log(`✅ [DELETE] Deleted ${rolesResult.rowCount} company roles`);
           
-          // 9. Finally delete the company itself
+          // 11. Finally delete the company itself
           console.log(`🗑️ [DELETE] Deleting company "${companyName}" (ID: ${companyId})...`);
           const deleteCompanyQuery = 'DELETE FROM companies WHERE id = $1';
           const companyResult = await client.query(deleteCompanyQuery, [companyId]);
@@ -178,9 +195,11 @@ export default async function handler(req, res) {
             id: companyId, 
             name: companyName,
             deletedRecords: {
+              chatAttachments: attachmentsResult.rowCount,
               chatMessages: messagesResult.rowCount,
               chatSessions: sessionsResult.rowCount,
               userActivities: activitiesResult.rowCount,
+              companyApiKeys: apiKeysResult.rowCount,
               aiModels: modelsResult.rowCount,
               activityTypes: typesResult.rowCount,
               modelFusionConfigs: fusionResult.rowCount,
