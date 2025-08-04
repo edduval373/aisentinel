@@ -37,7 +37,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
   // Fetch current company data from companies table using user's companyId
-  const { data: currentCompany } = useQuery({
+  const { data: currentCompany } = useQuery<{id: number, name: string}>({
     queryKey: ['/api/user/current-company'],
     enabled: !!user?.companyId, // Only fetch if user has a company ID
   });
@@ -596,7 +596,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       {/* Bottom section */}
       <div style={{ borderTop: '1px solid #3b82f6', padding: '12px' }}>
         {/* Current Company Display - shows company data from database or fallback to user data */}
-        {((currentCompany && currentCompany.name) || (user?.companyName && user?.companyId)) && (
+        {((currentCompany?.name) || (user?.companyName && user?.companyId)) && (
           <div style={{ 
             marginBottom: '12px',
             paddingBottom: '12px',
@@ -632,13 +632,13 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap'
                 }}>
-                  {(currentCompany && currentCompany.name) || user?.companyName || 'Current Company'}
+                  {currentCompany?.name || user?.companyName || 'Current Company'}
                 </div>
                 <div style={{
                   color: '#94a3b8',
                   fontSize: '10px'
                 }}>
-                  ID: {(currentCompany && currentCompany.id) || user?.companyId || 1}
+                  ID: {currentCompany?.id || user?.companyId || 1}
                 </div>
               </div>
             </div>
