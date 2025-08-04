@@ -108,70 +108,29 @@ export default async function handler(req, res) {
         await client.query('BEGIN');
         
         try {
-          // Delete related records in proper order to avoid foreign key violations
-          console.log(`🗑️ [DELETE] Starting comprehensive deletion for company ${companyId}...`);
+          console.log(`🗑️ [DELETE] Starting comprehensive deletion for company "${companyName}" (ID: ${companyId})...`);
           
-          // First, let's find all chat_sessions for this company
-          const findSessionsQuery = 'SELECT id FROM chat_sessions WHERE company_id = $1';
-          const sessionsToDelete = await client.query(findSessionsQuery, [companyId]);
-          console.log(`🔍 [DELETE] Found ${sessionsToDelete.rowCount} chat sessions to delete`);
+          // STEP 1: Delete all session-dependent data first
+          console.log(`🗑️ [DELETE] STEP 1: Cleaning session-dependent data...`);
           
-          // 1. Delete everything that references chat_sessions first
-          if (sessionsToDelete.rowCount > 0) {
-            const sessionIds = sessionsToDelete.rows.map(row => row.id);
-            
-            // Delete chat attachments
-            console.log(`🗑️ [DELETE] Deleting chat attachments for sessions...`);
-            const deleteAttachmentsQuery = `DELETE FROM chat_attachments WHERE session_id = ANY($1)`;
-            const attachmentsResult = await client.query(deleteAttachmentsQuery, [sessionIds]);
-            console.log(`✅ [DELETE] Deleted ${attachmentsResult.rowCount} chat attachments`);
-            
-            // Delete chat messages  
-            console.log(`🗑️ [DELETE] Deleting chat messages for sessions...`);
-            const deleteMessagesQuery = `DELETE FROM chat_messages WHERE session_id = ANY($1)`;
-            const messagesResult = await client.query(deleteMessagesQuery, [sessionIds]);
-            console.log(`✅ [DELETE] Deleted ${messagesResult.rowCount} chat messages`);
-            
-            // Delete any other tables that might reference session_id
-            console.log(`🗑️ [DELETE] Deleting session-related data...`);
-            
-            // Check for session_logs table
-            try {
-              const deleteSessionLogsQuery = `DELETE FROM session_logs WHERE session_id = ANY($1)`;
-              const sessionLogsResult = await client.query(deleteSessionLogsQuery, [sessionIds]);
-              console.log(`✅ [DELETE] Deleted ${sessionLogsResult.rowCount} session logs`);
-            } catch (err) {
-              console.log(`ℹ️ [DELETE] session_logs table doesn't exist or has no records`);
-            }
-            
-            // Check for session_analytics table
-            try {
-              const deleteSessionAnalyticsQuery = `DELETE FROM session_analytics WHERE session_id = ANY($1)`;
-              const sessionAnalyticsResult = await client.query(deleteSessionAnalyticsQuery, [sessionIds]);
-              console.log(`✅ [DELETE] Deleted ${sessionAnalyticsResult.rowCount} session analytics`);
-            } catch (err) {
-              console.log(`ℹ️ [DELETE] session_analytics table doesn't exist or has no records`);
-            }
-          }
+          // Delete chat messages that reference both session_id AND company_id
+          const deleteMessagesByCompanyQuery = 'DELETE FROM chat_messages WHERE company_id = $1';
+          const messagesByCompanyResult = await client.query(deleteMessagesByCompanyQuery, [companyId]);
+          console.log(`✅ [DELETE] Deleted ${messagesByCompanyResult.rowCount} chat messages by company`);
           
-          // 2. Now delete all chat_sessions for this company  
-          console.log(`🗑️ [DELETE] Deleting chat sessions for company ${companyId}...`);
+          // Delete chat attachments that reference both session_id AND company_id
+          const deleteAttachmentsByCompanyQuery = 'DELETE FROM chat_attachments WHERE company_id = $1';
+          const attachmentsByCompanyResult = await client.query(deleteAttachmentsByCompanyQuery, [companyId]);
+          console.log(`✅ [DELETE] Deleted ${attachmentsByCompanyResult.rowCount} chat attachments by company`);
+          
+          // STEP 2: Delete chat_sessions now that dependents are gone
+          console.log(`🗑️ [DELETE] STEP 2: Deleting chat sessions...`);
           const deleteSessionsQuery = 'DELETE FROM chat_sessions WHERE company_id = $1';
           const sessionsResult = await client.query(deleteSessionsQuery, [companyId]);
           console.log(`✅ [DELETE] Deleted ${sessionsResult.rowCount} chat sessions`);
           
-          // 3. Delete all other tables that reference companies directly
-          console.log(`🗑️ [DELETE] Deleting all company-related data...`);
-          
-          // Delete chat_messages that reference company_id directly
-          const deleteChatMessagesQuery = 'DELETE FROM chat_messages WHERE company_id = $1';
-          const chatMessagesResult = await client.query(deleteChatMessagesQuery, [companyId]);
-          console.log(`✅ [DELETE] Deleted ${chatMessagesResult.rowCount} chat messages (direct reference)`);
-          
-          // Delete chat_attachments that reference company_id directly  
-          const deleteChatAttachmentsDirectQuery = 'DELETE FROM chat_attachments WHERE company_id = $1';
-          const chatAttachmentsDirectResult = await client.query(deleteChatAttachmentsDirectQuery, [companyId]);
-          console.log(`✅ [DELETE] Deleted ${chatAttachmentsDirectResult.rowCount} chat attachments (direct reference)`);
+          // STEP 3: Delete all other company-related data
+          console.log(`🗑️ [DELETE] STEP 3: Deleting all other company-related data...`);
           
           // Delete user_activities
           const deleteActivitiesQuery = 'DELETE FROM user_activities WHERE company_id = $1';
@@ -238,11 +197,9 @@ export default async function handler(req, res) {
             id: companyId, 
             name: companyName,
             deletedRecords: {
-              sessionBasedAttachments: sessionsToDelete.rowCount > 0 ? (attachmentsResult?.rowCount || 0) : 0,
-              sessionBasedMessages: sessionsToDelete.rowCount > 0 ? (messagesResult?.rowCount || 0) : 0,
+              chatMessages: messagesByCompanyResult.rowCount,
+              chatAttachments: attachmentsByCompanyResult.rowCount,
               chatSessions: sessionsResult.rowCount,
-              directChatMessages: chatMessagesResult.rowCount,
-              directChatAttachments: chatAttachmentsDirectResult.rowCount,
               userActivities: activitiesResult.rowCount,
               userSessions: userSessionsResult.rowCount,
               trialUsage: trialUsageResult.rowCount,
