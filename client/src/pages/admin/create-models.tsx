@@ -336,7 +336,7 @@ export default function CreateModels() {
 
   if (templatesLoading) {
     return (
-      <AdminLayout title="AI Model Templates" subtitle="Create universal AI model templates">
+      <AdminLayout>
         <style>{spinKeyframes}</style>
         <div style={{ 
           display: 'flex', 
