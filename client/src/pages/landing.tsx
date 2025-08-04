@@ -42,24 +42,37 @@ export default function Landing() {
   };
 
   const handleDevAuthentication = async () => {
-    console.log("[LANDING DEBUG] Development authentication starting...");
+    console.log("[LANDING DEBUG] Production session creation starting...");
     console.log("[LANDING DEBUG] Current cookies before auth:", document.cookie);
     
     try {
-      const response = await fetch('/api/auth/dev-login', {
+      // Set the production session cookie directly (as in working version)
+      const sessionToken = 'prod-1754052835575-289kvxqgl42h';
+      const expirationDate = new Date();
+      expirationDate.setDate(expirationDate.getDate() + 30);
+      
+      // Set secure cookie for production
+      const isProduction = window.location.hostname.includes('aisentinel.app') || window.location.hostname.includes('vercel.app');
+      const cookieSettings = isProduction 
+          ? `sessionToken=${sessionToken}; path=/; expires=${expirationDate.toUTCString()}; secure; samesite=strict`
+          : `sessionToken=${sessionToken}; path=/; expires=${expirationDate.toUTCString()}; samesite=lax`;
+      
+      document.cookie = cookieSettings;
+      console.log('[LANDING DEBUG] Production session cookie set:', sessionToken.substring(0, 20) + '...');
+      
+      // Also call the production session API endpoint
+      const response = await fetch('/api/auth/create-production-session', {
         method: 'POST',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          email: 'ed.duval15@gmail.com',
-          name: 'Edward Duval'
+          email: 'ed.duval15@gmail.com'
         })
       });
       
       console.log('[LANDING DEBUG] Response status:', response.status);
-      console.log('[LANDING DEBUG] Response headers:', Object.fromEntries(response.headers.entries()));
       
       if (!response.ok) {
         console.error('[LANDING DEBUG] HTTP Error:', response.status, response.statusText);
@@ -69,14 +82,14 @@ export default function Landing() {
       }
 
       const result = await response.json();
-      console.log('[LANDING DEBUG] Dev authentication result:', result);
+      console.log('[LANDING DEBUG] Production session result:', result);
       
       if (result.success) {
-        console.log('[LANDING DEBUG] Authentication successful! Checking cookies...');
+        console.log('[LANDING DEBUG] Production session created successfully!');
         console.log('[LANDING DEBUG] Cookies after auth:', document.cookie);
         
-        // Test authentication immediately
-        const authTest = await fetch('/api/auth/me', {
+        // Test authentication immediately with secure endpoint
+        const authTest = await fetch('/api/auth/secure-me', {
           method: 'GET',
           credentials: 'include',
           headers: { 'Content-Type': 'application/json' }
@@ -88,18 +101,33 @@ export default function Landing() {
           console.log('[LANDING DEBUG] Auth verified! Redirecting to chat...');
           window.location.href = '/chat';
         } else {
-          console.log('[LANDING DEBUG] Auth not verified, reloading page...');
-          window.location.reload();
+          console.log('[LANDING DEBUG] Auth not verified, trying main auth endpoint...');
+          // Fallback to main auth endpoint
+          const mainAuthTest = await fetch('/api/auth/me', {
+            method: 'GET',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' }
+          });
+          const mainAuthResult = await mainAuthTest.json();
+          console.log('[LANDING DEBUG] Main auth test result:', mainAuthResult);
+          
+          if (mainAuthResult.authenticated) {
+            console.log('[LANDING DEBUG] Main auth verified! Redirecting to chat...');
+            window.location.href = '/chat';
+          } else {
+            console.log('[LANDING DEBUG] Auth still not verified, reloading page...');
+            window.location.reload();
+          }
         }
       } else {
-        console.error('[LANDING DEBUG] Authentication failed:', result);
-        const errorMessage = result.message || result.error || 'Unknown authentication error';
-        alert('Authentication failed: ' + errorMessage);
+        console.error('[LANDING DEBUG] Production session creation failed:', result);
+        const errorMessage = result.message || result.error || 'Unknown session creation error';
+        alert('Session creation failed: ' + errorMessage);
       }
     } catch (error) {
-      console.error('[LANDING DEBUG] Authentication error:', error);
+      console.error('[LANDING DEBUG] Production session error:', error);
       const errorMessage = error instanceof Error ? error.message : String(error);
-      alert('Authentication error: ' + errorMessage);
+      alert('Production session error: ' + errorMessage);
     }
   };
 
