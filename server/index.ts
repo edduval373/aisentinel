@@ -11,6 +11,14 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 (async () => {
   try {
+    // Add request logging middleware to debug routing issues
+    app.use((req, res, next) => {
+      if (req.originalUrl.startsWith('/api/')) {
+        console.log(`🌐 API Request: ${req.method} ${req.originalUrl} from ${req.get('User-Agent')?.substring(0, 50)}...`);
+      }
+      next();
+    });
+
     // Register API routes first, before Vite middleware
     console.log('Registering API routes...');
     const server = await registerRoutes(app);
