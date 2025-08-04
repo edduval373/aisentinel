@@ -2442,28 +2442,21 @@ Stack: \${error.stack || 'No stack trace available'}\`;
   // AI Model Templates (Super-user only)
   app.get('/api/admin/ai-model-templates', optionalAuth, async (req: any, res) => {
     try {
-      // Production authentication - check both headers and cookies
-      let userRoleLevel = 0;
-      
-      // Check header authentication first
+      // Strict authentication - no fallbacks
       const bearerToken = req.headers.authorization?.replace('Bearer ', '');
       const sessionToken = req.headers['x-session-token'] as string;
       const authToken = bearerToken || sessionToken;
       
       if (authToken === 'prod-1754052835575-289kvxqgl42h') {
-        userRoleLevel = 1000; // Production super-user token
-        console.log('✅ [TEMPLATE GET] Production header auth successful');
+        console.log('✅ [TEMPLATE GET] Production token authenticated');
       } else if (req.user && req.user.roleLevel >= 1000) {
-        userRoleLevel = req.user.roleLevel; // Authenticated via optionalAuth
-        console.log('✅ [TEMPLATE GET] User auth successful, role:', userRoleLevel);
+        console.log('✅ [TEMPLATE GET] User authenticated, role:', req.user.roleLevel);
       } else {
-        // Development bypass for testing
-        console.log('🧪 [TEMPLATE GET] Development bypass - allowing template access');
-        userRoleLevel = 1000;
-      }
-      
-      if (userRoleLevel < 1000) {
-        return res.status(403).json({ message: "Super-user access required" });
+        console.log('❌ [TEMPLATE GET] Authentication failed - token:', authToken?.substring(0, 10), 'user:', !!req.user, 'role:', req.user?.roleLevel);
+        return res.status(401).json({ 
+          message: "Authentication required", 
+          details: "Super-user access (1000+) required for template management" 
+        });
       }
       
       const templates = await storage.getAiModelTemplates();
@@ -2476,28 +2469,21 @@ Stack: \${error.stack || 'No stack trace available'}\`;
 
   app.post('/api/admin/ai-model-templates', optionalAuth, async (req: any, res) => {
     try {
-      // Production authentication - check both headers and cookies
-      let userRoleLevel = 0;
-      
-      // Check header authentication first
+      // Strict authentication - no fallbacks
       const bearerToken = req.headers.authorization?.replace('Bearer ', '');
       const sessionToken = req.headers['x-session-token'] as string;
       const authToken = bearerToken || sessionToken;
       
       if (authToken === 'prod-1754052835575-289kvxqgl42h') {
-        userRoleLevel = 1000; // Production super-user token
-        console.log('✅ [TEMPLATE POST] Production header auth successful');
+        console.log('✅ [TEMPLATE POST] Production token authenticated');
       } else if (req.user && req.user.roleLevel >= 1000) {
-        userRoleLevel = req.user.roleLevel; // Authenticated via optionalAuth
-        console.log('✅ [TEMPLATE POST] User auth successful, role:', userRoleLevel);
+        console.log('✅ [TEMPLATE POST] User authenticated, role:', req.user.roleLevel);
       } else {
-        // Development bypass for testing
-        console.log('🧪 [TEMPLATE POST] Development bypass - allowing template creation');
-        userRoleLevel = 1000;
-      }
-      
-      if (userRoleLevel < 1000) {
-        return res.status(403).json({ message: "Super-user access required" });
+        console.log('❌ [TEMPLATE POST] Authentication failed - token:', authToken?.substring(0, 10), 'user:', !!req.user, 'role:', req.user?.roleLevel);
+        return res.status(401).json({ 
+          message: "Authentication required", 
+          details: "Super-user access (1000+) required for template creation" 
+        });
       }
       
       const template = await storage.createAiModelTemplate(req.body);
@@ -2510,28 +2496,21 @@ Stack: \${error.stack || 'No stack trace available'}\`;
 
   app.put('/api/admin/ai-model-templates/:id', optionalAuth, async (req: any, res) => {
     try {
-      // Production authentication - check both headers and cookies
-      let userRoleLevel = 0;
-      
-      // Check header authentication first
+      // Strict authentication - no fallbacks
       const bearerToken = req.headers.authorization?.replace('Bearer ', '');
       const sessionToken = req.headers['x-session-token'] as string;
       const authToken = bearerToken || sessionToken;
       
       if (authToken === 'prod-1754052835575-289kvxqgl42h') {
-        userRoleLevel = 1000; // Production super-user token
-        console.log('✅ [TEMPLATE PUT] Production header auth successful');
+        console.log('✅ [TEMPLATE PUT] Production token authenticated');
       } else if (req.user && req.user.roleLevel >= 1000) {
-        userRoleLevel = req.user.roleLevel; // Authenticated via optionalAuth
-        console.log('✅ [TEMPLATE PUT] User auth successful, role:', userRoleLevel);
+        console.log('✅ [TEMPLATE PUT] User authenticated, role:', req.user.roleLevel);
       } else {
-        // Development bypass for testing
-        console.log('🧪 [TEMPLATE PUT] Development bypass - allowing template update');
-        userRoleLevel = 1000;
-      }
-      
-      if (userRoleLevel < 1000) {
-        return res.status(403).json({ message: "Super-user access required" });
+        console.log('❌ [TEMPLATE PUT] Authentication failed - token:', authToken?.substring(0, 10), 'user:', !!req.user, 'role:', req.user?.roleLevel);
+        return res.status(401).json({ 
+          message: "Authentication required", 
+          details: "Super-user access (1000+) required for template updates" 
+        });
       }
       
       const templateId = parseInt(req.params.id);
@@ -2545,13 +2524,22 @@ Stack: \${error.stack || 'No stack trace available'}\`;
 
   app.delete('/api/admin/ai-model-templates/:id', optionalAuth, async (req: any, res) => {
     try {
-      // Development bypass - allow template deletion for testing
-      console.log('🧪 [DEV MODE] Bypassing super-user check for template deletion testing');
+      // Strict authentication - no fallbacks
+      const bearerToken = req.headers.authorization?.replace('Bearer ', '');
+      const sessionToken = req.headers['x-session-token'] as string;
+      const authToken = bearerToken || sessionToken;
       
-      // In production, uncomment this authentication check:
-      // if (!req.user || req.user.roleLevel < 1000) {
-      //   return res.status(403).json({ message: "Super-user access required" });
-      // }
+      if (authToken === 'prod-1754052835575-289kvxqgl42h') {
+        console.log('✅ [TEMPLATE DELETE] Production token authenticated');
+      } else if (req.user && req.user.roleLevel >= 1000) {
+        console.log('✅ [TEMPLATE DELETE] User authenticated, role:', req.user.roleLevel);
+      } else {
+        console.log('❌ [TEMPLATE DELETE] Authentication failed - token:', authToken?.substring(0, 10), 'user:', !!req.user, 'role:', req.user?.roleLevel);
+        return res.status(401).json({ 
+          message: "Authentication required", 
+          details: "Super-user access (1000+) required for template deletion" 
+        });
+      }
       
       const templateId = parseInt(req.params.id);
       await storage.deleteAiModelTemplate(templateId);
