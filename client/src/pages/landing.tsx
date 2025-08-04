@@ -447,47 +447,7 @@ export default function Landing() {
               View Pricing Plans
               <BarChart3 style={{marginLeft: '8px', color: 'white', width: '18px', height: '18px'}} />
             </button>
-            
-            {/* Production Authentication - Create Session Button */}
-            <button
-              onClick={() => {
-                // Create a production session directly - bypass email verification for debugging
-                console.log('[LANDING DEBUG] Creating production session...');
-                window.location.href = '/api/auth/verify?token=debug-token-12345&email=ed.duval15@gmail.com';
-              }}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '12px 20px',
-                backgroundColor: '#dc2626',
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '15px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                textDecoration: 'none',
-                transition: 'all 0.2s ease',
-                minWidth: '250px',
-                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                flex: '1',
-                maxWidth: '280px'
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.backgroundColor = '#b91c1c';
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 6px 12px -1px rgba(0, 0, 0, 0.15)';
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.backgroundColor = '#dc2626';
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
-              }}
-            >
-              Create Production Session
-              <Settings style={{marginLeft: '8px', color: 'white', width: '18px', height: '18px'}} />
-            </button>
+
             
             {/* Debug Session Modal - Development Tool */}
             <SessionDebugModal 
