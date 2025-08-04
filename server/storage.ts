@@ -481,6 +481,10 @@ export class DatabaseStorage implements IStorage {
     await db.delete(modelFusionConfigs).where(eq(modelFusionConfigs.companyId, id));
     console.log("✅ Deleted model fusion configs for company:", id);
     
+    // Delete company roles (to prevent foreign key constraint violations)
+    await db.delete(companyRoles).where(eq(companyRoles.companyId, id));
+    console.log("✅ Deleted company roles for company:", id);
+    
     // Finally delete the company
     await db.delete(companies).where(eq(companies.id, id));
     console.log("✅ Company deleted successfully:", id);

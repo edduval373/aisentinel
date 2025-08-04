@@ -225,6 +225,9 @@ export default function AdminModels() {
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Add New AI Model</DialogTitle>
+                <DialogDescription>
+                  Create a new AI model configuration for your company.
+                </DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
                 <div>

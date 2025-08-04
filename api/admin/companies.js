@@ -1,4 +1,99 @@
 // Vercel API endpoint for admin companies management
+import { Pool } from 'pg';
+
+// Database connection using Railway PostgreSQL
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
+
+async function getCompaniesFromDB() {
+  const client = await pool.connect();
+  try {
+    const result = await client.query('SELECT * FROM companies ORDER BY created_at DESC');
+    return result.rows;
+  } catch (error) {
+    console.error('Database query error:', error);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+async function updateCompanyInDB(id, updates) {
+  const client = await pool.connect();
+  try {
+    const setClause = Object.keys(updates)
+      .map((key, index) => `${key} = $${index + 2}`)
+      .join(', ');
+    
+    const values = [id, ...Object.values(updates)];
+    
+    const query = `
+      UPDATE companies 
+      SET ${setClause}, updated_at = NOW() 
+      WHERE id = $1 
+      RETURNING *
+    `;
+    
+    const result = await client.query(query, values);
+    
+    if (result.rows.length === 0) {
+      throw new Error('Company not found');
+    }
+    
+    return result.rows[0];
+  } catch (error) {
+    console.error('Database update error:', error);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+async function createCompanyInDB(companyData) {
+  const client = await pool.connect();
+  try {
+    const { name, domain, primaryAdminName, primaryAdminEmail, primaryAdminTitle, logo, isActive } = companyData;
+    
+    const query = `
+      INSERT INTO companies (name, domain, primary_admin_name, primary_admin_email, primary_admin_title, logo, is_active, created_at, updated_at)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW())
+      RETURNING *
+    `;
+    
+    const values = [name, domain, primaryAdminName, primaryAdminEmail, primaryAdminTitle, logo || '', isActive !== false];
+    const result = await client.query(query, values);
+    
+    return result.rows[0];
+  } catch (error) {
+    console.error('Database create error:', error);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+async function deleteCompanyFromDB(id) {
+  const client = await pool.connect();
+  try {
+    const result = await client.query('DELETE FROM companies WHERE id = $1 RETURNING *', [id]);
+    
+    if (result.rows.length === 0) {
+      throw new Error('Company not found');
+    }
+    
+    return result.rows[0];
+  } catch (error) {
+    console.error('Database delete error:', error);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 export default async function handler(req, res) {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -37,41 +132,8 @@ export default async function handler(req, res) {
         // Fetch all companies
         console.log('Fetching companies for super-user:', { userId: user.user_id, roleLevel: user.role_level });
         
-        // Return companies from Railway database - hard-coded for production security
-        // NOTE: This would normally fetch from database, but using static data for production security
-        const companies = [
-          {
-            id: 1,
-            name: "Duval AI Solutions",
-            domain: "duvaialsolutions.com",
-            primary_admin_name: "Ed Duval",
-            primary_admin_email: "ed.duval15@gmail.com",
-            primary_admin_title: "Chief Executive Officer",
-            logo: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
-            is_active: true,
-            created_at: "2024-01-01T00:00:00.000Z",
-            updated_at: "2024-01-01T00:00:00.000Z"
-          },
-          {
-            id: 4,
-            name: "Test Company JSON UPDATED NAME",
-            domain: "testjson.com", 
-            primary_admin_name: "Test Admin",
-            primary_admin_email: "admin@testjson.com",
-            primary_admin_title: "CEO",
-            is_active: true,
-            updated_at: new Date().toISOString()
-          },
-          {
-            id: 6,
-            name: "Test Quick Fix",
-            domain: "testquick.com",
-            primary_admin_name: "Test Admin", 
-            primary_admin_email: "admin@testquick.com",
-            primary_admin_title: "CEO",
-            is_active: true
-          }
-        ];
+        // Fetch companies from Railway PostgreSQL database
+        const companies = await getCompaniesFromDB();
 
         console.log('Found companies:', companies.length);
         return res.status(200).json(companies);
@@ -94,26 +156,22 @@ export default async function handler(req, res) {
             });
           }
 
-          // For production, we'll simulate adding to the companies array
-          // In a real implementation, this would add to the database
-          const newCompany = {
-            id: Date.now(), // Simple ID generation
+          // Create company in Railway PostgreSQL database
+          const newCompany = await createCompanyInDB({
             name,
             domain,
-            primary_admin_name: primaryAdminName,
-            primary_admin_email: primaryAdminEmail,
-            primary_admin_title: primaryAdminTitle,
-            logo: logo || '',
-            is_active: isActive !== false,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          };
+            primaryAdminName,
+            primaryAdminEmail,
+            primaryAdminTitle,
+            logo,
+            isActive
+          });
 
-          console.log('✅ Super-user created new company:', newCompany);
+          console.log('✅ Super-user created new company in database:', newCompany);
           return res.status(201).json(newCompany);
         } catch (error) {
           console.error('Error creating company:', error);
-          return res.status(500).json({ message: 'Failed to create company' });
+          return res.status(500).json({ message: 'Failed to create company: ' + error.message });
         }
         
       } else if (req.method === 'PATCH') {
@@ -131,17 +189,26 @@ export default async function handler(req, res) {
 
         try {
           const updates = req.body;
-          console.log('✅ Super-user updated company:', { id: companyId, updates });
+          console.log('✅ [DATABASE UPDATE] Updating company in database:', { id: companyId, updates });
           
-          // Return updated company (in production, this would update the database)
-          return res.status(200).json({ 
-            id: parseInt(companyId), 
-            ...updates,
-            updated_at: new Date().toISOString()
-          });
+          // Map frontend field names to backend field names for database
+          const mappedUpdates = {};
+          if (updates.name) mappedUpdates.name = updates.name;
+          if (updates.domain) mappedUpdates.domain = updates.domain;
+          if (updates.primaryAdminName) mappedUpdates.primary_admin_name = updates.primaryAdminName;
+          if (updates.primaryAdminEmail) mappedUpdates.primary_admin_email = updates.primaryAdminEmail;
+          if (updates.primaryAdminTitle) mappedUpdates.primary_admin_title = updates.primaryAdminTitle;
+          if (updates.isActive !== undefined) mappedUpdates.is_active = updates.isActive;
+          if (updates.logo !== undefined) mappedUpdates.logo = updates.logo;
+          
+          // Update company in Railway PostgreSQL database
+          const updatedCompany = await updateCompanyInDB(parseInt(companyId), mappedUpdates);
+          
+          console.log('✅ [DATABASE UPDATE] Company successfully updated in database:', updatedCompany);
+          return res.status(200).json(updatedCompany);
         } catch (error) {
           console.error('Error updating company:', error);
-          return res.status(500).json({ message: 'Failed to update company' });
+          return res.status(500).json({ message: 'Failed to update company: ' + error.message });
         }
 
       } else if (req.method === 'DELETE') {
@@ -158,11 +225,13 @@ export default async function handler(req, res) {
         }
 
         try {
-          console.log('✅ Super-user deleted company:', companyId);
-          return res.status(200).json({ message: 'Company deleted successfully' });
+          // Delete company from Railway PostgreSQL database
+          const deletedCompany = await deleteCompanyFromDB(parseInt(companyId));
+          console.log('✅ Super-user deleted company from database:', deletedCompany);
+          return res.status(200).json({ message: 'Company deleted successfully', deletedCompany });
         } catch (error) {
           console.error('Error deleting company:', error);
-          return res.status(500).json({ message: 'Failed to delete company' });
+          return res.status(500).json({ message: 'Failed to delete company: ' + error.message });
         }
         
       } else {

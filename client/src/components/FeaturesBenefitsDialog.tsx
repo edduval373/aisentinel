@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -219,14 +219,14 @@ export default function FeaturesBenefitsDialog({ open, onOpenChange }: FeaturesB
                 }}>
                   AI Sentinel Features & Benefits
                 </DialogTitle>
-                <p style={{
+                <DialogDescription style={{
                   fontSize: '18px',
                   color: 'rgba(255, 255, 255, 0.9)',
                   margin: 0,
                   fontWeight: '400'
                 }}>
                   Comprehensive enterprise AI governance platform
-                </p>
+                </DialogDescription>
               </div>
             </div>
           </DialogHeader>

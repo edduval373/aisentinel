@@ -250,6 +250,9 @@ export default function ApiConfiguration() {
               <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>Add API Configuration</DialogTitle>
+                <DialogDescription>
+                  Configure API keys and endpoints for AI service providers.
+                </DialogDescription>
               </DialogHeader>
               <Form {...configForm}>
                 <form onSubmit={configForm.handleSubmit(onSubmitConfig)} className="space-y-4">
@@ -527,6 +530,9 @@ export default function ApiConfiguration() {
           <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Edit API Configuration</DialogTitle>
+              <DialogDescription>
+                Modify API keys and endpoints for AI service providers.
+              </DialogDescription>
             </DialogHeader>
             <Form {...configForm}>
               <form onSubmit={configForm.handleSubmit(onSubmitConfig)} className="space-y-4">

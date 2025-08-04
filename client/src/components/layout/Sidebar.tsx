@@ -361,29 +361,18 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                 <button
                   key={section.id}
                   onClick={(e) => {
-                    console.log('🚨 PRODUCTION CLICK DETECTED!', section.name, 'at', new Date().toISOString());
-                    alert(`PRODUCTION: Clicked ${section.name} - Check console for details!`);
                     e.preventDefault();
                     e.stopPropagation();
-                    console.log('🔧 [SIDEBAR] PRODUCTION Super-user section clicked:', section.name, section.href);
-                    console.log('🔧 [SIDEBAR] PRODUCTION Current location:', location);
-                    console.log('🔧 [SIDEBAR] PRODUCTION Navigating to:', section.href);
-                    console.log('🔧 [SIDEBAR] PRODUCTION Navigation function:', typeof navigate);
+                    
+                    console.log('🔧 [SIDEBAR] Button clicked:', section.name, 'href:', section.href);
                     
                     if (location === section.href) {
-                      console.log('🔧 [SIDEBAR] PRODUCTION Already on this page, closing sidebar');
+                      console.log('🔧 [SIDEBAR] Already on this page, closing sidebar');
                       onToggle();
                     } else {
-                      console.log('🔧 [SIDEBAR] PRODUCTION Calling navigate function...');
-                      try {
-                        navigate(section.href);
-                        console.log('🔧 [SIDEBAR] PRODUCTION Navigate called successfully to:', section.href);
-                        console.log('🔧 [SIDEBAR] PRODUCTION Current location should now be:', section.href);
-                        if (window.innerWidth < 1024) onToggle(); // Close on mobile
-                      } catch (error) {
-                        console.error('🔧 [SIDEBAR] PRODUCTION Navigate error:', error);
-                        alert(`Navigation error: ${error}`);
-                      }
+                      console.log('🔧 [SIDEBAR] Navigating to:', section.href);
+                      navigate(section.href);
+                      if (window.innerWidth < 1024) onToggle(); // Close on mobile
                     }
                   }}
                   style={{

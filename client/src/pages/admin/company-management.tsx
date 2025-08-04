@@ -53,8 +53,11 @@ export default function CompanyManagement() {
   const queryClient = useQueryClient();
 
   // Fetch all companies (super-user only)
-  const { data: companies = [], isLoading: companiesLoading, error: companiesError } = useQuery<Company[]>({
+  const { data: companies = [], isLoading: companiesLoading, error: companiesError, refetch: refetchCompanies } = useQuery<Company[]>({
     queryKey: ["/api/admin/companies"],
+    staleTime: 0, // Always fetch fresh data
+    gcTime: 0, // Don't cache data
+    refetchInterval: false, // Disable automatic refetching
   });
 
   // Debug logging for companies query
@@ -102,16 +105,36 @@ export default function CompanyManagement() {
 
   // Create company mutation
   const createCompanyMutation = useMutation({
-    mutationFn: (data: z.infer<typeof companySchema>) =>
-      apiRequest(`/api/admin/companies`, "POST", data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/companies"] });
+    mutationFn: (data: z.infer<typeof companySchema>) => {
+      console.log("🚀 [CREATE] Starting company creation with data:", data);
+      console.log("🚀 [CREATE] API endpoint: /api/admin/companies");
+      console.log("🚀 [CREATE] Request method: POST");
+      return apiRequest(`/api/admin/companies`, "POST", data);
+    },
+    onSuccess: (newCompany) => {
+      console.log("✅ [CREATE] Company created successfully!");
+      console.log("✅ [CREATE] New company data:", newCompany);
+      console.log("✅ [CREATE] Company ID:", newCompany?.id);
+      console.log("✅ [CREATE] Company Name:", newCompany?.name);
+      console.log("🔄 [CREATE] Manually refreshing companies list...");
+      
+      // Force immediate refetch
+      refetchCompanies().then(() => {
+        console.log("✅ [CREATE] Companies list refreshed successfully");
+        console.log("✅ [CREATE] Total companies after creation:", companies?.length + 1);
+      });
+      
       setShowAddCompany(false);
       companyForm.reset();
-      toast({ title: "Success", description: "Company created successfully" });
+      toast({ title: "Success", description: `Company '${newCompany?.name}' created successfully` });
     },
     onError: (error: any) => {
-      console.error("Company creation error:", error);
+      console.error("❌ [CREATE] Company creation failed!");
+      console.error("❌ [CREATE] Error details:", error);
+      console.error("❌ [CREATE] Error message:", error?.message);
+      console.error("❌ [CREATE] Error status:", error?.status);
+      console.error("❌ [CREATE] Full error object:", JSON.stringify(error, null, 2));
+      
       let errorMessage = "Failed to create company";
       
       if (error?.message) {
@@ -124,6 +147,8 @@ export default function CompanyManagement() {
         }
       }
       
+      console.error("❌ [CREATE] Final error message:", errorMessage);
+      
       toast({ 
         title: "Error", 
         description: errorMessage, 
@@ -135,49 +160,93 @@ export default function CompanyManagement() {
   // Update company mutation
   const updateCompanyMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: z.infer<typeof companySchema> }) => {
-      console.log("🔄 Updating company:", id, "with data:", data);
+      console.log("🔄 [UPDATE] Starting company update");
+      console.log("🔄 [UPDATE] Company ID:", id);
+      console.log("🔄 [UPDATE] Update data:", data);
+      console.log("🔄 [UPDATE] API endpoint:", `/api/admin/companies/${id}`);
+      console.log("🔄 [UPDATE] Request method: PUT");
       return apiRequest(`/api/admin/companies/${id}`, "PUT", data);
     },
     onSuccess: (response) => {
-      console.log("✅ Company update successful:", response);
+      console.log("✅ [UPDATE] Company update successful!");
+      console.log("✅ [UPDATE] Response data:", response);
+      console.log("✅ [UPDATE] Updated company name:", response?.name);
+      
       // Invalidate both company list and current company data
       queryClient.invalidateQueries({ queryKey: ["/api/admin/companies"] });
       queryClient.invalidateQueries({ queryKey: ["/api/user/current-company"] });
+      
+      console.log("✅ [UPDATE] Cache invalidated");
       
       setShowEditCompany(false);
       setEditingCompany(null);
       companyForm.reset();
       
-      toast({ title: "Success", description: "Company updated successfully" });
+      toast({ title: "Success", description: `Company '${response?.name}' updated successfully` });
       
+      console.log("✅ [UPDATE] Scheduling page refresh in 1 second...");
       // Force page refresh to update chat header
       setTimeout(() => {
+        console.log("🔄 [UPDATE] Refreshing page now...");
         window.location.reload();
       }, 1000);
     },
     onError: (error: any) => {
-      console.error("❌ Company update error:", error);
+      console.error("❌ [UPDATE] Company update failed!");
+      console.error("❌ [UPDATE] Error details:", error);
+      console.error("❌ [UPDATE] Error message:", error?.message);
+      console.error("❌ [UPDATE] Error status:", error?.status);
+      console.error("❌ [UPDATE] Full error object:", JSON.stringify(error, null, 2));
+      
+      const errorMessage = error?.message || "Failed to update company";
+      console.error("❌ [UPDATE] Final error message:", errorMessage);
+      
       toast({ 
         title: "Error", 
-        description: error?.message || "Failed to update company", 
+        description: errorMessage, 
         variant: "destructive" 
       });
     },
   });
 
-  // Delete company mutation - using dev route to bypass auth issues
+  // Delete company mutation
   const deleteCompanyMutation = useMutation({
-    mutationFn: (id: number) =>
-      apiRequest(`/api/dev/companies/${id}`, "DELETE"),
-    onSuccess: () => {
+    mutationFn: (id: number) => {
+      console.log("🗑️ [DELETE] Starting company deletion");
+      console.log("🗑️ [DELETE] Company ID:", id);
+      console.log("🗑️ [DELETE] API endpoint:", `/api/admin/companies/${id}`);
+      console.log("🗑️ [DELETE] Request method: DELETE");
+      return apiRequest(`/api/admin/companies/${id}`, "DELETE");
+    },
+    onSuccess: (response, deletedId) => {
+      console.log("✅ [DELETE] Company deletion successful!");
+      console.log("✅ [DELETE] Response data:", response);
+      console.log("✅ [DELETE] Deleted company ID:", deletedId);
+      console.log("🔄 [DELETE] Invalidating cache...");
+      
       queryClient.invalidateQueries({ queryKey: ["/api/admin/companies"] });
+      
+      // Force refetch to update UI immediately
+      refetchCompanies().then(() => {
+        console.log("✅ [DELETE] Companies list refreshed successfully");
+        console.log("✅ [DELETE] Total companies after deletion:", companies?.length - 1);
+      });
+      
       toast({ title: "Success", description: "Company deleted successfully" });
     },
     onError: (error: any) => {
-      console.error("Company deletion error:", error);
+      console.error("❌ [DELETE] Company deletion failed!");
+      console.error("❌ [DELETE] Error details:", error);
+      console.error("❌ [DELETE] Error message:", error?.message);
+      console.error("❌ [DELETE] Error status:", error?.status);
+      console.error("❌ [DELETE] Full error object:", JSON.stringify(error, null, 2));
+      
+      const errorMessage = error?.message || "Failed to delete company";
+      console.error("❌ [DELETE] Final error message:", errorMessage);
+      
       toast({ 
         title: "Error", 
-        description: error?.message || "Failed to delete company", 
+        description: errorMessage, 
         variant: "destructive" 
       });
     },
@@ -222,19 +291,32 @@ export default function CompanyManagement() {
   };
 
   const handleDeleteClick = (company: Company) => {
-    console.log("🗑️ handleDeleteClick called for:", company.name);
-    console.log("Setting delete dialog for company:", company.id);
+    console.log("🗑️ [DELETE] handleDeleteClick called for:", company.name);
+    console.log("🗑️ [DELETE] Company ID:", company.id);
+    console.log("🗑️ [DELETE] Company domain:", company.domain);
+    console.log("🗑️ [DELETE] Opening delete confirmation dialog...");
     setDeleteConfirmDialog({ isOpen: true, company });
   };
 
   const handleDeleteConfirm = () => {
-    if (deleteConfirmDialog.company) {
-      deleteCompanyMutation.mutate(deleteConfirmDialog.company.id);
+    const company = deleteConfirmDialog.company;
+    console.log("🗑️ [DELETE] Delete confirmed by user");
+    console.log("🗑️ [DELETE] Company to delete:", company?.name);
+    console.log("🗑️ [DELETE] Company ID to delete:", company?.id);
+    
+    if (company) {
+      console.log("🗑️ [DELETE] Calling deleteCompanyMutation.mutate...");
+      deleteCompanyMutation.mutate(company.id);
+      console.log("🗑️ [DELETE] Closing delete confirmation dialog...");
       setDeleteConfirmDialog({ isOpen: false, company: null });
+    } else {
+      console.error("🗑️ [DELETE] ERROR: No company found in delete dialog!");
     }
   };
 
   const handleDeleteCancel = () => {
+    console.log("🗑️ [DELETE] Delete cancelled by user");
+    console.log("🗑️ [DELETE] Closing delete confirmation dialog...");
     setDeleteConfirmDialog({ isOpen: false, company: null });
   };
 
@@ -690,54 +772,167 @@ export default function CompanyManagement() {
           </DialogContent>
         </Dialog>
 
-        {/* Delete Confirmation Modal */}
+        {/* Beautiful Centered Delete Confirmation Modal */}
         <Dialog open={deleteConfirmDialog.isOpen} onOpenChange={(open) => {
-          console.log("Delete Dialog onOpenChange called with:", open);
+          console.log("🗑️ [DELETE] Delete Dialog onOpenChange called with:", open);
+          console.log("🗑️ [DELETE] Company in dialog:", deleteConfirmDialog.company?.name);
           if (!open) {
+            console.log("🗑️ [DELETE] Dialog closed without confirmation");
             handleDeleteCancel();
           }
         }}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle style={{ color: '#dc2626' }}>Delete Company</DialogTitle>
-              <DialogDescription>
+          <DialogContent style={{ 
+            maxWidth: '480px',
+            margin: '0 auto',
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            backgroundColor: 'white',
+            borderRadius: '16px',
+            padding: '32px',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+            border: '1px solid #e5e7eb',
+            zIndex: 1000
+          }}>
+            <DialogHeader style={{ textAlign: 'center', marginBottom: '24px' }}>
+              {/* Warning Icon */}
+              <div style={{
+                width: '64px',
+                height: '64px',
+                backgroundColor: '#fef2f2',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 16px',
+                border: '4px solid #fecaca'
+              }}>
+                <svg 
+                  width="28" 
+                  height="28" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="#dc2626" 
+                  strokeWidth="2.5" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                >
+                  <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                  <path d="M12 9v4"/>
+                  <path d="m12 17 .01 0"/>
+                </svg>
+              </div>
+              
+              <DialogTitle style={{ 
+                color: '#1f2937',
+                fontSize: '24px',
+                fontWeight: '700',
+                marginBottom: '8px',
+                lineHeight: '1.3'
+              }}>
+                Delete Company?
+              </DialogTitle>
+              <DialogDescription style={{ 
+                fontSize: '16px', 
+                color: '#6b7280',
+                lineHeight: '1.5',
+                marginBottom: '0'
+              }}>
                 This action cannot be undone. All company data will be permanently removed.
               </DialogDescription>
             </DialogHeader>
-            <div style={{ padding: '16px 0' }}>
-              <p style={{ margin: 0, lineHeight: '1.5' }}>
-                Are you sure you want to delete <strong>{deleteConfirmDialog.company?.name}</strong>? 
-                This action cannot be undone and will permanently remove all company data, including:
-              </p>
-              <ul style={{ margin: '12px 0 0 20px', padding: 0 }}>
-                <li>All AI models and configurations</li>
-                <li>All activity types and settings</li>
-                <li>All chat sessions and messages</li>
-                <li>All user activities and logs</li>
-              </ul>
+            
+            {/* Company Details in Beautiful Card */}
+            <div style={{ 
+              padding: '20px',
+              backgroundColor: '#f9fafb',
+              border: '2px solid #e5e7eb',
+              borderRadius: '12px',
+              margin: '24px 0',
+              textAlign: 'center'
+            }}>
+              <div style={{
+                fontSize: '18px',
+                fontWeight: '600',
+                color: '#1f2937',
+                marginBottom: '4px'
+              }}>
+                {deleteConfirmDialog.company?.name}
+              </div>
+              <div style={{
+                fontSize: '14px',
+                color: '#6b7280'
+              }}>
+                {deleteConfirmDialog.company?.domain}
+              </div>
             </div>
+
+            {/* Simplified Warning */}
+            <div style={{ 
+              textAlign: 'center',
+              padding: '16px 0',
+              borderTop: '1px solid #e5e7eb',
+              borderBottom: '1px solid #e5e7eb',
+              margin: '20px 0'
+            }}>
+              <p style={{ 
+                margin: '0', 
+                fontSize: '15px',
+                color: '#6b7280',
+                lineHeight: '1.6'
+              }}>
+                This will permanently delete all company data including AI models, chat sessions, and user activities.
+              </p>
+            </div>
+
+            {/* Beautiful Action Buttons */}
             <div style={{ 
               display: 'flex', 
               gap: '12px', 
-              justifyContent: 'flex-end' 
+              justifyContent: 'center',
+              paddingTop: '8px'
             }}>
               <Button
                 variant="outline"
-                onClick={handleDeleteCancel}
+                onClick={() => {
+                  console.log("🗑️ [DELETE] Cancel button clicked");
+                  handleDeleteCancel();
+                }}
                 disabled={deleteCompanyMutation.isPending}
+                style={{
+                  minWidth: '100px',
+                  padding: '8px 16px'
+                }}
               >
                 Cancel
               </Button>
               <Button
-                onClick={handleDeleteConfirm}
+                onClick={() => {
+                  console.log("🗑️ [DELETE] Delete confirmation button clicked");
+                  handleDeleteConfirm();
+                }}
                 disabled={deleteCompanyMutation.isPending}
                 style={{
                   backgroundColor: '#dc2626',
                   color: 'white',
-                  border: 'none'
+                  border: 'none',
+                  minWidth: '140px',
+                  padding: '8px 16px',
+                  fontWeight: '600'
                 }}
               >
-                {deleteCompanyMutation.isPending ? "Deleting..." : "Delete Company"}
+                {deleteCompanyMutation.isPending ? (
+                  <>
+                    <span style={{ marginRight: '8px' }}>🔄</span>
+                    Deleting...
+                  </>
+                ) : (
+                  <>
+                    <span style={{ marginRight: '8px' }}>🗑️</span>
+                    Yes, Delete Company
+                  </>
+                )}
               </Button>
             </div>
           </DialogContent>
