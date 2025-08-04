@@ -209,7 +209,12 @@ export default function CreateModels() {
   // Update template mutation
   const updateTemplateMutation = useMutation({
     mutationFn: async ({ id, ...data }: { id: number } & z.infer<typeof templateSchema>) => {
+      console.log(`🔧 [TEMPLATE UPDATE] Starting update for template ID: ${id}`);
+      console.log(`🔧 [TEMPLATE UPDATE] Update data:`, data);
+      
       const sessionToken = localStorage.getItem('sessionToken') || localStorage.getItem('authToken');
+      console.log(`🔧 [TEMPLATE UPDATE] Session token found:`, !!sessionToken);
+      
       const headers: any = {
         'Content-Type': 'application/json'
       };
@@ -217,33 +222,53 @@ export default function CreateModels() {
       if (sessionToken) {
         headers['Authorization'] = `Bearer ${sessionToken}`;
         headers['X-Session-Token'] = sessionToken;
+        console.log(`🔧 [TEMPLATE UPDATE] Auth headers set with token: ${sessionToken.substring(0, 10)}...`);
       }
       
-      const response = await fetch(`/api/admin/ai-model-templates/${id}`, {
+      const url = `/api/admin/ai-model-templates/${id}`;
+      console.log(`🔧 [TEMPLATE UPDATE] Making PUT request to: ${url}`);
+      
+      const response = await fetch(url, {
         method: 'PUT',
         headers,
         body: JSON.stringify(data)
       });
       
+      console.log(`🔧 [TEMPLATE UPDATE] Response status: ${response.status}`);
+      console.log(`🔧 [TEMPLATE UPDATE] Response ok: ${response.ok}`);
+      
       if (!response.ok) {
+        console.error(`❌ [TEMPLATE UPDATE] Request failed with status ${response.status}`);
         const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+        console.error(`❌ [TEMPLATE UPDATE] Error data:`, errorData);
         throw new Error(errorData.message || `HTTP ${response.status}`);
       }
       
-      return response.json();
+      const result = await response.json();
+      console.log(`✅ [TEMPLATE UPDATE] Success:`, result);
+      return result;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log(`✅ [TEMPLATE UPDATE] Success callback executed with data:`, data);
+      console.log(`✅ [TEMPLATE UPDATE] Invalidating queries...`);
       queryClient.invalidateQueries({ queryKey: ["/api/admin/ai-model-templates"] });
+      console.log(`✅ [TEMPLATE UPDATE] Setting showEditDialog to false...`);
       setShowEditDialog(false);
+      console.log(`✅ [TEMPLATE UPDATE] Clearing editing template...`);
       setEditingTemplate(null);
+      console.log(`✅ [TEMPLATE UPDATE] Resetting form...`);
       templateForm.reset();
+      console.log(`✅ [TEMPLATE UPDATE] Showing success toast...`);
       toast({ 
         title: "Template Updated", 
         description: "AI model template has been updated successfully",
       });
+      console.log(`✅ [TEMPLATE UPDATE] Success callback completed - modal should close`);
     },
     onError: (error: any) => {
-      console.error("Update template error:", error);
+      console.error("❌ [TEMPLATE UPDATE] Error callback executed:", error);
+      console.error("❌ [TEMPLATE UPDATE] Error message:", error.message);
+      console.error("❌ [TEMPLATE UPDATE] Full error object:", error);
       toast({ 
         title: "Update Failed", 
         description: error.message || "Failed to update AI model template. Please try again."
