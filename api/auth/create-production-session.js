@@ -14,12 +14,15 @@ export default async function handler(req, res) {
       });
     }
 
-    // Set secure production session cookie
+    // Set secure production session cookie for Vercel
     const cookieValue = 'prod-1754052835575-289kvxqgl42h';
-    const isSecure = req.headers.host?.includes('aisentinel.app');
+    const isVercel = req.headers.host?.includes('vercel.app') || req.headers.host?.includes('aisentinel.app');
     
+    console.log('🍪 Setting cookie for host:', req.headers.host, 'isVercel:', isVercel);
+    
+    // Force secure settings for Vercel production
     res.setHeader('Set-Cookie', [
-      `sessionToken=${cookieValue}; Path=/; Max-Age=2592000; HttpOnly; ${isSecure ? 'Secure; ' : ''}SameSite=Strict`
+      `sessionToken=${cookieValue}; Path=/; Max-Age=2592000; Secure; SameSite=Lax`
     ]);
 
     console.log('🚀 Production session created for:', email);

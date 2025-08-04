@@ -624,64 +624,7 @@ export function setupAuthRoutes(app: Express) {
     }
   });
 
-  // Development manual authentication endpoint (since verification was successful)
-  app.post('/api/auth/dev-login', async (req, res) => {
-    try {
-      const { email } = req.body;
 
-      if (!email || email !== 'ed.duval15@gmail.com') {
-        return res.status(400).json({ success: false, message: "Invalid email" });
-      }
-
-      console.log(`🔧 DEV LOGIN: Creating session for ${email}`);
-
-      // Create development session AND store it in database
-      const sessionToken = `dev-session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-
-      // Store the session in database so authentication middleware can find it
-      const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
-
-      await storage.createUserSession({
-        userId: "42450602",
-        sessionToken,
-        email,
-        companyId: 1,
-        roleLevel: 1000,
-        expiresAt,
-      });
-
-      console.log(`✅ DEV LOGIN: Created and stored development session in database`);
-
-      // Set session cookie with Vercel-compatible settings
-      res.cookie('sessionToken', sessionToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax', // More permissive for development
-        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-        path: '/',
-      });
-
-      console.log(`✅ DEV LOGIN: Session created successfully`);
-
-      res.json({
-        success: true,
-        message: "Development authentication successful",
-        user: {
-          id: "42450602",
-          email: email,
-          firstName: 'Ed',
-          lastName: 'Duval',
-          role: 'super-user',
-          roleLevel: 1000,
-          companyId: 1,
-          companyName: 'Horizon Edge Enterprises'
-        }
-      });
-    } catch (error: any) {
-      console.error("Dev login error:", error);
-      res.status(500).json({ success: false, message: "Development authentication failed" });
-    }
-  });
 
   // Development-only test session creation endpoint
   app.post('/api/auth/create-test-session', async (req, res) => {

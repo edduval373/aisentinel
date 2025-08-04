@@ -1,0 +1,109 @@
+[APP DEBUG] STRICT MODE: Not authenticated, showing landing page
+index-CZG_Y_b6.js:650 [APP DEBUG] Not authenticated, showing landing page
+index-CZG_Y_b6.js:543 [LANDING DEBUG] Landing component rendering...
+index-CZG_Y_b6.js:543 [LANDING DEBUG] About to return JSX
+index-CZG_Y_b6.js:543   GET https://aisentinel-avutwj0l1-ed-duvals-projects.vercel.app/api/version/current 404 (Not Found)
+(anonymous) @ index-CZG_Y_b6.js:543
+(anonymous) @ index-CZG_Y_b6.js:543
+yf @ index-CZG_Y_b6.js:40
+za @ index-CZG_Y_b6.js:40
+h3 @ index-CZG_Y_b6.js:40
+bo @ index-CZG_Y_b6.js:40
+H1 @ index-CZG_Y_b6.js:40
+fo @ index-CZG_Y_b6.js:38
+(anonymous) @ index-CZG_Y_b6.js:40
+setTimeout
+s @ index-CZG_Y_b6.js:48
+a @ index-CZG_Y_b6.js:48
+batch @ index-CZG_Y_b6.js:48
+$i @ index-CZG_Y_b6.js:48
+setData @ index-CZG_Y_b6.js:48
+onSuccess @ index-CZG_Y_b6.js:48
+p @ index-CZG_Y_b6.js:48
+Promise.then
+b @ index-CZG_Y_b6.js:48
+start @ index-CZG_Y_b6.js:48
+fetch @ index-CZG_Y_b6.js:48
+pc @ index-CZG_Y_b6.js:48
+onSubscribe @ index-CZG_Y_b6.js:48
+subscribe @ index-CZG_Y_b6.js:48
+(anonymous) @ index-CZG_Y_b6.js:48
+cS @ index-CZG_Y_b6.js:38
+yf @ index-CZG_Y_b6.js:40
+za @ index-CZG_Y_b6.js:40
+H1 @ index-CZG_Y_b6.js:40
+fo @ index-CZG_Y_b6.js:38
+h3 @ index-CZG_Y_b6.js:40
+bo @ index-CZG_Y_b6.js:40
+US @ index-CZG_Y_b6.js:40
+T @ index-CZG_Y_b6.js:25
+F @ index-CZG_Y_b6.js:25
+feedback.js:1 [Violation] Added non-passive event listener to a scroll-blocking 'touchstart' event. Consider marking event handler as 'passive' to make the page more responsive. See https://www.chromestatus.com/feature/5745543795965952
+(anonymous) @ feedback.js:1
+Ve @ feedback.js:1
+(anonymous) @ feedback.js:1
+u @ feedback.js:1
+(anonymous) @ feedback.js:1
+(anonymous) @ feedback.js:1
+r @ feedback.js:1
+s @ feedback.js:1
+index-CZG_Y_b6.js:543 [LANDING DEBUG] Development authentication starting...
+index-CZG_Y_b6.js:543 [LANDING DEBUG] Current cookies before auth: 
+index-CZG_Y_b6.js:543   POST https://aisentinel-avutwj0l1-ed-duvals-projects.vercel.app/api/auth/dev-login 404 (Not Found)
+s @ index-CZG_Y_b6.js:543
+D6 @ index-CZG_Y_b6.js:37
+P6 @ index-CZG_Y_b6.js:37
+L6 @ index-CZG_Y_b6.js:37
+p1 @ index-CZG_Y_b6.js:37
+qE @ index-CZG_Y_b6.js:37
+(anonymous) @ index-CZG_Y_b6.js:37
+c0 @ index-CZG_Y_b6.js:40
+xE @ index-CZG_Y_b6.js:37
+Ch @ index-CZG_Y_b6.js:37
+Mx @ index-CZG_Y_b6.js:37
+Z6 @ index-CZG_Y_b6.js:37
+index-CZG_Y_b6.js:543 [LANDING DEBUG] Response status: 404
+index-CZG_Y_b6.js:543 [LANDING DEBUG] Response headers: {access-control-allow-headers: 'Content-Type, Authorization, X-Session-Token, Cookie', access-control-allow-methods: 'GET, POST, PUT, DELETE, OPTIONS', access-control-allow-origin: '*', cache-control: 'no-cache, no-store, must-revalidate', content-length: '50', …}
+index-CZG_Y_b6.js:543  [LANDING DEBUG] HTTP Error: 404 
+s @ index-CZG_Y_b6.js:543
+await in s
+D6 @ index-CZG_Y_b6.js:37
+P6 @ index-CZG_Y_b6.js:37
+L6 @ index-CZG_Y_b6.js:37
+p1 @ index-CZG_Y_b6.js:37
+qE @ index-CZG_Y_b6.js:37
+(anonymous) @ index-CZG_Y_b6.js:37
+c0 @ index-CZG_Y_b6.js:40
+xE @ index-CZG_Y_b6.js:37
+Ch @ index-CZG_Y_b6.js:37
+Mx @ index-CZG_Y_b6.js:37
+Z6 @ index-CZG_Y_b6.js:37
+index-CZG_Y_b6.js:543  [LANDING DEBUG] Error response body: {"error":"Not found","path":"/api/auth/dev-login"}
+s @ index-CZG_Y_b6.js:543
+await in s
+D6 @ index-CZG_Y_b6.js:37
+P6 @ index-CZG_Y_b6.js:37
+L6 @ index-CZG_Y_b6.js:37
+p1 @ index-CZG_Y_b6.js:37
+qE @ index-CZG_Y_b6.js:37
+(anonymous) @ index-CZG_Y_b6.js:37
+c0 @ index-CZG_Y_b6.js:40
+xE @ index-CZG_Y_b6.js:37
+Ch @ index-CZG_Y_b6.js:37
+Mx @ index-CZG_Y_b6.js:37
+Z6 @ index-CZG_Y_b6.js:37
+index-CZG_Y_b6.js:543  [LANDING DEBUG] Authentication error: Error: HTTP 404: 
+    at s (index-CZG_Y_b6.js:543:13211)
+s @ index-CZG_Y_b6.js:543
+await in s
+D6 @ index-CZG_Y_b6.js:37
+P6 @ index-CZG_Y_b6.js:37
+L6 @ index-CZG_Y_b6.js:37
+p1 @ index-CZG_Y_b6.js:37
+qE @ index-CZG_Y_b6.js:37
+(anonymous) @ index-CZG_Y_b6.js:37
+c0 @ index-CZG_Y_b6.js:40
+xE @ index-CZG_Y_b6.js:37
+Ch @ index-CZG_Y_b6.js:37
+Mx @ index-CZG_Y_b6.js:37
+Z6 @ index-CZG_Y_b6.js:37

@@ -1277,8 +1277,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Debug: List registered routes before setting up auth routes
+  console.log('Setting up authentication routes...');
+  
   // Setup authentication routes
   setupAuthRoutes(app);
+  
+  console.log('Authentication routes setup complete');
 
   // Trial system routes
   app.get('/api/trial/usage/:userId', requireAuth, async (req, res) => {

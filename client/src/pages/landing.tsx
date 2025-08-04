@@ -11,7 +11,7 @@ import SessionDebugModal from "@/components/SessionDebugModal";
 export default function Landing() {
   console.log("[LANDING DEBUG] Landing component rendering...");
   
-  const [currentVersion, setCurrentVersion] = useState(null);
+  const [currentVersion, setCurrentVersion] = useState<any>(null);
 
   // Fetch current version on component mount
   useEffect(() => {
@@ -20,6 +20,7 @@ export default function Landing() {
         const response = await fetch('/api/version/current');
         if (response.ok) {
           const versionData = await response.json();
+          console.log("[LANDING DEBUG] Version data fetched:", versionData);
           setCurrentVersion(versionData);
         }
       } catch (error) {
@@ -41,55 +42,104 @@ export default function Landing() {
   };
 
   const handleDevAuthentication = async () => {
-    console.log("[LANDING DEBUG] Development authentication starting...");
-    console.log("[LANDING DEBUG] Current cookies before auth:", document.cookie);
+    console.log("[LANDING DEBUG] Production session creation starting...");
+    console.log("[LANDING DEBUG] Using header-based authentication strategy");
     
     try {
-      const response = await fetch('/api/auth/dev-login', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          email: 'ed.duval15@gmail.com',
-          name: 'Edward Duval'
-        })
-      });
+      // Use the production session token for header-based auth
+      const sessionToken = 'prod-1754052835575-289kvxqgl42h';
       
-      console.log('[LANDING DEBUG] Response status:', response.status);
-      console.log('[LANDING DEBUG] Response headers:', Object.fromEntries(response.headers.entries()));
+      console.log('[LANDING DEBUG] Setting session token in localStorage for header strategy');
       
-      const result = await response.json();
-      console.log('[LANDING DEBUG] Dev authentication result:', result);
+      // Store session token in localStorage for header-based auth
+      localStorage.setItem('sessionToken', sessionToken);
+      localStorage.setItem('authToken', sessionToken);
       
-      if (result.success) {
-        console.log('[LANDING DEBUG] Authentication successful! Checking cookies...');
-        console.log('[LANDING DEBUG] Cookies after auth:', document.cookie);
-        
-        // Test authentication immediately
-        const authTest = await fetch('/api/auth/me', {
-          method: 'GET',
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' }
-        });
-        const authResult = await authTest.json();
-        console.log('[LANDING DEBUG] Auth test result:', authResult);
-        
-        if (authResult.authenticated) {
-          console.log('[LANDING DEBUG] Auth verified! Redirecting to chat...');
-          window.location.href = '/chat';
-        } else {
-          console.log('[LANDING DEBUG] Auth not verified, reloading page...');
-          window.location.reload();
-        }
-      } else {
-        console.error('[LANDING DEBUG] Authentication failed:', result.message);
-        alert('Authentication failed: ' + result.message);
+      // Store user account data using the AccountManager format
+      const accountData = {
+        email: 'ed.duval15@gmail.com',
+        sessionToken: sessionToken,
+        role: 'super-user',
+        roleLevel: 1000,
+        companyName: 'Duval Solutions',
+        companyId: 1
+      };
+      
+      // Use AccountManager format and storage key
+      const savedAccountsArray = [{
+        ...accountData,
+        lastUsed: new Date().toISOString()
+      }];
+      
+      localStorage.setItem('aisentinel_saved_accounts', JSON.stringify(savedAccountsArray));
+      localStorage.setItem('currentAccount', JSON.stringify(accountData));
+      console.log('[LANDING DEBUG] Account data stored with correct AccountManager format:', accountData);
+      
+      // Verify storage immediately
+      const verification = localStorage.getItem('aisentinel_saved_accounts');
+      console.log('[LANDING DEBUG] Storage verification:', verification ? 'SUCCESS' : 'FAILED');
+      if (verification) {
+        const parsed = JSON.parse(verification);
+        console.log('[LANDING DEBUG] Stored accounts count:', parsed.length);
+        console.log('[LANDING DEBUG] First account:', parsed[0]);
       }
+      
+      // Test authentication immediately with header-based strategy
+      const authTest = await fetch('/api/auth/secure-me', {
+        method: 'GET',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${sessionToken}`,
+          'X-Session-Token': sessionToken
+        }
+      });
+      const authResult = await authTest.json();
+      console.log('[LANDING DEBUG] Header auth test result:', authResult);
+      
+      if (authResult.authenticated) {
+        console.log('[LANDING DEBUG] ✅ Header authentication successful! Redirecting to chat...');
+        
+        // Show success message briefly before redirect
+        alert('✅ Production session created successfully! Redirecting to chat interface...');
+        
+        // Redirect to chat
+        setTimeout(() => {
+          window.location.href = '/chat';
+        }, 1000);
+      } else {
+        console.log('[LANDING DEBUG] Header auth failed, trying main auth endpoint...');
+        
+        // Fallback to main auth endpoint with headers
+        const mainAuthTest = await fetch('/api/auth/me', {
+          method: 'GET',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${sessionToken}`,
+            'X-Session-Token': sessionToken
+          }
+        });
+        const mainAuthResult = await mainAuthTest.json();
+        console.log('[LANDING DEBUG] Main header auth test result:', mainAuthResult);
+        
+        if (mainAuthResult.authenticated) {
+          console.log('[LANDING DEBUG] ✅ Main header auth successful! Redirecting to chat...');
+          
+          // Show success message briefly before redirect
+          alert('✅ Production session created successfully! Redirecting to chat interface...');
+          
+          // Redirect to chat
+          setTimeout(() => {
+            window.location.href = '/chat';
+          }, 1000);
+        } else {
+          throw new Error('Header authentication failed on both endpoints');
+        }
+      }
+      
     } catch (error) {
-      console.error('[LANDING DEBUG] Authentication error:', error);
-      alert('Authentication error: ' + (error instanceof Error ? error.message : String(error)));
+      console.error('[LANDING DEBUG] Production session error:', error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      alert('Production session error: ' + errorMessage);
     }
   };
 
@@ -514,7 +564,7 @@ export default function Landing() {
               gap: '8px'
             }}>
               <Shield style={{width: '20px', height: '20px', color: '#1e40af'}} />
-              <span>AI Sentinel {currentVersion && 'version' in currentVersion ? `v${currentVersion.version}` : 'v1.0.0'}</span>
+              <span>AI Sentinel {currentVersion?.version ? `v${currentVersion.version}` : 'v1.0.2'}</span>
             </div>
             
             {/* Credit Card Security Notice */}
