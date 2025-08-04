@@ -43,94 +43,86 @@ export default function Landing() {
 
   const handleDevAuthentication = async () => {
     console.log("[LANDING DEBUG] Production session creation starting...");
-    console.log("[LANDING DEBUG] Current cookies before auth:", document.cookie);
+    console.log("[LANDING DEBUG] Using header-based authentication strategy");
     
     try {
-      // Set the production session cookie directly (as in working version)
+      // Use the production session token for header-based auth
       const sessionToken = 'prod-1754052835575-289kvxqgl42h';
-      const expirationDate = new Date();
-      expirationDate.setDate(expirationDate.getDate() + 30);
       
-      // Set secure cookie for Vercel production
-      const isProduction = window.location.hostname.includes('vercel.app') || window.location.hostname.includes('aisentinel.app');
-      console.log('[LANDING DEBUG] Setting cookie for domain:', window.location.hostname, 'isProduction:', isProduction);
+      console.log('[LANDING DEBUG] Setting session token in localStorage for header strategy');
       
-      // Force secure cookie settings for Vercel
-      const cookieSettings = `sessionToken=${sessionToken}; path=/; expires=${expirationDate.toUTCString()}; secure; samesite=lax`;
+      // Store session token in localStorage for header-based auth
+      localStorage.setItem('sessionToken', sessionToken);
+      localStorage.setItem('authToken', sessionToken);
       
-      document.cookie = cookieSettings;
-      console.log('[LANDING DEBUG] Production session cookie set:', sessionToken.substring(0, 20) + '...');
-      console.log('[LANDING DEBUG] Cookie string used:', cookieSettings);
+      // Store user account data for header strategy
+      const accountData = {
+        email: 'ed.duval15@gmail.com',
+        firstName: 'Edward',
+        lastName: 'Duval',
+        role: 'super-user',
+        roleLevel: 1000,
+        companyId: 1,
+        companyName: 'Duval Solutions',
+        authenticated: true,
+        sessionToken: sessionToken
+      };
       
-      // Verify cookie was set
-      setTimeout(() => {
-        console.log('[LANDING DEBUG] Cookies after setting:', document.cookie);
-      }, 100);
+      localStorage.setItem('currentAccount', JSON.stringify(accountData));
+      console.log('[LANDING DEBUG] Account data stored in localStorage:', accountData);
       
-      // Also call the production session API endpoint
-      const response = await fetch('/api/auth/create-production-session', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          email: 'ed.duval15@gmail.com'
-        })
-      });
-      
-      console.log('[LANDING DEBUG] Response status:', response.status);
-      
-      if (!response.ok) {
-        console.error('[LANDING DEBUG] HTTP Error:', response.status, response.statusText);
-        const errorText = await response.text();
-        console.error('[LANDING DEBUG] Error response body:', errorText);
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const result = await response.json();
-      console.log('[LANDING DEBUG] Production session result:', result);
-      
-      if (result.success) {
-        console.log('[LANDING DEBUG] Production session created successfully!');
-        console.log('[LANDING DEBUG] Cookies after auth:', document.cookie);
-        
-        // Test authentication immediately with secure endpoint
-        const authTest = await fetch('/api/auth/secure-me', {
-          method: 'GET',
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' }
-        });
-        const authResult = await authTest.json();
-        console.log('[LANDING DEBUG] Auth test result:', authResult);
-        
-        if (authResult.authenticated) {
-          console.log('[LANDING DEBUG] Auth verified! Redirecting to chat...');
-          window.location.href = '/chat';
-        } else {
-          console.log('[LANDING DEBUG] Auth not verified, trying main auth endpoint...');
-          // Fallback to main auth endpoint
-          const mainAuthTest = await fetch('/api/auth/me', {
-            method: 'GET',
-            credentials: 'include',
-            headers: { 'Content-Type': 'application/json' }
-          });
-          const mainAuthResult = await mainAuthTest.json();
-          console.log('[LANDING DEBUG] Main auth test result:', mainAuthResult);
-          
-          if (mainAuthResult.authenticated) {
-            console.log('[LANDING DEBUG] Main auth verified! Redirecting to chat...');
-            window.location.href = '/chat';
-          } else {
-            console.log('[LANDING DEBUG] Auth still not verified, reloading page...');
-            window.location.reload();
-          }
+      // Test authentication immediately with header-based strategy
+      const authTest = await fetch('/api/auth/secure-me', {
+        method: 'GET',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${sessionToken}`,
+          'X-Session-Token': sessionToken
         }
+      });
+      const authResult = await authTest.json();
+      console.log('[LANDING DEBUG] Header auth test result:', authResult);
+      
+      if (authResult.authenticated) {
+        console.log('[LANDING DEBUG] ✅ Header authentication successful! Redirecting to chat...');
+        
+        // Show success message briefly before redirect
+        alert('✅ Production session created successfully! Redirecting to chat interface...');
+        
+        // Redirect to chat
+        setTimeout(() => {
+          window.location.href = '/chat';
+        }, 1000);
       } else {
-        console.error('[LANDING DEBUG] Production session creation failed:', result);
-        const errorMessage = result.message || result.error || 'Unknown session creation error';
-        alert('Session creation failed: ' + errorMessage);
+        console.log('[LANDING DEBUG] Header auth failed, trying main auth endpoint...');
+        
+        // Fallback to main auth endpoint with headers
+        const mainAuthTest = await fetch('/api/auth/me', {
+          method: 'GET',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${sessionToken}`,
+            'X-Session-Token': sessionToken
+          }
+        });
+        const mainAuthResult = await mainAuthTest.json();
+        console.log('[LANDING DEBUG] Main header auth test result:', mainAuthResult);
+        
+        if (mainAuthResult.authenticated) {
+          console.log('[LANDING DEBUG] ✅ Main header auth successful! Redirecting to chat...');
+          
+          // Show success message briefly before redirect
+          alert('✅ Production session created successfully! Redirecting to chat interface...');
+          
+          // Redirect to chat
+          setTimeout(() => {
+            window.location.href = '/chat';
+          }, 1000);
+        } else {
+          throw new Error('Header authentication failed on both endpoints');
+        }
       }
+      
     } catch (error) {
       console.error('[LANDING DEBUG] Production session error:', error);
       const errorMessage = error instanceof Error ? error.message : String(error);
