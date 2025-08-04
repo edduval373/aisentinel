@@ -59,6 +59,8 @@ const capabilities = [
 
 export default function CreateModels() {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [editingTemplate, setEditingTemplate] = useState<any>(null);
   const [activeTab, setActiveTab] = useState("basic");
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -204,7 +206,91 @@ export default function CreateModels() {
     },
   });
 
+  // Update template mutation
+  const updateTemplateMutation = useMutation({
+    mutationFn: async ({ id, ...data }: { id: number } & z.infer<typeof templateSchema>) => {
+      const sessionToken = localStorage.getItem('sessionToken') || localStorage.getItem('authToken');
+      const headers: any = {
+        'Content-Type': 'application/json'
+      };
+      
+      if (sessionToken) {
+        headers['Authorization'] = `Bearer ${sessionToken}`;
+        headers['X-Session-Token'] = sessionToken;
+      }
+      
+      const response = await fetch(`/api/admin/ai-model-templates/${id}`, {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify(data)
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+        throw new Error(errorData.message || `HTTP ${response.status}`);
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/ai-model-templates"] });
+      setShowEditDialog(false);
+      setEditingTemplate(null);
+      templateForm.reset();
+      toast({ 
+        title: "Template Updated", 
+        description: "AI model template has been updated successfully",
+      });
+    },
+    onError: (error: any) => {
+      console.error("Update template error:", error);
+      toast({ 
+        title: "Update Failed", 
+        description: error.message || "Failed to update AI model template. Please try again."
+      });
+    },
+  });
 
+  // Delete template mutation
+  const deleteTemplateMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const sessionToken = localStorage.getItem('sessionToken') || localStorage.getItem('authToken');
+      const headers: any = {
+        'Content-Type': 'application/json'
+      };
+      
+      if (sessionToken) {
+        headers['Authorization'] = `Bearer ${sessionToken}`;
+        headers['X-Session-Token'] = sessionToken;
+      }
+      
+      const response = await fetch(`/api/admin/ai-model-templates/${id}`, {
+        method: 'DELETE',
+        headers
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+        throw new Error(errorData.message || `HTTP ${response.status}`);
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/ai-model-templates"] });
+      toast({ 
+        title: "Template Deleted", 
+        description: "AI model template has been deleted successfully",
+      });
+    },
+    onError: (error: any) => {
+      console.error("Delete template error:", error);
+      toast({ 
+        title: "Deletion Failed", 
+        description: error.message || "Failed to delete AI model template. Please try again."
+      });
+    },
+  });
 
   const onSubmitTemplate = (data: z.infer<typeof templateSchema>) => {
     console.log('🚀 Form submission triggered with data:', data);
