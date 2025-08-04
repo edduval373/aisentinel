@@ -11,7 +11,7 @@ import SessionDebugModal from "@/components/SessionDebugModal";
 export default function Landing() {
   console.log("[LANDING DEBUG] Landing component rendering...");
   
-  const [currentVersion, setCurrentVersion] = useState(null);
+  const [currentVersion, setCurrentVersion] = useState<any>(null);
 
   // Fetch current version on component mount
   useEffect(() => {
@@ -20,6 +20,7 @@ export default function Landing() {
         const response = await fetch('/api/version/current');
         if (response.ok) {
           const versionData = await response.json();
+          console.log("[LANDING DEBUG] Version data fetched:", versionData);
           setCurrentVersion(versionData);
         }
       } catch (error) {
@@ -514,7 +515,7 @@ export default function Landing() {
               gap: '8px'
             }}>
               <Shield style={{width: '20px', height: '20px', color: '#1e40af'}} />
-              <span>AI Sentinel {currentVersion && 'version' in currentVersion ? `v${currentVersion.version}` : 'v1.0.0'}</span>
+              <span>AI Sentinel {currentVersion?.version ? `v${currentVersion.version}` : 'v1.0.2'}</span>
             </div>
             
             {/* Credit Card Security Notice */}
