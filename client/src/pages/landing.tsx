@@ -55,21 +55,34 @@ export default function Landing() {
       localStorage.setItem('sessionToken', sessionToken);
       localStorage.setItem('authToken', sessionToken);
       
-      // Store user account data for header strategy
+      // Store user account data using the AccountManager format
       const accountData = {
         email: 'ed.duval15@gmail.com',
-        firstName: 'Edward',
-        lastName: 'Duval',
+        sessionToken: sessionToken,
         role: 'super-user',
         roleLevel: 1000,
-        companyId: 1,
         companyName: 'Duval Solutions',
-        authenticated: true,
-        sessionToken: sessionToken
+        companyId: 1
       };
       
+      // Use AccountManager format and storage key
+      const savedAccountsArray = [{
+        ...accountData,
+        lastUsed: new Date().toISOString()
+      }];
+      
+      localStorage.setItem('aisentinel_saved_accounts', JSON.stringify(savedAccountsArray));
       localStorage.setItem('currentAccount', JSON.stringify(accountData));
-      console.log('[LANDING DEBUG] Account data stored in localStorage:', accountData);
+      console.log('[LANDING DEBUG] Account data stored with correct AccountManager format:', accountData);
+      
+      // Verify storage immediately
+      const verification = localStorage.getItem('aisentinel_saved_accounts');
+      console.log('[LANDING DEBUG] Storage verification:', verification ? 'SUCCESS' : 'FAILED');
+      if (verification) {
+        const parsed = JSON.parse(verification);
+        console.log('[LANDING DEBUG] Stored accounts count:', parsed.length);
+        console.log('[LANDING DEBUG] First account:', parsed[0]);
+      }
       
       // Test authentication immediately with header-based strategy
       const authTest = await fetch('/api/auth/secure-me', {
