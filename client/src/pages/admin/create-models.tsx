@@ -207,6 +207,9 @@ export default function CreateModels() {
 
 
   const onSubmitTemplate = (data: z.infer<typeof templateSchema>) => {
+    console.log('🚀 Form submission triggered with data:', data);
+    console.log('🚀 Form validation state:', templateForm.formState);
+    console.log('🚀 Form errors:', templateForm.formState.errors);
     createTemplateMutation.mutate(data);
   };
 
@@ -665,7 +668,7 @@ function TemplateForm({
                               if (e.target.checked) {
                                 field.onChange([...currentCapabilities, capability]);
                               } else {
-                                field.onChange(currentCapabilities.filter(c => c !== capability));
+                                field.onChange(currentCapabilities.filter((c: string) => c !== capability));
                               }
                             }}
                             style={{ marginRight: '4px' }}
