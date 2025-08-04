@@ -19,7 +19,7 @@ async function throwIfResNotOk(res: Response) {
 
 // Production fallback for API failures
 async function getFallbackResponse(url: string, method: string, data?: unknown): Promise<any> {
-  const isProduction = window.location.hostname.includes('aisentinel.app');
+  const isProduction = window.location.hostname.includes('aisentinel.app') || window.location.hostname.includes('vercel.app');
 
   if (!isProduction) return null;
 
@@ -27,6 +27,25 @@ async function getFallbackResponse(url: string, method: string, data?: unknown):
   if (url.includes('auth/me') && method === 'GET') {
     console.log('🚫 [FALLBACK] Auth fallback disabled - must use real sessions');
     return null; // Force real authentication
+  }
+
+  // AI Model Templates fallback - redirect to development server
+  if (url.includes('admin/ai-model-templates') && method === 'GET') {
+    console.log('🔄 [FALLBACK] AI model templates - redirecting to development server');
+    try {
+      const devResponse = await fetch('https://aisentinel-judm9g13-ed-duvals-projects.vercel.app/api/ai-models', {
+        headers: {
+          'Authorization': `Bearer prod-1754052835575-289kvxqgl42h`,
+          'X-Session-Token': 'prod-1754052835575-289kvxqgl42h'
+        }
+      });
+      if (devResponse.ok) {
+        return await devResponse.json();
+      }
+    } catch (error) {
+      console.error('🚫 [FALLBACK] Development server fallback failed:', error);
+    }
+    return null;
   }
 
   // Admin companies fallback
