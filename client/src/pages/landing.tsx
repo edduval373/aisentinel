@@ -51,14 +51,21 @@ export default function Landing() {
       const expirationDate = new Date();
       expirationDate.setDate(expirationDate.getDate() + 30);
       
-      // Set secure cookie for production
-      const isProduction = window.location.hostname.includes('aisentinel.app') || window.location.hostname.includes('vercel.app');
-      const cookieSettings = isProduction 
-          ? `sessionToken=${sessionToken}; path=/; expires=${expirationDate.toUTCString()}; secure; samesite=strict`
-          : `sessionToken=${sessionToken}; path=/; expires=${expirationDate.toUTCString()}; samesite=lax`;
+      // Set secure cookie for Vercel production
+      const isProduction = window.location.hostname.includes('vercel.app') || window.location.hostname.includes('aisentinel.app');
+      console.log('[LANDING DEBUG] Setting cookie for domain:', window.location.hostname, 'isProduction:', isProduction);
+      
+      // Force secure cookie settings for Vercel
+      const cookieSettings = `sessionToken=${sessionToken}; path=/; expires=${expirationDate.toUTCString()}; secure; samesite=lax`;
       
       document.cookie = cookieSettings;
       console.log('[LANDING DEBUG] Production session cookie set:', sessionToken.substring(0, 20) + '...');
+      console.log('[LANDING DEBUG] Cookie string used:', cookieSettings);
+      
+      // Verify cookie was set
+      setTimeout(() => {
+        console.log('[LANDING DEBUG] Cookies after setting:', document.cookie);
+      }, 100);
       
       // Also call the production session API endpoint
       const response = await fetch('/api/auth/create-production-session', {
