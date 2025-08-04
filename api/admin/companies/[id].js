@@ -108,29 +108,26 @@ export default async function handler(req, res) {
         await client.query('BEGIN');
         
         try {
-          console.log(`🗑️ [DELETE] Starting comprehensive deletion for company "${companyName}" (ID: ${companyId})...`);
+          console.log(`🗑️ [DELETE] Starting deletion for company "${companyName}" (ID: ${companyId})...`);
           
-          // STEP 1: Delete all session-dependent data first
-          console.log(`🗑️ [DELETE] STEP 1: Cleaning session-dependent data...`);
-          
-          // Delete chat messages that reference both session_id AND company_id
-          const deleteMessagesByCompanyQuery = 'DELETE FROM chat_messages WHERE company_id = $1';
-          const messagesByCompanyResult = await client.query(deleteMessagesByCompanyQuery, [companyId]);
-          console.log(`✅ [DELETE] Deleted ${messagesByCompanyResult.rowCount} chat messages by company`);
-          
-          // Delete chat attachments that reference both session_id AND company_id
-          const deleteAttachmentsByCompanyQuery = 'DELETE FROM chat_attachments WHERE company_id = $1';
-          const attachmentsByCompanyResult = await client.query(deleteAttachmentsByCompanyQuery, [companyId]);
-          console.log(`✅ [DELETE] Deleted ${attachmentsByCompanyResult.rowCount} chat attachments by company`);
-          
-          // STEP 2: Delete chat_sessions now that dependents are gone
-          console.log(`🗑️ [DELETE] STEP 2: Deleting chat sessions...`);
+          // STEP 1: Delete chat_sessions that reference this company
+          console.log(`🗑️ [DELETE] STEP 1: Deleting chat_sessions for company ${companyId}...`);
           const deleteSessionsQuery = 'DELETE FROM chat_sessions WHERE company_id = $1';
           const sessionsResult = await client.query(deleteSessionsQuery, [companyId]);
           console.log(`✅ [DELETE] Deleted ${sessionsResult.rowCount} chat sessions`);
           
-          // STEP 3: Delete all other company-related data
-          console.log(`🗑️ [DELETE] STEP 3: Deleting all other company-related data...`);
+          // STEP 2: Delete other data that references company directly
+          console.log(`🗑️ [DELETE] STEP 2: Deleting other company data...`);
+          
+          // Delete chat messages 
+          const deleteMessagesQuery = 'DELETE FROM chat_messages WHERE company_id = $1';
+          const messagesResult = await client.query(deleteMessagesQuery, [companyId]);
+          console.log(`✅ [DELETE] Deleted ${messagesResult.rowCount} chat messages`);
+          
+          // Delete chat attachments
+          const deleteAttachmentsQuery = 'DELETE FROM chat_attachments WHERE company_id = $1';
+          const attachmentsResult = await client.query(deleteAttachmentsQuery, [companyId]);
+          console.log(`✅ [DELETE] Deleted ${attachmentsResult.rowCount} chat attachments`);
           
           // Delete user_activities
           const deleteActivitiesQuery = 'DELETE FROM user_activities WHERE company_id = $1';
@@ -197,9 +194,9 @@ export default async function handler(req, res) {
             id: companyId, 
             name: companyName,
             deletedRecords: {
-              chatMessages: messagesByCompanyResult.rowCount,
-              chatAttachments: attachmentsByCompanyResult.rowCount,
               chatSessions: sessionsResult.rowCount,
+              chatMessages: messagesResult.rowCount,
+              chatAttachments: attachmentsResult.rowCount,
               userActivities: activitiesResult.rowCount,
               userSessions: userSessionsResult.rowCount,
               trialUsage: trialUsageResult.rowCount,
