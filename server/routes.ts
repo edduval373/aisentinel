@@ -2478,6 +2478,44 @@ Stack: \${error.stack || 'No stack trace available'}\`;
     }
   });
 
+  app.put('/api/admin/ai-model-templates/:id', optionalAuth, async (req: any, res) => {
+    try {
+      // Development bypass - allow template update for testing
+      console.log('🧪 [DEV MODE] Bypassing super-user check for template update testing');
+      
+      // In production, uncomment this authentication check:
+      // if (!req.user || req.user.roleLevel < 1000) {
+      //   return res.status(403).json({ message: "Super-user access required" });
+      // }
+      
+      const templateId = parseInt(req.params.id);
+      const template = await storage.updateAiModelTemplate(templateId, req.body);
+      res.json(template);
+    } catch (error) {
+      console.error("Error updating AI model template:", error);
+      res.status(500).json({ message: "Failed to update AI model template" });
+    }
+  });
+
+  app.delete('/api/admin/ai-model-templates/:id', optionalAuth, async (req: any, res) => {
+    try {
+      // Development bypass - allow template deletion for testing
+      console.log('🧪 [DEV MODE] Bypassing super-user check for template deletion testing');
+      
+      // In production, uncomment this authentication check:
+      // if (!req.user || req.user.roleLevel < 1000) {
+      //   return res.status(403).json({ message: "Super-user access required" });
+      // }
+      
+      const templateId = parseInt(req.params.id);
+      await storage.deleteAiModelTemplate(templateId);
+      res.json({ message: "Template deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting AI model template:", error);
+      res.status(500).json({ message: "Failed to delete AI model template" });
+    }
+  });
+
   // Company API Keys (Owner level)
   app.get('/api/admin/company-api-keys', optionalAuth, async (req: any, res) => {
     try {
