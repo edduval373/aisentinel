@@ -1,0 +1,50 @@
+
+﻿
+index-AGkHzHjt.js:492 ❌ [SESSION CREATE] Session creation failed: 405 
+index-AGkHzHjt.js:492 ❌ [SESSION CREATE] Full error response: 
+Object
+index-AGkHzHjt.js:492 ❌ [SESSION CREATE] Failed to create session: Error: Failed to create chat session: 405 
+    at Object.mutationFn (index-AGkHzHjt.js:492:25708)
+index-AGkHzHjt.js:492 ❌ [SESSION CREATE] Error details: 
+Object
+index-AGkHzHjt.js:492 AI Models error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-AGkHzHjt.js:50:3337
+index-AGkHzHjt.js:492 Activity Types error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-AGkHzHjt.js:50:3337
+index-AGkHzHjt.js:492 AI Models error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-AGkHzHjt.js:50:3337
+index-AGkHzHjt.js:492 Activity Types error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-AGkHzHjt.js:50:3337
+index-AGkHzHjt.js:492 ❌ [SESSION CREATE] Session creation failed: 405 
+
+index-AGkHzHjt.js:492 ❌ [SESSION CREATE] Full error response: 
+Object
+index-AGkHzHjt.js:492 ❌ [SESSION CREATE] Failed to create session: Error: Failed to create chat session: 405 
+    at Object.mutationFn (index-AGkHzHjt.js:492:25708)
+index-AGkHzHjt.js:492 ❌ [SESSION CREATE] Error details: 
+Object
+index-AGkHzHjt.js:492 AI Models error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-AGkHzHjt.js:50:3337
+index-AGkHzHjt.js:492 Activity Types error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-AGkHzHjt.js:50:3337
+index-AGkHzHjt.js:492 AI Models error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-AGkHzHjt.js:50:3337
+index-AGkHzHjt.js:492 Activity Types error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-AGkHzHjt.js:50:3337
+index-AGkHzHjt.js:492 ❌ [SESSION CREATE] Session creation failed: 405 
+index-AGkHzHjt.js:492 ❌ [SESSION CREATE] Full error response: 
+Object
+index-AGkHzHjt.js:492 ❌ [SESSION CREATE] Failed to create session: Error: Failed to create chat session: 405 
+    at Object.mutationFn (index-AGkHzHjt.js:492:25708)
+index-AGkHzHjt.js:492 ❌ [SESSION CREATE] Error details: 
+Object
+index-AGkHzHjt.js:615 Delete template error: Error: Unknown error
+    at Object.mutationFn (index-AGkHzHjt.js:615:6291)
+index-AGkHzHjt.js:615 ❌ [TEMPLATE UPDATE] Request failed with status 405
+index-AGkHzHjt.js:615 ❌ [TEMPLATE UPDATE] Error data: 
+Object
+index-AGkHzHjt.js:615 ❌ [TEMPLATE UPDATE] Error callback executed: Error: Unknown error
+    at Object.mutationFn (index-AGkHzHjt.js:615:4749)
+index-AGkHzHjt.js:615 ❌ [TEMPLATE UPDATE] Error message: Unknown error
+index-AGkHzHjt.js:615 ❌ [TEMPLATE UPDATE] Full error object: Error: Unknown error
+    at Object.mutationFn (index-AGkHzHjt.js:615:4749)

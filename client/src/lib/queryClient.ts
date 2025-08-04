@@ -29,23 +29,11 @@ async function getFallbackResponse(url: string, method: string, data?: unknown):
     return null; // Force real authentication
   }
 
-  // AI Model Templates fallback - redirect to development server
-  if (url.includes('admin/ai-model-templates') && method === 'GET') {
-    console.log('🔄 [FALLBACK] AI model templates - redirecting to development server');
-    try {
-      const devResponse = await fetch('https://aisentinel-judm9g13-ed-duvals-projects.vercel.app/api/ai-models', {
-        headers: {
-          'Authorization': `Bearer prod-1754052835575-289kvxqgl42h`,
-          'X-Session-Token': 'prod-1754052835575-289kvxqgl42h'
-        }
-      });
-      if (devResponse.ok) {
-        return await devResponse.json();
-      }
-    } catch (error) {
-      console.error('🚫 [FALLBACK] Development server fallback failed:', error);
-    }
-    return null;
+  // AI Model Templates fallback - CRUD operations not supported in production
+  if (url.includes('admin/ai-model-templates')) {
+    console.log(`🚫 [FALLBACK] AI model template ${method} operations not supported in production`);
+    console.log('🚫 [FALLBACK] Template management requires development environment');
+    throw new Error(`Template ${method} operations are only available in development environment. Please use the development server for template management.`);
   }
 
   // Admin companies fallback
