@@ -671,7 +671,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createAiModelTemplate(template: InsertAiModelTemplate): Promise<AiModelTemplate> {
-    const [created] = await db.insert(aiModelTemplates).values(template).returning();
+    // Provide default apiEndpoint if not specified
+    const templateData = {
+      ...template,
+      apiEndpoint: template.apiEndpoint || `https://api.${template.provider}.com/v1/completions`
+    };
+    const [created] = await db.insert(aiModelTemplates).values(templateData).returning();
     return created;
   }
 

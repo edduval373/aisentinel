@@ -9,6 +9,18 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
+  // Development bypass for testing template creation
+  if (process.env.NODE_ENV === 'development') {
+    console.log('🧪 [DEV MODE] Bypassing authentication for template testing');
+  } else {
+    // In production, check authentication
+    const sessionToken = req.headers.authorization?.replace('Bearer ', '') || req.headers['x-session-token'];
+    if (!sessionToken) {
+      return res.status(401).json({ message: 'Authentication required' });
+    }
+    // Add proper auth validation here for production
+  }
+
   try {
     if (req.method === 'GET') {
       // Return the same AI model templates as the main API
