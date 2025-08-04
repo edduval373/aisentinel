@@ -24,10 +24,16 @@ export default async function handler(req, res) {
       // Development bypass - allow template update for testing in production
       console.log('🧪 [VERCEL] Bypassing super-user check for template update testing');
       
+      // Log the exact request body before processing
+      console.log(`🔍 [TEMPLATE PUT] Raw request body:`, JSON.stringify(req.body, null, 2));
+      console.log(`🔍 [TEMPLATE PUT] Template ID:`, templateId);
+      
       const templateData = {
         ...req.body,
         apiEndpoint: req.body.apiEndpoint || `https://api.${req.body.provider}.com/v1/completions`
       };
+      
+      console.log(`🔍 [TEMPLATE PUT] Final template data:`, JSON.stringify(templateData, null, 2));
 
       const [template] = await db
         .update(aiModelTemplates)
