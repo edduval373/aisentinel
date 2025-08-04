@@ -125,10 +125,13 @@ export default function CreateModels() {
   }
 
   // Fetch AI model templates with proper authentication headers
-  const { data: templates = [], isLoading: templatesLoading, error, isError } = useQuery({
+  const { data: templates = [], isLoading: templatesLoading, error, isError, refetch } = useQuery({
     queryKey: ["/api/admin/ai-model-templates"],
     queryFn: async () => {
+      console.log(`🔄 [TEMPLATES QUERY] Starting template fetch...`);
       const sessionToken = localStorage.getItem('sessionToken') || localStorage.getItem('authToken');
+      console.log(`🔄 [TEMPLATES QUERY] Session token found:`, !!sessionToken);
+      
       const headers: any = {
         'Content-Type': 'application/json'
       };
@@ -138,15 +141,23 @@ export default function CreateModels() {
         headers['X-Session-Token'] = sessionToken;
       }
       
+      console.log(`🔄 [TEMPLATES QUERY] Making request to /api/admin/ai-model-templates`);
       const response = await fetch('/api/admin/ai-model-templates', { headers });
+      console.log(`🔄 [TEMPLATES QUERY] Response status:`, response.status);
+      
       if (!response.ok) {
+        console.error(`❌ [TEMPLATES QUERY] Request failed:`, response.status, response.statusText);
         throw new Error(`Failed to fetch templates: ${response.status} ${response.statusText}`);
       }
-      return response.json();
+      
+      const data = await response.json();
+      console.log(`✅ [TEMPLATES QUERY] Received ${data.length} templates:`, data.map(t => ({ id: t.id, name: t.name })));
+      return data;
     },
     retry: 2,
-    refetchOnWindowFocus: false,
-    staleTime: 30000,
+    refetchOnWindowFocus: true,
+    staleTime: 0, // Always refetch when invalidated
+    gcTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
   const templateForm = useForm<z.infer<typeof templateSchema>>({
@@ -188,14 +199,22 @@ export default function CreateModels() {
       
       return response.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/ai-model-templates"] });
+    onSuccess: async (data) => {
+      console.log(`✅ [TEMPLATE CREATE] Success callback executed with data:`, data);
+      console.log(`✅ [TEMPLATE CREATE] Invalidating queries...`);
+      await queryClient.invalidateQueries({ queryKey: ["/api/admin/ai-model-templates"] });
+      console.log(`✅ [TEMPLATE CREATE] Refetching templates manually...`);
+      await refetch();
+      console.log(`✅ [TEMPLATE CREATE] Setting showCreateDialog to false...`);
       setShowCreateDialog(false);
+      console.log(`✅ [TEMPLATE CREATE] Resetting form...`);
       templateForm.reset();
+      console.log(`✅ [TEMPLATE CREATE] Showing success toast...`);
       toast({ 
         title: "Template Created", 
         description: "AI model template has been created successfully",
       });
+      console.log(`✅ [TEMPLATE CREATE] Success callback completed - modal should close`);
     },
     onError: (error: any) => {
       console.error("Create template error:", error);
@@ -248,10 +267,12 @@ export default function CreateModels() {
       console.log(`✅ [TEMPLATE UPDATE] Success:`, result);
       return result;
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       console.log(`✅ [TEMPLATE UPDATE] Success callback executed with data:`, data);
       console.log(`✅ [TEMPLATE UPDATE] Invalidating queries...`);
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/ai-model-templates"] });
+      await queryClient.invalidateQueries({ queryKey: ["/api/admin/ai-model-templates"] });
+      console.log(`✅ [TEMPLATE UPDATE] Refetching templates manually...`);
+      await refetch();
       console.log(`✅ [TEMPLATE UPDATE] Setting showEditDialog to false...`);
       setShowEditDialog(false);
       console.log(`✅ [TEMPLATE UPDATE] Clearing editing template...`);
@@ -543,6 +564,8 @@ export default function CreateModels() {
           gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', 
           gap: '24px'
         }}>
+          {/* Debug: Display template count and list */}
+          {console.log(`🎨 [TEMPLATES RENDER] Rendering ${templates.length} templates:`, templates.map(t => ({ id: t.id, name: t.name })))}
           {templates.length === 0 ? (
             <div style={{
               gridColumn: '1 / -1',
