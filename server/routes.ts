@@ -1240,6 +1240,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Model fusion config (singular) route
+  app.get('/api/model-fusion-config', optionalAuth, async (req: any, res) => {
+    try {
+      let companyId = 1; // Default to company 1 for demo users
+
+      // Check for header-based authentication first
+      const bearerToken = req.headers.authorization?.replace('Bearer ', '');
+      const sessionToken = req.headers['x-session-token'] as string;
+      const authToken = bearerToken || sessionToken;
+
+      if (authToken && authToken.startsWith('prod-session-')) {
+        const authService = await import('./services/authService');
+        const session = await authService.authService.verifySession(authToken);
+        if (session) {
+          companyId = session.companyId;
+          console.log(`✅ Header auth for model fusion config: companyId=${companyId}`);
+        }
+      }
+      // If user is authenticated and has a company, use their company
+      else if (req.user && req.user.companyId) {
+        companyId = req.user.companyId;
+        console.log("Authenticated user requesting model fusion config:", { userId: req.user.userId, companyId });
+      } else {
+        console.log("Demo mode model fusion config request");
+      }
+
+      let config = await storage.getModelFusionConfig(companyId);
+
+      // If no config found, provide demo fallback
+      if (!config) {
+        console.log("No model fusion config found, providing demo fallback");
+        config = {
+          id: 1,
+          companyId,
+          isEnabled: false,
+          summaryModelId: null,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+      }
+
+      console.log("Returning model fusion config for company", companyId + ":", config);
+      return res.json(config);
+    } catch (error) {
+      console.error("Error fetching model fusion config:", error);
+      res.status(500).json({ message: "Failed to fetch model fusion config" });
+    }
+  });
+
   // Model fusion configs (plural) route - alias for singular route
   app.get('/api/model-fusion-configs', optionalAuth, async (req: any, res) => {
     try {
