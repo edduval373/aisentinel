@@ -297,6 +297,16 @@ export default function CreateModels() {
     console.log('🚀 Form validation state:', templateForm.formState);
     console.log('🚀 Form errors:', templateForm.formState.errors);
     
+    // Check authentication tokens
+    const sessionToken = localStorage.getItem('sessionToken');
+    const authToken = localStorage.getItem('authToken');
+    console.log('🔐 Authentication check:', { 
+      sessionToken: sessionToken ? 'present' : 'missing',
+      authToken: authToken ? 'present' : 'missing',
+      user: user ? 'authenticated' : 'not authenticated',
+      isSuperUser
+    });
+    
     if (editingTemplate) {
       updateTemplateMutation.mutate({ id: editingTemplate.id, ...data });
     } else {
@@ -435,6 +445,21 @@ export default function CreateModels() {
   return (
     <AdminLayout title="AI Model Templates" subtitle="Create universal AI model templates for companies to use (no API keys required)">
       <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
+        
+        {/* Debug Authentication Info */}
+        <div style={{ 
+          backgroundColor: '#fff3cd', 
+          border: '1px solid #ffeaa7', 
+          borderRadius: '6px', 
+          padding: '12px', 
+          marginBottom: '16px' 
+        }}>
+          <p style={{ margin: 0, fontSize: '14px', color: '#856404' }}>
+            <strong>Auth Debug:</strong> User: {user ? 'authenticated' : 'not authenticated'}, 
+            SuperUser: {isSuperUser ? 'yes' : 'no'}, 
+            Tokens: {localStorage.getItem('sessionToken') ? 'session' : 'none'}/{localStorage.getItem('authToken') ? 'auth' : 'none'}
+          </p>
+        </div>
         
         {/* Header Section */}
         <div style={{ 
@@ -851,16 +876,25 @@ function TemplateForm({
           }}>
             Cancel
           </button>
-          <button type="submit" disabled={isSubmitting} style={{
-            backgroundColor: isSubmitting ? '#9ca3af' : '#3b82f6',
-            color: 'white',
-            padding: '8px 16px',
-            borderRadius: '6px',
-            border: 'none',
-            cursor: isSubmitting ? 'not-allowed' : 'pointer',
-            fontSize: '14px',
-            fontWeight: '500'
-          }}>
+          <button 
+            type="submit" 
+            disabled={isSubmitting}
+            onClick={(e) => {
+              console.log('🔥 Button clicked - triggering form submission');
+              e.preventDefault();
+              form.handleSubmit(onSubmit)();
+            }}
+            style={{
+              backgroundColor: isSubmitting ? '#9ca3af' : '#3b82f6',
+              color: 'white',
+              padding: '8px 16px',
+              borderRadius: '6px',
+              border: 'none',
+              cursor: isSubmitting ? 'not-allowed' : 'pointer',
+              fontSize: '14px',
+              fontWeight: '500'
+            }}
+          >
             {isSubmitting ? "Processing..." : "Save Template"}
           </button>
         </div>
