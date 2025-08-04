@@ -494,32 +494,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log("Demo mode AI models request");
       }
 
-      // Get AI models from database
-      let models = await storage.getAiModels(companyId);
+      // Get AI models from new template-based system
+      let models = await storage.getAiModelsWithApiKeys(companyId);
       
-      console.log("Raw models from database:", models.map(m => ({ 
+      console.log("Raw models from template database:", models.map(m => ({ 
         id: m.id, 
         name: m.name, 
         provider: m.provider,
         apiKey: m.apiKey ? `${m.apiKey.substring(0, 10)}...` : 'MISSING',
-        hasRawApiKey: !!m.apiKey
+        hasValidApiKey: m.hasValidApiKey
       })));
       
-      // Add API key validation status to each model
+      // Add warning for models without API keys
       models = models.map(model => ({
         ...model,
-        hasValidApiKey: !!(model.apiKey && model.apiKey.trim() !== ''),
-        warning: (!model.apiKey || model.apiKey.trim() === '') ? "Demo mode - configure API keys to enable" : undefined
+        warning: !model.hasValidApiKey ? "Demo mode - configure API keys to enable" : undefined
       }));
 
-      console.log("Final processed models:", models.map(m => ({ 
+      console.log("Final processed template models:", models.map(m => ({ 
         id: m.id, 
         name: m.name, 
         provider: m.provider, 
         hasValidApiKey: m.hasValidApiKey
       })));
 
-      console.log("Returning AI model templates for company", companyId + ":", models.length, "models");
+      console.log("Returning AI model templates for company", companyId + ":", models.length, "template models");
       return res.json(models);
     } catch (error) {
       console.error("Error fetching AI models:", error);

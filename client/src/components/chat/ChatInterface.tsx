@@ -18,7 +18,7 @@ import VersionDisplay from "@/components/VersionDisplay";
 
 import { useFeaturesBenefits } from "@/hooks/useFeaturesBenefits";
 import { isDemoModeActive } from "@/utils/demoMode";
-import type { AiModel, ActivityType, ChatMessage as ChatMessageType, Company, ChatSession } from "@shared/schema";
+import type { AiModelWithApiKey, ActivityType, ChatMessage as ChatMessageType, Company, ChatSession } from "@shared/schema";
 
 interface ChatInterfaceProps {
   currentSession: number | null;
@@ -45,7 +45,7 @@ export default function ChatInterface({ currentSession, setCurrentSession }: Cha
   const isDemoMode = isDemoModeActive(user);
 
   // Fetch AI models
-  const { data: aiModels, isLoading: modelsLoading, error: modelsError } = useQuery<AiModel[]>({
+  const { data: aiModels, isLoading: modelsLoading, error: modelsError } = useQuery<AiModelWithApiKey[]>({
     queryKey: ['/api/ai-models'],
   });
 
