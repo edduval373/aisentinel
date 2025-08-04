@@ -129,6 +129,11 @@ export default async function handler(req, res) {
           const attachmentsResult = await client.query(deleteAttachmentsQuery, [companyId]);
           console.log(`✅ [DELETE] Deleted ${attachmentsResult.rowCount} chat attachments`);
           
+          // Delete company_roles (this was blocking deletion in our test!)
+          const deleteRolesQuery = 'DELETE FROM company_roles WHERE company_id = $1';
+          const rolesResult = await client.query(deleteRolesQuery, [companyId]);
+          console.log(`✅ [DELETE] Deleted ${rolesResult.rowCount} company roles`);
+          
           // Delete user_activities
           const deleteActivitiesQuery = 'DELETE FROM user_activities WHERE company_id = $1';
           const activitiesResult = await client.query(deleteActivitiesQuery, [companyId]);
@@ -174,10 +179,7 @@ export default async function handler(req, res) {
           const employeesResult = await client.query(deleteEmployeesQuery, [companyId]);
           console.log(`✅ [DELETE] Deleted ${employeesResult.rowCount} company employees`);
           
-          // Delete company_roles
-          const deleteRolesQuery = 'DELETE FROM company_roles WHERE company_id = $1';
-          const rolesResult = await client.query(deleteRolesQuery, [companyId]);
-          console.log(`✅ [DELETE] Deleted ${rolesResult.rowCount} company roles`);
+
           
           // 4. Finally delete the company itself
           console.log(`🗑️ [DELETE] Deleting company "${companyName}" (ID: ${companyId})...`);
@@ -197,6 +199,7 @@ export default async function handler(req, res) {
               chatSessions: sessionsResult.rowCount,
               chatMessages: messagesResult.rowCount,
               chatAttachments: attachmentsResult.rowCount,
+              companyRoles: rolesResult.rowCount,
               userActivities: activitiesResult.rowCount,
               userSessions: userSessionsResult.rowCount,
               trialUsage: trialUsageResult.rowCount,
@@ -206,7 +209,6 @@ export default async function handler(req, res) {
               activityTypes: typesResult.rowCount,
               modelFusionConfigs: fusionResult.rowCount,
               companyEmployees: employeesResult.rowCount,
-              companyRoles: rolesResult.rowCount,
               company: companyResult.rowCount
             }
           });
