@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Bot, Plus, Edit, Trash2, Eye, EyeOff, TestTube } from "lucide-react";
+import { Bot, Plus, Edit, Trash2, Eye, EyeOff, TestTube, AlertTriangle } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { Button } from "@/components/ui/button"; 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
@@ -725,6 +725,35 @@ function TemplateForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        {/* Critical Required Fields Alert */}
+        <div style={{
+          backgroundColor: '#fef2f2',
+          border: '2px solid #dc2626',
+          borderRadius: '8px',
+          padding: '16px',
+          marginBottom: '16px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+            <AlertTriangle style={{ width: '20px', height: '20px', color: '#dc2626' }} />
+            <h4 style={{ 
+              margin: 0, 
+              color: '#dc2626', 
+              fontSize: '16px', 
+              fontWeight: '700' 
+            }}>
+              REQUIRED FIELDS
+            </h4>
+          </div>
+          <p style={{ 
+            margin: 0, 
+            color: '#7f1d1d', 
+            fontSize: '14px',
+            lineHeight: '1.4'
+          }}>
+            <strong>Fields marked with red * are REQUIRED:</strong> Model Name, Provider, Model ID, and Context Window must be filled out completely or the template will not save.
+          </p>
+        </div>
+        
         <Tabs value={activeTab} onValueChange={setActiveTab} style={{ width: '100%' }}>
           <TabsList style={{ display: 'grid', width: '100%', gridTemplateColumns: '1fr 1fr' }}>
             <TabsTrigger value="basic">Basic Info</TabsTrigger>
@@ -738,9 +767,22 @@ function TemplateForm({
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Model Name</FormLabel>
+                    <FormLabel style={{ 
+                      color: '#dc2626', 
+                      fontWeight: '600',
+                      fontSize: '14px'
+                    }}>
+                      * Model Name (REQUIRED)
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g., Custom GPT-4" {...field} />
+                      <Input 
+                        placeholder="e.g., Custom GPT-4" 
+                        {...field} 
+                        style={{
+                          borderColor: field.value ? '#10b981' : '#dc2626',
+                          borderWidth: '2px'
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -752,13 +794,22 @@ function TemplateForm({
                 name="provider"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Provider</FormLabel>
+                    <FormLabel style={{ 
+                      color: '#dc2626', 
+                      fontWeight: '600',
+                      fontSize: '14px'
+                    }}>
+                      * Provider (REQUIRED)
+                    </FormLabel>
                     <Select onValueChange={(value) => {
                       field.onChange(value);
                       handleProviderChange(value);
                     }} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger style={{
+                          borderColor: field.value ? '#10b981' : '#dc2626',
+                          borderWidth: '2px'
+                        }}>
                           <SelectValue placeholder="Select provider" />
                         </SelectTrigger>
                       </FormControl>
@@ -780,9 +831,22 @@ function TemplateForm({
                 name="modelId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Model ID</FormLabel>
+                    <FormLabel style={{ 
+                      color: '#dc2626', 
+                      fontWeight: '600',
+                      fontSize: '14px'
+                    }}>
+                      * Model ID (REQUIRED)
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g., gpt-4" {...field} />
+                      <Input 
+                        placeholder="e.g., gpt-4" 
+                        {...field} 
+                        style={{
+                          borderColor: field.value ? '#10b981' : '#dc2626',
+                          borderWidth: '2px'
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -794,7 +858,13 @@ function TemplateForm({
                 name="contextWindow"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Context Window</FormLabel>
+                    <FormLabel style={{ 
+                      color: '#dc2626', 
+                      fontWeight: '600',
+                      fontSize: '14px'
+                    }}>
+                      * Context Window (REQUIRED)
+                    </FormLabel>
                     <FormControl>
                       <Input 
                         type="number" 
@@ -802,6 +872,10 @@ function TemplateForm({
                         max="2000000" 
                         {...field}
                         onChange={(e) => field.onChange(parseInt(e.target.value))}
+                        style={{
+                          borderColor: field.value ? '#10b981' : '#dc2626',
+                          borderWidth: '2px'
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -815,11 +889,21 @@ function TemplateForm({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel style={{ 
+                    color: '#64748b', 
+                    fontWeight: '500',
+                    fontSize: '14px'
+                  }}>
+                    Description (Optional)
+                  </FormLabel>
                   <FormControl>
                     <Textarea 
                       placeholder="Describe this model's capabilities and use cases..." 
                       {...field} 
+                      style={{
+                        borderColor: '#e2e8f0',
+                        borderWidth: '1px'
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -853,7 +937,13 @@ function TemplateForm({
                 name="capabilities"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Capabilities (Optional)</FormLabel>
+                    <FormLabel style={{ 
+                      color: '#64748b', 
+                      fontWeight: '500',
+                      fontSize: '14px'
+                    }}>
+                      Capabilities (Optional)
+                    </FormLabel>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', marginTop: '8px' }}>
                       {capabilities.map((capability) => (
                         <label key={capability} style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
