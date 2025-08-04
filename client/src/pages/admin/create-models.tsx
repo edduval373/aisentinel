@@ -296,17 +296,39 @@ export default function CreateModels() {
     console.log('🚀 Form submission triggered with data:', data);
     console.log('🚀 Form validation state:', templateForm.formState);
     console.log('🚀 Form errors:', templateForm.formState.errors);
-    createTemplateMutation.mutate(data);
+    
+    if (editingTemplate) {
+      updateTemplateMutation.mutate({ id: editingTemplate.id, ...data });
+    } else {
+      createTemplateMutation.mutate(data);
+    }
   };
 
+  const handleEditTemplate = (template: any) => {
+    setEditingTemplate(template);
+    templateForm.reset({
+      name: template.name,
+      provider: template.provider,
+      modelId: template.modelId,
+      description: template.description || "",
+      contextWindow: template.contextWindow,
+      isEnabled: template.isEnabled,
+      capabilities: Array.isArray(template.capabilities) ? template.capabilities : [],
+    });
+    setShowEditDialog(true);
+  };
 
+  const handleDeleteTemplate = (id: number) => {
+    if (confirm("Are you sure you want to delete this universal template? This will affect all companies that might use it.")) {
+      deleteTemplateMutation.mutate(id);
+    }
+  };
 
   const resetForm = () => {
     setActiveTab("basic");
     templateForm.reset();
+    setEditingTemplate(null);
   };
-
-
 
   const handleProviderChange = (provider: string) => {
     templateForm.setValue("provider", provider);
@@ -578,11 +600,77 @@ export default function CreateModels() {
                     🌐 Universal Template - Companies configure their own API keys
                   </div>
                 </div>
+
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '8px' }}>
+                  <button
+                    onClick={() => handleEditTemplate(template)}
+                    style={{
+                      backgroundColor: '#f8fafc',
+                      color: '#475569',
+                      padding: '6px 12px',
+                      borderRadius: '6px',
+                      border: '1px solid #e2e8f0',
+                      fontSize: '14px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      cursor: 'pointer',
+                      fontWeight: '500'
+                    }}
+                  >
+                    <Edit style={{ width: '14px', height: '14px' }} />
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDeleteTemplate(template.id)}
+                    style={{
+                      backgroundColor: '#fef2f2',
+                      color: '#dc2626',
+                      padding: '6px 12px',
+                      borderRadius: '6px',
+                      border: '1px solid #fecaca',
+                      fontSize: '14px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      cursor: 'pointer',
+                      fontWeight: '500'
+                    }}
+                  >
+                    <Trash2 style={{ width: '14px', height: '14px' }} />
+                    Delete
+                  </button>
+                </div>
               </div>
             ))
           )}
         </div>
 
+        {/* Edit Dialog */}
+        <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+          <DialogContent style={{ maxWidth: '600px', maxHeight: '90vh', overflowY: 'auto' }}>
+            <DialogHeader>
+              <DialogTitle>Edit Universal Template</DialogTitle>
+              <DialogDescription>
+                Modify this universal AI model template. Changes will affect all companies using this template.
+              </DialogDescription>
+            </DialogHeader>
+            <TemplateForm 
+              form={templateForm}
+              onSubmit={onSubmitTemplate}
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              providers={providers}
+              capabilities={capabilities}
+              handleProviderChange={handleProviderChange}
+              isSubmitting={updateTemplateMutation.isPending}
+              onCancel={() => {
+                setShowEditDialog(false);
+                resetForm();
+              }}
+            />
+          </DialogContent>
+        </Dialog>
 
       </div>
     </AdminLayout>
@@ -796,7 +884,7 @@ function TemplateForm({
             fontSize: '14px',
             fontWeight: '500'
           }}>
-            {isSubmitting ? "Creating..." : "Create Template"}
+            {isSubmitting ? (editingTemplate ? "Updating..." : "Creating...") : (editingTemplate ? "Update Template" : "Create Template")}
           </button>
         </div>
       </form>

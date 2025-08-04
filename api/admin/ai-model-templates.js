@@ -93,7 +93,7 @@ export default async function handler(req, res) {
 
     if (req.method === 'POST') {
       // Handle AI model template creation
-      const { name, provider, modelId, description, contextWindow } = req.body;
+      const { name, provider, modelId, description, contextWindow, capabilities, isEnabled } = req.body;
       
       if (!name || !provider || !modelId) {
         return res.status(400).json({ message: 'Missing required fields: name, provider, modelId' });
@@ -107,13 +107,45 @@ export default async function handler(req, res) {
         modelId,
         description: description || '',
         contextWindow: contextWindow || 4096,
-        isEnabled: true,
+        capabilities: capabilities || [],
+        isEnabled: isEnabled !== undefined ? isEnabled : true,
         createdAt: new Date(),
         updatedAt: new Date()
       };
 
       console.log('Created new AI model template:', newTemplate);
       return res.status(201).json(newTemplate);
+    }
+
+    if (req.method === 'PUT') {
+      // Handle AI model template update
+      const { name, provider, modelId, description, contextWindow, capabilities, isEnabled } = req.body;
+      
+      if (!name || !provider || !modelId) {
+        return res.status(400).json({ message: 'Missing required fields: name, provider, modelId' });
+      }
+
+      // Mock update response - in real implementation, this would update the database
+      const updatedTemplate = {
+        id: Date.now(), // This would be the actual ID from the request params
+        name,
+        provider,
+        modelId,
+        description: description || '',
+        contextWindow: contextWindow || 4096,
+        capabilities: capabilities || [],
+        isEnabled: isEnabled !== undefined ? isEnabled : true,
+        updatedAt: new Date()
+      };
+
+      console.log('Updated AI model template:', updatedTemplate);
+      return res.json(updatedTemplate);
+    }
+
+    if (req.method === 'DELETE') {
+      // Handle AI model template deletion
+      console.log('Deleted AI model template with ID:', req.query?.id || 'unknown');
+      return res.json({ message: 'Template deleted successfully' });
     }
 
     return res.status(405).json({ message: 'Method not allowed' });
