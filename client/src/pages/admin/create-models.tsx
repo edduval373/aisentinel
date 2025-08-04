@@ -124,38 +124,9 @@ export default function CreateModels() {
     );
   }
 
-  // Fetch AI model templates with proper authentication headers
+  // Fetch AI model templates using the default query configuration
   const { data: templates = [], isLoading: templatesLoading, error, isError, refetch } = useQuery({
     queryKey: ["/api/admin/ai-model-templates"],
-    queryFn: async () => {
-      console.log(`🔄 [TEMPLATES QUERY] Starting template fetch...`);
-      const sessionToken = localStorage.getItem('sessionToken') || localStorage.getItem('authToken');
-      console.log(`🔄 [TEMPLATES QUERY] Session token found:`, !!sessionToken);
-      
-      const headers: any = {
-        'Content-Type': 'application/json'
-      };
-      
-      if (sessionToken) {
-        headers['Authorization'] = `Bearer ${sessionToken}`;
-        headers['X-Session-Token'] = sessionToken;
-      }
-      
-      console.log(`🔄 [TEMPLATES QUERY] Making request to /api/admin/ai-model-templates`);
-      const response = await fetch('/api/admin/ai-model-templates', { headers });
-      console.log(`🔄 [TEMPLATES QUERY] Response status:`, response.status);
-      
-      if (!response.ok) {
-        console.error(`❌ [TEMPLATES QUERY] Request failed:`, response.status, response.statusText);
-        throw new Error(`Failed to fetch templates: ${response.status} ${response.statusText}`);
-      }
-      
-      const data = await response.json();
-      console.log(`✅ [TEMPLATES QUERY] Received ${data.length} templates:`, data.map(t => ({ id: t.id, name: t.name })));
-      return data;
-    },
-    retry: 2,
-    refetchOnWindowFocus: true,
     staleTime: 0, // Always refetch when invalidated
     gcTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
