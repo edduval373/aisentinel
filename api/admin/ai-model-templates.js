@@ -1,16 +1,5 @@
 // Vercel serverless function for AI model template management with Railway PostgreSQL
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
-
-// Dynamic import to avoid module loading issues in serverless
-let aiModelTemplates;
-
-const initDb = async () => {
-  if (!aiModelTemplates) {
-    const { aiModelTemplates: schema } = await import('@shared/schema');
-    aiModelTemplates = schema;
-  }
-};
+// Using raw SQL for maximum Vercel compatibility
 
 export default async function handler(req, res) {
   // Set CORS headers
@@ -38,19 +27,23 @@ export default async function handler(req, res) {
   console.log('✅ [VERCEL TEMPLATES] Production token authenticated');
 
   try {
-    await initDb();
-
     if (req.method === 'GET') {
-      // Connect to Railway PostgreSQL database
+      // Connect directly to Railway PostgreSQL using raw queries
       if (!process.env.DATABASE_URL) {
         throw new Error('DATABASE_URL environment variable is required');
       }
 
-      const client = postgres(process.env.DATABASE_URL);
-      const db = drizzle(client);
+      const { Client } = await import('pg');
+      const client = new Client({
+        connectionString: process.env.DATABASE_URL,
+        ssl: { rejectUnauthorized: false }
+      });
 
+      await client.connect();
       console.log('🔍 [VERCEL TEMPLATES] Fetching templates from Railway database...');
-      const templates = await db.select().from(aiModelTemplates);
+      
+      const result = await client.query('SELECT * FROM ai_model_templates ORDER BY id');
+      const templates = result.rows;
       
       await client.end();
       
@@ -66,30 +59,43 @@ export default async function handler(req, res) {
         return res.status(400).json({ message: 'Missing required fields: name, provider, modelId' });
       }
 
-      // Connect to Railway PostgreSQL database
-      const client = postgres(process.env.DATABASE_URL);
-      const db = drizzle(client);
+      // Connect directly to Railway PostgreSQL using raw queries
+      const { Client } = await import('pg');
+      const client = new Client({
+        connectionString: process.env.DATABASE_URL,
+        ssl: { rejectUnauthorized: false }
+      });
 
+      await client.connect();
       console.log('🔍 [VERCEL TEMPLATES] Creating new template in Railway database...');
-      const newTemplateData = {
+      
+      const insertQuery = `
+        INSERT INTO ai_model_templates (name, provider, "modelId", description, "contextWindow", capabilities, "isEnabled", "apiEndpoint", "authMethod", "requestHeaders", "maxTokens", temperature, "maxRetries", timeout, "rateLimit")
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+        RETURNING *
+      `;
+      
+      const values = [
         name,
         provider,
         modelId,
-        description: description || '',
-        contextWindow: contextWindow || 4096,
-        capabilities: capabilities || null,
-        isEnabled: isEnabled !== undefined ? isEnabled : true,
-        apiEndpoint: `https://api.${provider}.com/v1/completions`,
-        authMethod: 'bearer',
-        requestHeaders: { 'Content-Type': 'application/json' },
-        maxTokens: 1000,
-        temperature: 0.7,
-        maxRetries: 3,
-        timeout: 30000,
-        rateLimit: 100
-      };
+        description || '',
+        contextWindow || 4096,
+        capabilities ? JSON.stringify(capabilities) : null,
+        isEnabled !== undefined ? isEnabled : true,
+        `https://api.${provider}.com/v1/completions`,
+        'bearer',
+        JSON.stringify({ 'Content-Type': 'application/json' }),
+        1000,
+        0.7,
+        3,
+        30000,
+        100
+      ];
 
-      const [newTemplate] = await db.insert(aiModelTemplates).values(newTemplateData).returning();
+      const result = await client.query(insertQuery, values);
+      const newTemplate = result.rows[0];
+      
       await client.end();
 
       console.log('✅ [VERCEL TEMPLATES] Created new template:', newTemplate.id);
