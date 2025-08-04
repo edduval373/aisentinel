@@ -1,0 +1,69 @@
+{"notify":"init_tab"}
+index-CZG_Y_b6.js:650 React app mounted successfully
+index-CZG_Y_b6.js:650 [APP DEBUG] Main App component rendering
+index-CZG_Y_b6.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-CZG_Y_b6.js:415 Authentication check: Object
+index-CZG_Y_b6.js:640 [APP DEBUG] Router component rendering...
+index-CZG_Y_b6.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-CZG_Y_b6.js:415 Authentication check: Object
+index-CZG_Y_b6.js:640 [APP DEBUG] Router state: Object
+index-CZG_Y_b6.js:640 [APP DEBUG] Authentication check: Object
+index-CZG_Y_b6.js:640 [APP DEBUG] useAuth hook returned: Object
+index-CZG_Y_b6.js:415 🔒 [SECURE AUTH] Starting secure database authentication...
+index-CZG_Y_b6.js:415 🔍 [AUTH DEBUG] Starting authentication with detailed logging...
+index-CZG_Y_b6.js:415 🔍 [AUTH DEBUG] Current URL: https://aisentinel-avutwj0l1-ed-duvals-projects.vercel.app/
+index-CZG_Y_b6.js:415 🔍 [AUTH DEBUG] Current domain: aisentinel-avutwj0l1-ed-duvals-projects.vercel.app
+index-CZG_Y_b6.js:415 🔍 [AUTH DEBUG] Saved accounts raw: null
+index-CZG_Y_b6.js:415 ❌ [AUTH DEBUG] No saved accounts found in localStorage
+index-CZG_Y_b6.js:415  🔒 [SECURE AUTH] Database authentication failed: Error: No saved accounts found
+    at queryFn (index-CZG_Y_b6.js:415:38373)
+    at Object.o [as fn] (index-CZG_Y_b6.js:48:14393)
+    at b (index-CZG_Y_b6.js:48:9986)
+    at Object.start (index-CZG_Y_b6.js:48:10445)
+    at D2.fetch (index-CZG_Y_b6.js:48:15729)
+    at F2.pc (index-CZG_Y_b6.js:48:36125)
+    at F2.onSubscribe (index-CZG_Y_b6.js:48:30659)
+    at F2.subscribe (index-CZG_Y_b6.js:48:4345)
+    at index-CZG_Y_b6.js:48:41649
+    at cS (index-CZG_Y_b6.js:38:19708)
+queryFn @ index-CZG_Y_b6.js:415
+index-CZG_Y_b6.js:640 Checking saved accounts: 0
+index-CZG_Y_b6.js:415 Unauthenticated user: No company context
+index-CZG_Y_b6.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-CZG_Y_b6.js:415 Authentication check: Object
+index-CZG_Y_b6.js:640 [APP DEBUG] Router component rendering...
+index-CZG_Y_b6.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-CZG_Y_b6.js:415 Authentication check: Object
+index-CZG_Y_b6.js:640 [APP DEBUG] Router state: Object
+index-CZG_Y_b6.js:640 [APP DEBUG] Authentication check: Object
+index-CZG_Y_b6.js:640 [APP DEBUG] useAuth hook returned: Object
+index-CZG_Y_b6.js:640 [APP DEBUG] STRICT MODE: Not authenticated, showing landing page
+index-CZG_Y_b6.js:650 [APP DEBUG] Not authenticated, showing landing page
+index-CZG_Y_b6.js:543 [LANDING DEBUG] Landing component rendering...
+index-CZG_Y_b6.js:543 [LANDING DEBUG] About to return JSX
+index-CZG_Y_b6.js:543 [LANDING DEBUG] Landing component mounted successfully
+index-CZG_Y_b6.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-CZG_Y_b6.js:415 Authentication check: Object
+index-CZG_Y_b6.js:640 [APP DEBUG] Router component rendering...
+index-CZG_Y_b6.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-CZG_Y_b6.js:415 Authentication check: Object
+index-CZG_Y_b6.js:640 [APP DEBUG] Router state: Object
+index-CZG_Y_b6.js:640 [APP DEBUG] Authentication check: Object
+index-CZG_Y_b6.js:640 [APP DEBUG] useAuth hook returned: Object
+index-CZG_Y_b6.js:640 [APP DEBUG] STRICT MODE: Not authenticated, showing landing page
+index-CZG_Y_b6.js:650 [APP DEBUG] Not authenticated, showing landing page
+index-CZG_Y_b6.js:543 [LANDING DEBUG] Landing component rendering...
+index-CZG_Y_b6.js:543 [LANDING DEBUG] About to return JSX
+/api/version/current:1   Failed to load resource: the server responded with a status of 404 ()
+index-CZG_Y_b6.js:543 [LANDING DEBUG] Development authentication starting...
+index-CZG_Y_b6.js:543 [LANDING DEBUG] Current cookies before auth: 
+/api/auth/dev-login:1   Failed to load resource: the server responded with a status of 404 ()
+index-CZG_Y_b6.js:543 [LANDING DEBUG] Response status: 404
+index-CZG_Y_b6.js:543 [LANDING DEBUG] Response headers: Object
+index-CZG_Y_b6.js:543  [LANDING DEBUG] HTTP Error: 404 
+s @ index-CZG_Y_b6.js:543
+index-CZG_Y_b6.js:543  [LANDING DEBUG] Error response body: {"error":"Not found","path":"/api/auth/dev-login"}
+s @ index-CZG_Y_b6.js:543
+index-CZG_Y_b6.js:543  [LANDING DEBUG] Authentication error: Error: HTTP 404: 
+    at s (index-CZG_Y_b6.js:543:13211)
+s @ index-CZG_Y_b6.js:543
