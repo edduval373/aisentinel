@@ -389,7 +389,7 @@ export default function CreateModels() {
 
   if (isError) {
     return (
-      <AdminLayout title="Create AI Models" subtitle="Create and manage custom AI models from scratch">
+      <AdminLayout>
         <div style={{ 
           padding: '48px', 
           textAlign: 'center',
@@ -433,10 +433,7 @@ export default function CreateModels() {
   }
 
   return (
-    <AdminLayout 
-      title="AI Model Templates" 
-      subtitle="Create universal AI model templates for companies to use"
-    >
+    <AdminLayout>
       <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
         
         {/* Header Section */}
@@ -447,7 +444,15 @@ export default function CreateModels() {
           marginBottom: '8px'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <Bot style={{ width: '32px', height: '32px', color: '#3b82f6' }} />
+            <img 
+              src="/ai-sentinel-logo.png" 
+              alt="AI Sentinel" 
+              style={{
+                width: '32px',
+                height: '32px',
+                objectFit: 'contain'
+              }}
+            />
             <div>
               <h2 style={{ 
                 fontSize: '28px', 
