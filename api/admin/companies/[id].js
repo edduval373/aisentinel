@@ -109,78 +109,121 @@ export default async function handler(req, res) {
         
         try {
           // Delete related records in proper order to avoid foreign key violations
+          console.log(`🗑️ [DELETE] Starting comprehensive deletion for company ${companyId}...`);
           
-          // 1. Delete chat attachments first (they may reference chat_sessions)
-          console.log(`🗑️ [DELETE] Deleting chat attachments for company ${companyId}...`);
-          const deleteAttachmentsQuery = `
-            DELETE FROM chat_attachments 
-            WHERE session_id IN (
-              SELECT id FROM chat_sessions WHERE company_id = $1
-            )
-          `;
-          const attachmentsResult = await client.query(deleteAttachmentsQuery, [companyId]);
-          console.log(`✅ [DELETE] Deleted ${attachmentsResult.rowCount} chat attachments`);
+          // First, let's find all chat_sessions for this company
+          const findSessionsQuery = 'SELECT id FROM chat_sessions WHERE company_id = $1';
+          const sessionsToDelete = await client.query(findSessionsQuery, [companyId]);
+          console.log(`🔍 [DELETE] Found ${sessionsToDelete.rowCount} chat sessions to delete`);
           
-          // 2. Delete chat messages (they reference chat_sessions)
-          console.log(`🗑️ [DELETE] Deleting chat messages for company ${companyId}...`);
-          const deleteMessagesQuery = `
-            DELETE FROM chat_messages 
-            WHERE session_id IN (
-              SELECT id FROM chat_sessions WHERE company_id = $1
-            )
-          `;
-          const messagesResult = await client.query(deleteMessagesQuery, [companyId]);
-          console.log(`✅ [DELETE] Deleted ${messagesResult.rowCount} chat messages`);
+          // 1. Delete everything that references chat_sessions first
+          if (sessionsToDelete.rowCount > 0) {
+            const sessionIds = sessionsToDelete.rows.map(row => row.id);
+            
+            // Delete chat attachments
+            console.log(`🗑️ [DELETE] Deleting chat attachments for sessions...`);
+            const deleteAttachmentsQuery = `DELETE FROM chat_attachments WHERE session_id = ANY($1)`;
+            const attachmentsResult = await client.query(deleteAttachmentsQuery, [sessionIds]);
+            console.log(`✅ [DELETE] Deleted ${attachmentsResult.rowCount} chat attachments`);
+            
+            // Delete chat messages  
+            console.log(`🗑️ [DELETE] Deleting chat messages for sessions...`);
+            const deleteMessagesQuery = `DELETE FROM chat_messages WHERE session_id = ANY($1)`;
+            const messagesResult = await client.query(deleteMessagesQuery, [sessionIds]);
+            console.log(`✅ [DELETE] Deleted ${messagesResult.rowCount} chat messages`);
+            
+            // Delete any other tables that might reference session_id
+            console.log(`🗑️ [DELETE] Deleting session-related data...`);
+            
+            // Check for session_logs table
+            try {
+              const deleteSessionLogsQuery = `DELETE FROM session_logs WHERE session_id = ANY($1)`;
+              const sessionLogsResult = await client.query(deleteSessionLogsQuery, [sessionIds]);
+              console.log(`✅ [DELETE] Deleted ${sessionLogsResult.rowCount} session logs`);
+            } catch (err) {
+              console.log(`ℹ️ [DELETE] session_logs table doesn't exist or has no records`);
+            }
+            
+            // Check for session_analytics table
+            try {
+              const deleteSessionAnalyticsQuery = `DELETE FROM session_analytics WHERE session_id = ANY($1)`;
+              const sessionAnalyticsResult = await client.query(deleteSessionAnalyticsQuery, [sessionIds]);
+              console.log(`✅ [DELETE] Deleted ${sessionAnalyticsResult.rowCount} session analytics`);
+            } catch (err) {
+              console.log(`ℹ️ [DELETE] session_analytics table doesn't exist or has no records`);
+            }
+          }
           
-          // 3. Delete chat sessions
+          // 2. Now delete all chat_sessions for this company  
           console.log(`🗑️ [DELETE] Deleting chat sessions for company ${companyId}...`);
           const deleteSessionsQuery = 'DELETE FROM chat_sessions WHERE company_id = $1';
           const sessionsResult = await client.query(deleteSessionsQuery, [companyId]);
           console.log(`✅ [DELETE] Deleted ${sessionsResult.rowCount} chat sessions`);
           
-          // 4. Delete user activities
-          console.log(`🗑️ [DELETE] Deleting user activities for company ${companyId}...`);
+          // 3. Delete all other tables that reference companies directly
+          console.log(`🗑️ [DELETE] Deleting all company-related data...`);
+          
+          // Delete chat_messages that reference company_id directly
+          const deleteChatMessagesQuery = 'DELETE FROM chat_messages WHERE company_id = $1';
+          const chatMessagesResult = await client.query(deleteChatMessagesQuery, [companyId]);
+          console.log(`✅ [DELETE] Deleted ${chatMessagesResult.rowCount} chat messages (direct reference)`);
+          
+          // Delete chat_attachments that reference company_id directly  
+          const deleteChatAttachmentsDirectQuery = 'DELETE FROM chat_attachments WHERE company_id = $1';
+          const chatAttachmentsDirectResult = await client.query(deleteChatAttachmentsDirectQuery, [companyId]);
+          console.log(`✅ [DELETE] Deleted ${chatAttachmentsDirectResult.rowCount} chat attachments (direct reference)`);
+          
+          // Delete user_activities
           const deleteActivitiesQuery = 'DELETE FROM user_activities WHERE company_id = $1';
           const activitiesResult = await client.query(deleteActivitiesQuery, [companyId]);
           console.log(`✅ [DELETE] Deleted ${activitiesResult.rowCount} user activities`);
           
-          // 5. Delete company API keys
-          console.log(`🗑️ [DELETE] Deleting company API keys for company ${companyId}...`);
+          // Delete user_sessions  
+          const deleteUserSessionsQuery = 'DELETE FROM user_sessions WHERE company_id = $1';
+          const userSessionsResult = await client.query(deleteUserSessionsQuery, [companyId]);
+          console.log(`✅ [DELETE] Deleted ${userSessionsResult.rowCount} user sessions`);
+          
+          // Delete trial_usage
+          const deleteTrialUsageQuery = 'DELETE FROM trial_usage WHERE company_id = $1';
+          const trialUsageResult = await client.query(deleteTrialUsageQuery, [companyId]);
+          console.log(`✅ [DELETE] Deleted ${trialUsageResult.rowCount} trial usage records`);
+          
+          // Delete permissions
+          const deletePermissionsQuery = 'DELETE FROM permissions WHERE company_id = $1';
+          const permissionsResult = await client.query(deletePermissionsQuery, [companyId]);
+          console.log(`✅ [DELETE] Deleted ${permissionsResult.rowCount} permissions`);
+          
+          // Delete company_api_keys
           const deleteApiKeysQuery = 'DELETE FROM company_api_keys WHERE company_id = $1';
           const apiKeysResult = await client.query(deleteApiKeysQuery, [companyId]);
           console.log(`✅ [DELETE] Deleted ${apiKeysResult.rowCount} company API keys`);
           
-          // 6. Delete AI models
-          console.log(`🗑️ [DELETE] Deleting AI models for company ${companyId}...`);
+          // Delete ai_models
           const deleteModelsQuery = 'DELETE FROM ai_models WHERE company_id = $1';
           const modelsResult = await client.query(deleteModelsQuery, [companyId]);
           console.log(`✅ [DELETE] Deleted ${modelsResult.rowCount} AI models`);
           
-          // 7. Delete activity types
-          console.log(`🗑️ [DELETE] Deleting activity types for company ${companyId}...`);
+          // Delete activity_types
           const deleteTypesQuery = 'DELETE FROM activity_types WHERE company_id = $1';
           const typesResult = await client.query(deleteTypesQuery, [companyId]);
           console.log(`✅ [DELETE] Deleted ${typesResult.rowCount} activity types`);
           
-          // 8. Delete model fusion configs
-          console.log(`🗑️ [DELETE] Deleting model fusion configs for company ${companyId}...`);
+          // Delete model_fusion_configs
           const deleteFusionQuery = 'DELETE FROM model_fusion_configs WHERE company_id = $1';
           const fusionResult = await client.query(deleteFusionQuery, [companyId]);
           console.log(`✅ [DELETE] Deleted ${fusionResult.rowCount} model fusion configs`);
           
-          // 9. Delete company employees
-          console.log(`🗑️ [DELETE] Deleting company employees for company ${companyId}...`);
+          // Delete company_employees
           const deleteEmployeesQuery = 'DELETE FROM company_employees WHERE company_id = $1';
           const employeesResult = await client.query(deleteEmployeesQuery, [companyId]);
           console.log(`✅ [DELETE] Deleted ${employeesResult.rowCount} company employees`);
           
-          // 10. Delete company roles
-          console.log(`🗑️ [DELETE] Deleting company roles for company ${companyId}...`);
+          // Delete company_roles
           const deleteRolesQuery = 'DELETE FROM company_roles WHERE company_id = $1';
           const rolesResult = await client.query(deleteRolesQuery, [companyId]);
           console.log(`✅ [DELETE] Deleted ${rolesResult.rowCount} company roles`);
           
-          // 11. Finally delete the company itself
+          // 4. Finally delete the company itself
           console.log(`🗑️ [DELETE] Deleting company "${companyName}" (ID: ${companyId})...`);
           const deleteCompanyQuery = 'DELETE FROM companies WHERE id = $1';
           const companyResult = await client.query(deleteCompanyQuery, [companyId]);
@@ -195,10 +238,15 @@ export default async function handler(req, res) {
             id: companyId, 
             name: companyName,
             deletedRecords: {
-              chatAttachments: attachmentsResult.rowCount,
-              chatMessages: messagesResult.rowCount,
+              sessionBasedAttachments: sessionsToDelete.rowCount > 0 ? (attachmentsResult?.rowCount || 0) : 0,
+              sessionBasedMessages: sessionsToDelete.rowCount > 0 ? (messagesResult?.rowCount || 0) : 0,
               chatSessions: sessionsResult.rowCount,
+              directChatMessages: chatMessagesResult.rowCount,
+              directChatAttachments: chatAttachmentsDirectResult.rowCount,
               userActivities: activitiesResult.rowCount,
+              userSessions: userSessionsResult.rowCount,
+              trialUsage: trialUsageResult.rowCount,
+              permissions: permissionsResult.rowCount,
               companyApiKeys: apiKeysResult.rowCount,
               aiModels: modelsResult.rowCount,
               activityTypes: typesResult.rowCount,
