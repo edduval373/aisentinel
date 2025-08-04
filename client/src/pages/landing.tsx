@@ -61,6 +61,13 @@ export default function Landing() {
       console.log('[LANDING DEBUG] Response status:', response.status);
       console.log('[LANDING DEBUG] Response headers:', Object.fromEntries(response.headers.entries()));
       
+      if (!response.ok) {
+        console.error('[LANDING DEBUG] HTTP Error:', response.status, response.statusText);
+        const errorText = await response.text();
+        console.error('[LANDING DEBUG] Error response body:', errorText);
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
       const result = await response.json();
       console.log('[LANDING DEBUG] Dev authentication result:', result);
       
@@ -85,12 +92,14 @@ export default function Landing() {
           window.location.reload();
         }
       } else {
-        console.error('[LANDING DEBUG] Authentication failed:', result.message);
-        alert('Authentication failed: ' + result.message);
+        console.error('[LANDING DEBUG] Authentication failed:', result);
+        const errorMessage = result.message || result.error || 'Unknown authentication error';
+        alert('Authentication failed: ' + errorMessage);
       }
     } catch (error) {
       console.error('[LANDING DEBUG] Authentication error:', error);
-      alert('Authentication error: ' + (error instanceof Error ? error.message : String(error)));
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      alert('Authentication error: ' + errorMessage);
     }
   };
 
