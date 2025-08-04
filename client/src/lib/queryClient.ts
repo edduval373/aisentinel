@@ -29,12 +29,7 @@ async function getFallbackResponse(url: string, method: string, data?: unknown):
     return null; // Force real authentication
   }
 
-  // AI Model Templates fallback - CRUD operations not supported in production
-  if (url.includes('admin/ai-model-templates')) {
-    console.log(`🚫 [FALLBACK] AI model template ${method} operations not supported in production`);
-    console.log('🚫 [FALLBACK] Template management requires development environment');
-    throw new Error(`Template ${method} operations are only available in development environment. Please use the development server for template management.`);
-  }
+  // Remove AI Model Templates fallback - let production handle requests directly
 
   // Admin companies fallback
   if (url.includes('admin/companies') && method === 'GET') {

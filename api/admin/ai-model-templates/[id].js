@@ -1,6 +1,62 @@
-import { db } from '../../../server/db.js';
-import { aiModelTemplates } from '../../../shared/schema.js';
-import { eq } from 'drizzle-orm';
+// Vercel serverless function for AI template CRUD operations - matches companies pattern
+import { Pool } from 'pg';
+
+// Database connection using Railway PostgreSQL - same as companies.js
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
+
+async function updateTemplateInDB(id, updates) {
+  const client = await pool.connect();
+  try {
+    const setClause = Object.keys(updates)
+      .map((key, index) => `"${key}" = $${index + 2}`)
+      .join(', ');
+    
+    const values = [id, ...Object.values(updates)];
+    
+    const query = `
+      UPDATE ai_model_templates 
+      SET ${setClause}, "updatedAt" = NOW() 
+      WHERE id = $1 
+      RETURNING *
+    `;
+    
+    const result = await client.query(query, values);
+    
+    if (result.rows.length === 0) {
+      throw new Error('Template not found');
+    }
+    
+    return result.rows[0];
+  } catch (error) {
+    console.error('Database update error:', error);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+async function deleteTemplateFromDB(id) {
+  const client = await pool.connect();
+  try {
+    const result = await client.query('DELETE FROM ai_model_templates WHERE id = $1 RETURNING *', [id]);
+    
+    if (result.rows.length === 0) {
+      throw new Error('Template not found');
+    }
+    
+    return result.rows[0];
+  } catch (error) {
+    console.error('Database delete error:', error);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
 
 export default async function handler(req, res) {
   // Set CORS headers
@@ -12,6 +68,15 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
+  // Authentication check - same as companies
+  const authHeader = req.headers.authorization;
+  const sessionToken = req.headers['x-session-token'] || 
+                      (authHeader && authHeader.startsWith('Bearer ') ? authHeader.substring(7) : null);
+
+  if (!sessionToken || sessionToken !== 'prod-1754052835575-289kvxqgl42h') {
+    return res.status(401).json({ message: 'Authentication required' });
+  }
+
   const { id } = req.query;
   const templateId = parseInt(id);
 
@@ -21,65 +86,45 @@ export default async function handler(req, res) {
 
   try {
     if (req.method === 'PUT') {
-      // Development bypass - allow template update for testing in production
-      console.log('🧪 [VERCEL] Bypassing super-user check for template update testing');
+      console.log('✅ [TEMPLATE UPDATE] Authenticated user updating template:', templateId);
       
-      // Log the exact request body before processing
-      console.log(`🔍 [TEMPLATE PUT] Raw request body:`, JSON.stringify(req.body, null, 2));
-      console.log(`🔍 [TEMPLATE PUT] Template ID:`, templateId);
+      const updates = req.body;
+      console.log('✅ [TEMPLATE UPDATE] Update data:', updates);
       
-      const templateData = {
-        ...req.body,
-        apiEndpoint: req.body.apiEndpoint || `https://api.${req.body.provider}.com/v1/completions`
-      };
+      // Update template in Railway PostgreSQL database
+      const updatedTemplate = await updateTemplateInDB(templateId, updates);
       
-      console.log(`🔍 [TEMPLATE PUT] Final template data:`, JSON.stringify(templateData, null, 2));
-
-      const [template] = await db
-        .update(aiModelTemplates)
-        .set(templateData)
-        .where(eq(aiModelTemplates.id, templateId))
-        .returning();
-      
-      if (!template) {
-        return res.status(404).json({ message: 'Template not found' });
-      }
-      
-      return res.json(template);
+      console.log('✅ [TEMPLATE UPDATE] Template successfully updated in database:', updatedTemplate);
+      return res.status(200).json(updatedTemplate);
     }
 
     if (req.method === 'DELETE') {
-      // Development bypass - allow template deletion for testing in production
-      console.log('🧪 [VERCEL] Bypassing super-user check for template deletion testing');
+      console.log('✅ [TEMPLATE DELETE] Authenticated user deleting template:', templateId);
       
-      const [deletedTemplate] = await db
-        .delete(aiModelTemplates)
-        .where(eq(aiModelTemplates.id, templateId))
-        .returning();
-      
-      if (!deletedTemplate) {
-        return res.status(404).json({ message: 'Template not found' });
-      }
-      
-      return res.json({ message: 'Template deleted successfully' });
+      // Delete template from Railway PostgreSQL database
+      const deletedTemplate = await deleteTemplateFromDB(templateId);
+      console.log('✅ [TEMPLATE DELETE] Template deleted from database:', deletedTemplate);
+      return res.status(200).json({ message: 'Template deleted successfully', deletedTemplate });
     }
 
     if (req.method === 'GET') {
-      const [template] = await db
-        .select()
-        .from(aiModelTemplates)
-        .where(eq(aiModelTemplates.id, templateId));
-      
-      if (!template) {
-        return res.status(404).json({ message: 'Template not found' });
+      const client = await pool.connect();
+      try {
+        const result = await client.query('SELECT * FROM ai_model_templates WHERE id = $1', [templateId]);
+        
+        if (result.rows.length === 0) {
+          return res.status(404).json({ message: 'Template not found' });
+        }
+        
+        return res.json(result.rows[0]);
+      } finally {
+        client.release();
       }
-      
-      return res.json(template);
     }
 
     return res.status(405).json({ message: 'Method not allowed' });
   } catch (error) {
     console.error('Error in template API:', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    return res.status(500).json({ message: 'Internal server error: ' + error.message });
   }
 }

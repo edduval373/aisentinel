@@ -361,62 +361,7 @@ export default function CreateModels() {
     templateForm.setValue("provider", provider);
   };
 
-  // Check if in production environment
-  const isProduction = window.location.hostname.includes('vercel.app') || window.location.hostname.includes('aisentinel.app');
-  
-  if (isProduction) {
-    return (
-      <AdminLayout title="AI Model Templates" subtitle="Production environment - read-only">
-        <div style={{ 
-          padding: '48px', 
-          textAlign: 'center',
-          backgroundColor: '#fff3cd',
-          borderRadius: '12px',
-          border: '1px solid #ffc107',
-          margin: '24px 0'
-        }}>
-          <div style={{ 
-            width: '64px', 
-            height: '64px', 
-            backgroundColor: '#ffc107',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            margin: '0 auto 24px auto'
-          }}>
-            <Bot style={{ width: '32px', height: '32px', color: 'white' }} />
-          </div>
-          <h2 style={{ 
-            fontSize: '24px', 
-            fontWeight: '600', 
-            color: '#856404', 
-            margin: '0 0 12px 0' 
-          }}>
-            Production Environment
-          </h2>
-          <p style={{ 
-            fontSize: '16px', 
-            color: '#856404', 
-            margin: '0 0 16px 0',
-            lineHeight: '1.5'
-          }}>
-            Template management is only available in the development environment for safety.
-            <br />
-            All 12 templates are correctly loaded from Railway database in read-only mode.
-          </p>
-          <p style={{ 
-            fontSize: '14px', 
-            color: '#856404', 
-            margin: 0,
-            fontStyle: 'italic'
-          }}>
-            Use the development server to create, edit, or delete templates.
-          </p>
-        </div>
-      </AdminLayout>
-    );
-  }
+  // Production template management now fully enabled with proper endpoints
 
   if (templatesLoading) {
     return (
