@@ -142,6 +142,10 @@ export default function CompanyManagement() {
           errorMessage = "Company logo is too large. Please use a smaller image (under 5MB).";
         } else if (error.message.includes("413")) {
           errorMessage = "Upload file is too large. Please use a smaller image.";
+        } else if (error.message.includes("duplicate key") || error.message.includes("unique constraint") || error.message.includes("domain")) {
+          errorMessage = "This domain is already used by another company. Please choose a different domain.";
+        } else if (error.message.includes("violates unique constraint")) {
+          errorMessage = "A company with this information already exists. Please check the domain field.";
         } else {
           errorMessage = error.message;
         }
@@ -439,10 +443,10 @@ export default function CompanyManagement() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>
-                          <span style={{ color: '#dc2626' }}>*</span> Email Domain
+                          <span style={{ color: '#dc2626' }}>*</span> Email Domain (Must be unique)
                         </FormLabel>
                         <FormControl>
-                          <Input placeholder="acme.com" {...field} />
+                          <Input placeholder="acme.com (must be unique)" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
