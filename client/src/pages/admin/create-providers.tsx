@@ -350,8 +350,19 @@ export default function CreateProviders() {
 
   const handleEdit = (provider: AiProvider) => {
     console.log('🔧 [AI-PROVIDERS] Editing provider:', provider.id, provider.name);
+    console.log('🔧 [AI-PROVIDERS] Provider data:', {
+      name: provider.name,
+      displayName: provider.displayName,
+      description: provider.description,
+      website: provider.website,
+      apiDocUrl: provider.apiDocUrl,
+      isEnabled: provider.isEnabled
+    });
+    
     setEditingProvider(provider);
     setNameCheckResult({ checking: false, exists: false, message: "" });
+    
+    // Reset form with all provider data
     form.reset({
       name: provider.name,
       displayName: provider.displayName,
@@ -360,6 +371,8 @@ export default function CreateProviders() {
       apiDocUrl: provider.apiDocUrl || '',
       isEnabled: provider.isEnabled,
     });
+    
+    console.log('🔧 [AI-PROVIDERS] Form reset with values, opening edit dialog...');
     setShowEditProvider(true);
   };
 
@@ -743,7 +756,6 @@ export default function CreateProviders() {
                     Internal: {provider.name}
                   </p>
                   <span style={provider.isEnabled ? activeBadgeStyle : disabledBadgeStyle}>
-                    {console.log('🔍 [PROVIDER DEBUG]', provider.name, 'isEnabled:', provider.isEnabled, 'type:', typeof provider.isEnabled)}
                     {provider.isEnabled ? 'Enabled' : 'Disabled'}
                   </span>
                 </div>
@@ -933,7 +945,7 @@ export default function CreateProviders() {
                         <span style={{ color: '#dc2626' }}>*</span> Display Name
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="OpenAI" {...field} />
+                        <Input placeholder="OpenAI" {...field} value={field.value || ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
