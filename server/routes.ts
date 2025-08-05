@@ -553,13 +553,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      console.log('✅ [AI-PROVIDERS CREATE] Creating AI provider:', req.body.name);
-      const newProvider = await storage.createAiProvider(req.body);
-      console.log(`✅ [AI-PROVIDERS CREATE] Provider created successfully: ID ${newProvider.id}`);
-      res.json(newProvider);
+      console.log('✅ [AI-PROVIDERS CREATE] Creating AI provider with data:', req.body);
+      
+      // Validate required fields
+      const { name, displayName, description, website, apiDocUrl, isEnabled } = req.body;
+      
+      if (!name || !displayName) {
+        console.log('❌ [AI-PROVIDERS CREATE] Missing required fields');
+        return res.status(400).json({ 
+          error: 'Missing required fields: name and displayName are required' 
+        });
+      }
+      
+      const providerData = {
+        name,
+        displayName,
+        description: description || null,
+        website: website || null,
+        apiDocUrl: apiDocUrl || null,
+        isEnabled: isEnabled !== false,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      
+      console.log('✅ [AI-PROVIDERS CREATE] Processed provider data:', providerData);
+      const newProvider = await storage.createAiProvider(providerData);
+      console.log(`✅ [AI-PROVIDERS CREATE] Provider created successfully: ID ${newProvider.id}, Name: ${newProvider.name}`);
+      res.status(201).json(newProvider);
     } catch (error) {
       console.error('❌ [AI-PROVIDERS CREATE] Error creating provider:', error);
-      res.status(500).json({ error: 'Failed to create AI provider' });
+      console.error('❌ [AI-PROVIDERS CREATE] Error details:', error instanceof Error ? error.message : 'Unknown error');
+      console.error('❌ [AI-PROVIDERS CREATE] Stack trace:', error instanceof Error ? error.stack : 'No stack trace');
+      
+      let errorMessage = 'Failed to create AI provider';
+      if (error instanceof Error) {
+        if (error.message.includes('duplicate key') || error.message.includes('unique constraint')) {
+          errorMessage = 'A provider with this name already exists';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
+      res.status(500).json({ 
+        error: errorMessage,
+        details: error instanceof Error ? error.message : 'Unknown database error'
+      });
     }
   });
 
