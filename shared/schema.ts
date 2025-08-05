@@ -59,7 +59,7 @@ export const userSessions = pgTable("user_sessions", {
 // Companies table
 export const companies = pgTable("companies", {
   id: serial("id").primaryKey(),
-  name: varchar("name").notNull(),
+  name: varchar("name").notNull().unique(),
   domain: varchar("domain").unique(),
   primaryAdminName: varchar("primary_admin_name"),
   primaryAdminEmail: varchar("primary_admin_email"),
