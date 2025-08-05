@@ -650,16 +650,44 @@ export default function CreateProviders() {
                   control={form.control}
                   name="isEnabled"
                   render={({ field }) => (
-                    <FormItem style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '8px' }}>
+                    <FormItem style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '12px', 
+                      marginTop: '16px',
+                      padding: '12px 16px',
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '8px',
+                      backgroundColor: '#f9fafb',
+                      cursor: 'pointer'
+                    }}>
                       <FormControl>
                         <Switch 
                           checked={field.value}
                           onCheckedChange={field.onChange}
+                          style={{ cursor: 'pointer' }}
                         />
                       </FormControl>
-                      <FormLabel style={{ fontSize: '14px', fontWeight: '500', margin: 0 }}>
-                        Enable this provider
+                      <FormLabel style={{ 
+                        fontSize: '14px', 
+                        fontWeight: '600', 
+                        margin: 0,
+                        cursor: 'pointer',
+                        color: field.value ? '#10b981' : '#6b7280'
+                      }}>
+                        {field.value ? '✅ Provider Enabled' : '⚪ Enable this provider'}
                       </FormLabel>
+                      <div style={{ 
+                        marginLeft: 'auto',
+                        fontSize: '12px',
+                        fontWeight: '500',
+                        color: field.value ? '#10b981' : '#6b7280',
+                        backgroundColor: field.value ? '#dcfce7' : '#f3f4f6',
+                        padding: '4px 8px',
+                        borderRadius: '4px'
+                      }}>
+                        {field.value ? 'ACTIVE' : 'INACTIVE'}
+                      </div>
                     </FormItem>
                   )}
                 />
@@ -1052,16 +1080,44 @@ export default function CreateProviders() {
                 control={form.control}
                 name="isEnabled"
                 render={({ field }) => (
-                  <FormItem style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '8px' }}>
+                  <FormItem style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '12px', 
+                    marginTop: '16px',
+                    padding: '12px 16px',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '8px',
+                    backgroundColor: '#f9fafb',
+                    cursor: 'pointer'
+                  }}>
                     <FormControl>
                       <Switch 
                         checked={field.value}
                         onCheckedChange={field.onChange}
+                        style={{ cursor: 'pointer' }}
                       />
                     </FormControl>
-                    <FormLabel style={{ fontSize: '14px', fontWeight: '500', margin: 0 }}>
-                      Enable this provider
+                    <FormLabel style={{ 
+                      fontSize: '14px', 
+                      fontWeight: '600', 
+                      margin: 0,
+                      cursor: 'pointer',
+                      color: field.value ? '#10b981' : '#6b7280'
+                    }}>
+                      {field.value ? '✅ Provider Enabled' : '⚪ Enable this provider'}
                     </FormLabel>
+                    <div style={{ 
+                      marginLeft: 'auto',
+                      fontSize: '12px',
+                      fontWeight: '500',
+                      color: field.value ? '#10b981' : '#6b7280',
+                      backgroundColor: field.value ? '#dcfce7' : '#f3f4f6',
+                      padding: '4px 8px',
+                      borderRadius: '4px'
+                    }}>
+                      {field.value ? 'ACTIVE' : 'INACTIVE'}
+                    </div>
                   </FormItem>
                 )}
               />
