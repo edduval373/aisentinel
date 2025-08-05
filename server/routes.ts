@@ -604,7 +604,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Update AI Provider - Super-user only
   app.put('/api/admin/ai-providers/:id', async (req, res) => {
     try {
-      console.log(`🌐 API Request: ${req.method} ${req.url}`);
+      console.log(`🌐 [AI-PROVIDERS UPDATE] API Request: ${req.method} ${req.url}`);
+      console.log('📝 [AI-PROVIDERS UPDATE] Update data:', req.body);
 
       // Header-based authentication for super-users (1000+ level)
       const authHeader = req.headers.authorization;
@@ -620,6 +621,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const productionToken = 'prod-1754052835575-289kvxqgl42h';
       const extractedToken = authHeader?.replace('Bearer ', '') || sessionToken;
       
+      console.log('🔍 [AI-PROVIDERS UPDATE] Auth check:', extractedToken ? `${extractedToken.substring(0, 20)}...` : 'none');
+      
       if (extractedToken === productionToken) {
         console.log('✅ [AI-PROVIDERS UPDATE] Production token authenticated');
         isAuthenticated = true;
@@ -634,19 +637,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Super-user access required (1000+)
       if (roleLevel < 1000) {
+        console.log('❌ [AI-PROVIDERS UPDATE] Insufficient role level:', roleLevel);
         return res.status(403).json({ 
           error: 'Super-user access required'
         });
       }
 
       const providerId = parseInt(req.params.id);
-      console.log('✅ [AI-PROVIDERS UPDATE] Updating AI provider:', providerId, req.body.name);
-      const updatedProvider = await storage.updateAiProvider(providerId, req.body);
-      console.log(`✅ [AI-PROVIDERS UPDATE] Provider updated successfully: ID ${providerId}`);
+      
+      if (isNaN(providerId)) {
+        console.log('❌ [AI-PROVIDERS UPDATE] Invalid provider ID:', req.params.id);
+        return res.status(400).json({ 
+          error: 'Invalid provider ID' 
+        });
+      }
+
+      // Validate and process update data
+      const { name, displayName, description, website, apiDocUrl, isEnabled } = req.body;
+      
+      const updateData = {
+        ...(name && { name }),
+        ...(displayName && { displayName }),
+        ...(description !== undefined && { description: description || null }),
+        ...(website !== undefined && { website: website || null }),
+        ...(apiDocUrl !== undefined && { apiDocUrl: apiDocUrl || null }),
+        ...(isEnabled !== undefined && { isEnabled: isEnabled !== false }),
+        updatedAt: new Date()
+      };
+
+      console.log('✅ [AI-PROVIDERS UPDATE] Updating AI provider:', providerId, 'with data:', updateData);
+      const updatedProvider = await storage.updateAiProvider(providerId, updateData);
+      console.log(`✅ [AI-PROVIDERS UPDATE] Provider updated successfully: ID ${providerId}, Name: ${updatedProvider.name}`);
       res.json(updatedProvider);
     } catch (error) {
       console.error('❌ [AI-PROVIDERS UPDATE] Error updating provider:', error);
-      res.status(500).json({ error: 'Failed to update AI provider' });
+      console.error('❌ [AI-PROVIDERS UPDATE] Error details:', error instanceof Error ? error.message : 'Unknown error');
+      
+      let errorMessage = 'Failed to update AI provider';
+      if (error instanceof Error) {
+        if (error.message.includes('duplicate key') || error.message.includes('unique constraint')) {
+          errorMessage = 'A provider with this name already exists';
+        } else if (error.message.includes('not found')) {
+          errorMessage = 'Provider not found';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
+      res.status(500).json({ 
+        error: errorMessage,
+        details: error instanceof Error ? error.message : 'Unknown database error'
+      });
     }
   });
 
