@@ -132,6 +132,24 @@ export default function CreateProviders() {
         
         const data = await response.json();
         console.log('✅ [AI-PROVIDERS] Fetched providers from database:', data.length, 'providers');
+        
+        // PRODUCTION DEBUG: Log actual data structure to identify caching issue
+        if (data.length > 0) {
+          console.log('🔍 [PRODUCTION-DEBUG] First provider data structure:', {
+            id: data[0].id,
+            name: data[0].name,
+            displayName: data[0].displayName,
+            isEnabled: data[0].isEnabled,
+            isEnabledType: typeof data[0].isEnabled,
+            booleanCheck: Boolean(data[0].isEnabled)
+          });
+          
+          console.log('🔍 [PRODUCTION-DEBUG] All provider names and status:');
+          data.forEach((provider: any, index: number) => {
+            console.log(`  ${index + 1}. ${provider.displayName} (${provider.name}) - isEnabled: ${provider.isEnabled} (${typeof provider.isEnabled})`);
+          });
+        }
+        
         return data;
       } catch (error) {
         console.error('❌ [AI-PROVIDERS] Network or parsing error:', error);
@@ -707,7 +725,18 @@ export default function CreateProviders() {
           gap: '16px', 
           gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' 
         }}>
-          {providers.map((provider) => (
+          {providers.map((provider) => {
+            // PRODUCTION DEBUG: Log individual provider rendering
+            console.log('🎨 [RENDER-DEBUG] Rendering provider:', {
+              id: provider.id,
+              name: provider.name,
+              displayName: provider.displayName,
+              isEnabled: provider.isEnabled,
+              isEnabledType: typeof provider.isEnabled,
+              booleanCheck: Boolean(provider.isEnabled)
+            });
+            
+            return (
             <Card key={provider.id} style={{ 
               border: '1px solid #e5e7eb',
               borderRadius: '12px',
@@ -859,7 +888,8 @@ export default function CreateProviders() {
                 </div>
               </CardContent>
             </Card>
-          ))}
+            );
+          })}
         </div>
       )}
 
