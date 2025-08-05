@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus, Edit, Trash2, ExternalLink, Globe, Loader2 } from 'lucide-react';
 import { z } from 'zod';
+import { insertAiProviderSchema, type AiProvider, type InsertAiProvider } from '@shared/schema';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -657,7 +658,7 @@ export default function CreateProviders() {
 
                 <Button 
                   type="submit" 
-                  disabled={createMutation.isPending || updateMutation.isPending || 
+                  disabled={createProviderMutation.isPending || updateProviderMutation.isPending || 
                            nameCheckResult.exists || nameCheckResult.checking}
                   style={{ 
                     width: '100%',
@@ -669,13 +670,13 @@ export default function CreateProviders() {
                     fontSize: '16px',
                     fontWeight: '600',
                     cursor: (nameCheckResult.exists || nameCheckResult.checking) ? 'not-allowed' : 'pointer',
-                    opacity: (createMutation.isPending || updateMutation.isPending || nameCheckResult.checking) ? 0.7 : 1,
+                    opacity: (createProviderMutation.isPending || updateProviderMutation.isPending || nameCheckResult.checking) ? 0.7 : 1,
                     marginTop: '8px'
                   }}
                 >
                   {nameCheckResult.checking ? "Checking..." :
                    nameCheckResult.exists ? "Name unavailable" :
-                   createMutation.isPending ? "Creating..." : "Create Provider"
+                   createProviderMutation.isPending ? "Creating..." : "Create Provider"
                   }
                 </Button>
               </form>
@@ -995,7 +996,7 @@ export default function CreateProviders() {
 
               <Button 
                 type="submit" 
-                disabled={createMutation.isPending || updateMutation.isPending || 
+                disabled={createProviderMutation.isPending || updateProviderMutation.isPending || 
                          nameCheckResult.exists || nameCheckResult.checking}
                 style={{ 
                   width: '100%',
@@ -1007,13 +1008,13 @@ export default function CreateProviders() {
                   fontSize: '16px',
                   fontWeight: '600',
                   cursor: (nameCheckResult.exists || nameCheckResult.checking) ? 'not-allowed' : 'pointer',
-                  opacity: (createMutation.isPending || updateMutation.isPending || nameCheckResult.checking) ? 0.7 : 1,
+                  opacity: (createProviderMutation.isPending || updateProviderMutation.isPending || nameCheckResult.checking) ? 0.7 : 1,
                   marginTop: '8px'
                 }}
               >
                 {nameCheckResult.checking ? "Checking..." :
                  nameCheckResult.exists ? "Name unavailable" :
-                 updateMutation.isPending ? "Updating..." : "Update Provider"
+                 updateProviderMutation.isPending ? "Updating..." : "Update Provider"
                 }
               </Button>
             </form>
