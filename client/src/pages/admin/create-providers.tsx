@@ -827,6 +827,9 @@ export default function CreateProviders() {
         }}>
           {providers.map((provider) => {
             // PRODUCTION DEBUG: Log individual provider rendering  
+            console.log('🔧 [PROVIDER-FULL-OBJECT] Complete provider data:', JSON.stringify(provider, null, 2));
+            console.log('🔧 [PROVIDER-KEYS] Available keys:', Object.keys(provider));
+            console.log('🔧 [PROVIDER-VALUES] Values:', Object.values(provider));
             console.log('🎨 [RENDER-DEBUG] Rendering provider:', {
               id: provider.id,
               name: provider.name,
