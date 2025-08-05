@@ -49,19 +49,59 @@ export default function CreateProviders() {
     },
   });
 
-  // Fetch AI providers
-  const { data: providers = [], isLoading } = useQuery({
-    queryKey: ['/api/admin/ai-providers'],
+  // Fetch AI providers (super-user only) 
+  const { data: providers = [], isLoading, error: providersError, refetch: refetchProviders } = useQuery({
+    queryKey: ["/api/admin/ai-providers"],
+    staleTime: 0, // Always fetch fresh data
+    gcTime: 0, // Don't cache data
+    refetchInterval: false, // Disable automatic refetching
   });
+
+  // Debug logging for providers query
+  React.useEffect(() => {
+    console.log("🔧 Providers query state:", {
+      isLoading: isLoading,
+      hasError: !!providersError,
+      error: providersError,
+      providersCount: providers?.length || 0,
+      providers: providers
+    });
+    
+    // Manual API test for providers
+    if (!isLoading && providers.length === 0 && !providersError) {
+      console.log("🧪 Manual API test - fetching providers directly...");
+      fetch('/api/admin/ai-providers', { 
+        credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('sessionToken')}`,
+          'X-Session-Token': localStorage.getItem('sessionToken') || ''
+        }
+      })
+        .then(res => {
+          console.log("🧪 Manual providers fetch response status:", res.status);
+          return res.json();
+        })
+        .then(data => {
+          console.log("🧪 Manual providers fetch response data:", data);
+        })
+        .catch(err => {
+          console.error("🧪 Manual providers fetch error:", err);
+        });
+    }
+  }, [providers, isLoading, providersError]);
 
   // Create provider mutation
   const createProviderMutation = useMutation({
-    mutationFn: (data: InsertAiProvider) => apiRequest('/api/admin/ai-providers', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/ai-providers'] });
+    mutationFn: (data: InsertAiProvider) => {
+      console.log("🚀 [CREATE PROVIDER] Starting provider creation with data:", data);
+      return apiRequest(`/api/admin/ai-providers`, "POST", data);
+    },
+    onSuccess: (newProvider) => {
+      console.log("✅ [CREATE PROVIDER] Provider created successfully:", newProvider);
+      // Force immediate refetch
+      refetchProviders().then(() => {
+        console.log("✅ [CREATE PROVIDER] Providers list refreshed successfully");
+      });
       toast({
         title: "Provider Created",
         description: "AI provider has been created successfully.",
@@ -80,13 +120,16 @@ export default function CreateProviders() {
 
   // Update provider mutation
   const updateProviderMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: InsertAiProvider }) => 
-      apiRequest(`/api/admin/ai-providers/${id}`, {
-        method: 'PUT',
-        body: JSON.stringify(data),
-      }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/ai-providers'] });
+    mutationFn: ({ id, data }: { id: number; data: InsertAiProvider }) => {
+      console.log("🔧 [UPDATE PROVIDER] Starting provider update for ID:", id, "with data:", data);
+      return apiRequest(`/api/admin/ai-providers/${id}`, "PUT", data);
+    },
+    onSuccess: (updatedProvider) => {
+      console.log("✅ [UPDATE PROVIDER] Provider updated successfully:", updatedProvider);
+      // Force immediate refetch
+      refetchProviders().then(() => {
+        console.log("✅ [UPDATE PROVIDER] Providers list refreshed successfully");
+      });
       toast({
         title: "Provider Updated",
         description: "AI provider has been updated successfully.",
@@ -106,11 +149,16 @@ export default function CreateProviders() {
 
   // Delete provider mutation
   const deleteProviderMutation = useMutation({
-    mutationFn: (id: number) => apiRequest(`/api/admin/ai-providers/${id}`, {
-      method: 'DELETE',
-    }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/ai-providers'] });
+    mutationFn: (id: number) => {
+      console.log("🗑️ [DELETE PROVIDER] Starting provider deletion for ID:", id);
+      return apiRequest(`/api/admin/ai-providers/${id}`, "DELETE");
+    },
+    onSuccess: (deletedProvider) => {
+      console.log("✅ [DELETE PROVIDER] Provider deleted successfully:", deletedProvider);
+      // Force immediate refetch
+      refetchProviders().then(() => {
+        console.log("✅ [DELETE PROVIDER] Providers list refreshed successfully");
+      });
       toast({
         title: "Provider Deleted",
         description: "AI provider has been deleted successfully.",
@@ -252,7 +300,8 @@ export default function CreateProviders() {
                       <FormControl>
                         <Textarea 
                           placeholder="Brief description of the AI provider..." 
-                          {...field} 
+                          {...field}
+                          value={field.value || ''}
                         />
                       </FormControl>
                       <FormMessage />
@@ -337,7 +386,7 @@ export default function CreateProviders() {
       </div>
 
       <div style={{ display: 'grid', gap: '16px' }}>
-        {providers.map((provider: AiProvider) => (
+        {providers.map((provider: any) => (
           <div 
             key={provider.id} 
             style={{
@@ -508,7 +557,8 @@ export default function CreateProviders() {
                     <FormControl>
                       <Textarea 
                         placeholder="Brief description of the AI provider..." 
-                        {...field} 
+                        {...field}
+                        value={field.value || ''}
                       />
                     </FormControl>
                     <FormMessage />
@@ -526,7 +576,7 @@ export default function CreateProviders() {
                         Website (Optional)
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="https://openai.com" {...field} />
+                        <Input placeholder="https://openai.com" {...field} value={field.value || ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -542,7 +592,7 @@ export default function CreateProviders() {
                         API Documentation (Optional)
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="https://platform.openai.com/docs" {...field} />
+                        <Input placeholder="https://platform.openai.com/docs" {...field} value={field.value || ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

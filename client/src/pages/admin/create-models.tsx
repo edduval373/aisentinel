@@ -131,11 +131,22 @@ export default function CreateModels() {
     gcTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
-  // Fetch AI providers from database
-  const { data: dbProviders = [], isLoading: providersLoading } = useQuery({
+  // Fetch AI providers from database  
+  const { data: dbProviders = [], isLoading: providersLoading, error: providersError } = useQuery({
     queryKey: ["/api/admin/ai-providers"],
     staleTime: 5 * 60 * 1000, // Cache providers for 5 minutes
   });
+
+  // Debug providers query
+  React.useEffect(() => {
+    console.log("🔧 [CREATE-MODELS] Providers query state:", {
+      isLoading: providersLoading,
+      hasError: !!providersError,
+      error: providersError,
+      providersCount: dbProviders?.length || 0,
+      providers: dbProviders
+    });
+  }, [dbProviders, providersLoading, providersError]);
 
   // Transform providers for the dropdown (compatible with existing form structure)
   const providers = dbProviders.map((provider: any) => ({

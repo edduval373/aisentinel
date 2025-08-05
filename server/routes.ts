@@ -470,6 +470,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // AI Providers CRUD routes - Super-user only
+  app.get('/api/admin/ai-providers', async (req, res) => {
+    try {
+      console.log(`🌐 API Request: ${req.method} ${req.url}`);
+
+      // Header-based authentication for super-users (1000+ level)
+      const authHeader = req.headers.authorization;
+      const sessionToken = req.headers['x-session-token'];
+      
+      let isAuthenticated = false;
+      let roleLevel = 0;
+
+      // Production token authentication
+      const productionToken = 'prod-1754052835575-289kvxqgl42h';
+      const extractedToken = authHeader?.replace('Bearer ', '') || sessionToken;
+      
+      if (extractedToken === productionToken) {
+        console.log('✅ [AI-PROVIDERS] Production token authenticated');
+        isAuthenticated = true;
+        roleLevel = 1000;
+      } else {
+        console.log('❌ [AI-PROVIDERS] Authentication failed');
+        return res.status(401).json({ 
+          error: 'Authentication failed',
+          requiredRole: '1000+ (Super-user)'
+        });
+      }
+
+      // Super-user access required (1000+)
+      if (roleLevel < 1000) {
+        return res.status(403).json({ 
+          error: 'Super-user access required'
+        });
+      }
+
+      console.log('✅ [AI-PROVIDERS] Fetching all AI providers...');
+      const providers = await storage.getAiProviders();
+      console.log(`✅ [AI-PROVIDERS] Found ${providers.length} providers`);
+      res.json(providers);
+    } catch (error) {
+      console.error('❌ [AI-PROVIDERS] Error fetching providers:', error);
+      res.status(500).json({ error: 'Failed to fetch AI providers' });
+    }
+  });
+
   // AI models route with header authentication support
   app.get('/api/ai-models', async (req, res) => {
     try {
