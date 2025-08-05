@@ -743,6 +743,7 @@ export default function CreateProviders() {
                     Internal: {provider.name}
                   </p>
                   <span style={provider.isEnabled ? activeBadgeStyle : disabledBadgeStyle}>
+                    {console.log('🔍 [PROVIDER DEBUG]', provider.name, 'isEnabled:', provider.isEnabled, 'type:', typeof provider.isEnabled)}
                     {provider.isEnabled ? 'Enabled' : 'Disabled'}
                   </span>
                 </div>
