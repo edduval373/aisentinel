@@ -29,6 +29,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import AdminLayout from '@/components/layout/AdminLayout';
+import { AISentinelLoader } from '@/components/ui/ai-sentinel-loader';
 
 // Use the schema and types from shared/schema.ts
 type AiProviderFormData = InsertAiProvider;
@@ -405,17 +406,7 @@ export default function CreateProviders() {
   if (isLoading) {
     return (
       <AdminLayout title="AI Providers" subtitle="Manage universal AI providers for the platform">
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '40px' }}>
-          <div style={{ 
-            width: '20px', 
-            height: '20px', 
-            border: '3px solid #e5e7eb',
-            borderTop: '3px solid #3b82f6',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite'
-          }}></div>
-          <span style={{ color: '#6b7280', fontSize: '16px' }}>Loading AI providers from database...</span>
-        </div>
+        <AISentinelLoader size={24} message="Loading AI providers from database..." />
       </AdminLayout>
     );
   }
@@ -540,11 +531,19 @@ export default function CreateProviders() {
                               <div style={{
                                 width: '12px',
                                 height: '12px',
-                                border: '2px solid #e5e7eb',
-                                borderTop: '2px solid #3b82f6',
-                                borderRadius: '50%',
                                 animation: 'spin 1s linear infinite'
-                              }} />
+                              }}>
+                                <img 
+                                  src="/ai-sentinel-logo.png" 
+                                  alt="Checking..." 
+                                  style={{ 
+                                    width: '100%', 
+                                    height: '100%', 
+                                    objectFit: 'contain',
+                                    filter: 'brightness(1.2) saturate(1.4) contrast(1.1)'
+                                  }} 
+                                />
+                              </div>
                             )}
                             {nameCheckResult.message}
                           </div>
@@ -921,11 +920,19 @@ export default function CreateProviders() {
                             <div style={{
                               width: '12px',
                               height: '12px',
-                              border: '2px solid #e5e7eb',
-                              borderTop: '2px solid #3b82f6',
-                              borderRadius: '50%',
                               animation: 'spin 1s linear infinite'
-                            }} />
+                            }}>
+                              <img 
+                                src="/ai-sentinel-logo.png" 
+                                alt="Checking..." 
+                                style={{ 
+                                  width: '100%', 
+                                  height: '100%', 
+                                  objectFit: 'contain',
+                                  filter: 'brightness(1.2) saturate(1.4) contrast(1.1)'
+                                }} 
+                              />
+                            </div>
                           )}
                           {nameCheckResult.message}
                         </div>
@@ -1113,11 +1120,19 @@ export default function CreateProviders() {
                   <div style={{
                     width: '14px',
                     height: '14px',
-                    border: '2px solid #ffffff',
-                    borderTop: '2px solid transparent',
-                    borderRadius: '50%',
                     animation: 'spin 1s linear infinite'
-                  }} />
+                  }}>
+                    <img 
+                      src="/ai-sentinel-logo.png" 
+                      alt="Deleting..." 
+                      style={{ 
+                        width: '100%', 
+                        height: '100%', 
+                        objectFit: 'contain',
+                        filter: 'brightness(2) saturate(0) contrast(1)' // White version for red button
+                      }} 
+                    />
+                  </div>
                   Deleting...
                 </div>
               ) : (

@@ -1175,11 +1175,19 @@ export default function CompanySetup() {
                 <div style={{ 
                   width: '24px', 
                   height: '24px', 
-                  border: '3px solid #f3f4f6', 
-                  borderTop: '3px solid #3b82f6', 
-                  borderRadius: '50%', 
                   animation: 'spin 1s linear infinite' 
-                }}></div>
+                }}>
+                  <img 
+                    src="/ai-sentinel-logo.png" 
+                    alt="Loading owners..." 
+                    style={{ 
+                      width: '100%', 
+                      height: '100%', 
+                      objectFit: 'contain',
+                      filter: 'brightness(1.2) saturate(1.4) contrast(1.1)'
+                    }} 
+                  />
+                </div>
               </div>
             ) : !Array.isArray(owners) || owners.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}>
@@ -2002,11 +2010,19 @@ export default function CompanySetup() {
                       <div style={{ 
                         width: '16px', 
                         height: '16px', 
-                        border: '2px solid #ffffff40', 
-                        borderTop: '2px solid #ffffff', 
-                        borderRadius: '50%', 
                         animation: 'spin 1s linear infinite' 
-                      }}></div>
+                      }}>
+                        <img 
+                          src="/ai-sentinel-logo.png" 
+                          alt="Updating..." 
+                          style={{ 
+                            width: '100%', 
+                            height: '100%', 
+                            objectFit: 'contain',
+                            filter: 'brightness(2) saturate(0) contrast(1)' // White version for blue button
+                          }} 
+                        />
+                      </div>
                       Updating...
                     </>
                   ) : (
