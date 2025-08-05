@@ -889,13 +889,18 @@ export default function CreateProviders() {
                     fontSize: '12px'
                   }}>
                     {(() => {
+                      console.log(`🔧 [RENDER-OBJECT] Full provider object:`, provider);
+                      console.log(`🔧 [RENDER-KEYS] Provider keys:`, Object.keys(provider));
+                      console.log(`🔧 [RENDER-VALUES] Provider values:`, Object.values(provider));
+                      
                       const isActiveCheck = provider.isEnabled === true;
-                      console.log(`🎨 [RENDER-STATUS] Provider ${provider.displayName} (ID: ${provider.id}):`, {
+                      console.log(`🎨 [RENDER-STATUS] Provider ${provider.displayName || provider.name} (ID: ${provider.id}):`, {
                         isEnabled: provider.isEnabled,
                         isEnabledType: typeof provider.isEnabled,
                         strictEquality: provider.isEnabled === true,
                         booleanConversion: Boolean(provider.isEnabled),
-                        rendering: isActiveCheck ? "ACTIVE" : "INACTIVE"
+                        rendering: isActiveCheck ? "ACTIVE" : "INACTIVE",
+                        fullObject: provider
                       });
                       return isActiveCheck ? "ACTIVE" : "INACTIVE";
                     })()}
