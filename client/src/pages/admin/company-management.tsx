@@ -170,11 +170,34 @@ export default function CompanyManagement() {
           
           timeoutId = setTimeout(async () => {
             try {
+              console.log("🔍 [NAME CHECK] Checking name:", name);
+              console.log("🔍 [NAME CHECK] Companies array:", companies);
+              console.log("🔍 [NAME CHECK] Total companies:", companies?.length);
+              console.log("🔍 [NAME CHECK] Editing company:", editingCompany);
+              
               // Check if company name exists in current companies list
-              const nameExists = companies.some(company => 
-                company.name?.toLowerCase() === name.toLowerCase() && 
-                (!editingCompany || company.id !== editingCompany.id)
-              );
+              const nameExists = companies.some(company => {
+                const companyNameLower = company.name?.toLowerCase();
+                const inputNameLower = name.toLowerCase();
+                const isMatch = companyNameLower === inputNameLower;
+                const isNotSameCompany = !editingCompany || company.id !== editingCompany.id;
+                
+                console.log("🔍 [NAME CHECK] Comparing:", {
+                  companyName: company.name,
+                  companyNameLower,
+                  inputName: name,
+                  inputNameLower,
+                  isMatch,
+                  companyId: company.id,
+                  editingCompanyId: editingCompany?.id,
+                  isNotSameCompany,
+                  wouldTriggerDuplicate: isMatch && isNotSameCompany
+                });
+                
+                return isMatch && isNotSameCompany;
+              });
+              
+              console.log("🔍 [NAME CHECK] Final result - nameExists:", nameExists);
               
               if (nameExists) {
                 setNameCheckResult({ 
