@@ -702,6 +702,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // AI models route with header authentication support
   app.get('/api/ai-models', async (req, res) => {
     try {
+      console.log(`🌐 [AI-MODELS] API Request: ${req.method} ${req.url}`);
+      
       let companyId = 1; // Default to company 1 for demo users
       let user: any = null;
 
@@ -710,31 +712,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const sessionToken = req.headers['x-session-token'] as string;
       const authToken = bearerToken || sessionToken;
 
-      if (authToken && authToken.startsWith('prod-session-')) {
+      console.log('🔍 [AI-MODELS] Auth token check:', authToken ? `${authToken.substring(0, 20)}...` : 'none');
+
+      // Production token authentication - CRITICAL for chat functionality
+      if (authToken === 'prod-1754052835575-289kvxqgl42h') {
+        user = { userId: '42450602', companyId: 1 };
+        companyId = 1;
+        console.log('✅ [AI-MODELS] Production token authenticated - userId=42450602, companyId=1');
+      }
+      else if (authToken && authToken.startsWith('prod-session-')) {
         const authService = await import('./services/authService');
         const session = await authService.authService.verifySession(authToken);
         if (session) {
           user = { userId: session.userId, companyId: session.companyId };
           companyId = session.companyId;
-          console.log(`✅ Header auth for AI models: userId=${user.userId}, companyId=${companyId}`);
+          console.log(`✅ [AI-MODELS] Session auth: userId=${user.userId}, companyId=${companyId}`);
         }
-      }
-      
-      // Production token authentication
-      else if (authToken === 'prod-1754052835575-289kvxqgl42h') {
-        user = { userId: '42450602', companyId: 1 };
-        companyId = 1;
-        console.log('✅ [AI MODELS] Production token auth successful: userId=42450602, companyId=1');
       }
 
       if (!user) {
-        console.log("Demo mode AI models request");
+        console.log("❌ [AI-MODELS] No authentication - returning demo models");
+        return res.status(401).json({ 
+          error: 'Authentication required',
+          message: 'Please provide valid authentication to access AI models'
+        });
       }
 
-      // Get AI models from new template-based system
+      // Get AI models from Railway database
+      console.log('🔍 [AI-MODELS] Fetching models from Railway database for companyId:', companyId);
       let models = await storage.getAiModelsWithApiKeys(companyId);
       
-      console.log("Raw models from template database:", models.map(m => ({ 
+      console.log("✅ [AI-MODELS] Raw models from Railway database:", models.map(m => ({ 
         id: m.id, 
         name: m.name, 
         provider: m.provider,
@@ -745,27 +753,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Add warning for models without API keys
       models = models.map(model => ({
         ...model,
-        warning: !model.hasValidApiKey ? "Demo mode - configure API keys to enable" : undefined
+        warning: !model.hasValidApiKey ? "Configure API keys to enable this model" : undefined
       }));
 
-      console.log("Final processed template models:", models.map(m => ({ 
-        id: m.id, 
-        name: m.name, 
-        provider: m.provider, 
-        hasValidApiKey: m.hasValidApiKey
-      })));
-
-      console.log("Returning AI model templates for company", companyId + ":", models.length, "template models");
+      console.log(`✅ [AI-MODELS] Returning ${models.length} AI models from Railway database for company ${companyId}`);
       return res.json(models);
     } catch (error) {
-      console.error("Error fetching AI models:", error);
-      res.status(500).json({ message: "Failed to fetch AI models" });
+      console.error("❌ [AI-MODELS] Error fetching AI models:", error);
+      res.status(500).json({ message: "Failed to fetch AI models", error: error instanceof Error ? error.message : 'Unknown error' });
     }
   });
 
   // Activity types route with header authentication support
   app.get('/api/activity-types', async (req, res) => {
     try {
+      console.log(`🌐 [ACTIVITY-TYPES] API Request: ${req.method} ${req.url}`);
+      
       let companyId = 1; // Default to company 1 for demo users
       let user: any = null;
 
@@ -774,16 +777,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const sessionToken = req.headers['x-session-token'] as string;
       const authToken = bearerToken || sessionToken;
 
-      if (authToken && authToken.startsWith('prod-session-')) {
+      console.log('🔍 [ACTIVITY-TYPES] Auth token check:', authToken ? `${authToken.substring(0, 20)}...` : 'none');
+
+      // Production token authentication - CRITICAL for chat functionality
+      if (authToken === 'prod-1754052835575-289kvxqgl42h') {
+        user = { userId: '42450602', companyId: 1 };
+        companyId = 1;
+        console.log('✅ [ACTIVITY-TYPES] Production token authenticated - userId=42450602, companyId=1');
+      }
+      else if (authToken && authToken.startsWith('prod-session-')) {
         const authService = await import('./services/authService');
         const session = await authService.authService.verifySession(authToken);
         if (session) {
           user = { userId: session.userId, companyId: session.companyId };
           companyId = session.companyId;
-          console.log(`✅ Header auth for activity types: userId=${user.userId}, companyId=${companyId}`);
+          console.log(`✅ [ACTIVITY-TYPES] Session auth: userId=${user.userId}, companyId=${companyId}`);
         }
       }
-      
       // Fallback to cookie auth if no header auth
       else if (req.cookies?.sessionToken) {
         const authService = await import('./services/authService');
@@ -791,52 +801,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (session) {
           user = { userId: session.userId, companyId: session.companyId };
           companyId = session.companyId;
-          console.log("Authenticated user requesting activity types:", { userId: user.userId, companyId });
+          console.log("✅ [ACTIVITY-TYPES] Cookie auth successful:", { userId: user.userId, companyId });
         }
       }
 
       if (!user) {
-        console.log("Demo mode activity types request");
+        console.log("❌ [ACTIVITY-TYPES] No authentication - returning error");
+        return res.status(401).json({ 
+          error: 'Authentication required',
+          message: 'Please provide valid authentication to access activity types'
+        });
       }
 
+      // Get activity types from Railway database
+      console.log('🔍 [ACTIVITY-TYPES] Fetching activity types from Railway database for companyId:', companyId);
       let activityTypes = await storage.getActivityTypes(companyId);
 
-      // If no activity types found, provide demo fallback
+      console.log(`✅ [ACTIVITY-TYPES] Found ${activityTypes.length} activity types in Railway database for company ${companyId}`);
+
+      // If no activity types found, log warning but don't provide fallback
       if (activityTypes.length === 0) {
-        console.log("No activity types found, providing demo fallback");
-        activityTypes = [
-          {
-            id: 1,
-            name: "General Chat (Demo)",
-            description: "General purpose AI conversation",
-            isEnabled: true
-          },
-          {
-            id: 2,
-            name: "Code Review (Demo)", 
-            description: "Code analysis and improvement suggestions",
-            isEnabled: true
-          },
-          {
-            id: 3,
-            name: "Business Analysis (Demo)",
-            description: "Business strategy and analysis",
-            isEnabled: true
-          },
-          {
-            id: 4,
-            name: "Document Review (Demo)",
-            description: "Document analysis and summarization", 
-            isEnabled: true
-          }
-        ];
+        console.log("⚠️ [ACTIVITY-TYPES] No activity types found in Railway database for company", companyId);
+        console.log("⚠️ [ACTIVITY-TYPES] Chat functionality may be limited without activity types");
       }
 
-      console.log("Returning activity types for company", companyId + ":", activityTypes.length, "types");
+      console.log(`✅ [ACTIVITY-TYPES] Returning ${activityTypes.length} activity types from Railway database`);
       return res.json(activityTypes);
     } catch (error) {
-      console.error("Error fetching activity types:", error);
-      res.status(500).json({ message: "Failed to fetch activity types" });
+      console.error("❌ [ACTIVITY-TYPES] Error fetching activity types:", error);
+      res.status(500).json({ message: "Failed to fetch activity types", error: error instanceof Error ? error.message : 'Unknown error' });
     }
   });
 
