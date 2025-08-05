@@ -327,36 +327,61 @@ export default function CreateProviders() {
       console.log('🔄 [AI-PROVIDERS DELETE] Response headers:', Object.fromEntries(response.headers.entries()));
       
       if (!response.ok) {
-        const errorText = await response.text();
+        let errorText = '';
+        try {
+          errorText = await response.text();
+        } catch (e) {
+          console.error('❌ [AI-PROVIDERS DELETE] Could not read error response:', e);
+          errorText = 'Unable to read error response';
+        }
+        
         console.error('❌ [AI-PROVIDERS DELETE] Delete failed:', {
           status: response.status,
           statusText: response.statusText,
           errorText,
-          url: deleteUrl
+          url: deleteUrl,
+          headers: Object.fromEntries(response.headers.entries())
         });
-        throw new Error(errorText || `Failed to delete provider: ${response.status} ${response.statusText}`);
+        
+        throw new Error(errorText || `HTTP ${response.status}: ${response.statusText}`);
       }
       
       const result = await response.json();
       console.log('✅ [AI-PROVIDERS DELETE] Provider deleted successfully:', { id, result });
       return result;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('✅ [AI-PROVIDERS DELETE] Delete success callback triggered:', data);
+      
+      // Invalidate and refetch the providers list
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/ai-providers'] });
       refetchProviders();
+      
       toast({
         title: "Provider Deleted",
         description: "AI provider has been deleted successfully.",
       });
       setShowDeleteDialog(false);
       setProviderToDelete(null);
+      
+      console.log('✅ [AI-PROVIDERS DELETE] UI cleanup completed');
     },
     onError: (error: any) => {
-      console.error('❌ [AI-PROVIDERS] Delete mutation error:', error);
+      console.error('❌ [AI-PROVIDERS DELETE] Delete mutation error:', {
+        error,
+        errorMessage: error.message,
+        errorType: typeof error,
+        stack: error.stack
+      });
+      
       toast({
-        title: "Error",
-        description: error.message || "Failed to delete provider",
+        title: "Delete Failed",
+        description: error.message || "Failed to delete provider. Please try again.",
         variant: "destructive",
       });
+      
+      // Keep dialog open so user can retry
+      console.log('❌ [AI-PROVIDERS DELETE] Keeping delete dialog open for retry');
     },
   });
 
