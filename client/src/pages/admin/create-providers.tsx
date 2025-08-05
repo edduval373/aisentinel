@@ -888,7 +888,17 @@ export default function CreateProviders() {
                     borderRadius: '6px',
                     fontSize: '12px'
                   }}>
-                    {provider.isEnabled === true ? "ACTIVE" : "INACTIVE"}
+                    {(() => {
+                      const isActiveCheck = provider.isEnabled === true;
+                      console.log(`🎨 [RENDER-STATUS] Provider ${provider.displayName} (ID: ${provider.id}):`, {
+                        isEnabled: provider.isEnabled,
+                        isEnabledType: typeof provider.isEnabled,
+                        strictEquality: provider.isEnabled === true,
+                        booleanConversion: Boolean(provider.isEnabled),
+                        rendering: isActiveCheck ? "ACTIVE" : "INACTIVE"
+                      });
+                      return isActiveCheck ? "ACTIVE" : "INACTIVE";
+                    })()}
                   </span>
                 </div>
               </div>
