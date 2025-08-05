@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -25,7 +25,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { apiRequest } from '@/lib/queryClient';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function CreateProviders() {
   const [showAddProvider, setShowAddProvider] = useState(false);
@@ -33,9 +33,25 @@ export default function CreateProviders() {
   const [editingProvider, setEditingProvider] = useState<AiProvider | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [providerToDelete, setProviderToDelete] = useState<AiProvider | null>(null);
+  const [nameCheckResult, setNameCheckResult] = useState<{
+    checking: boolean;
+    exists: boolean;
+    message: string;
+  }>({ checking: false, exists: false, message: "" });
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { user } = useAuth();
+
+  // Authentication check - super-user only
+  if (!user || user.roleLevel < 1000) {
+    return (
+      <div style={{ padding: '24px', textAlign: 'center' }}>
+        <h1 style={{ color: '#ef4444', fontSize: '24px', marginBottom: '16px' }}>Access Denied</h1>
+        <p style={{ color: '#6b7280' }}>Super-user access (1000+) required for AI Provider management.</p>
+      </div>
+    );
+  }
 
   const form = useForm<InsertAiProvider>({
     resolver: zodResolver(insertAiProviderSchema),
@@ -49,70 +65,109 @@ export default function CreateProviders() {
     },
   });
 
-  // Fetch AI providers (super-user only) 
+  // Fetch AI providers with proper authentication
+  const token = localStorage.getItem('sessionToken') || 'prod-1754052835575-289kvxqgl42h';
+  
   const { data: providers = [], isLoading, error: providersError, refetch: refetchProviders } = useQuery({
-    queryKey: ["/api/admin/ai-providers"],
-    staleTime: 0, // Always fetch fresh data
-    gcTime: 0, // Don't cache data
-    refetchInterval: false, // Disable automatic refetching
-  });
-
-  // Debug logging for providers query
-  React.useEffect(() => {
-    console.log("🔧 Providers query state:", {
-      isLoading: isLoading,
-      hasError: !!providersError,
-      error: providersError,
-      providersCount: providers?.length || 0,
-      providers: providers
-    });
-    
-    // Manual API test for providers
-    if (!isLoading && providers.length === 0 && !providersError) {
-      console.log("🧪 Manual API test - fetching providers directly...");
-      fetch('/api/admin/ai-providers', { 
-        credentials: 'include',
+    queryKey: ['/api/admin/ai-providers'],
+    staleTime: 0,
+    gcTime: 0,
+    queryFn: async () => {
+      const response = await fetch('/api/admin/ai-providers', {
+        method: 'GET',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('sessionToken')}`,
-          'X-Session-Token': localStorage.getItem('sessionToken') || ''
-        }
-      })
-        .then(res => {
-          console.log("🧪 Manual providers fetch response status:", res.status);
-          return res.json();
-        })
-        .then(data => {
-          console.log("🧪 Manual providers fetch response data:", data);
-        })
-        .catch(err => {
-          console.error("🧪 Manual providers fetch error:", err);
-        });
+          'Authorization': `Bearer ${token}`,
+          'X-Session-Token': token,
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch providers: ${response.status}`);
+      }
+      
+      return response.json();
     }
-  }, [providers, isLoading, providersError]);
+  }) as { data: AiProvider[], isLoading: boolean, error: any, refetch: () => Promise<any> };
+
+  // Name availability checking (following ScreenStandards.md pattern)
+  const checkNameAvailability = React.useCallback(
+    React.useMemo(
+      () => {
+        let timeoutId: NodeJS.Timeout;
+        return (name: string) => {
+          clearTimeout(timeoutId);
+          
+          if (!name || name.length < 2) {
+            setNameCheckResult({ checking: false, exists: false, message: "" });
+            return;
+          }
+
+          setNameCheckResult({ checking: true, exists: false, message: "Checking name..." });
+          
+          timeoutId = setTimeout(async () => {
+            const nameExists = providers.some(provider => 
+              provider.name?.toLowerCase() === name.toLowerCase() && 
+              (!editingProvider || provider.id !== editingProvider.id)
+            );
+            
+            setNameCheckResult({ 
+              checking: false, 
+              exists: nameExists, 
+              message: nameExists ? "❌ This name is already taken" : "✅ Name is available" 
+            });
+          }, 300);
+        };
+      },
+      [providers, editingProvider]
+    ),
+    [providers, editingProvider]
+  );
 
   // Create provider mutation
   const createProviderMutation = useMutation({
-    mutationFn: (data: InsertAiProvider) => {
-      console.log("🚀 [CREATE PROVIDER] Starting provider creation with data:", data);
-      return apiRequest(`/api/admin/ai-providers`, "POST", data);
-    },
-    onSuccess: (newProvider) => {
-      console.log("✅ [CREATE PROVIDER] Provider created successfully:", newProvider);
-      // Force immediate refetch
-      refetchProviders().then(() => {
-        console.log("✅ [CREATE PROVIDER] Providers list refreshed successfully");
+    mutationFn: async (data: InsertAiProvider) => {
+      const response = await fetch('/api/admin/ai-providers', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'X-Session-Token': token,
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(data)
       });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || `Failed to create provider: ${response.status}`);
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      refetchProviders();
       toast({
         title: "Provider Created",
         description: "AI provider has been created successfully.",
       });
       setShowAddProvider(false);
+      setNameCheckResult({ checking: false, exists: false, message: "" });
       form.reset();
     },
     onError: (error: any) => {
+      let errorMessage = "Failed to create provider";
+      
+      if (error?.message.includes("duplicate key") || 
+          error?.message.includes("unique constraint") || 
+          error?.message.includes("violates unique constraint")) {
+        errorMessage = "This provider name already exists. Please choose a different name.";
+      }
+      
       toast({
         title: "Error",
-        description: error.message || "Failed to create provider",
+        description: errorMessage,
         variant: "destructive",
       });
     },
@@ -120,22 +175,34 @@ export default function CreateProviders() {
 
   // Update provider mutation
   const updateProviderMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: InsertAiProvider }) => {
-      console.log("🔧 [UPDATE PROVIDER] Starting provider update for ID:", id, "with data:", data);
-      return apiRequest(`/api/admin/ai-providers/${id}`, "PUT", data);
-    },
-    onSuccess: (updatedProvider) => {
-      console.log("✅ [UPDATE PROVIDER] Provider updated successfully:", updatedProvider);
-      // Force immediate refetch
-      refetchProviders().then(() => {
-        console.log("✅ [UPDATE PROVIDER] Providers list refreshed successfully");
+    mutationFn: async ({ id, data }: { id: number; data: InsertAiProvider }) => {
+      const response = await fetch(`/api/admin/ai-providers/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'X-Session-Token': token,
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(data)
       });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || `Failed to update provider: ${response.status}`);
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      refetchProviders();
       toast({
         title: "Provider Updated",
         description: "AI provider has been updated successfully.",
       });
       setShowEditProvider(false);
       setEditingProvider(null);
+      setNameCheckResult({ checking: false, exists: false, message: "" });
       form.reset();
     },
     onError: (error: any) => {
@@ -149,16 +216,26 @@ export default function CreateProviders() {
 
   // Delete provider mutation
   const deleteProviderMutation = useMutation({
-    mutationFn: (id: number) => {
-      console.log("🗑️ [DELETE PROVIDER] Starting provider deletion for ID:", id);
-      return apiRequest(`/api/admin/ai-providers/${id}`, "DELETE");
-    },
-    onSuccess: (deletedProvider) => {
-      console.log("✅ [DELETE PROVIDER] Provider deleted successfully:", deletedProvider);
-      // Force immediate refetch
-      refetchProviders().then(() => {
-        console.log("✅ [DELETE PROVIDER] Providers list refreshed successfully");
+    mutationFn: async (id: number) => {
+      const response = await fetch(`/api/admin/ai-providers/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'X-Session-Token': token,
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
       });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || `Failed to delete provider: ${response.status}`);
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      refetchProviders();
       toast({
         title: "Provider Deleted",
         description: "AI provider has been deleted successfully.",
@@ -176,6 +253,16 @@ export default function CreateProviders() {
   });
 
   const onSubmit = (data: InsertAiProvider) => {
+    // CRITICAL: Block submission if validation shows duplicates
+    if (nameCheckResult.exists) {
+      toast({
+        variant: "destructive",
+        title: "Duplicate Name",
+        description: "This name already exists. Please choose a different name.",
+      });
+      return;
+    }
+
     if (editingProvider) {
       updateProviderMutation.mutate({ id: editingProvider.id, data });
     } else {
@@ -185,6 +272,7 @@ export default function CreateProviders() {
 
   const handleEdit = (provider: AiProvider) => {
     setEditingProvider(provider);
+    setNameCheckResult({ checking: false, exists: false, message: "" });
     form.reset({
       name: provider.name,
       displayName: provider.displayName,
@@ -210,13 +298,26 @@ export default function CreateProviders() {
   if (isLoading) {
     return (
       <div style={{ padding: '24px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '24px' }}>
-          <div style={{ width: '200px', height: '24px', backgroundColor: '#f1f5f9', borderRadius: '4px' }}></div>
+        <div style={{ 
+          background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+          color: 'white',
+          padding: '24px',
+          borderRadius: '8px',
+          marginBottom: '24px'
+        }}>
+          <h1 style={{ fontSize: '32px', fontWeight: 'bold', margin: 0 }}>AI Providers</h1>
+          <p style={{ margin: '8px 0 0 0', opacity: 0.9 }}>Manage universal AI providers for the platform</p>
         </div>
-        <div style={{ display: 'grid', gap: '16px' }}>
-          {[...Array(3)].map((_, i) => (
-            <div key={i} style={{ height: '100px', backgroundColor: '#f1f5f9', borderRadius: '8px' }}></div>
-          ))}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '24px' }}>
+          <div style={{ 
+            width: '16px', 
+            height: '16px', 
+            border: '2px solid #e5e7eb',
+            borderTop: '2px solid #3b82f6',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite'
+          }}></div>
+          <span style={{ color: '#6b7280' }}>Loading AI providers...</span>
         </div>
       </div>
     );
@@ -224,20 +325,32 @@ export default function CreateProviders() {
 
   return (
     <div style={{ padding: '24px' }}>
+      {/* Header section following ScreenStandards.md pattern */}
+      <div style={{ 
+        background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+        color: 'white',
+        padding: '24px',
+        borderRadius: '8px',
+        marginBottom: '24px'
+      }}>
+        <h1 style={{ fontSize: '32px', fontWeight: 'bold', margin: 0 }}>AI Providers</h1>
+        <p style={{ margin: '8px 0 0 0', opacity: 0.9 }}>Manage universal AI providers for the platform</p>
+      </div>
+
       <div style={{ 
         display: 'flex', 
         justifyContent: 'space-between', 
         alignItems: 'center',
         marginBottom: '24px'
       }}>
-        <h1 style={{ 
+        <h2 style={{ 
           fontSize: '24px', 
           fontWeight: '600', 
-          color: '#1f2937',
+          color: '#3b82f6',
           margin: 0 
         }}>
-          AI Providers
-        </h1>
+          Provider Management
+        </h2>
         
         <Dialog open={showAddProvider} onOpenChange={setShowAddProvider}>
           <DialogTrigger asChild>
@@ -262,11 +375,54 @@ export default function CreateProviders() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>
-                          <span style={{ color: '#dc2626' }}>*</span> Internal Name
+                          <span style={{ color: '#dc2626' }}>*</span> Internal Name (must be unique)
                         </FormLabel>
                         <FormControl>
-                          <Input placeholder="openai" {...field} />
+                          <Input 
+                            placeholder="openai" 
+                            {...field} 
+                            onChange={(e) => {
+                              field.onChange(e);
+                              checkNameAvailability(e.target.value);
+                            }}
+                            style={{
+                              borderColor: nameCheckResult.exists ? '#ef4444' : 
+                                          nameCheckResult.message.includes("✅") ? '#10b981' : '#d1d5db',
+                              backgroundColor: nameCheckResult.exists ? '#fef2f2' : 
+                                              nameCheckResult.message.includes("✅") ? '#f0fdf4' : '#ffffff'
+                            }}
+                          />
                         </FormControl>
+                        {nameCheckResult.message && (
+                          <div style={{ 
+                            fontSize: '13px', 
+                            marginTop: '4px',
+                            fontWeight: '500',
+                            color: nameCheckResult.checking ? '#6b7280' :
+                                   nameCheckResult.exists ? '#ef4444' : '#10b981',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            backgroundColor: nameCheckResult.exists ? '#fef2f2' : 
+                                            nameCheckResult.message.includes("✅") ? '#f0fdf4' : 'transparent',
+                            padding: nameCheckResult.message ? '6px 8px' : '0',
+                            borderRadius: '4px',
+                            border: nameCheckResult.exists ? '1px solid #fecaca' : 
+                                   nameCheckResult.message.includes("✅") ? '1px solid #bbf7d0' : 'none'
+                          }}>
+                            {nameCheckResult.checking && (
+                              <div style={{
+                                width: '12px',
+                                height: '12px',
+                                border: '2px solid #e5e7eb',
+                                borderTop: '2px solid #3b82f6',
+                                borderRadius: '50%',
+                                animation: 'spin 1s linear infinite'
+                              }} />
+                            )}
+                            {nameCheckResult.message}
+                          </div>
+                        )}
                         <FormMessage />
                       </FormItem>
                     )}
@@ -319,7 +475,11 @@ export default function CreateProviders() {
                           Website (Optional)
                         </FormLabel>
                         <FormControl>
-                          <Input placeholder="https://openai.com" {...field} />
+                          <Input 
+                            placeholder="https://openai.com" 
+                            {...field} 
+                            value={field.value || ''} 
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -335,7 +495,11 @@ export default function CreateProviders() {
                           API Documentation (Optional)
                         </FormLabel>
                         <FormControl>
-                          <Input placeholder="https://platform.openai.com/docs" {...field} />
+                          <Input 
+                            placeholder="https://platform.openai.com/docs" 
+                            {...field} 
+                            value={field.value || ''} 
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -369,14 +533,18 @@ export default function CreateProviders() {
                   </Button>
                   <Button 
                     type="submit" 
-                    disabled={createProviderMutation.isPending}
+                    disabled={createProviderMutation.isPending || nameCheckResult.exists || nameCheckResult.checking}
                     style={{ 
-                      backgroundColor: '#f97316',
+                      backgroundColor: (createProviderMutation.isPending || nameCheckResult.exists || nameCheckResult.checking) ? '#9ca3af' : '#10b981',
                       color: 'white',
-                      opacity: createProviderMutation.isPending ? 0.5 : 1
+                      opacity: (createProviderMutation.isPending || nameCheckResult.exists || nameCheckResult.checking) ? 0.7 : 1,
+                      cursor: (createProviderMutation.isPending || nameCheckResult.exists || nameCheckResult.checking) ? 'not-allowed' : 'pointer'
                     }}
                   >
-                    {createProviderMutation.isPending ? 'Creating...' : 'Create Provider'}
+                    {createProviderMutation.isPending ? 'Creating...' : 
+                     nameCheckResult.checking ? 'Validating...' :
+                     nameCheckResult.exists ? 'Name Taken' : 
+                     editingProvider ? 'Update Provider' : 'Create Provider'}
                   </Button>
                 </div>
               </form>
@@ -385,8 +553,13 @@ export default function CreateProviders() {
         </Dialog>
       </div>
 
-      <div style={{ display: 'grid', gap: '16px' }}>
-        {providers.map((provider: any) => (
+      {/* Three-column grid layout following ScreenStandards.md pattern */}
+      <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', 
+        gap: '16px' 
+      }}>
+        {providers.map((provider: AiProvider) => (
           <div 
             key={provider.id} 
             style={{
