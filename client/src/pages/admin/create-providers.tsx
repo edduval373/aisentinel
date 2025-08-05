@@ -323,8 +323,13 @@ export default function CreateProviders() {
   });
 
   const onSubmit = (data: AiProviderFormData) => {
+    console.log('🚀 [FORM SUBMIT] Form submission triggered:', data);
+    console.log('🔍 [FORM SUBMIT] Name check result:', nameCheckResult);
+    console.log('🔍 [FORM SUBMIT] Editing provider:', editingProvider);
+    
     // CRITICAL: Block submission if validation shows duplicates
     if (nameCheckResult.exists) {
+      console.log('❌ [FORM SUBMIT] Blocked - duplicate name detected');
       toast({
         variant: "destructive",
         title: "Duplicate Name",
@@ -333,9 +338,12 @@ export default function CreateProviders() {
       return;
     }
 
+    console.log('✅ [FORM SUBMIT] Proceeding with submission...');
     if (editingProvider) {
+      console.log('🔧 [FORM SUBMIT] Update mode - calling updateProviderMutation');
       updateProviderMutation.mutate({ id: editingProvider.id, data });
     } else {
+      console.log('➕ [FORM SUBMIT] Create mode - calling createProviderMutation');
       createProviderMutation.mutate(data);
     }
   };
@@ -675,6 +683,11 @@ export default function CreateProviders() {
                   type="submit" 
                   disabled={createProviderMutation.isPending || updateProviderMutation.isPending || 
                            nameCheckResult.exists || nameCheckResult.checking}
+                  onClick={() => {
+                    console.log('🖱️ [BUTTON CLICK] Create Provider button clicked');
+                    console.log('🔍 [BUTTON CLICK] Button disabled?', createProviderMutation.isPending || updateProviderMutation.isPending || nameCheckResult.exists || nameCheckResult.checking);
+                    console.log('🔍 [BUTTON CLICK] Name check result:', nameCheckResult);
+                  }}
                   style={{ 
                     width: '100%',
                     backgroundColor: (nameCheckResult.exists || nameCheckResult.checking) ? '#9ca3af' : '#10b981',
@@ -1014,6 +1027,12 @@ export default function CreateProviders() {
                 type="submit" 
                 disabled={createProviderMutation.isPending || updateProviderMutation.isPending || 
                          nameCheckResult.exists || nameCheckResult.checking}
+                onClick={() => {
+                  console.log('🖱️ [BUTTON CLICK] Update Provider button clicked');
+                  console.log('🔍 [BUTTON CLICK] Button disabled?', createProviderMutation.isPending || updateProviderMutation.isPending || nameCheckResult.exists || nameCheckResult.checking);
+                  console.log('🔍 [BUTTON CLICK] Name check result:', nameCheckResult);
+                  console.log('🔍 [BUTTON CLICK] Editing provider:', editingProvider);
+                }}
                 style={{ 
                   width: '100%',
                   backgroundColor: (nameCheckResult.exists || nameCheckResult.checking) ? '#9ca3af' : '#10b981',
