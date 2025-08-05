@@ -9,7 +9,7 @@ import { authService } from "./services/authService";
 import { aiService } from "./services/aiService";
 import { contentFilter } from "./services/contentFilter";
 import { fileStorageService } from "./services/fileStorageService";
-import { insertUserActivitySchema, insertChatMessageSchema, insertCompanyRoleSchema, insertModelFusionConfigSchema, chatAttachments } from "@shared/schema";
+import { insertUserActivitySchema, insertChatMessageSchema, insertCompanyRoleSchema, insertModelFusionConfigSchema, chatAttachments, aiProviders } from "@shared/schema";
 import { z } from "zod";
 import type { UploadedFile } from "express-fileupload";
 import { db } from "./db";
@@ -512,6 +512,143 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('❌ [AI-PROVIDERS] Error fetching providers:', error);
       res.status(500).json({ error: 'Failed to fetch AI providers' });
+    }
+  });
+
+  // Create AI Provider - Super-user only
+  app.post('/api/admin/ai-providers', async (req, res) => {
+    try {
+      console.log(`🌐 API Request: ${req.method} ${req.url}`);
+
+      // Header-based authentication for super-users (1000+ level)
+      const authHeader = req.headers.authorization;
+      const sessionToken = req.headers['x-session-token'];
+      
+      let isAuthenticated = false;
+      let roleLevel = 0;
+
+      // Production token authentication
+      const productionToken = 'prod-1754052835575-289kvxqgl42h';
+      const extractedToken = authHeader?.replace('Bearer ', '') || sessionToken;
+      
+      if (extractedToken === productionToken) {
+        console.log('✅ [AI-PROVIDERS CREATE] Production token authenticated');
+        isAuthenticated = true;
+        roleLevel = 1000;
+      } else {
+        console.log('❌ [AI-PROVIDERS CREATE] Authentication failed');
+        return res.status(401).json({ 
+          error: 'Authentication failed',
+          requiredRole: '1000+ (Super-user)'
+        });
+      }
+
+      // Super-user access required (1000+)
+      if (roleLevel < 1000) {
+        return res.status(403).json({ 
+          error: 'Super-user access required'
+        });
+      }
+
+      console.log('✅ [AI-PROVIDERS CREATE] Creating AI provider:', req.body.name);
+      const newProvider = await storage.createAiProvider(req.body);
+      console.log(`✅ [AI-PROVIDERS CREATE] Provider created successfully: ID ${newProvider.id}`);
+      res.json(newProvider);
+    } catch (error) {
+      console.error('❌ [AI-PROVIDERS CREATE] Error creating provider:', error);
+      res.status(500).json({ error: 'Failed to create AI provider' });
+    }
+  });
+
+  // Update AI Provider - Super-user only
+  app.put('/api/admin/ai-providers/:id', async (req, res) => {
+    try {
+      console.log(`🌐 API Request: ${req.method} ${req.url}`);
+
+      // Header-based authentication for super-users (1000+ level)
+      const authHeader = req.headers.authorization;
+      const sessionToken = req.headers['x-session-token'];
+      
+      let isAuthenticated = false;
+      let roleLevel = 0;
+
+      // Production token authentication
+      const productionToken = 'prod-1754052835575-289kvxqgl42h';
+      const extractedToken = authHeader?.replace('Bearer ', '') || sessionToken;
+      
+      if (extractedToken === productionToken) {
+        console.log('✅ [AI-PROVIDERS UPDATE] Production token authenticated');
+        isAuthenticated = true;
+        roleLevel = 1000;
+      } else {
+        console.log('❌ [AI-PROVIDERS UPDATE] Authentication failed');
+        return res.status(401).json({ 
+          error: 'Authentication failed',
+          requiredRole: '1000+ (Super-user)'
+        });
+      }
+
+      // Super-user access required (1000+)
+      if (roleLevel < 1000) {
+        return res.status(403).json({ 
+          error: 'Super-user access required'
+        });
+      }
+
+      const providerId = parseInt(req.params.id);
+      console.log('✅ [AI-PROVIDERS UPDATE] Updating AI provider:', providerId, req.body.name);
+      const updatedProvider = await storage.updateAiProvider(providerId, req.body);
+      console.log(`✅ [AI-PROVIDERS UPDATE] Provider updated successfully: ID ${providerId}`);
+      res.json(updatedProvider);
+    } catch (error) {
+      console.error('❌ [AI-PROVIDERS UPDATE] Error updating provider:', error);
+      res.status(500).json({ error: 'Failed to update AI provider' });
+    }
+  });
+
+  // Delete AI Provider - Super-user only
+  app.delete('/api/admin/ai-providers/:id', async (req, res) => {
+    try {
+      console.log(`🌐 API Request: ${req.method} ${req.url}`);
+
+      // Header-based authentication for super-users (1000+ level)
+      const authHeader = req.headers.authorization;
+      const sessionToken = req.headers['x-session-token'];
+      
+      let isAuthenticated = false;
+      let roleLevel = 0;
+
+      // Production token authentication
+      const productionToken = 'prod-1754052835575-289kvxqgl42h';
+      const extractedToken = authHeader?.replace('Bearer ', '') || sessionToken;
+      
+      if (extractedToken === productionToken) {
+        console.log('✅ [AI-PROVIDERS DELETE] Production token authenticated');
+        isAuthenticated = true;
+        roleLevel = 1000;
+      } else {
+        console.log('❌ [AI-PROVIDERS DELETE] Authentication failed');
+        return res.status(401).json({ 
+          error: 'Authentication failed',
+          requiredRole: '1000+ (Super-user)'
+        });
+      }
+
+      // Super-user access required (1000+)
+      if (roleLevel < 1000) {
+        return res.status(403).json({ 
+          error: 'Super-user access required'
+        });
+      }
+
+      const providerId = parseInt(req.params.id);
+      console.log('✅ [AI-PROVIDERS DELETE] Deleting AI provider:', providerId);
+      await storage.deleteAiProvider(providerId);
+      console.log(`✅ [AI-PROVIDERS DELETE] Provider deleted successfully: ID ${providerId}`);
+      res.json({ message: 'AI provider deleted successfully', id: providerId });
+    } catch (error) {
+      console.error('❌ [AI-PROVIDERS DELETE] Error deleting provider:', error);
+      res.status(500).json({ error: 'Failed to delete AI provider' });
     }
   });
 
