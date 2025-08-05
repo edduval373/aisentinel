@@ -438,25 +438,95 @@ export class DatabaseStorage implements IStorage {
 
   // AI Providers operations - Super-user only
   async getAiProviders(): Promise<AiProvider[]> {
-    return await db.select().from(aiProviders).orderBy(aiProviders.displayName);
+    console.log('🔍 [STORAGE] getAiProviders() called');
+    try {
+      console.log('🔍 [STORAGE] Executing SELECT query on aiProviders table...');
+      const providers = await db.select().from(aiProviders).orderBy(aiProviders.displayName);
+      console.log(`✅ [STORAGE] Successfully retrieved ${providers.length} AI providers from database`);
+      console.log('🔍 [STORAGE] Provider summary:', providers.map(p => ({
+        id: p.id,
+        name: p.name,
+        displayName: p.displayName,
+        isEnabled: p.isEnabled,
+        isEnabledType: typeof p.isEnabled
+      })));
+      return providers;
+    } catch (error) {
+      console.error('❌ [STORAGE] Error in getAiProviders():', error);
+      console.error('❌ [STORAGE] Error details:', error instanceof Error ? error.message : 'Unknown error');
+      console.error('❌ [STORAGE] Stack trace:', error instanceof Error ? error.stack : 'No stack trace');
+      throw error;
+    }
   }
 
   async createAiProvider(providerData: InsertAiProvider): Promise<AiProvider> {
-    const [newProvider] = await db.insert(aiProviders).values(providerData).returning();
-    return newProvider;
+    console.log('🔍 [STORAGE] createAiProvider() called with data:', providerData);
+    try {
+      console.log('🔍 [STORAGE] Executing INSERT query on aiProviders table...');
+      const [newProvider] = await db.insert(aiProviders).values(providerData).returning();
+      console.log('✅ [STORAGE] Successfully created AI provider:', {
+        id: newProvider.id,
+        name: newProvider.name,
+        displayName: newProvider.displayName,
+        isEnabled: newProvider.isEnabled,
+        isEnabledType: typeof newProvider.isEnabled
+      });
+      return newProvider;
+    } catch (error) {
+      console.error('❌ [STORAGE] Error in createAiProvider():', error);
+      console.error('❌ [STORAGE] Provider data that failed:', providerData);
+      console.error('❌ [STORAGE] Error details:', error instanceof Error ? error.message : 'Unknown error');
+      console.error('❌ [STORAGE] Stack trace:', error instanceof Error ? error.stack : 'No stack trace');
+      throw error;
+    }
   }
 
   async updateAiProvider(id: number, updates: Partial<InsertAiProvider>): Promise<AiProvider> {
-    const [updatedProvider] = await db
-      .update(aiProviders)
-      .set(updates)
-      .where(eq(aiProviders.id, id))
-      .returning();
-    return updatedProvider;
+    console.log(`🔍 [STORAGE] updateAiProvider() called for ID ${id} with updates:`, updates);
+    try {
+      console.log('🔍 [STORAGE] Executing UPDATE query on aiProviders table...');
+      const [updatedProvider] = await db
+        .update(aiProviders)
+        .set(updates)
+        .where(eq(aiProviders.id, id))
+        .returning();
+      
+      if (!updatedProvider) {
+        console.log(`❌ [STORAGE] No provider found with ID ${id} to update`);
+        throw new Error(`Provider with ID ${id} not found`);
+      }
+      
+      console.log('✅ [STORAGE] Successfully updated AI provider:', {
+        id: updatedProvider.id,
+        name: updatedProvider.name,
+        displayName: updatedProvider.displayName,
+        isEnabled: updatedProvider.isEnabled,
+        isEnabledType: typeof updatedProvider.isEnabled,
+        updatedFields: Object.keys(updates)
+      });
+      return updatedProvider;
+    } catch (error) {
+      console.error(`❌ [STORAGE] Error in updateAiProvider() for ID ${id}:`, error);
+      console.error('❌ [STORAGE] Update data that failed:', updates);
+      console.error('❌ [STORAGE] Error details:', error instanceof Error ? error.message : 'Unknown error');
+      console.error('❌ [STORAGE] Stack trace:', error instanceof Error ? error.stack : 'No stack trace');
+      throw error;
+    }
   }
 
   async deleteAiProvider(id: number): Promise<void> {
-    await db.delete(aiProviders).where(eq(aiProviders.id, id));
+    console.log(`🔍 [STORAGE] deleteAiProvider() called for ID ${id}`);
+    try {
+      console.log('🔍 [STORAGE] Executing DELETE query on aiProviders table...');
+      const result = await db.delete(aiProviders).where(eq(aiProviders.id, id));
+      console.log(`✅ [STORAGE] Successfully deleted AI provider with ID ${id}`);
+      console.log('🔍 [STORAGE] Delete operation result:', result);
+    } catch (error) {
+      console.error(`❌ [STORAGE] Error in deleteAiProvider() for ID ${id}:`, error);
+      console.error('❌ [STORAGE] Error details:', error instanceof Error ? error.message : 'Unknown error');
+      console.error('❌ [STORAGE] Stack trace:', error instanceof Error ? error.stack : 'No stack trace');
+      throw error;
+    }
   }
 
   async createCompany(company: InsertCompany): Promise<Company> {

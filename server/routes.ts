@@ -38,31 +38,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Database test endpoint for debug panel
   app.get('/api/debug/database', async (req, res) => {
     try {
-      console.log('Database test endpoint hit');
+      console.log('🔍 [DATABASE-TEST] Database test endpoint hit');
       
       // Test database connectivity by querying companies table
+      console.log('🔍 [DATABASE-TEST] Testing companies table...');
       const companies = await storage.getCompanies();
       const companyCount = companies.length;
+      console.log(`✅ [DATABASE-TEST] Companies query successful: ${companyCount} companies found`);
+      
+      // Test AI providers table
+      console.log('🔍 [DATABASE-TEST] Testing AI providers table...');
+      const providers = await storage.getAiProviders();
+      const providerCount = providers.length;
+      console.log(`✅ [DATABASE-TEST] AI providers query successful: ${providerCount} providers found`);
       
       // Get first company for detailed info
       const firstCompany = companies[0];
+      const firstProvider = providers[0];
       
       res.json({ 
         status: 'connected',
         timestamp: new Date().toISOString(),
-        companyCount,
-        firstCompany: firstCompany ? {
-          id: firstCompany.id,
-          name: firstCompany.name,
-          primaryAdminTitle: firstCompany.primaryAdminTitle
-        } : null
+        tables: {
+          companies: {
+            count: companyCount,
+            sample: firstCompany ? {
+              id: firstCompany.id,
+              name: firstCompany.name,
+              primaryAdminTitle: firstCompany.primaryAdminTitle
+            } : null
+          },
+          aiProviders: {
+            count: providerCount,
+            sample: firstProvider ? {
+              id: firstProvider.id,
+              name: firstProvider.name,
+              displayName: firstProvider.displayName,
+              isEnabled: firstProvider.isEnabled,
+              isEnabledType: typeof firstProvider.isEnabled
+            } : null
+          }
+        },
+        databaseUrl: process.env.DATABASE_URL ? `${process.env.DATABASE_URL.substring(0, 30)}...` : 'Not set'
       });
     } catch (error) {
-      console.error('Database test failed:', error);
+      console.error('❌ [DATABASE-TEST] Database test failed:', error);
       res.status(500).json({ 
         status: 'error', 
         error: error instanceof Error ? error.message : 'Unknown database error',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        stack: error instanceof Error ? error.stack : 'No stack trace'
       });
     }
   });
