@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -125,14 +125,14 @@ export default function CreateModels() {
   }
 
   // Fetch AI model templates using the default query configuration
-  const { data: templates = [], isLoading: templatesLoading, error, isError, refetch } = useQuery({
+  const { data: templates = [], isLoading: templatesLoading, error, isError, refetch } = useQuery<any[]>({
     queryKey: ["/api/admin/ai-model-templates"],
     staleTime: 0, // Always refetch when invalidated
     gcTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
   // Fetch AI providers from database  
-  const { data: dbProviders = [], isLoading: providersLoading, error: providersError } = useQuery({
+  const { data: dbProviders = [], isLoading: providersLoading, error: providersError } = useQuery<any[]>({
     queryKey: ["/api/admin/ai-providers"],
     staleTime: 5 * 60 * 1000, // Cache providers for 5 minutes
   });
@@ -143,13 +143,13 @@ export default function CreateModels() {
       isLoading: providersLoading,
       hasError: !!providersError,
       error: providersError,
-      providersCount: dbProviders?.length || 0,
+      providersCount: (dbProviders as any[])?.length || 0,
       providers: dbProviders
     });
   }, [dbProviders, providersLoading, providersError]);
 
   // Transform providers for the dropdown (compatible with existing form structure)
-  const providers = dbProviders.map((provider: any) => ({
+  const providers = (dbProviders as any[]).map((provider: any) => ({
     value: provider.name,
     label: provider.displayName,
     defaultEndpoint: defaultEndpoints[provider.name] || "",
@@ -486,7 +486,55 @@ export default function CreateModels() {
   }
 
   return (
-    <AdminLayout title="AI Model Templates" subtitle="Create universal AI model templates for companies to use (no API keys required)">
+    <AdminLayout 
+      title="AI Model Templates" 
+      subtitle="Create universal AI model templates for companies to use (no API keys required)"
+      rightContent={
+        <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+          <DialogTrigger asChild>
+            <Button
+              style={{
+                backgroundColor: '#3b82f6',
+                color: 'white',
+                border: '1px solid #3b82f6',
+                borderRadius: '8px',
+                padding: '12px 24px',
+                fontSize: '16px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
+            >
+              <Plus size={20} />
+              Create Template
+            </Button>
+          </DialogTrigger>
+          <DialogContent style={{ maxWidth: '600px', maxHeight: '90vh', overflowY: 'auto' }}>
+            <DialogHeader>
+              <DialogTitle>Create New AI Model Template</DialogTitle>
+              <DialogDescription>
+                Create a universal AI model template. No API keys needed - companies configure their own.
+              </DialogDescription>
+            </DialogHeader>
+            <TemplateForm 
+              form={templateForm}
+              onSubmit={onSubmitTemplate}
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              providers={providers}
+              capabilities={capabilities}
+              handleProviderChange={handleProviderChange}
+              isSubmitting={createTemplateMutation.isPending}
+              onCancel={() => {
+                setShowCreateDialog(false);
+                resetForm();
+              }}
+            />
+          </DialogContent>
+        </Dialog>
+      }>
       <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
         
         {/* Debug Authentication Info */}
@@ -504,57 +552,6 @@ export default function CreateModels() {
           </p>
         </div>
         
-        {/* Header Section */}
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'flex-end', 
-          alignItems: 'center',
-          marginBottom: '8px'
-        }}>
-          <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-            <DialogTrigger asChild>
-              <button style={{
-                backgroundColor: '#3b82f6',
-                color: 'white',
-                padding: '8px 16px',
-                borderRadius: '6px',
-                border: 'none',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                cursor: 'pointer',
-                fontSize: '14px',
-                fontWeight: '500'
-              }}>
-                <Plus style={{ width: '16px', height: '16px' }} />
-                Create Template
-              </button>
-            </DialogTrigger>
-            <DialogContent style={{ maxWidth: '600px', maxHeight: '90vh', overflowY: 'auto' }}>
-              <DialogHeader>
-                <DialogTitle>Create New AI Model Template</DialogTitle>
-                <DialogDescription>
-                  Create a universal AI model template. No API keys needed - companies configure their own.
-                </DialogDescription>
-              </DialogHeader>
-              <TemplateForm 
-                form={templateForm}
-                onSubmit={onSubmitTemplate}
-                activeTab={activeTab}
-                setActiveTab={setActiveTab}
-                providers={providers}
-                capabilities={capabilities}
-                handleProviderChange={handleProviderChange}
-                isSubmitting={createTemplateMutation.isPending}
-                onCancel={() => {
-                  setShowCreateDialog(false);
-                  resetForm();
-                }}
-              />
-            </DialogContent>
-          </Dialog>
-        </div>
-
         {/* Models List */}
         <div style={{
           display: 'grid', 
@@ -562,8 +559,8 @@ export default function CreateModels() {
           gap: '24px'
         }}>
           {/* Debug: Display template count and list */}
-          {console.log(`🎨 [TEMPLATES RENDER] Rendering ${templates.length} templates:`, templates.map(t => ({ id: t.id, name: t.name })))}
-          {templates.length === 0 ? (
+          {console.log(`🎨 [TEMPLATES RENDER] Rendering ${(templates as any[]).length} templates:`, (templates as any[]).map((t: any) => ({ id: t.id, name: t.name })))}
+          {(templates as any[]).length === 0 ? (
             <div style={{
               gridColumn: '1 / -1',
               textAlign: 'center',
@@ -581,7 +578,7 @@ export default function CreateModels() {
               </p>
             </div>
           ) : (
-            templates.map((template: any) => (
+            (templates as any[]).map((template: any) => (
               <div
                 key={template.id}
                 style={{
