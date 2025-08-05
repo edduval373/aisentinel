@@ -40,6 +40,11 @@ export default function CompanyManagement() {
   const [showEditCompany, setShowEditCompany] = useState(false);
   const [editingCompany, setEditingCompany] = useState<Company | null>(null);
   const [dialogJustOpened, setDialogJustOpened] = useState(false);
+  const [domainCheckResult, setDomainCheckResult] = useState<{
+    checking: boolean;
+    exists: boolean;
+    message: string;
+  }>({ checking: false, exists: false, message: "" });
   
   // Debug effect to track state changes
   React.useEffect(() => {
@@ -89,6 +94,58 @@ export default function CompanyManagement() {
         });
     }
   }, [companies, companiesLoading, companiesError]);
+
+  // Debounced domain checking function
+  const checkDomainAvailability = React.useCallback(
+    React.useMemo(
+      () => {
+        let timeoutId: NodeJS.Timeout;
+        return (domain: string) => {
+          clearTimeout(timeoutId);
+          
+          if (!domain || domain.length < 3) {
+            setDomainCheckResult({ checking: false, exists: false, message: "" });
+            return;
+          }
+
+          setDomainCheckResult({ checking: true, exists: false, message: "Checking domain availability..." });
+          
+          timeoutId = setTimeout(async () => {
+            try {
+              // Check if domain exists in current companies list
+              const domainExists = companies.some(company => 
+                company.domain?.toLowerCase() === domain.toLowerCase() && 
+                (!editingCompany || company.id !== editingCompany.id)
+              );
+              
+              if (domainExists) {
+                setDomainCheckResult({ 
+                  checking: false, 
+                  exists: true, 
+                  message: "This domain is already used by another company" 
+                });
+              } else {
+                setDomainCheckResult({ 
+                  checking: false, 
+                  exists: false, 
+                  message: "Domain is available" 
+                });
+              }
+            } catch (error) {
+              console.error("Domain check error:", error);
+              setDomainCheckResult({ 
+                checking: false, 
+                exists: false, 
+                message: "" 
+              });
+            }
+          }, 500); // 500ms debounce
+        };
+      },
+      [companies, editingCompany]
+    ),
+    [companies, editingCompany]
+  );
 
   const companyForm = useForm<z.infer<typeof companySchema>>({
     resolver: zodResolver(companySchema),
@@ -258,6 +315,17 @@ export default function CompanyManagement() {
 
   const onSubmitCompany = (data: z.infer<typeof companySchema>) => {
     console.log("📝 Form submitted with data:", data);
+    
+    // Check for domain conflicts before submitting
+    if (domainCheckResult.exists) {
+      toast({
+        title: "Domain Conflict",
+        description: "This domain is already used by another company. Please choose a different domain.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     if (editingCompany) {
       console.log("🔄 Editing existing company:", editingCompany.id, editingCompany.name);
       updateCompanyMutation.mutate({ id: editingCompany.id, data });
@@ -274,6 +342,7 @@ export default function CompanyManagement() {
     // Use setTimeout to ensure state update happens in next tick
     setTimeout(() => {
       setEditingCompany(company);
+      setDomainCheckResult({ checking: false, exists: false, message: "" });
       companyForm.reset({
         name: company.name,
         domain: company.domain,
@@ -384,6 +453,7 @@ export default function CompanyManagement() {
               // Reset form and editing state when opening add dialog
               console.log("🆕 Resetting form for new company creation");
               setEditingCompany(null);
+              setDomainCheckResult({ checking: false, exists: false, message: "" });
               companyForm.reset({
                 name: "",
                 domain: "",
@@ -393,6 +463,9 @@ export default function CompanyManagement() {
                 logo: "",
                 isActive: true,
               });
+            } else {
+              // Reset domain check when closing
+              setDomainCheckResult({ checking: false, exists: false, message: "" });
             }
           }}>
             <DialogTrigger asChild>
@@ -446,8 +519,42 @@ export default function CompanyManagement() {
                           <span style={{ color: '#dc2626' }}>*</span> Email Domain (Must be unique)
                         </FormLabel>
                         <FormControl>
-                          <Input placeholder="acme.com (must be unique)" {...field} />
+                          <Input 
+                            placeholder="acme.com (must be unique)" 
+                            {...field} 
+                            onChange={(e) => {
+                              field.onChange(e);
+                              checkDomainAvailability(e.target.value);
+                            }}
+                            style={{
+                              borderColor: domainCheckResult.exists ? '#ef4444' : 
+                                          domainCheckResult.message === "Domain is available" ? '#10b981' : '#d1d5db'
+                            }}
+                          />
                         </FormControl>
+                        {domainCheckResult.message && (
+                          <div style={{ 
+                            fontSize: '12px', 
+                            marginTop: '4px',
+                            color: domainCheckResult.checking ? '#6b7280' :
+                                   domainCheckResult.exists ? '#ef4444' : '#10b981',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}>
+                            {domainCheckResult.checking && (
+                              <div style={{
+                                width: '12px',
+                                height: '12px',
+                                border: '2px solid #e5e7eb',
+                                borderTop: '2px solid #3b82f6',
+                                borderRadius: '50%',
+                                animation: 'spin 1s linear infinite'
+                              }} />
+                            )}
+                            {domainCheckResult.message}
+                          </div>
+                        )}
                         <FormMessage />
                       </FormItem>
                     )}
@@ -536,20 +643,23 @@ export default function CompanyManagement() {
                   />
                   <Button 
                     type="submit" 
-                    disabled={createCompanyMutation.isPending || updateCompanyMutation.isPending}
+                    disabled={createCompanyMutation.isPending || updateCompanyMutation.isPending || domainCheckResult.exists || domainCheckResult.checking}
                     style={{ 
                       width: '100%',
-                      backgroundColor: '#10b981',
+                      backgroundColor: (domainCheckResult.exists || domainCheckResult.checking) ? '#9ca3af' : '#10b981',
                       color: 'white',
-                      border: '1px solid #10b981',
+                      border: (domainCheckResult.exists || domainCheckResult.checking) ? '1px solid #9ca3af' : '1px solid #10b981',
                       borderRadius: '8px',
                       padding: '12px 24px',
                       fontSize: '16px',
                       fontWeight: '600',
-                      cursor: 'pointer'
+                      cursor: (domainCheckResult.exists || domainCheckResult.checking) ? 'not-allowed' : 'pointer',
+                      opacity: (createCompanyMutation.isPending || updateCompanyMutation.isPending || domainCheckResult.checking) ? 0.7 : 1
                     }}
                   >
-                    {editingCompany 
+                    {domainCheckResult.checking ? "Checking domain..." :
+                     domainCheckResult.exists ? "Domain unavailable" :
+                     editingCompany 
                       ? (updateCompanyMutation.isPending ? "Updating..." : "Update Company")
                       : (createCompanyMutation.isPending ? "Creating..." : "Create Company")
                     }
@@ -803,6 +913,7 @@ export default function CompanyManagement() {
               setEditingCompany(null);
               companyForm.reset();
               setDialogJustOpened(false);
+              setDomainCheckResult({ checking: false, exists: false, message: "" });
             }
           }}
         >
@@ -836,11 +947,45 @@ export default function CompanyManagement() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>
-                        <span style={{ color: '#dc2626' }}>*</span> Email Domain
+                        <span style={{ color: '#dc2626' }}>*</span> Email Domain (Must be unique)
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="acme.com" {...field} />
+                        <Input 
+                          placeholder="acme.com (must be unique)" 
+                          {...field} 
+                          onChange={(e) => {
+                            field.onChange(e);
+                            checkDomainAvailability(e.target.value);
+                          }}
+                          style={{
+                            borderColor: domainCheckResult.exists ? '#ef4444' : 
+                                        domainCheckResult.message === "Domain is available" ? '#10b981' : '#d1d5db'
+                          }}
+                        />
                       </FormControl>
+                      {domainCheckResult.message && (
+                        <div style={{ 
+                          fontSize: '12px', 
+                          marginTop: '4px',
+                          color: domainCheckResult.checking ? '#6b7280' :
+                                 domainCheckResult.exists ? '#ef4444' : '#10b981',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px'
+                        }}>
+                          {domainCheckResult.checking && (
+                            <div style={{
+                              width: '12px',
+                              height: '12px',
+                              border: '2px solid #e5e7eb',
+                              borderTop: '2px solid #3b82f6',
+                              borderRadius: '50%',
+                              animation: 'spin 1s linear infinite'
+                            }} />
+                          )}
+                          {domainCheckResult.message}
+                        </div>
+                      )}
                       <FormMessage />
                     </FormItem>
                   )}
