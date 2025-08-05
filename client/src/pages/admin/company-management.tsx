@@ -375,8 +375,20 @@ export default function CompanyManagement() {
           
           <Dialog open={showAddCompany} onOpenChange={setShowAddCompany}>
             <DialogTrigger asChild>
-              <Button>
-                <Plus style={{ width: '16px', height: '16px', marginRight: '8px' }} />
+              <Button style={{
+                backgroundColor: '#3b82f6',
+                color: 'white',
+                border: '1px solid #3b82f6',
+                borderRadius: '8px',
+                padding: '12px 24px',
+                fontSize: '16px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                <Plus style={{ width: '16px', height: '16px' }} />
                 Add Company
               </Button>
             </DialogTrigger>
@@ -501,7 +513,21 @@ export default function CompanyManagement() {
                       </FormItem>
                     )}
                   />
-                  <Button type="submit" style={{ width: '100%' }} disabled={createCompanyMutation.isPending || updateCompanyMutation.isPending}>
+                  <Button 
+                    type="submit" 
+                    disabled={createCompanyMutation.isPending || updateCompanyMutation.isPending}
+                    style={{ 
+                      width: '100%',
+                      backgroundColor: '#10b981',
+                      color: 'white',
+                      border: '1px solid #10b981',
+                      borderRadius: '8px',
+                      padding: '12px 24px',
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      cursor: 'pointer'
+                    }}
+                  >
                     {editingCompany 
                       ? (updateCompanyMutation.isPending ? "Updating..." : "Update Company")
                       : (createCompanyMutation.isPending ? "Creating..." : "Create Company")
@@ -534,7 +560,17 @@ export default function CompanyManagement() {
                 </p>
                 <Button 
                   onClick={() => queryClient.invalidateQueries({ queryKey: ["/api/admin/companies"] })}
-                  style={{ marginTop: '16px' }}
+                  style={{ 
+                    marginTop: '16px',
+                    backgroundColor: '#3b82f6',
+                    color: 'white',
+                    border: '1px solid #3b82f6',
+                    borderRadius: '8px',
+                    padding: '12px 24px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: 'pointer'
+                  }}
                 >
                   Retry
                 </Button>
@@ -679,26 +715,47 @@ export default function CompanyManagement() {
                       </div>
                       <div style={{ display: 'flex', gap: '8px' }}>
                         <Button
-                          variant="outline"
-                          size="sm"
                           onClick={() => {
                             console.log("Edit button clicked for company:", company.id, company.name);
                             handleEditCompany(company);
                           }}
+                          style={{
+                            backgroundColor: '#3b82f6',
+                            color: 'white',
+                            border: '1px solid #3b82f6',
+                            borderRadius: '6px',
+                            padding: '8px 16px',
+                            fontSize: '14px',
+                            fontWeight: '500',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}
                         >
-                          <Edit2 style={{ width: '16px', height: '16px', marginRight: '4px' }} />
+                          <Edit2 style={{ width: '16px', height: '16px' }} />
                           Edit
                         </Button>
                         <Button
-                          variant="outline"
-                          size="sm"
                           onClick={() => {
                             console.log("Delete button clicked for company:", company.id, company.name);
                             handleDeleteClick(company);
                           }}
-                          style={{ color: '#ef4444' }}
+                          style={{
+                            backgroundColor: 'white',
+                            color: '#ef4444',
+                            border: '1px solid #ef4444',
+                            borderRadius: '6px',
+                            padding: '8px 16px',
+                            fontSize: '14px',
+                            fontWeight: '500',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}
                         >
-                          <Trash2 style={{ width: '16px', height: '16px', marginRight: '4px' }} />
+                          <Trash2 style={{ width: '16px', height: '16px' }} />
                           Delete
                         </Button>
                       </div>
@@ -852,21 +909,40 @@ export default function CompanyManagement() {
                 <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
                   <Button 
                     type="button" 
-                    variant="outline" 
                     onClick={() => {
                       console.log("❌ Edit dialog cancelled");
                       setShowEditCompany(false);
                       setEditingCompany(null);
                       companyForm.reset();
                     }}
-                    style={{ flex: 1 }}
+                    style={{ 
+                      flex: 1,
+                      backgroundColor: 'white',
+                      color: '#6b7280',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '8px',
+                      padding: '12px 24px',
+                      fontSize: '16px',
+                      fontWeight: '500',
+                      cursor: 'pointer'
+                    }}
                   >
                     Cancel
                   </Button>
                   <Button 
                     type="submit" 
-                    style={{ flex: 1 }} 
                     disabled={updateCompanyMutation.isPending}
+                    style={{ 
+                      flex: 1,
+                      backgroundColor: '#10b981',
+                      color: 'white',
+                      border: '1px solid #10b981',
+                      borderRadius: '8px',
+                      padding: '12px 24px',
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      cursor: 'pointer'
+                    }}
                   >
                     {updateCompanyMutation.isPending ? "Updating..." : "Update Company"}
                   </Button>
