@@ -3,6 +3,56 @@
 ## Overview
 This document defines the comprehensive standards for all admin screens in the AI Sentinel platform based on the **Company Management screen** - our fully implemented, tested, and debugged reference implementation. These standards ensure consistency, security, and usability across all administrative interfaces. **CRITICAL: NO HARDCODING DATA, NO DUMMY DATA, MOCK DATA, ALTERNATE DATA, NO ALTERNATIVE SOLUTIONS OR HALLUCINATIONS ALLOWED.**
 
+## Layout Standards (Updated August 5, 2025)
+
+### Page Header Layout - NO BLUE BANNERS ALLOWED
+**CRITICAL: All admin pages must use clean header layout without colored banners**
+
+```css
+/* Main container */
+backgroundColor: '#f8fafc'
+minHeight: '100vh'
+padding: '32px'
+
+/* Header section */
+display: 'flex'
+justifyContent: 'space-between'
+alignItems: 'center'
+marginBottom: '32px'
+
+/* Page title */
+fontSize: '32px'
+fontWeight: 'bold'
+color: '#1f2937'
+margin: '0 0 8px 0'
+
+/* Page subtitle */
+fontSize: '16px'
+color: '#6b7280'
+margin: 0
+```
+
+### Section Headers
+```css
+fontSize: '24px'
+fontWeight: '600'
+color: '#3b82f6'
+margin: 0
+```
+
+### Grid Layout for Content
+```css
+display: 'grid'
+gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))'
+gap: '24px'
+```
+
+**FORBIDDEN ELEMENTS:**
+- Large colored banner headers with gradients
+- Blue background headers (pageHeaderStyle patterns)
+- Any gradient backgrounds on headers
+- Full-width colored sections above content
+
 ## Reference Implementation: Company Management Screen
 The Company Management screen (`client/src/pages/admin/company-management.tsx`) serves as the gold standard for all admin screens. It demonstrates:
 - Complete CRUD operations with real Railway PostgreSQL data
