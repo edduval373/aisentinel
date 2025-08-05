@@ -417,43 +417,17 @@ export default function CreateProviders() {
 
   if (isLoading) {
     return (
-      <AdminLayout>
-        <div style={{ backgroundColor: '#f8fafc', minHeight: '100vh', padding: '32px' }}>
+      <AdminLayout title="AI Providers" subtitle="Manage universal AI providers for the platform">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '40px' }}>
           <div style={{ 
-            display: 'flex', 
-            justifyContent: 'space-between', 
-            alignItems: 'center',
-            marginBottom: '32px'
-          }}>
-            <div>
-              <h1 style={{ 
-                fontSize: '32px', 
-                fontWeight: 'bold', 
-                color: '#1f2937',
-                margin: '0 0 8px 0'
-              }}>
-                AI Providers
-              </h1>
-              <p style={{ 
-                fontSize: '16px', 
-                color: '#6b7280', 
-                margin: 0 
-              }}>
-                Manage universal AI providers for the platform
-              </p>
-            </div>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '40px' }}>
-            <div style={{ 
-              width: '20px', 
-              height: '20px', 
-              border: '3px solid #e5e7eb',
-              borderTop: '3px solid #3b82f6',
-              borderRadius: '50%',
-              animation: 'spin 1s linear infinite'
-            }}></div>
-            <span style={{ color: '#6b7280', fontSize: '16px' }}>Loading AI providers from database...</span>
-          </div>
+            width: '20px', 
+            height: '20px', 
+            border: '3px solid #e5e7eb',
+            borderTop: '3px solid #3b82f6',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite'
+          }}></div>
+          <span style={{ color: '#6b7280', fontSize: '16px' }}>Loading AI providers from database...</span>
         </div>
       </AdminLayout>
     );
@@ -461,105 +435,59 @@ export default function CreateProviders() {
 
   if (providersError) {
     return (
-      <AdminLayout>
-        <div style={{ backgroundColor: '#f8fafc', minHeight: '100vh', padding: '32px' }}>
-          <div style={{ 
-            display: 'flex', 
-            justifyContent: 'space-between', 
-            alignItems: 'center',
-            marginBottom: '32px'
-          }}>
-            <div>
-              <h1 style={{ 
-                fontSize: '32px', 
-                fontWeight: 'bold', 
-                color: '#1f2937',
-                margin: '0 0 8px 0'
-              }}>
-                AI Providers
-              </h1>
-              <p style={{ 
-                fontSize: '16px', 
-                color: '#6b7280', 
-                margin: 0 
-              }}>
-                Manage universal AI providers for the platform
-              </p>
-            </div>
-          </div>
-          <div style={{ 
-            backgroundColor: '#fef2f2',
-            border: '1px solid #fecaca',
+      <AdminLayout title="AI Providers" subtitle="Manage universal AI providers for the platform">
+        <div style={{ 
+          backgroundColor: '#fef2f2',
+          border: '1px solid #fecaca',
+          borderRadius: '8px',
+          padding: '20px',
+          textAlign: 'center'
+        }}>
+          <h2 style={{ color: '#ef4444', fontSize: '20px', marginBottom: '12px' }}>Error Loading Providers</h2>
+          <p style={{ color: '#6b7280', marginBottom: '16px' }}>
+            {providersError?.message || 'Failed to fetch AI providers from the database'}
+          </p>
+          <Button onClick={() => refetchProviders()} style={{
+            backgroundColor: '#3b82f6',
+            color: 'white',
+            border: '1px solid #3b82f6',
             borderRadius: '8px',
-            padding: '20px',
-            textAlign: 'center'
+            padding: '8px 16px'
           }}>
-            <h2 style={{ color: '#ef4444', fontSize: '20px', marginBottom: '12px' }}>Error Loading Providers</h2>
-            <p style={{ color: '#6b7280', marginBottom: '16px' }}>
-              {providersError?.message || 'Failed to fetch AI providers from the database'}
-            </p>
-            <Button onClick={() => refetchProviders()} style={{
-              backgroundColor: '#3b82f6',
-              color: 'white',
-              border: '1px solid #3b82f6',
-              borderRadius: '8px',
-              padding: '8px 16px'
-            }}>
-              Try Again
-            </Button>
-          </div>
+            Try Again
+          </Button>
         </div>
       </AdminLayout>
     );
   }
 
   return (
-    <AdminLayout>
+    <AdminLayout 
+      title="AI Providers" 
+      subtitle="Manage universal AI providers for the platform"
+      rightContent={
+        <Button
+          onClick={() => setShowAddProvider(true)}
+          style={{
+            backgroundColor: '#3b82f6',
+            color: 'white',
+            border: '1px solid #3b82f6',
+            borderRadius: '8px',
+            padding: '12px 24px',
+            fontSize: '16px',
+            fontWeight: '600',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}
+        >
+          <Plus size={20} />
+          Add Provider
+        </Button>
+      }
+    >
       <div style={{ backgroundColor: '#f8fafc', minHeight: '100vh', padding: '32px' }}>
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center',
-          marginBottom: '32px'
-        }}>
-          <div>
-            <h1 style={{ 
-              fontSize: '32px', 
-              fontWeight: 'bold', 
-              color: '#1f2937',
-              margin: '0 0 8px 0'
-            }}>
-              AI Providers
-            </h1>
-            <p style={{ 
-              fontSize: '16px', 
-              color: '#6b7280', 
-              margin: 0 
-            }}>
-              Manage universal AI providers for the platform
-            </p>
-          </div>
-          <Button
-            onClick={() => setShowAddProvider(true)}
-            style={{
-              backgroundColor: '#3b82f6',
-              color: 'white',
-              border: '1px solid #3b82f6',
-              borderRadius: '8px',
-              padding: '12px 24px',
-              fontSize: '16px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px'
-            }}
-          >
-            <Plus size={20} />
-            Add Provider
-          </Button>
-        </div>
-
         <h2 style={{ 
           fontSize: '24px', 
           fontWeight: '600', 
