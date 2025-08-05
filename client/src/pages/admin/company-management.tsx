@@ -46,6 +46,12 @@ export default function CompanyManagement() {
     message: string;
   }>({ checking: false, exists: false, message: "" });
   
+  const [nameCheckResult, setNameCheckResult] = useState<{
+    checking: boolean;
+    exists: boolean;
+    message: string;
+  }>({ checking: false, exists: false, message: "" });
+  
   // Debug effect to track state changes
   React.useEffect(() => {
     console.log("🔍 State change - showEditCompany:", showEditCompany, "editingCompany:", editingCompany?.name);
@@ -103,12 +109,12 @@ export default function CompanyManagement() {
         return (domain: string) => {
           clearTimeout(timeoutId);
           
-          if (!domain || domain.length < 3) {
+          if (!domain || domain.length < 2) {
             setDomainCheckResult({ checking: false, exists: false, message: "" });
             return;
           }
 
-          setDomainCheckResult({ checking: true, exists: false, message: "Checking domain availability..." });
+          setDomainCheckResult({ checking: true, exists: false, message: "Checking domain..." });
           
           timeoutId = setTimeout(async () => {
             try {
@@ -122,13 +128,13 @@ export default function CompanyManagement() {
                 setDomainCheckResult({ 
                   checking: false, 
                   exists: true, 
-                  message: "This domain is already used by another company" 
+                  message: "❌ This domain is already used by another company" 
                 });
               } else {
                 setDomainCheckResult({ 
                   checking: false, 
                   exists: false, 
-                  message: "Domain is available" 
+                  message: "✅ Domain is available" 
                 });
               }
             } catch (error) {
@@ -139,7 +145,59 @@ export default function CompanyManagement() {
                 message: "" 
               });
             }
-          }, 500); // 500ms debounce
+          }, 300); // Faster feedback - 300ms debounce
+        };
+      },
+      [companies, editingCompany]
+    ),
+    [companies, editingCompany]
+  );
+
+  // Debounced company name checking function
+  const checkNameAvailability = React.useCallback(
+    React.useMemo(
+      () => {
+        let timeoutId: NodeJS.Timeout;
+        return (name: string) => {
+          clearTimeout(timeoutId);
+          
+          if (!name || name.length < 2) {
+            setNameCheckResult({ checking: false, exists: false, message: "" });
+            return;
+          }
+
+          setNameCheckResult({ checking: true, exists: false, message: "Checking name..." });
+          
+          timeoutId = setTimeout(async () => {
+            try {
+              // Check if company name exists in current companies list
+              const nameExists = companies.some(company => 
+                company.name?.toLowerCase() === name.toLowerCase() && 
+                (!editingCompany || company.id !== editingCompany.id)
+              );
+              
+              if (nameExists) {
+                setNameCheckResult({ 
+                  checking: false, 
+                  exists: true, 
+                  message: "❌ This company name is already taken" 
+                });
+              } else {
+                setNameCheckResult({ 
+                  checking: false, 
+                  exists: false, 
+                  message: "✅ Company name is available" 
+                });
+              }
+            } catch (error) {
+              console.error("Name check error:", error);
+              setNameCheckResult({ 
+                checking: false, 
+                exists: false, 
+                message: "" 
+              });
+            }
+          }, 300); // 300ms debounce
         };
       },
       [companies, editingCompany]
@@ -316,11 +374,20 @@ export default function CompanyManagement() {
   const onSubmitCompany = (data: z.infer<typeof companySchema>) => {
     console.log("📝 Form submitted with data:", data);
     
-    // Check for domain conflicts before submitting
+    // Check for validation conflicts before submitting
     if (domainCheckResult.exists) {
       toast({
         title: "Domain Conflict",
         description: "This domain is already used by another company. Please choose a different domain.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (nameCheckResult.exists) {
+      toast({
+        title: "Company Name Conflict",
+        description: "This company name is already taken. Please choose a different name.",
         variant: "destructive"
       });
       return;
@@ -454,6 +521,7 @@ export default function CompanyManagement() {
               console.log("🆕 Resetting form for new company creation");
               setEditingCompany(null);
               setDomainCheckResult({ checking: false, exists: false, message: "" });
+              setNameCheckResult({ checking: false, exists: false, message: "" });
               companyForm.reset({
                 name: "",
                 domain: "",
@@ -464,8 +532,9 @@ export default function CompanyManagement() {
                 isActive: true,
               });
             } else {
-              // Reset domain check when closing
+              // Reset validation checks when closing
               setDomainCheckResult({ checking: false, exists: false, message: "" });
+              setNameCheckResult({ checking: false, exists: false, message: "" });
             }
           }}>
             <DialogTrigger asChild>
@@ -501,11 +570,52 @@ export default function CompanyManagement() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>
-                          <span style={{ color: '#dc2626' }}>*</span> Company Name
+                          <span style={{ color: '#dc2626' }}>*</span> Company Name (Must be unique)
                         </FormLabel>
                         <FormControl>
-                          <Input placeholder="Acme Corporation" {...field} />
+                          <Input 
+                            placeholder="Acme Corporation (must be unique)" 
+                            {...field} 
+                            onChange={(e) => {
+                              field.onChange(e);
+                              checkNameAvailability(e.target.value);
+                            }}
+                            style={{
+                              borderColor: nameCheckResult.exists ? '#ef4444' : 
+                                          nameCheckResult.message.includes("✅") ? '#10b981' : '#d1d5db'
+                            }}
+                          />
                         </FormControl>
+                        {nameCheckResult.message && (
+                          <div style={{ 
+                            fontSize: '13px', 
+                            marginTop: '4px',
+                            fontWeight: '500',
+                            color: nameCheckResult.checking ? '#6b7280' :
+                                   nameCheckResult.exists ? '#ef4444' : '#10b981',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            backgroundColor: nameCheckResult.exists ? '#fef2f2' : 
+                                            nameCheckResult.message.includes("✅") ? '#f0fdf4' : 'transparent',
+                            padding: nameCheckResult.message ? '6px 8px' : '0',
+                            borderRadius: '4px',
+                            border: nameCheckResult.exists ? '1px solid #fecaca' : 
+                                   nameCheckResult.message.includes("✅") ? '1px solid #bbf7d0' : 'none'
+                          }}>
+                            {nameCheckResult.checking && (
+                              <div style={{
+                                width: '12px',
+                                height: '12px',
+                                border: '2px solid #e5e7eb',
+                                borderTop: '2px solid #3b82f6',
+                                borderRadius: '50%',
+                                animation: 'spin 1s linear infinite'
+                              }} />
+                            )}
+                            {nameCheckResult.message}
+                          </div>
+                        )}
                         <FormMessage />
                       </FormItem>
                     )}
