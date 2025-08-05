@@ -725,34 +725,7 @@ function TemplateForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        {/* Critical Required Fields Alert */}
-        <div style={{
-          backgroundColor: '#fef2f2',
-          border: '2px solid #dc2626',
-          borderRadius: '8px',
-          padding: '16px',
-          marginBottom: '16px'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-            <AlertTriangle style={{ width: '20px', height: '20px', color: '#dc2626' }} />
-            <h4 style={{ 
-              margin: 0, 
-              color: '#dc2626', 
-              fontSize: '16px', 
-              fontWeight: '700' 
-            }}>
-              REQUIRED FIELDS
-            </h4>
-          </div>
-          <p style={{ 
-            margin: 0, 
-            color: '#7f1d1d', 
-            fontSize: '14px',
-            lineHeight: '1.4'
-          }}>
-            <strong>Fields marked with red * are REQUIRED:</strong> Model Name, Provider, Model ID, and Context Window must be filled out completely or the template will not save.
-          </p>
-        </div>
+
         
         <Tabs value={activeTab} onValueChange={setActiveTab} style={{ width: '100%' }}>
           <TabsList style={{ display: 'grid', width: '100%', gridTemplateColumns: '1fr 1fr' }}>
@@ -768,11 +741,10 @@ function TemplateForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel style={{ 
-                      color: '#dc2626', 
-                      fontWeight: '600',
-                      fontSize: '14px'
+                      fontSize: '14px',
+                      fontWeight: '500'
                     }}>
-                      * Model Name (REQUIRED)
+                      <span style={{ color: '#dc2626' }}>*</span> Model Name
                     </FormLabel>
                     <FormControl>
                       <Input 
@@ -795,11 +767,10 @@ function TemplateForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel style={{ 
-                      color: '#dc2626', 
-                      fontWeight: '600',
-                      fontSize: '14px'
+                      fontSize: '14px',
+                      fontWeight: '500'
                     }}>
-                      * Provider (REQUIRED)
+                      <span style={{ color: '#dc2626' }}>*</span> Provider
                     </FormLabel>
                     <Select onValueChange={(value) => {
                       field.onChange(value);
@@ -832,11 +803,10 @@ function TemplateForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel style={{ 
-                      color: '#dc2626', 
-                      fontWeight: '600',
-                      fontSize: '14px'
+                      fontSize: '14px',
+                      fontWeight: '500'
                     }}>
-                      * Model ID (REQUIRED)
+                      <span style={{ color: '#dc2626' }}>*</span> Model ID
                     </FormLabel>
                     <FormControl>
                       <Input 
@@ -859,11 +829,10 @@ function TemplateForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel style={{ 
-                      color: '#dc2626', 
-                      fontWeight: '600',
-                      fontSize: '14px'
+                      fontSize: '14px',
+                      fontWeight: '500'
                     }}>
-                      * Context Window (REQUIRED)
+                      <span style={{ color: '#dc2626' }}>*</span> Context Window
                     </FormLabel>
                     <FormControl>
                       <Input 
