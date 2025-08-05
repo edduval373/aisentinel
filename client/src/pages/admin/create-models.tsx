@@ -37,16 +37,16 @@ const templateSchema = z.object({
   capabilities: z.array(z.string()).optional(),
 });
 
-// Provider configurations
-const providers = [
-  { value: "openai", label: "OpenAI", defaultEndpoint: "https://api.openai.com/v1" },
-  { value: "anthropic", label: "Anthropic", defaultEndpoint: "https://api.anthropic.com/v1" },
-  { value: "google", label: "Google AI", defaultEndpoint: "https://generativelanguage.googleapis.com/v1" },
-  { value: "perplexity", label: "Perplexity", defaultEndpoint: "https://api.perplexity.ai" },
-  { value: "cohere", label: "Cohere", defaultEndpoint: "https://api.cohere.ai/v1" },
-  { value: "mistral", label: "Mistral AI", defaultEndpoint: "https://api.mistral.ai/v1" },
-  { value: "custom", label: "Custom Provider", defaultEndpoint: "" },
-];
+// Default endpoint mapping for providers (fallback)
+const defaultEndpoints: Record<string, string> = {
+  "openai": "https://api.openai.com/v1",
+  "anthropic": "https://api.anthropic.com/v1",
+  "google-ai": "https://generativelanguage.googleapis.com/v1",
+  "perplexity": "https://api.perplexity.ai",
+  "cohere": "https://api.cohere.ai/v1",
+  "mistral": "https://api.mistral.ai/v1",
+  "custom": "",
+};
 
 const capabilities = [
   "text-generation",
@@ -130,6 +130,19 @@ export default function CreateModels() {
     staleTime: 0, // Always refetch when invalidated
     gcTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
+
+  // Fetch AI providers from database
+  const { data: dbProviders = [], isLoading: providersLoading } = useQuery({
+    queryKey: ["/api/admin/ai-providers"],
+    staleTime: 5 * 60 * 1000, // Cache providers for 5 minutes
+  });
+
+  // Transform providers for the dropdown (compatible with existing form structure)
+  const providers = dbProviders.map((provider: any) => ({
+    value: provider.name,
+    label: provider.displayName,
+    defaultEndpoint: defaultEndpoints[provider.name] || "",
+  }));
 
   const templateForm = useForm<z.infer<typeof templateSchema>>({
     resolver: zodResolver(templateSchema),
@@ -363,7 +376,7 @@ export default function CreateModels() {
 
   // Production template management now fully enabled with proper endpoints
 
-  if (templatesLoading) {
+  if (templatesLoading || providersLoading) {
     return (
       <AdminLayout title="AI Model Templates" subtitle="Loading templates...">
         <style>{spinKeyframes}</style>

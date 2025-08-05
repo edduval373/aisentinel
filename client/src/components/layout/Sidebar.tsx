@@ -65,6 +65,12 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       icon: Building,
     },
     {
+      id: "create-providers", 
+      name: "Create AI Providers",
+      href: "/admin/create-providers",
+      icon: Settings,
+    },
+    {
       id: "create-models", 
       name: "Create AI Models",
       href: "/admin/create-models",
