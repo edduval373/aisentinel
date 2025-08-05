@@ -395,11 +395,20 @@ export default function CreateProviders() {
     console.log('🔧 [AI-PROVIDERS] Form data being set:', formData);
     form.reset(formData);
     
-    // Explicitly set displayName to ensure it's populated
+    // Explicitly set all fields to ensure they're populated correctly
     setTimeout(() => {
+      form.setValue('name', provider.name || '');
       form.setValue('displayName', provider.displayName || '');
-      console.log('🔧 [AI-PROVIDERS] Display name explicitly set to:', provider.displayName);
-    }, 50);
+      form.setValue('description', provider.description || '');
+      form.setValue('website', provider.website || '');
+      form.setValue('apiDocUrl', provider.apiDocUrl || '');
+      form.setValue('isEnabled', Boolean(provider.isEnabled));
+      console.log('🔧 [AI-PROVIDERS] All fields explicitly set:', {
+        name: provider.name,
+        displayName: provider.displayName,
+        isEnabled: provider.isEnabled
+      });
+    }, 100);
     
     console.log('🔧 [AI-PROVIDERS] Form reset with values, opening edit dialog...');
     setShowEditProvider(true);
@@ -726,14 +735,15 @@ export default function CreateProviders() {
           gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' 
         }}>
           {providers.map((provider) => {
-            // PRODUCTION DEBUG: Log individual provider rendering
+            // PRODUCTION DEBUG: Log individual provider rendering  
             console.log('🎨 [RENDER-DEBUG] Rendering provider:', {
               id: provider.id,
               name: provider.name,
               displayName: provider.displayName,
               isEnabled: provider.isEnabled,
               isEnabledType: typeof provider.isEnabled,
-              booleanCheck: Boolean(provider.isEnabled)
+              booleanCheck: Boolean(provider.isEnabled),
+              strictCheck: provider.isEnabled === true
             });
             
             return (
