@@ -755,9 +755,8 @@ export default function CreateProviders() {
             </Form>
           </DialogContent>
         </Dialog>
-      </div>
 
-      {/* Providers grid following ScreenStandards.md pattern */}
+        {/* Providers grid following ScreenStandards.md pattern */}
       {providers.length === 0 ? (
         <div style={{ 
           textAlign: 'center', 
