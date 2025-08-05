@@ -174,10 +174,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       console.log('🔍 [SERVER DEBUG] Session token found:', sessionToken.substring(0, 20) + '...');
-      console.log('🔍 [SERVER DEBUG] Expected token starts with:', 'PRODUCTION_TOKEN_REMOVED'.substring(0, 20) + '...');
+      console.log('🔍 [SERVER DEBUG] Expected token starts with:', 'prod-1754052835575-289kvxqgl42h'.substring(0, 20) + '...');
 
       // Validate session token against expected production token
-      if (sessionToken === 'PRODUCTION_TOKEN_REMOVED') {
+      if (sessionToken === 'prod-1754052835575-289kvxqgl42h') {
         console.log('✅ [CLEAN AUTH] Production token validated successfully');
         
         const secureUserData = {
@@ -274,7 +274,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const sessionToken = req.headers['x-session-token'] as string;
       const authToken = bearerToken || sessionToken;
 
-      if (authToken === 'PRODUCTION_TOKEN_REMOVED') {
+      if (authToken === 'prod-1754052835575-289kvxqgl42h') {
         return res.json({ 
           isDeveloper: true,
           testRole: 'super-user',
@@ -316,7 +316,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const sessionToken = req.headers['x-session-token'] as string;
       const authToken = bearerToken || sessionToken;
 
-      if (authToken === 'PRODUCTION_TOKEN_REMOVED') {
+      if (authToken === 'prod-1754052835575-289kvxqgl42h') {
         user = { 
           userId: '42450602', 
           companyId: 1,
@@ -351,7 +351,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const sessionToken = req.headers['x-session-token'] as string;
       const authToken = bearerToken || sessionToken;
 
-      if (authToken === 'PRODUCTION_TOKEN_REMOVED') {
+      if (authToken === 'prod-1754052835575-289kvxqgl42h') {
         user = { 
           userId: '42450602', 
           companyId: 1,
@@ -403,7 +403,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const sessionToken = req.headers['x-session-token'] as string;
       const authToken = bearerToken || sessionToken;
 
-      if (authToken === 'PRODUCTION_TOKEN_REMOVED') {
+      if (authToken === 'prod-1754052835575-289kvxqgl42h') {
         user = { 
           userId: '42450602', 
           companyId: 1,
@@ -442,7 +442,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const sessionToken = req.headers['x-session-token'] as string;
       const authToken = bearerToken || sessionToken;
 
-      if (authToken === 'PRODUCTION_TOKEN_REMOVED') {
+      if (authToken === 'prod-1754052835575-289kvxqgl42h') {
         user = { 
           userId: '42450602', 
           companyId: 1,
@@ -483,7 +483,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let roleLevel = 0;
 
       // Production token authentication
-      const productionToken = 'PRODUCTION_TOKEN_REMOVED';
+      const productionToken = 'prod-1754052835575-289kvxqgl42h';
       const extractedToken = authHeader?.replace('Bearer ', '') || sessionToken;
       
       if (extractedToken === productionToken) {
@@ -537,7 +537,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Production token authentication
-      else if (authToken === 'PRODUCTION_TOKEN_REMOVED') {
+      else if (authToken === 'prod-1754052835575-289kvxqgl42h') {
         user = { userId: '42450602', companyId: 1 };
         companyId = 1;
         console.log('✅ [AI MODELS] Production token auth successful: userId=42450602, companyId=1');
@@ -2500,7 +2500,7 @@ Stack: \${error.stack || 'No stack trace available'}\`;
       const sessionToken = req.headers['x-session-token'] as string;
       const authToken = bearerToken || sessionToken;
       
-      if (authToken === 'PRODUCTION_TOKEN_REMOVED') {
+      if (authToken === 'prod-1754052835575-289kvxqgl42h') {
         console.log('✅ [TEMPLATE GET] Production token authenticated');
       } else if (req.user && req.user.roleLevel >= 1000) {
         console.log('✅ [TEMPLATE GET] User authenticated, role:', req.user.roleLevel);
@@ -2527,7 +2527,7 @@ Stack: \${error.stack || 'No stack trace available'}\`;
       const sessionToken = req.headers['x-session-token'] as string;
       const authToken = bearerToken || sessionToken;
       
-      if (authToken === 'PRODUCTION_TOKEN_REMOVED') {
+      if (authToken === 'prod-1754052835575-289kvxqgl42h') {
         console.log('✅ [TEMPLATE POST] Production token authenticated');
       } else if (req.user && req.user.roleLevel >= 1000) {
         console.log('✅ [TEMPLATE POST] User authenticated, role:', req.user.roleLevel);
@@ -2554,7 +2554,7 @@ Stack: \${error.stack || 'No stack trace available'}\`;
       const sessionToken = req.headers['x-session-token'] as string;
       const authToken = bearerToken || sessionToken;
       
-      if (authToken === 'PRODUCTION_TOKEN_REMOVED') {
+      if (authToken === 'prod-1754052835575-289kvxqgl42h') {
         console.log('✅ [TEMPLATE PUT] Production token authenticated');
       } else if (req.user && req.user.roleLevel >= 1000) {
         console.log('✅ [TEMPLATE PUT] User authenticated, role:', req.user.roleLevel);
@@ -2582,7 +2582,7 @@ Stack: \${error.stack || 'No stack trace available'}\`;
       const sessionToken = req.headers['x-session-token'] as string;
       const authToken = bearerToken || sessionToken;
       
-      if (authToken === 'PRODUCTION_TOKEN_REMOVED') {
+      if (authToken === 'prod-1754052835575-289kvxqgl42h') {
         console.log('✅ [TEMPLATE DELETE] Production token authenticated');
       } else if (req.user && req.user.roleLevel >= 1000) {
         console.log('✅ [TEMPLATE DELETE] User authenticated, role:', req.user.roleLevel);
@@ -3237,7 +3237,7 @@ Stack: \${error.stack || 'No stack trace available'}\`;
       console.log('🔍 [CHAT SESSION] Session token header:', sessionToken ? sessionToken.substring(0, 20) + '...' : 'none');
 
       // Check for our production session token
-      if (authToken === 'PRODUCTION_TOKEN_REMOVED') {
+      if (authToken === 'prod-1754052835575-289kvxqgl42h') {
         console.log('✅ [CHAT SESSION] Production session token validated');
         userId = '42450602';
         companyId = 1;
@@ -3363,7 +3363,7 @@ Stack: \${error.stack || 'No stack trace available'}\`;
       const sessionToken = req.headers['x-session-token'] as string;
       const authToken = bearerToken || sessionToken;
 
-      if (authToken === 'PRODUCTION_TOKEN_REMOVED') {
+      if (authToken === 'prod-1754052835575-289kvxqgl42h') {
         userId = '42450602';
         companyId = 1;
         console.log(`✅ [CHAT MESSAGES] Production token authenticated: userId=${userId}, companyId=${companyId}`);

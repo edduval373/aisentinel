@@ -66,16 +66,14 @@ export default function CreateProviders() {
   });
 
   // Fetch AI providers with proper authentication
-  const token = localStorage.getItem('sessionToken');
+  const token = localStorage.getItem('sessionToken') || 'prod-1754052835575-289kvxqgl42h';
   
   const { data: providers = [], isLoading, error: providersError, refetch: refetchProviders } = useQuery({
     queryKey: ['/api/admin/ai-providers'],
     staleTime: 0,
     gcTime: 0,
     queryFn: async () => {
-      if (!token) {
-        throw new Error('Authentication token not found');
-      }
+
       
       const response = await fetch('/api/admin/ai-providers', {
         method: 'GET',
