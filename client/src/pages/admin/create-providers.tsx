@@ -301,9 +301,18 @@ export default function CreateProviders() {
   // Delete provider mutation
   const deleteProviderMutation = useMutation({
     mutationFn: async (id: number) => {
-      console.log('🔄 [AI-PROVIDERS] Deleting provider:', id);
+      console.log('🔄 [AI-PROVIDERS DELETE] Starting deletion for provider:', id);
+      console.log('🔄 [AI-PROVIDERS DELETE] Token available:', !!token, 'Token preview:', token?.substring(0, 20) + '...');
       
-      const response = await fetch(`/api/admin/ai-providers/${id}`, {
+      if (!token) {
+        console.error('❌ [AI-PROVIDERS DELETE] No authentication token available');
+        throw new Error('Authentication token not available');
+      }
+      
+      const deleteUrl = `/api/admin/ai-providers/${id}`;
+      console.log('🔄 [AI-PROVIDERS DELETE] Making DELETE request to:', deleteUrl);
+      
+      const response = await fetch(deleteUrl, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -313,14 +322,23 @@ export default function CreateProviders() {
         credentials: 'include'
       });
       
+      console.log('🔄 [AI-PROVIDERS DELETE] Response status:', response.status);
+      console.log('🔄 [AI-PROVIDERS DELETE] Response ok:', response.ok);
+      console.log('🔄 [AI-PROVIDERS DELETE] Response headers:', Object.fromEntries(response.headers.entries()));
+      
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('❌ [AI-PROVIDERS] Delete failed:', response.status, errorText);
-        throw new Error(errorText || `Failed to delete provider: ${response.status}`);
+        console.error('❌ [AI-PROVIDERS DELETE] Delete failed:', {
+          status: response.status,
+          statusText: response.statusText,
+          errorText,
+          url: deleteUrl
+        });
+        throw new Error(errorText || `Failed to delete provider: ${response.status} ${response.statusText}`);
       }
       
       const result = await response.json();
-      console.log('✅ [AI-PROVIDERS] Provider deleted successfully:', id);
+      console.log('✅ [AI-PROVIDERS DELETE] Provider deleted successfully:', { id, result });
       return result;
     },
     onSuccess: () => {
@@ -421,8 +439,16 @@ export default function CreateProviders() {
   };
 
   const confirmDelete = () => {
+    console.log('🗑️ [AI-PROVIDERS DELETE] Confirm delete called');
+    console.log('🗑️ [AI-PROVIDERS DELETE] Provider to delete:', providerToDelete);
+    console.log('🗑️ [AI-PROVIDERS DELETE] Token available:', !!token);
+    console.log('🗑️ [AI-PROVIDERS DELETE] Delete mutation pending:', deleteProviderMutation.isPending);
+    
     if (providerToDelete) {
+      console.log('🗑️ [AI-PROVIDERS DELETE] Triggering mutation for provider ID:', providerToDelete.id);
       deleteProviderMutation.mutate(providerToDelete.id);
+    } else {
+      console.error('❌ [AI-PROVIDERS DELETE] No provider selected for deletion');
     }
   };
 
