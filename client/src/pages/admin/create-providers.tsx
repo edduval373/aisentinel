@@ -44,7 +44,7 @@ export default function CreateProviders() {
   const { user } = useAuth();
 
   // Authentication check - super-user only
-  if (!user || user.roleLevel < 1000) {
+  if (!user || (user.roleLevel ?? 0) < 1000) {
     return (
       <div style={{ padding: '24px', textAlign: 'center' }}>
         <h1 style={{ color: '#ef4444', fontSize: '24px', marginBottom: '16px' }}>Access Denied</h1>
@@ -66,18 +66,22 @@ export default function CreateProviders() {
   });
 
   // Fetch AI providers with proper authentication
-  const token = localStorage.getItem('sessionToken') || 'prod-1754052835575-289kvxqgl42h';
+  const token = localStorage.getItem('sessionToken');
   
   const { data: providers = [], isLoading, error: providersError, refetch: refetchProviders } = useQuery({
     queryKey: ['/api/admin/ai-providers'],
     staleTime: 0,
     gcTime: 0,
     queryFn: async () => {
+      if (!token) {
+        throw new Error('Authentication token not found');
+      }
+      
       const response = await fetch('/api/admin/ai-providers', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
-          'X-Session-Token': token,
+          'X-Session-Token': token || '',
           'Content-Type': 'application/json'
         },
         credentials: 'include'
@@ -132,7 +136,7 @@ export default function CreateProviders() {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
-          'X-Session-Token': token,
+          'X-Session-Token': token || '',
           'Content-Type': 'application/json'
         },
         credentials: 'include',
@@ -180,7 +184,7 @@ export default function CreateProviders() {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
-          'X-Session-Token': token,
+          'X-Session-Token': token || '',
           'Content-Type': 'application/json'
         },
         credentials: 'include',
@@ -221,7 +225,7 @@ export default function CreateProviders() {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
-          'X-Session-Token': token,
+          'X-Session-Token': token || '',
           'Content-Type': 'application/json'
         },
         credentials: 'include'

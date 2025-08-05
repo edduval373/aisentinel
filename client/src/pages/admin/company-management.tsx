@@ -70,8 +70,11 @@ export default function CompanyManagement() {
     gcTime: 0, // Don't cache data
     refetchInterval: false, // Disable automatic refetching
     queryFn: async () => {
-      const token = localStorage.getItem('sessionToken') || 'prod-1754052835575-289kvxqgl42h';
-      console.log("🔑 [COMPANIES QUERY] Using token:", token);
+      const token = localStorage.getItem('sessionToken');
+      if (!token) {
+        throw new Error('Authentication token not found');
+      }
+      console.log("🔑 [COMPANIES QUERY] Using saved session token");
       
       const response = await fetch('/api/admin/companies', {
         method: 'GET',
