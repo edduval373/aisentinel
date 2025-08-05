@@ -826,19 +826,16 @@ export default function CreateProviders() {
           gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' 
         }}>
           {providers.map((provider) => {
-            // PRODUCTION DEBUG: Log individual provider rendering  
-            console.log('🔧 [PROVIDER-FULL-OBJECT] Complete provider data:', provider);
-            console.log('🔧 [PROVIDER-KEYS] Available keys:', Object.keys(provider));
-            console.log('🔧 [PROVIDER-VALUES] Values:', Object.values(provider));
-            console.log('🎨 [RENDER-DEBUG] Rendering provider:', {
-              id: provider.id,
-              name: provider.name,
-              displayName: provider.displayName,
-              isEnabled: provider.isEnabled,
-              isEnabledType: typeof provider.isEnabled,
-              booleanCheck: Boolean(provider.isEnabled),
-              strictCheck: provider.isEnabled === true
-            });
+            // Status debug for production
+            if (provider.id === 1) { // Only log first provider to avoid spam
+              console.log('✅ [STATUS-CHECK] Sample provider data:', {
+                id: provider.id,
+                displayName: provider.displayName,
+                isEnabled: provider.isEnabled,
+                isEnabledType: typeof provider.isEnabled,
+                statusWillShow: provider.isEnabled ? "ACTIVE" : "INACTIVE"
+              });
+            }
             
             return (
             <Card key={provider.id} style={{ 
