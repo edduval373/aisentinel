@@ -170,10 +170,23 @@ export default function CompanyManagement() {
           
           timeoutId = setTimeout(async () => {
             try {
+              console.log("🔍 [NAME CHECK] ========== VALIDATION START ==========");
               console.log("🔍 [NAME CHECK] Checking name:", name);
               console.log("🔍 [NAME CHECK] Companies array:", companies);
               console.log("🔍 [NAME CHECK] Total companies:", companies?.length);
+              console.log("🔍 [NAME CHECK] Companies is array?", Array.isArray(companies));
               console.log("🔍 [NAME CHECK] Editing company:", editingCompany);
+              
+              if (!companies || !Array.isArray(companies) || companies.length === 0) {
+                console.error("🔍 [NAME CHECK] ERROR: Companies array is empty or invalid!");
+                console.log("🔍 [NAME CHECK] Setting validation to available due to missing data");
+                setNameCheckResult({ 
+                  checking: false, 
+                  exists: false, 
+                  message: "⚠️ Unable to check - missing company data" 
+                });
+                return;
+              }
               
               // Check if company name exists in current companies list
               const nameExists = companies.some(company => {
@@ -618,6 +631,9 @@ export default function CompanyManagement() {
                             placeholder="Acme Corporation (must be unique)" 
                             {...field} 
                             onChange={(e) => {
+                              console.log("🔵 [FORM] Company name field onChange triggered:", e.target.value);
+                              console.log("🔵 [FORM] Companies available for validation:", companies?.length || 0);
+                              console.log("🔵 [FORM] Companies data:", companies);
                               field.onChange(e);
                               checkNameAvailability(e.target.value);
                             }}
