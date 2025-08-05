@@ -52,7 +52,7 @@ export default function CreateProviders() {
   // Authentication check - super-user only (following ScreenStandards.md)
   if (!user || (user.roleLevel ?? 0) < 1000) {
     return (
-      <AdminLayout>
+      <AdminLayout title="AI Providers" subtitle="Manage universal AI providers for the platform">
         <div style={{ 
           padding: '24px', 
           textAlign: 'center',
@@ -363,15 +363,24 @@ export default function CreateProviders() {
     setEditingProvider(provider);
     setNameCheckResult({ checking: false, exists: false, message: "" });
     
-    // Reset form with all provider data
-    form.reset({
-      name: provider.name,
-      displayName: provider.displayName,
+    // Reset form with all provider data - ensuring displayName is properly set
+    const formData = {
+      name: provider.name || '',
+      displayName: provider.displayName || '',
       description: provider.description || '',
       website: provider.website || '',
       apiDocUrl: provider.apiDocUrl || '',
-      isEnabled: provider.isEnabled,
-    });
+      isEnabled: Boolean(provider.isEnabled),
+    };
+    
+    console.log('🔧 [AI-PROVIDERS] Form data being set:', formData);
+    form.reset(formData);
+    
+    // Explicitly set displayName to ensure it's populated
+    setTimeout(() => {
+      form.setValue('displayName', provider.displayName || '');
+      console.log('🔧 [AI-PROVIDERS] Display name explicitly set to:', provider.displayName);
+    }, 50);
     
     console.log('🔧 [AI-PROVIDERS] Form reset with values, opening edit dialog...');
     setShowEditProvider(true);
@@ -706,11 +715,10 @@ export default function CreateProviders() {
               overflow: 'hidden',
               boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
             }}>
-              {/* Blue Header */}
+              {/* Card Header */}
               <div style={{
-                background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
                 padding: '16px',
-                color: 'white'
+                borderBottom: '1px solid #e5e7eb'
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -718,25 +726,25 @@ export default function CreateProviders() {
                       width: '40px',
                       height: '40px',
                       borderRadius: '8px',
-                      backgroundColor: 'rgba(255,255,255,0.2)',
+                      backgroundColor: '#f3f4f6',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center'
                     }}>
-                      <Globe style={{ width: '20px', height: '20px', color: 'white' }} />
+                      <Globe style={{ width: '20px', height: '20px', color: '#6b7280' }} />
                     </div>
                     <div>
                       <h3 style={{ 
                         fontWeight: '700', 
                         fontSize: '18px',
                         marginBottom: '4px',
-                        color: 'white'
+                        color: '#1f2937'
                       }}>
                         {provider.displayName}
                       </h3>
                       <p style={{ 
                         fontSize: '14px', 
-                        color: 'rgba(255,255,255,0.9)',
+                        color: '#6b7280',
                         fontWeight: '500'
                       }}>
                         {provider.name}
@@ -816,7 +824,7 @@ export default function CreateProviders() {
                       color: 'white',
                       border: '1px solid #f97316',
                       borderRadius: '6px',
-                      padding: '8px 16px',
+                      padding: '4px 8px',
                       fontSize: '14px',
                       fontWeight: '500',
                       cursor: 'pointer',
@@ -836,7 +844,7 @@ export default function CreateProviders() {
                       color: 'white',
                       border: '1px solid #ef4444',
                       borderRadius: '6px',
-                      padding: '8px 16px',
+                      padding: '4px 8px',
                       fontSize: '14px',
                       fontWeight: '500',
                       cursor: 'pointer',
