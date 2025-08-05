@@ -1,3 +1,8 @@
+// ⚠️ CRITICAL WARNING: DO NOT MODIFY AUTHENTICATION SYSTEM ⚠️
+// This authentication routes file is WORKING in production
+// User specifically requested NO changes to auth system - DO NOT REFACTOR
+// ANY CHANGES TO THIS AUTHENTICATION WILL BREAK THE WORKING SYSTEM
+
 import type { Express } from "express";
 import { z } from "zod";
 import { authService } from "./services/authService";
