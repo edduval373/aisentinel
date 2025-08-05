@@ -108,24 +108,30 @@ export default function CreateProviders() {
     queryFn: async () => {
       console.log('🔍 [AI-PROVIDERS] Fetching providers from Railway database...');
       
-      const response = await fetch('/api/admin/ai-providers', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'X-Session-Token': token,
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include'
-      });
-      
-      if (!response.ok) {
-        console.error('❌ [AI-PROVIDERS] Fetch failed:', response.status, response.statusText);
-        throw new Error(`Failed to fetch providers: ${response.status}`);
+      try {
+        const response = await fetch('/api/admin/ai-providers', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'X-Session-Token': token,
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include'
+        });
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('❌ [AI-PROVIDERS] Fetch failed:', response.status, response.statusText, errorText);
+          throw new Error(`Failed to fetch providers: ${response.status} - ${errorText}`);
+        }
+        
+        const data = await response.json();
+        console.log('✅ [AI-PROVIDERS] Fetched providers from database:', data.length, 'providers');
+        return data;
+      } catch (error) {
+        console.error('❌ [AI-PROVIDERS] Network or parsing error:', error);
+        throw error;
       }
-      
-      const data = await response.json();
-      console.log('✅ [AI-PROVIDERS] Fetched providers from database:', data.length, 'providers');
-      return data;
     }
   }) as { data: AiProvider[], isLoading: boolean, error: any, refetch: () => Promise<any> };
 
@@ -599,7 +605,8 @@ export default function CreateProviders() {
                       <FormControl>
                         <Textarea 
                           placeholder="Brief description of the AI provider..." 
-                          {...field} 
+                          {...field}
+                          value={field.value || ''}
                           style={{ minHeight: '80px' }}
                         />
                       </FormControl>
@@ -616,7 +623,7 @@ export default function CreateProviders() {
                       <FormItem>
                         <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>Website URL</FormLabel>
                         <FormControl>
-                          <Input placeholder="https://openai.com" {...field} />
+                          <Input placeholder="https://openai.com" {...field} value={field.value || ''} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -630,7 +637,7 @@ export default function CreateProviders() {
                       <FormItem>
                         <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>API Documentation URL</FormLabel>
                         <FormControl>
-                          <Input placeholder="https://platform.openai.com/docs" {...field} />
+                          <Input placeholder="https://platform.openai.com/docs" {...field} value={field.value || ''} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -833,7 +840,7 @@ export default function CreateProviders() {
                 paddingTop: '12px',
                 borderTop: '1px solid #f3f4f6'
               }}>
-                Created: {new Date(provider.createdAt).toLocaleDateString()}
+                Created: {provider.createdAt ? new Date(provider.createdAt).toLocaleDateString() : 'Unknown'}
               </div>
             </div>
           ))}
@@ -937,7 +944,8 @@ export default function CreateProviders() {
                     <FormControl>
                       <Textarea 
                         placeholder="Brief description of the AI provider..." 
-                        {...field} 
+                        {...field}
+                        value={field.value || ''}
                         style={{ minHeight: '80px' }}
                       />
                     </FormControl>
@@ -954,7 +962,7 @@ export default function CreateProviders() {
                     <FormItem>
                       <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>Website URL</FormLabel>
                       <FormControl>
-                        <Input placeholder="https://openai.com" {...field} />
+                        <Input placeholder="https://openai.com" {...field} value={field.value || ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -968,7 +976,7 @@ export default function CreateProviders() {
                     <FormItem>
                       <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>API Documentation URL</FormLabel>
                       <FormControl>
-                        <Input placeholder="https://platform.openai.com/docs" {...field} />
+                        <Input placeholder="https://platform.openai.com/docs" {...field} value={field.value || ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
