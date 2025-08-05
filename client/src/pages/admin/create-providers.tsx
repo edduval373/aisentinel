@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus, Edit2, Trash2, ExternalLink, Globe, Loader2 } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 import { z } from 'zod';
 import { insertAiProviderSchema, type AiProvider, type InsertAiProvider } from '@shared/schema';
 import { Button } from '@/components/ui/button';
@@ -390,43 +391,7 @@ export default function CreateProviders() {
 
 
 
-  // Grid container style (EXACT from ScreenStandards.md)
-  const gridContainerStyle = {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))',
-    gap: '24px',
-    padding: '0 32px'
-  };
 
-  // Provider card style (EXACT from ScreenStandards.md)
-  const cardStyle = {
-    backgroundColor: '#ffffff',
-    borderRadius: '12px',
-    padding: '20px',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-    border: '1px solid #e5e7eb',
-    transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
-    cursor: 'pointer'
-  };
-
-  // Active badge style (EXACT from ScreenStandards.md)
-  const activeBadgeStyle = {
-    backgroundColor: '#10b981',
-    color: 'white',
-    padding: '4px 8px',
-    borderRadius: '4px',
-    fontSize: '12px',
-    fontWeight: '500'
-  };
-
-  const disabledBadgeStyle = {
-    backgroundColor: '#6b7280',
-    color: 'white',
-    padding: '4px 8px',
-    borderRadius: '4px',
-    fontSize: '12px',
-    fontWeight: '500'
-  };
 
   if (isLoading) {
     return (
@@ -729,43 +694,127 @@ export default function CreateProviders() {
           </Button>
         </div>
       ) : (
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))',
-          gap: '24px'
+        <div style={{ 
+          display: 'grid', 
+          gap: '16px', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' 
         }}>
           {providers.map((provider) => (
-            <div 
-              key={provider.id} 
-              style={cardStyle}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.15)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
-                <div>
-                  <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#1f2937', margin: '0 0 4px 0' }}>
-                    {provider.displayName}
-                  </h3>
-                  <p style={{ fontSize: '14px', color: '#6b7280', margin: '0 0 8px 0' }}>
-                    Internal: {provider.name}
-                  </p>
-                  <span style={provider.isEnabled ? activeBadgeStyle : disabledBadgeStyle}>
-                    {provider.isEnabled ? 'Enabled' : 'Disabled'}
+            <Card key={provider.id} style={{ 
+              border: '1px solid #e5e7eb',
+              borderRadius: '12px',
+              overflow: 'hidden',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+            }}>
+              {/* Blue Header */}
+              <div style={{
+                background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+                padding: '16px',
+                color: 'white'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '8px',
+                      backgroundColor: 'rgba(255,255,255,0.2)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <Globe style={{ width: '20px', height: '20px', color: 'white' }} />
+                    </div>
+                    <div>
+                      <h3 style={{ 
+                        fontWeight: '700', 
+                        fontSize: '18px',
+                        marginBottom: '4px',
+                        color: 'white'
+                      }}>
+                        {provider.displayName}
+                      </h3>
+                      <p style={{ 
+                        fontSize: '14px', 
+                        color: 'rgba(255,255,255,0.9)',
+                        fontWeight: '500'
+                      }}>
+                        {provider.name}
+                      </p>
+                    </div>
+                  </div>
+                  <span style={{
+                    backgroundColor: provider.isEnabled ? '#10b981' : '#6b7280',
+                    color: 'white',
+                    fontWeight: '600',
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    fontSize: '12px'
+                  }}>
+                    {provider.isEnabled ? "ACTIVE" : "INACTIVE"}
                   </span>
                 </div>
+              </div>
+              
+              <CardContent style={{ padding: '16px' }}>
+                {provider.description && (
+                  <div style={{ marginBottom: '16px' }}>
+                    <p style={{ 
+                      fontSize: '14px', 
+                      color: '#4b5563', 
+                      lineHeight: '1.5'
+                    }}>
+                      {provider.description}
+                    </p>
+                  </div>
+                )}
+                
+                <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+                  {provider.website && (
+                    <a 
+                      href={provider.website} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        fontSize: '13px',
+                        color: '#3b82f6',
+                        textDecoration: 'none'
+                      }}
+                    >
+                      <Globe style={{ width: '12px', height: '12px' }} />
+                      Website
+                    </a>
+                  )}
+                  {provider.apiDocUrl && (
+                    <a 
+                      href={provider.apiDocUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        fontSize: '13px',
+                        color: '#3b82f6',
+                        textDecoration: 'none'
+                      }}
+                    >
+                      <ExternalLink style={{ width: '12px', height: '12px' }} />
+                      API Docs
+                    </a>
+                  )}
+                </div>
+                
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <Button
                     onClick={() => handleEdit(provider)}
                     style={{
-                      backgroundColor: '#3b82f6',
+                      backgroundColor: '#f97316',
                       color: 'white',
-                      border: '1px solid #3b82f6',
+                      border: '1px solid #f97316',
                       borderRadius: '6px',
                       padding: '8px 16px',
                       fontSize: '14px',
@@ -773,10 +822,11 @@ export default function CreateProviders() {
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '4px'
+                      gap: '4px',
+                      flex: 1
                     }}
                   >
-                    <Edit2 style={{ width: '14px', height: '14px' }} />
+                    <Edit2 style={{ width: '16px', height: '16px' }} />
                     Edit
                   </Button>
                   <Button
@@ -792,75 +842,16 @@ export default function CreateProviders() {
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '4px'
+                      gap: '4px',
+                      flex: 1
                     }}
                   >
-                    <Trash2 style={{ width: '14px', height: '14px' }} />
+                    <Trash2 style={{ width: '16px', height: '16px' }} />
                     Delete
                   </Button>
                 </div>
-              </div>
-
-              {provider.description && (
-                <p style={{ 
-                  fontSize: '14px', 
-                  color: '#4b5563', 
-                  marginBottom: '12px',
-                  lineHeight: '1.4'
-                }}>
-                  {provider.description}
-                </p>
-              )}
-
-              <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
-                {provider.website && (
-                  <a 
-                    href={provider.website} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                      fontSize: '13px',
-                      color: '#3b82f6',
-                      textDecoration: 'none'
-                    }}
-                  >
-                    <Globe style={{ width: '12px', height: '12px' }} />
-                    Website
-                  </a>
-                )}
-                {provider.apiDocUrl && (
-                  <a 
-                    href={provider.apiDocUrl} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                      fontSize: '13px',
-                      color: '#3b82f6',
-                      textDecoration: 'none'
-                    }}
-                  >
-                    <ExternalLink style={{ width: '12px', height: '12px' }} />
-                    API Docs
-                  </a>
-                )}
-              </div>
-
-              <div style={{ 
-                fontSize: '12px', 
-                color: '#9ca3af', 
-                marginTop: '12px',
-                paddingTop: '12px',
-                borderTop: '1px solid #f3f4f6'
-              }}>
-                Created: {provider.createdAt ? new Date(provider.createdAt).toLocaleDateString() : 'Unknown'}
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
       )}
