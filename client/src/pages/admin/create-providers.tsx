@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Plus, Edit, Trash2, ExternalLink, Globe, Loader2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, ExternalLink, Globe, Loader2 } from 'lucide-react';
 import { z } from 'zod';
 import { insertAiProviderSchema, type AiProvider, type InsertAiProvider } from '@shared/schema';
 import { Button } from '@/components/ui/button';
@@ -539,26 +539,9 @@ export default function CreateProviders() {
               Manage universal AI providers for the platform
             </p>
           </div>
-        </div>
-
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center',
-          marginBottom: '24px'
-        }}>
-          <h2 style={{ 
-            fontSize: '24px', 
-            fontWeight: '600', 
-            color: '#3b82f6',
-            margin: 0 
-          }}>
-            Provider Management ({providers.length} providers)
-          </h2>
-        
-        <Dialog open={showAddProvider} onOpenChange={setShowAddProvider}>
-          <DialogTrigger asChild>
-            <Button style={{
+          <Button
+            onClick={() => setShowAddProvider(true)}
+            style={{
               backgroundColor: '#3b82f6',
               color: 'white',
               border: '1px solid #3b82f6',
@@ -570,11 +553,23 @@ export default function CreateProviders() {
               display: 'flex',
               alignItems: 'center',
               gap: '8px'
-            }}>
-              <Plus style={{ width: '16px', height: '16px' }} />
-              Add Provider
-            </Button>
-          </DialogTrigger>
+            }}
+          >
+            <Plus size={20} />
+            Add Provider
+          </Button>
+        </div>
+
+        <h2 style={{ 
+          fontSize: '24px', 
+          fontWeight: '600', 
+          color: '#3b82f6',
+          margin: '0 0 24px 0'
+        }}>
+          Provider Management ({providers.length} providers)
+        </h2>
+        
+        <Dialog open={showAddProvider} onOpenChange={setShowAddProvider}>
           <DialogContent style={{ maxWidth: '600px' }}>
             <DialogHeader>
               <DialogTitle>Add New AI Provider</DialogTitle>
@@ -826,33 +821,42 @@ export default function CreateProviders() {
                 </div>
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <Button
-                    variant="outline"
-                    size="sm"
                     onClick={() => handleEdit(provider)}
                     style={{
-                      backgroundColor: '#ffffff',
-                      border: '1px solid #d1d5db',
+                      backgroundColor: '#3b82f6',
+                      color: 'white',
+                      border: '1px solid #3b82f6',
                       borderRadius: '6px',
-                      padding: '6px 8px',
-                      cursor: 'pointer'
+                      padding: '8px 16px',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px'
                     }}
                   >
-                    <Edit style={{ width: '14px', height: '14px' }} />
+                    <Edit2 style={{ width: '14px', height: '14px' }} />
+                    Edit
                   </Button>
                   <Button
-                    variant="outline"
-                    size="sm"
                     onClick={() => handleDelete(provider)}
                     style={{
-                      backgroundColor: '#ffffff',
+                      backgroundColor: '#ef4444',
+                      color: 'white',
                       border: '1px solid #ef4444',
                       borderRadius: '6px',
-                      padding: '6px 8px',
+                      padding: '8px 16px',
+                      fontSize: '14px',
+                      fontWeight: '500',
                       cursor: 'pointer',
-                      color: '#ef4444'
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px'
                     }}
                   >
                     <Trash2 style={{ width: '14px', height: '14px' }} />
+                    Delete
                   </Button>
                 </div>
               </div>

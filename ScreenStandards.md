@@ -7,6 +7,7 @@ This document defines the comprehensive standards for all admin screens in the A
 
 ### Page Header Layout - NO BLUE BANNERS ALLOWED
 **CRITICAL: All admin pages must use clean header layout without colored banners**
+**NEW REQUIREMENT: Title must be positioned next to logo in header, not in separate colored banner**
 
 ```css
 /* Main container */
@@ -14,13 +15,13 @@ backgroundColor: '#f8fafc'
 minHeight: '100vh'
 padding: '32px'
 
-/* Header section */
+/* Header section - MATCHES COMPANY MANAGEMENT EXACTLY */
 display: 'flex'
 justifyContent: 'space-between'
 alignItems: 'center'
 marginBottom: '32px'
 
-/* Page title */
+/* Page title - NEXT TO LOGO */
 fontSize: '32px'
 fontWeight: 'bold'
 color: '#1f2937'
@@ -30,6 +31,44 @@ margin: '0 0 8px 0'
 fontSize: '16px'
 color: '#6b7280'
 margin: 0
+
+/* Primary action button - TOP RIGHT */
+backgroundColor: '#3b82f6'
+color: 'white'
+border: '1px solid #3b82f6'
+borderRadius: '8px'
+padding: '12px 24px'
+fontSize: '16px'
+fontWeight: '600'
+```
+
+### Action Button Standards (Company Management Pattern)
+**CRITICAL: All edit/delete buttons must match Company Management styling**
+
+```css
+/* Edit Button - Blue with text and icon */
+backgroundColor: '#3b82f6'
+color: 'white'
+border: '1px solid #3b82f6'
+borderRadius: '6px'
+padding: '8px 16px'
+fontSize: '14px'
+fontWeight: '500'
+display: 'flex'
+alignItems: 'center'
+gap: '4px'
+
+/* Delete Button - Red with text and icon */
+backgroundColor: '#ef4444'
+color: 'white'
+border: '1px solid #ef4444'
+borderRadius: '6px'
+padding: '8px 16px'
+fontSize: '14px'
+fontWeight: '500'
+display: 'flex'
+alignItems: 'center'
+gap: '4px'
 ```
 
 ### Section Headers
@@ -37,7 +76,7 @@ margin: 0
 fontSize: '24px'
 fontWeight: '600'
 color: '#3b82f6'
-margin: 0
+margin: '0 0 24px 0'
 ```
 
 ### Grid Layout for Content
