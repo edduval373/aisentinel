@@ -410,6 +410,7 @@ export default function CompanyManagement() {
     setTimeout(() => {
       setEditingCompany(company);
       setDomainCheckResult({ checking: false, exists: false, message: "" });
+      setNameCheckResult({ checking: false, exists: false, message: "" });
       companyForm.reset({
         name: company.name,
         domain: company.domain,
@@ -644,13 +645,20 @@ export default function CompanyManagement() {
                         </FormControl>
                         {domainCheckResult.message && (
                           <div style={{ 
-                            fontSize: '12px', 
+                            fontSize: '13px', 
                             marginTop: '4px',
+                            fontWeight: '500',
                             color: domainCheckResult.checking ? '#6b7280' :
                                    domainCheckResult.exists ? '#ef4444' : '#10b981',
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '4px'
+                            gap: '4px',
+                            backgroundColor: domainCheckResult.exists ? '#fef2f2' : 
+                                            domainCheckResult.message.includes("✅") ? '#f0fdf4' : 'transparent',
+                            padding: domainCheckResult.message ? '6px 8px' : '0',
+                            borderRadius: '4px',
+                            border: domainCheckResult.exists ? '1px solid #fecaca' : 
+                                   domainCheckResult.message.includes("✅") ? '1px solid #bbf7d0' : 'none'
                           }}>
                             {domainCheckResult.checking && (
                               <div style={{
@@ -753,22 +761,23 @@ export default function CompanyManagement() {
                   />
                   <Button 
                     type="submit" 
-                    disabled={createCompanyMutation.isPending || updateCompanyMutation.isPending || domainCheckResult.exists || domainCheckResult.checking}
+                    disabled={createCompanyMutation.isPending || updateCompanyMutation.isPending || domainCheckResult.exists || domainCheckResult.checking || nameCheckResult.exists || nameCheckResult.checking}
                     style={{ 
                       width: '100%',
-                      backgroundColor: (domainCheckResult.exists || domainCheckResult.checking) ? '#9ca3af' : '#10b981',
+                      backgroundColor: (domainCheckResult.exists || domainCheckResult.checking || nameCheckResult.exists || nameCheckResult.checking) ? '#9ca3af' : '#10b981',
                       color: 'white',
-                      border: (domainCheckResult.exists || domainCheckResult.checking) ? '1px solid #9ca3af' : '1px solid #10b981',
+                      border: (domainCheckResult.exists || domainCheckResult.checking || nameCheckResult.exists || nameCheckResult.checking) ? '1px solid #9ca3af' : '1px solid #10b981',
                       borderRadius: '8px',
                       padding: '12px 24px',
                       fontSize: '16px',
                       fontWeight: '600',
-                      cursor: (domainCheckResult.exists || domainCheckResult.checking) ? 'not-allowed' : 'pointer',
-                      opacity: (createCompanyMutation.isPending || updateCompanyMutation.isPending || domainCheckResult.checking) ? 0.7 : 1
+                      cursor: (domainCheckResult.exists || domainCheckResult.checking || nameCheckResult.exists || nameCheckResult.checking) ? 'not-allowed' : 'pointer',
+                      opacity: (createCompanyMutation.isPending || updateCompanyMutation.isPending || domainCheckResult.checking || nameCheckResult.checking) ? 0.7 : 1
                     }}
                   >
-                    {domainCheckResult.checking ? "Checking domain..." :
+                    {(domainCheckResult.checking || nameCheckResult.checking) ? "Checking..." :
                      domainCheckResult.exists ? "Domain unavailable" :
+                     nameCheckResult.exists ? "Name unavailable" :
                      editingCompany 
                       ? (updateCompanyMutation.isPending ? "Updating..." : "Update Company")
                       : (createCompanyMutation.isPending ? "Creating..." : "Create Company")
@@ -1024,6 +1033,7 @@ export default function CompanyManagement() {
               companyForm.reset();
               setDialogJustOpened(false);
               setDomainCheckResult({ checking: false, exists: false, message: "" });
+              setNameCheckResult({ checking: false, exists: false, message: "" });
             }
           }}
         >
@@ -1042,11 +1052,52 @@ export default function CompanyManagement() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>
-                        <span style={{ color: '#dc2626' }}>*</span> Company Name
+                        <span style={{ color: '#dc2626' }}>*</span> Company Name (Must be unique)
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="Acme Corporation" {...field} />
+                        <Input 
+                          placeholder="Acme Corporation (must be unique)" 
+                          {...field} 
+                          onChange={(e) => {
+                            field.onChange(e);
+                            checkNameAvailability(e.target.value);
+                          }}
+                          style={{
+                            borderColor: nameCheckResult.exists ? '#ef4444' : 
+                                        nameCheckResult.message.includes("✅") ? '#10b981' : '#d1d5db'
+                          }}
+                        />
                       </FormControl>
+                      {nameCheckResult.message && (
+                        <div style={{ 
+                          fontSize: '13px', 
+                          marginTop: '4px',
+                          fontWeight: '500',
+                          color: nameCheckResult.checking ? '#6b7280' :
+                                 nameCheckResult.exists ? '#ef4444' : '#10b981',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          backgroundColor: nameCheckResult.exists ? '#fef2f2' : 
+                                          nameCheckResult.message.includes("✅") ? '#f0fdf4' : 'transparent',
+                          padding: nameCheckResult.message ? '6px 8px' : '0',
+                          borderRadius: '4px',
+                          border: nameCheckResult.exists ? '1px solid #fecaca' : 
+                                 nameCheckResult.message.includes("✅") ? '1px solid #bbf7d0' : 'none'
+                        }}>
+                          {nameCheckResult.checking && (
+                            <div style={{
+                              width: '12px',
+                              height: '12px',
+                              border: '2px solid #e5e7eb',
+                              borderTop: '2px solid #3b82f6',
+                              borderRadius: '50%',
+                              animation: 'spin 1s linear infinite'
+                            }} />
+                          )}
+                          {nameCheckResult.message}
+                        </div>
+                      )}
                       <FormMessage />
                     </FormItem>
                   )}
@@ -1075,13 +1126,20 @@ export default function CompanyManagement() {
                       </FormControl>
                       {domainCheckResult.message && (
                         <div style={{ 
-                          fontSize: '12px', 
+                          fontSize: '13px', 
                           marginTop: '4px',
+                          fontWeight: '500',
                           color: domainCheckResult.checking ? '#6b7280' :
                                  domainCheckResult.exists ? '#ef4444' : '#10b981',
                           display: 'flex',
                           alignItems: 'center',
-                          gap: '4px'
+                          gap: '4px',
+                          backgroundColor: domainCheckResult.exists ? '#fef2f2' : 
+                                          domainCheckResult.message.includes("✅") ? '#f0fdf4' : 'transparent',
+                          padding: domainCheckResult.message ? '6px 8px' : '0',
+                          borderRadius: '4px',
+                          border: domainCheckResult.exists ? '1px solid #fecaca' : 
+                                 domainCheckResult.message.includes("✅") ? '1px solid #bbf7d0' : 'none'
                         }}>
                           {domainCheckResult.checking && (
                             <div style={{
