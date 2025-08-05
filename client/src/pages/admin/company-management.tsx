@@ -213,11 +213,11 @@ export default function CompanyManagement() {
               
               if (!companies || !Array.isArray(companies) || companies.length === 0) {
                 console.error("🔍 [NAME CHECK] ERROR: Companies array is empty or invalid!");
-                console.log("🔍 [NAME CHECK] Setting validation to available due to missing data");
+                console.log("🔍 [NAME CHECK] Setting validation to ERROR due to missing data");
                 setNameCheckResult({ 
                   checking: false, 
-                  exists: false, 
-                  message: "⚠️ Unable to check - missing company data" 
+                  exists: true, // Block submission when data is missing
+                  message: "⚠️ Cannot validate - please refresh page" 
                 });
                 return;
               }
