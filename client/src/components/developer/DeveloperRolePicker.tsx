@@ -187,6 +187,23 @@ export default function DeveloperRolePicker({ email, onRoleSelect }: DeveloperRo
         }}>
           {loading ? (
             <div style={{ textAlign: 'center', padding: '40px', gridColumn: '1 / -1' }}>
+              <div style={{ 
+                width: '24px', 
+                height: '24px', 
+                animation: 'spin 1s linear infinite',
+                margin: '0 auto 12px'
+              }}>
+                <img 
+                  src="/ai-sentinel-logo.png" 
+                  alt="Loading..." 
+                  style={{ 
+                    width: '100%', 
+                    height: '100%', 
+                    objectFit: 'contain',
+                    filter: 'brightness(1.2) saturate(1.4) contrast(1.1)'
+                  }} 
+                />
+              </div>
               <div style={{ fontSize: '14px', color: '#6b7280' }}>Loading company roles...</div>
             </div>
           ) : roles.map((role) => (
