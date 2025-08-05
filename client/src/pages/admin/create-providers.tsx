@@ -375,15 +375,7 @@ export default function CreateProviders() {
     }
   };
 
-  // Page header style (EXACT from ScreenStandards.md)
-  const pageHeaderStyle = {
-    background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-    color: 'white',
-    padding: '40px 0',
-    marginBottom: '32px',
-    textAlign: 'center' as const,
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
-  };
+
 
   // Grid container style (EXACT from ScreenStandards.md)
   const gridContainerStyle = {
@@ -426,10 +418,30 @@ export default function CreateProviders() {
   if (isLoading) {
     return (
       <AdminLayout>
-        <div style={{ backgroundColor: '#f8fafc', minHeight: '100vh' }}>
-          <div style={pageHeaderStyle}>
-            <h1 style={{ fontSize: '32px', fontWeight: 'bold', margin: 0 }}>AI Providers</h1>
-            <p style={{ margin: '8px 0 0 0', opacity: 0.9 }}>Manage universal AI providers for the platform</p>
+        <div style={{ backgroundColor: '#f8fafc', minHeight: '100vh', padding: '32px' }}>
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center',
+            marginBottom: '32px'
+          }}>
+            <div>
+              <h1 style={{ 
+                fontSize: '32px', 
+                fontWeight: 'bold', 
+                color: '#1f2937',
+                margin: '0 0 8px 0'
+              }}>
+                AI Providers
+              </h1>
+              <p style={{ 
+                fontSize: '16px', 
+                color: '#6b7280', 
+                margin: 0 
+              }}>
+                Manage universal AI providers for the platform
+              </p>
+            </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '40px' }}>
             <div style={{ 
@@ -450,17 +462,36 @@ export default function CreateProviders() {
   if (providersError) {
     return (
       <AdminLayout>
-        <div style={{ backgroundColor: '#f8fafc', minHeight: '100vh' }}>
-          <div style={pageHeaderStyle}>
-            <h1 style={{ fontSize: '32px', fontWeight: 'bold', margin: 0 }}>AI Providers</h1>
-            <p style={{ margin: '8px 0 0 0', opacity: 0.9 }}>Manage universal AI providers for the platform</p>
+        <div style={{ backgroundColor: '#f8fafc', minHeight: '100vh', padding: '32px' }}>
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center',
+            marginBottom: '32px'
+          }}>
+            <div>
+              <h1 style={{ 
+                fontSize: '32px', 
+                fontWeight: 'bold', 
+                color: '#1f2937',
+                margin: '0 0 8px 0'
+              }}>
+                AI Providers
+              </h1>
+              <p style={{ 
+                fontSize: '16px', 
+                color: '#6b7280', 
+                margin: 0 
+              }}>
+                Manage universal AI providers for the platform
+              </p>
+            </div>
           </div>
           <div style={{ 
             backgroundColor: '#fef2f2',
             border: '1px solid #fecaca',
             borderRadius: '8px',
             padding: '20px',
-            margin: '0 32px',
             textAlign: 'center'
           }}>
             <h2 style={{ color: '#ef4444', fontSize: '20px', marginBottom: '12px' }}>Error Loading Providers</h2>
@@ -484,28 +515,46 @@ export default function CreateProviders() {
 
   return (
     <AdminLayout>
-      <div style={{ backgroundColor: '#f8fafc', minHeight: '100vh' }}>
-      {/* Header section following ScreenStandards.md pattern */}
-      <div style={pageHeaderStyle}>
-        <h1 style={{ fontSize: '32px', fontWeight: 'bold', margin: 0 }}>AI Providers</h1>
-        <p style={{ margin: '8px 0 0 0', opacity: 0.9 }}>Manage universal AI providers for the platform</p>
-      </div>
-
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center',
-        marginBottom: '24px',
-        padding: '0 32px'
-      }}>
-        <h2 style={{ 
-          fontSize: '24px', 
-          fontWeight: '600', 
-          color: '#3b82f6',
-          margin: 0 
+      <div style={{ backgroundColor: '#f8fafc', minHeight: '100vh', padding: '32px' }}>
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          marginBottom: '32px'
         }}>
-          Provider Management ({providers.length} providers)
-        </h2>
+          <div>
+            <h1 style={{ 
+              fontSize: '32px', 
+              fontWeight: 'bold', 
+              color: '#1f2937',
+              margin: '0 0 8px 0'
+            }}>
+              AI Providers
+            </h1>
+            <p style={{ 
+              fontSize: '16px', 
+              color: '#6b7280', 
+              margin: 0 
+            }}>
+              Manage universal AI providers for the platform
+            </p>
+          </div>
+        </div>
+
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          marginBottom: '24px'
+        }}>
+          <h2 style={{ 
+            fontSize: '24px', 
+            fontWeight: '600', 
+            color: '#3b82f6',
+            margin: 0 
+          }}>
+            Provider Management ({providers.length} providers)
+          </h2>
         
         <Dialog open={showAddProvider} onOpenChange={setShowAddProvider}>
           <DialogTrigger asChild>
@@ -745,7 +794,11 @@ export default function CreateProviders() {
           </Button>
         </div>
       ) : (
-        <div style={gridContainerStyle}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))',
+          gap: '24px'
+        }}>
           {providers.map((provider) => (
             <div 
               key={provider.id} 
