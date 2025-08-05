@@ -116,7 +116,11 @@ export default function CompanyManagement() {
     // Manual API test with proper authentication
     if (!companiesLoading && companies.length === 0 && !companiesError) {
       console.log("🧪 Manual API test - fetching companies directly...");
-      const token = localStorage.getItem('sessionToken') || 'prod-1754052835575-289kvxqgl42h';
+      const token = localStorage.getItem('sessionToken');
+      if (!token) {
+        console.log("🧪 No session token available for manual test");
+        return;
+      }
       fetch('/api/admin/companies', { 
         credentials: 'include',
         headers: {

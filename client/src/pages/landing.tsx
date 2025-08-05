@@ -46,19 +46,21 @@ export default function Landing() {
     console.log("[LANDING DEBUG] Using header-based authentication strategy");
     
     try {
-      // Use the production session token for header-based auth
-      const sessionToken = 'prod-1754052835575-289kvxqgl42h';
+      // Check if user already has a valid session token
+      const existingToken = localStorage.getItem('sessionToken');
+      if (!existingToken) {
+        console.log('[LANDING DEBUG] No session token found - redirecting to login');
+        window.location.href = "/login";
+        return;
+      }
       
-      console.log('[LANDING DEBUG] Setting session token in localStorage for header strategy');
-      
-      // Store session token in localStorage for header-based auth
-      localStorage.setItem('sessionToken', sessionToken);
-      localStorage.setItem('authToken', sessionToken);
+      console.log('[LANDING DEBUG] Using existing session token for authentication');
+      localStorage.setItem('authToken', existingToken);
       
       // Store user account data using the AccountManager format
       const accountData = {
         email: 'ed.duval15@gmail.com',
-        sessionToken: sessionToken,
+        sessionToken: existingToken,
         role: 'super-user',
         roleLevel: 1000,
         companyName: 'Duval Solutions',
@@ -89,8 +91,8 @@ export default function Landing() {
         method: 'GET',
         headers: { 
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${sessionToken}`,
-          'X-Session-Token': sessionToken
+          'Authorization': `Bearer ${existingToken}`,
+          'X-Session-Token': existingToken
         }
       });
       const authResult = await authTest.json();

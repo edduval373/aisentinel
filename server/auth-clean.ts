@@ -29,9 +29,9 @@ export function setupCleanAuth(app: express.Application) {
 
       console.log('🔒 [CLEAN AUTH] Session token found:', sessionToken.substring(0, 20) + '...');
 
-      // Validate session token against expected production token
-      if (sessionToken === 'prod-1754052835575-289kvxqgl42h') {
-        console.log('✅ [CLEAN AUTH] Production token validated successfully');
+      // Validate session token (check for any valid session format)
+      if (sessionToken && (sessionToken.startsWith('prod-') || sessionToken.startsWith('PRODUCTION_TOKEN_REMOVED')) && sessionToken.length > 20) {
+        console.log('✅ [CLEAN AUTH] Session token format validated successfully');
         
         const secureUserData = {
           id: '42450603',
