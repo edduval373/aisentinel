@@ -19,7 +19,7 @@ async function throwIfResNotOk(res: Response) {
 
 // Production fallback for API failures
 async function getFallbackResponse(url: string, method: string, data?: unknown): Promise<any> {
-  const isProduction = window.location.hostname.includes('aisentinel.app');
+  const isProduction = window.location.hostname.includes('aisentinel.app') || window.location.hostname.includes('vercel.app');
 
   if (!isProduction) return null;
 
@@ -28,6 +28,8 @@ async function getFallbackResponse(url: string, method: string, data?: unknown):
     console.log('🚫 [FALLBACK] Auth fallback disabled - must use real sessions');
     return null; // Force real authentication
   }
+
+  // Remove AI Model Templates fallback - let production handle requests directly
 
   // Admin companies fallback
   if (url.includes('admin/companies') && method === 'GET') {
@@ -154,12 +156,7 @@ export async function apiRequest(
     const duration = Date.now() - startTime;
     console.error(`❌ [API ${method}] ${url} - Failed (${duration}ms):`, error);
 
-    // Try fallback response for production API failures
-    const fallback = await getFallbackResponse(url, method, data);
-    if (fallback) {
-      console.log(`🔄 [API ${method}] ${url} - Using production fallback`);
-      return fallback;
-    }
+    // No fallbacks - all requests must use real API endpoints
 
     throw error;
   }

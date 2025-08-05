@@ -16,6 +16,7 @@ import VerificationSuccess from "@/pages/VerificationSuccess.tsx";
 import PricingPage from "@/pages/pricing.tsx";
 import DemoSignup from "@/pages/demo-signup.tsx";
 import AdminCompanies from "@/pages/admin/companies.tsx";
+import CompanyManagement from "@/pages/admin/company-management.tsx";
 import AdminModels from "@/pages/admin/models.tsx";
 import AdminActivityTypes from "@/pages/admin/activity-types.tsx";
 
@@ -30,6 +31,7 @@ import AdminPermissions from "@/pages/admin/permissions.tsx";
 import AdminModelSettings from "@/pages/admin/model-settings.tsx";
 import AdminContextManagement from "@/pages/admin/context-management.tsx";
 import CreateModels from "@/pages/admin/create-models.tsx";
+import CreateProviders from "@/pages/admin/create-providers.tsx";
 import ModelFusion from "@/pages/admin/model-fusion.tsx";
 import SetupApiKeys from "@/pages/admin/setup-api-keys.tsx";
 import RoleManagement from "@/pages/admin/role-management.tsx";
@@ -489,6 +491,14 @@ function Router() {
         )}
       </Route>
       
+      <Route path="/admin/company-management">
+        {() => (
+          <RoleGuard requiredRole="super-user">
+            <CompanyManagement />
+          </RoleGuard>
+        )}
+      </Route>
+      
       <Route path="/admin/role-management">
         {() => (
           <RoleGuard requiredRole="super-user">
@@ -603,9 +613,17 @@ function Router() {
         )}
       </Route>
       
+      <Route path="/admin/create-providers">
+        {() => (
+          <RoleGuard requiredRole="super-user">
+            <CreateProviders />
+          </RoleGuard>
+        )}
+      </Route>
+      
       <Route path="/admin/create-models">
         {() => (
-          <RoleGuard requiredRole="owner">
+          <RoleGuard requiredRole="super-user">
             <CreateModels />
           </RoleGuard>
         )}

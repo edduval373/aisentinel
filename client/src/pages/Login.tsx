@@ -41,22 +41,38 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      console.log("Making request to:", "/api/auth/request-verification", "with email:", email);
-      const response = await apiRequest("/api/auth/request-verification", "POST", { email });
-      console.log("Response received:", response);
+      console.log("🔐 [EMAIL] Making direct request to:", "/api/auth/request-verification", "with email:", email);
       
-      if (response.success) {
+      // Use fetch directly to bypass any apiRequest routing issues
+      const response = await fetch("/api/auth/request-verification", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+      
+      console.log("🔐 [EMAIL] Response status:", response.status);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      console.log("🔐 [EMAIL] Response data:", data);
+      
+      if (data.success) {
         setEmailSent(true);
         toast({
           title: "Verification Email Sent",
           description: "Please check your email and click the verification link to continue.",
         });
       } else {
-        setError(response.message || "Failed to send verification email");
+        setError(data.message || "Failed to send verification email");
       }
     } catch (error: any) {
-      console.error("Login error:", error);
-      console.error("Error details:", {
+      console.error("🔐 [EMAIL] Login error:", error);
+      console.error("🔐 [EMAIL] Error details:", {
         message: error.message,
         stack: error.stack,
         name: error.name
@@ -72,18 +88,33 @@ export default function Login() {
     setError("");
 
     try {
-      const response = await apiRequest("/api/auth/request-verification", "POST", { email });
+      console.log("🔐 [EMAIL] Resending verification email to:", email);
       
-      if (response.success) {
+      // Use fetch directly for resend as well
+      const response = await fetch("/api/auth/request-verification", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.success) {
         toast({
           title: "Verification Email Resent",
           description: "Please check your email for the new verification link.",
         });
       } else {
-        setError(response.message || "Failed to resend verification email");
+        setError(data.message || "Failed to resend verification email");
       }
     } catch (error: any) {
-      console.error("Resend error:", error);
+      console.error("🔐 [EMAIL] Resend error:", error);
       setError(error.message || "An error occurred. Please try again.");
     } finally {
       setIsLoading(false);

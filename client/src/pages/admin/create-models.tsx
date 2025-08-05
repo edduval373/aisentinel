@@ -3,10 +3,10 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Bot, Plus, Edit, Trash2, Eye, EyeOff, TestTube } from "lucide-react";
+import { Bot, Plus, Edit, Trash2, Eye, EyeOff, TestTube, AlertTriangle } from "lucide-react";
 import AdminLayout from "@/components/layout/AdminLayout";
 import { Button } from "@/components/ui/button"; 
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,10 +16,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/useAuth";
-import { isDemoModeActive, isReadOnlyMode } from "@/utils/demoMode";
-import { useDemoDialog } from "@/hooks/useDemoDialog";
-import DemoBanner from "@/components/DemoBanner";
-import type { AiModel } from "@shared/schema";
 
 // Animation keyframes for loading spinner
 const spinKeyframes = `
@@ -30,33 +26,27 @@ const spinKeyframes = `
 `;
 
 // Model schema for form validation
-const modelSchema = z.object({
+// Template schema - NO company-specific API keys or config
+const templateSchema = z.object({
   name: z.string().min(1, "Name is required"),
   provider: z.string().min(1, "Provider is required"),
   modelId: z.string().min(1, "Model ID is required"),
   description: z.string().optional(),
   contextWindow: z.number().min(1).max(2000000),
-  isEnabled: z.boolean(),
-  capabilities: z.array(z.string()),
-  apiKey: z.string().min(1, "API key is required"),
-  apiEndpoint: z.string().optional(),
-  maxTokens: z.number().min(1).max(100000),
-  temperature: z.number().min(0).max(2),
-  maxRetries: z.number().min(0).max(10),
-  timeout: z.number().min(1000).max(120000),
-  rateLimit: z.number().min(1).max(10000),
+  isEnabled: z.boolean().default(true),
+  capabilities: z.array(z.string()).optional(),
 });
 
-// Provider configurations
-const providers = [
-  { value: "openai", label: "OpenAI", defaultEndpoint: "https://api.openai.com/v1" },
-  { value: "anthropic", label: "Anthropic", defaultEndpoint: "https://api.anthropic.com/v1" },
-  { value: "google", label: "Google AI", defaultEndpoint: "https://generativelanguage.googleapis.com/v1" },
-  { value: "perplexity", label: "Perplexity", defaultEndpoint: "https://api.perplexity.ai" },
-  { value: "cohere", label: "Cohere", defaultEndpoint: "https://api.cohere.ai/v1" },
-  { value: "mistral", label: "Mistral AI", defaultEndpoint: "https://api.mistral.ai/v1" },
-  { value: "custom", label: "Custom Provider", defaultEndpoint: "" },
-];
+// Default endpoint mapping for providers (fallback)
+const defaultEndpoints: Record<string, string> = {
+  "openai": "https://api.openai.com/v1",
+  "anthropic": "https://api.anthropic.com/v1",
+  "google-ai": "https://generativelanguage.googleapis.com/v1",
+  "perplexity": "https://api.perplexity.ai",
+  "cohere": "https://api.cohere.ai/v1",
+  "mistral": "https://api.mistral.ai/v1",
+  "custom": "",
+};
 
 const capabilities = [
   "text-generation",
@@ -70,18 +60,11 @@ const capabilities = [
 export default function CreateModels() {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
-  const [editingModel, setEditingModel] = useState<AiModel | null>(null);
-  const [showApiKeys, setShowApiKeys] = useState<Record<number, boolean>>({});
+  const [editingTemplate, setEditingTemplate] = useState<any>(null);
   const [activeTab, setActiveTab] = useState("basic");
-  const [showDebug, setShowDebug] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user, isAuthenticated, isSuperUser: authIsSuperUser } = useAuth();
-  // Simple demo mode handler without complex dialog
-  const showDialog = (config: any) => {
-    console.log('Demo dialog would show:', config);
-  };
-  const DialogComponent = () => null;
   
   // SECURITY: Super-user access only (role level 1000+)
   const isSuperUser = authIsSuperUser;
@@ -140,43 +123,40 @@ export default function CreateModels() {
       </AdminLayout>
     );
   }
-  
-  // Check if we're in demo mode
-  const isDemoMode = isDemoModeActive(user);
-  const isReadOnly = isReadOnlyMode(user);
 
-  // Fetch AI models
-  const { data: models = [], isLoading: modelsLoading, error, isError, refetch } = useQuery<AiModel[]>({
-    queryKey: ["/api/ai-models"],
-    retry: 2,
-    refetchOnWindowFocus: false,
-    staleTime: 30000, // 30 seconds
+  // Fetch AI model templates using the default query configuration
+  const { data: templates = [], isLoading: templatesLoading, error, isError, refetch } = useQuery({
+    queryKey: ["/api/admin/ai-model-templates"],
+    staleTime: 0, // Always refetch when invalidated
+    gcTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
-  // Debug logging for models loading
-  console.log("🤖 Create Models Debug:", {
-    modelsLoading,
-    modelsCount: models?.length || 0,
-    isError,
-    error: error?.message,
-    models: models && Array.isArray(models) ? models.slice(0, 2) : [], // First 2 models for debug
-    rawModels: models, // Full models array
-    queryDataType: typeof models,
-    isArray: Array.isArray(models),
-    modelsTestCondition: models && models?.length > 0,
-    modelsUndefined: models === undefined,
-    modelsNull: models === null,
-    modelsEmpty: models?.length === 0
+  // Fetch AI providers from database  
+  const { data: dbProviders = [], isLoading: providersLoading, error: providersError } = useQuery({
+    queryKey: ["/api/admin/ai-providers"],
+    staleTime: 5 * 60 * 1000, // Cache providers for 5 minutes
   });
 
-  // Fetch debug status
-  const { data: debugStatus } = useQuery({
-    queryKey: ["/api/debug/status"],
-    enabled: showDebug,
-  });
+  // Debug providers query
+  React.useEffect(() => {
+    console.log("🔧 [CREATE-MODELS] Providers query state:", {
+      isLoading: providersLoading,
+      hasError: !!providersError,
+      error: providersError,
+      providersCount: dbProviders?.length || 0,
+      providers: dbProviders
+    });
+  }, [dbProviders, providersLoading, providersError]);
 
-  const modelForm = useForm<z.infer<typeof modelSchema>>({
-    resolver: zodResolver(modelSchema),
+  // Transform providers for the dropdown (compatible with existing form structure)
+  const providers = dbProviders.map((provider: any) => ({
+    value: provider.name,
+    label: provider.displayName,
+    defaultEndpoint: defaultEndpoints[provider.name] || "",
+  }));
+
+  const templateForm = useForm<z.infer<typeof templateSchema>>({
+    resolver: zodResolver(templateSchema),
     defaultValues: {
       name: "",
       provider: "",
@@ -185,175 +165,231 @@ export default function CreateModels() {
       contextWindow: 4096,
       isEnabled: true,
       capabilities: [],
-      apiKey: "",
-      apiEndpoint: "",
-      maxTokens: 1000,
-      temperature: 0.7,
-      maxRetries: 3,
-      timeout: 30000,
-      rateLimit: 100,
     },
   });
 
-  // Create model mutation
-  const createModelMutation = useMutation({
-    mutationFn: (data: z.infer<typeof modelSchema>) =>
-      apiRequest("/api/ai-models", "POST", data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/ai-models"] });
-      setShowCreateDialog(false);
-      resetForm();
-      toast({ 
-        title: "Model Created", 
-        description: "AI model has been created successfully",
-        variant: "default"
+  // Create template mutation with headers
+  const createTemplateMutation = useMutation({
+    mutationFn: async (data: z.infer<typeof templateSchema>) => {
+      const sessionToken = localStorage.getItem('sessionToken') || localStorage.getItem('authToken');
+      const headers: any = {
+        'Content-Type': 'application/json'
+      };
+      
+      if (sessionToken) {
+        headers['Authorization'] = `Bearer ${sessionToken}`;
+        headers['X-Session-Token'] = sessionToken;
+      }
+      
+      const response = await fetch('/api/admin/ai-model-templates', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(data)
       });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+        throw new Error(errorData.message || `HTTP ${response.status}`);
+      }
+      
+      return response.json();
+    },
+    onSuccess: async (data) => {
+      console.log(`✅ [TEMPLATE CREATE] Success callback executed with data:`, data);
+      console.log(`✅ [TEMPLATE CREATE] Invalidating queries...`);
+      await queryClient.invalidateQueries({ queryKey: ["/api/admin/ai-model-templates"] });
+      console.log(`✅ [TEMPLATE CREATE] Refetching templates manually...`);
+      await refetch();
+      console.log(`✅ [TEMPLATE CREATE] Setting showCreateDialog to false...`);
+      setShowCreateDialog(false);
+      console.log(`✅ [TEMPLATE CREATE] Resetting form...`);
+      templateForm.reset();
+      console.log(`✅ [TEMPLATE CREATE] Showing success toast...`);
+      toast({ 
+        title: "Template Created", 
+        description: "AI model template has been created successfully",
+      });
+      console.log(`✅ [TEMPLATE CREATE] Success callback completed - modal should close`);
     },
     onError: (error: any) => {
-      console.error("Create model error:", error);
+      console.error("Create template error:", error);
       toast({ 
         title: "Creation Failed", 
-        description: "Failed to create AI model. Please try again.",
-        variant: "destructive"
+        description: error.message || "Failed to create AI model template. Please try again."
       });
     },
   });
 
-  // Update model mutation
-  const updateModelMutation = useMutation({
-    mutationFn: ({ id, ...data }: { id: number } & z.infer<typeof modelSchema>) =>
-      apiRequest(`/api/ai-models/${id}`, "PUT", data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/ai-models"] });
-      setShowEditDialog(false);
-      resetForm();
-      toast({ 
-        title: "Model Updated", 
-        description: "AI model has been updated successfully",
-        variant: "default"
+  // Update template mutation
+  const updateTemplateMutation = useMutation({
+    mutationFn: async ({ id, ...data }: { id: number } & z.infer<typeof templateSchema>) => {
+      console.log(`🔧 [TEMPLATE UPDATE] Starting update for template ID: ${id}`);
+      console.log(`🔧 [TEMPLATE UPDATE] Update data:`, data);
+      
+      const sessionToken = localStorage.getItem('sessionToken') || localStorage.getItem('authToken');
+      console.log(`🔧 [TEMPLATE UPDATE] Session token found:`, !!sessionToken);
+      
+      const headers: any = {
+        'Content-Type': 'application/json'
+      };
+      
+      if (sessionToken) {
+        headers['Authorization'] = `Bearer ${sessionToken}`;
+        headers['X-Session-Token'] = sessionToken;
+        console.log(`🔧 [TEMPLATE UPDATE] Auth headers set with token: ${sessionToken.substring(0, 10)}...`);
+      }
+      
+      const url = `/api/admin/ai-model-templates/${id}`;
+      console.log(`🔧 [TEMPLATE UPDATE] Making PUT request to: ${url}`);
+      
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify(data)
       });
+      
+      console.log(`🔧 [TEMPLATE UPDATE] Response status: ${response.status}`);
+      console.log(`🔧 [TEMPLATE UPDATE] Response ok: ${response.ok}`);
+      
+      if (!response.ok) {
+        console.error(`❌ [TEMPLATE UPDATE] Request failed with status ${response.status}`);
+        const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+        console.error(`❌ [TEMPLATE UPDATE] Error data:`, errorData);
+        throw new Error(errorData.message || `HTTP ${response.status}`);
+      }
+      
+      const result = await response.json();
+      console.log(`✅ [TEMPLATE UPDATE] Success:`, result);
+      return result;
+    },
+    onSuccess: async (data) => {
+      console.log(`✅ [TEMPLATE UPDATE] Success callback executed with data:`, data);
+      console.log(`✅ [TEMPLATE UPDATE] Invalidating queries...`);
+      await queryClient.invalidateQueries({ queryKey: ["/api/admin/ai-model-templates"] });
+      console.log(`✅ [TEMPLATE UPDATE] Refetching templates manually...`);
+      await refetch();
+      console.log(`✅ [TEMPLATE UPDATE] Setting showEditDialog to false...`);
+      setShowEditDialog(false);
+      console.log(`✅ [TEMPLATE UPDATE] Clearing editing template...`);
+      setEditingTemplate(null);
+      console.log(`✅ [TEMPLATE UPDATE] Resetting form...`);
+      templateForm.reset();
+      console.log(`✅ [TEMPLATE UPDATE] Showing success toast...`);
+      toast({ 
+        title: "Template Updated", 
+        description: "AI model template has been updated successfully",
+      });
+      console.log(`✅ [TEMPLATE UPDATE] Success callback completed - modal should close`);
     },
     onError: (error: any) => {
-      console.error("Update model error:", error);
+      console.error("❌ [TEMPLATE UPDATE] Error callback executed:", error);
+      console.error("❌ [TEMPLATE UPDATE] Error message:", error.message);
+      console.error("❌ [TEMPLATE UPDATE] Full error object:", error);
       toast({ 
         title: "Update Failed", 
-        description: "Failed to update AI model. Please try again.",
-        variant: "destructive"
+        description: error.message || "Failed to update AI model template. Please try again."
       });
     },
   });
 
-  // Delete model mutation
-  const deleteModelMutation = useMutation({
-    mutationFn: (id: number) => apiRequest(`/api/ai-models/${id}`, "DELETE"),
+  // Delete template mutation
+  const deleteTemplateMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const sessionToken = localStorage.getItem('sessionToken') || localStorage.getItem('authToken');
+      const headers: any = {
+        'Content-Type': 'application/json'
+      };
+      
+      if (sessionToken) {
+        headers['Authorization'] = `Bearer ${sessionToken}`;
+        headers['X-Session-Token'] = sessionToken;
+      }
+      
+      const response = await fetch(`/api/admin/ai-model-templates/${id}`, {
+        method: 'DELETE',
+        headers
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+        throw new Error(errorData.message || `HTTP ${response.status}`);
+      }
+      
+      return response.json();
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/ai-models"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/ai-model-templates"] });
       toast({ 
-        title: "Model Deleted", 
-        description: "AI model has been deleted successfully",
-        variant: "default"
+        title: "Template Deleted", 
+        description: "AI model template has been deleted successfully",
       });
     },
     onError: (error: any) => {
-      console.error("Delete model error:", error);
+      console.error("Delete template error:", error);
       toast({ 
         title: "Deletion Failed", 
-        description: "Failed to delete AI model. Please try again.",
-        variant: "destructive"
+        description: error.message || "Failed to delete AI model template. Please try again."
       });
     },
   });
 
-  const onSubmitModel = (data: z.infer<typeof modelSchema>) => {
-    if (editingModel) {
-      updateModelMutation.mutate({ id: editingModel.id, ...data });
+  const onSubmitTemplate = (data: z.infer<typeof templateSchema>) => {
+    console.log('🚀 Form submission triggered with data:', data);
+    console.log('🚀 Form validation state:', templateForm.formState);
+    console.log('🚀 Form errors:', templateForm.formState.errors);
+    
+    // Check authentication tokens
+    const sessionToken = localStorage.getItem('sessionToken');
+    const authToken = localStorage.getItem('authToken');
+    console.log('🔐 Authentication check:', { 
+      sessionToken: sessionToken ? 'present' : 'missing',
+      authToken: authToken ? 'present' : 'missing',
+      user: user ? 'authenticated' : 'not authenticated',
+      isSuperUser
+    });
+    
+    if (editingTemplate) {
+      updateTemplateMutation.mutate({ id: editingTemplate.id, ...data });
     } else {
-      createModelMutation.mutate(data);
+      createTemplateMutation.mutate(data);
     }
   };
 
-  const handleEditModel = (model: AiModel) => {
-    setEditingModel(model);
-    modelForm.reset({
-      name: model.name,
-      provider: model.provider,
-      modelId: model.modelId,
-      description: model.description || "",
-      contextWindow: model.contextWindow,
-      isEnabled: model.isEnabled,
-      capabilities: Array.isArray(model.capabilities) ? model.capabilities : [],
-      apiKey: model.apiKey,
-      apiEndpoint: model.apiEndpoint || "",
-      maxTokens: model.maxTokens || 1000,
-      temperature: model.temperature || 0.7,
-      maxRetries: model.maxRetries || 3,
-      timeout: model.timeout || 30000,
-      rateLimit: model.rateLimit || 100,
+  const handleEditTemplate = (template: any) => {
+    setEditingTemplate(template);
+    templateForm.reset({
+      name: template.name,
+      provider: template.provider,
+      modelId: template.modelId,
+      description: template.description || "",
+      contextWindow: template.contextWindow,
+      isEnabled: template.isEnabled,
+      capabilities: Array.isArray(template.capabilities) ? template.capabilities : [],
     });
     setShowEditDialog(true);
   };
 
-  const handleDeleteModel = (id: number) => {
-    if (confirm("Are you sure you want to delete this model? This action cannot be undone.")) {
-      deleteModelMutation.mutate(id);
+  const handleDeleteTemplate = (id: number) => {
+    if (confirm("Are you sure you want to delete this universal template? This will affect all companies that might use it.")) {
+      deleteTemplateMutation.mutate(id);
     }
   };
 
   const resetForm = () => {
-    setEditingModel(null);
     setActiveTab("basic");
-    modelForm.reset();
+    templateForm.reset();
+    setEditingTemplate(null);
   };
 
-  const toggleApiKeyVisibility = (id: number) => {
-    setShowApiKeys(prev => ({ ...prev, [id]: !prev[id] }));
-  };
-
-  const maskApiKey = (key: string) => {
-    if (key.length <= 8) return key;
-    return key.substring(0, 4) + "•".repeat(key.length - 8) + key.substring(key.length - 4);
-  };
-
-  // Update form values when provider changes
   const handleProviderChange = (provider: string) => {
-    const providerConfig = providers.find(p => p.value === provider);
-    if (providerConfig) {
-      modelForm.setValue("provider", provider);
-      if (providerConfig.defaultEndpoint) {
-        modelForm.setValue("apiEndpoint", providerConfig.defaultEndpoint);
-      }
-    }
+    templateForm.setValue("provider", provider);
   };
 
-  // Test API configuration
-  const testConfigMutation = useMutation({
-    mutationFn: (id: number) =>
-      apiRequest(`/api/ai-models/${id}/test`, "POST"),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/ai-models"] });
-      toast({ 
-        title: "Test Successful", 
-        description: "API configuration is working correctly",
-        variant: "default"
-      });
-    },
-    onError: (error: any) => {
-      console.error("API test error:", error);
-      toast({ 
-        title: "Test Failed", 
-        description: "API configuration test failed. Please check your settings.",
-        variant: "destructive"
-      });
-    },
-  });
+  // Production template management now fully enabled with proper endpoints
 
-  const handleTestConfig = (id: number) => {
-    testConfigMutation.mutate(id);
-  };
-
-  if (modelsLoading) {
+  if (templatesLoading || providersLoading) {
     return (
-      <AdminLayout title="Create AI Models" subtitle="Create and manage custom AI models from scratch">
+      <AdminLayout title="AI Model Templates" subtitle="Loading templates...">
         <style>{spinKeyframes}</style>
         <div style={{ 
           display: 'flex', 
@@ -404,403 +440,292 @@ export default function CreateModels() {
     );
   }
 
+  if (isError) {
+    return (
+      <AdminLayout title="AI Model Templates" subtitle="Error loading templates">
+        <div style={{ 
+          padding: '48px', 
+          textAlign: 'center',
+          backgroundColor: '#fef2f2',
+          borderRadius: '12px',
+          border: '1px solid #fecaca'
+        }}>
+          <h2 style={{ 
+            fontSize: '24px', 
+            fontWeight: '600', 
+            color: '#991b1b', 
+            margin: '0 0 12px 0' 
+          }}>
+            Error Loading Models
+          </h2>
+          <p style={{ 
+            fontSize: '16px', 
+            color: '#7f1d1d', 
+            margin: '0 0 16px 0' 
+          }}>
+            {error?.message || 'Failed to load AI models'}
+          </p>
+          <button 
+            onClick={() => queryClient.invalidateQueries({ queryKey: ["/api/ai-models"] })}
+            style={{
+              backgroundColor: '#3b82f6',
+              color: 'white',
+              padding: '8px 16px',
+              borderRadius: '6px',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '500'
+            }}
+          >
+            Retry
+          </button>
+        </div>
+      </AdminLayout>
+    );
+  }
 
-  
   return (
-    <AdminLayout 
-      title="Create AI Models" 
-      subtitle="Create and manage custom AI models from scratch"
-      rightContent={<DemoBanner message="Demo Mode - Read Only View - AI models cannot be modified" />}
-    >
+    <AdminLayout title="AI Model Templates" subtitle="Create universal AI model templates for companies to use (no API keys required)">
       <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
+        
+        {/* Debug Authentication Info */}
+        <div style={{ 
+          backgroundColor: '#fff3cd', 
+          border: '1px solid #ffeaa7', 
+          borderRadius: '6px', 
+          padding: '12px', 
+          marginBottom: '16px' 
+        }}>
+          <p style={{ margin: 0, fontSize: '14px', color: '#856404' }}>
+            <strong>Auth Debug:</strong> User: {user ? 'authenticated' : 'not authenticated'}, 
+            SuperUser: {isSuperUser ? 'yes' : 'no'}, 
+            Tokens: {localStorage.getItem('sessionToken') ? 'session' : 'none'}/{localStorage.getItem('authToken') ? 'auth' : 'none'}
+          </p>
+        </div>
         
         {/* Header Section */}
         <div style={{ 
           display: 'flex', 
-          justifyContent: 'space-between', 
+          justifyContent: 'flex-end', 
           alignItems: 'center',
           marginBottom: '8px'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <Bot style={{ width: '32px', height: '32px', color: '#3b82f6' }} />
-            <div>
-              <h2 style={{ 
-                fontSize: '28px', 
-                fontWeight: '700', 
-                color: '#1e293b', 
-                margin: '0 0 4px 0' 
-              }}>
-                Custom AI Models
-              </h2>
-              <p style={{ 
-                fontSize: '16px', 
-                color: '#64748b', 
-                margin: 0 
-              }}>
-                Build and configure AI models tailored to your organization's needs
-              </p>
-            </div>
-          </div>
-          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-            <button
-              onClick={() => refetch()}
-              style={{
-                backgroundColor: '#10b981',
+          <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+            <DialogTrigger asChild>
+              <button style={{
+                backgroundColor: '#3b82f6',
                 color: 'white',
                 padding: '8px 16px',
                 borderRadius: '6px',
                 border: 'none',
-                fontSize: '14px',
-                fontWeight: '500',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
                 cursor: 'pointer',
-                marginRight: '8px'
-              }}
-            >
-              Refresh Models
-            </button>
-            <Button
-              onClick={() => setShowDebug(!showDebug)}
-              style={{
-                backgroundColor: showDebug ? '#dc2626' : '#eab308',
-                color: 'white',
-                padding: '8px 16px',
-                borderRadius: '6px',
-                border: 'none',
                 fontSize: '14px',
-                fontWeight: '500',
-                cursor: 'pointer'
-              }}
-            >
-              {showDebug ? 'Hide Debug' : 'Debug Panel'}
-            </Button>
-            {!isDemoMode ? (
-              <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-                <DialogTrigger asChild>
-                  <Button style={{
-                    backgroundColor: '#3b82f6',
-                    color: 'white',
-                    padding: '8px 16px',
-                    borderRadius: '6px',
-                    border: 'none',
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px'
-                  }}>
-                    <Plus style={{ width: '16px', height: '16px' }} />
-                    Create Model
-                  </Button>
-                </DialogTrigger>
-                <DialogContent style={{ maxWidth: '80vw', maxHeight: '90vh', overflowY: 'auto' }}>
-                  <DialogHeader>
-                    <DialogTitle>Create New AI Model</DialogTitle>  
-                  </DialogHeader>
-                  <ModelForm 
-                    form={modelForm}
-                    onSubmit={onSubmitModel}
-                    activeTab={activeTab}
-                    setActiveTab={setActiveTab}
-                    providers={providers}
-                    capabilities={capabilities}
-                    handleProviderChange={handleProviderChange}
-                    isSubmitting={createModelMutation.isPending}
-                    onCancel={() => setShowCreateDialog(false)}
-                  />
-                </DialogContent>
-              </Dialog>
-            ) : (
-              <Button
-                onClick={() => showDialog({
-                  title: 'Create AI Model',
-                  description: 'In demo mode, AI model creation shows how you can build custom models with your own API keys, provider endpoints, and specialized configurations for your organization.'
-                })}
-                style={{
-                  backgroundColor: '#3b82f6',
-                  color: 'white',
-                  padding: '8px 16px',
-                  borderRadius: '6px',
-                  border: 'none',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
-                }}
-              >
+                fontWeight: '500'
+              }}>
                 <Plus style={{ width: '16px', height: '16px' }} />
-                Create Model
-              </Button>
-            )}
-          </div>
+                Create Template
+              </button>
+            </DialogTrigger>
+            <DialogContent style={{ maxWidth: '600px', maxHeight: '90vh', overflowY: 'auto' }}>
+              <DialogHeader>
+                <DialogTitle>Create New AI Model Template</DialogTitle>
+                <DialogDescription>
+                  Create a universal AI model template. No API keys needed - companies configure their own.
+                </DialogDescription>
+              </DialogHeader>
+              <TemplateForm 
+                form={templateForm}
+                onSubmit={onSubmitTemplate}
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+                providers={providers}
+                capabilities={capabilities}
+                handleProviderChange={handleProviderChange}
+                isSubmitting={createTemplateMutation.isPending}
+                onCancel={() => {
+                  setShowCreateDialog(false);
+                  resetForm();
+                }}
+              />
+            </DialogContent>
+          </Dialog>
         </div>
 
-        {/* Debug Panel */}
-        {showDebug && (
-          <div style={{
-            backgroundColor: '#f8fafc',
-            border: '1px solid #e2e8f0',
-            borderRadius: '8px',
-            padding: '16px'
-          }}>
-            <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#1e293b', margin: '0 0 12px 0' }}>
-              Debug Information
-            </h3>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', fontSize: '14px' }}>
-              <div>
-                <strong>Models Loading:</strong> {modelsLoading ? 'Yes' : 'No'}<br/>
-                <strong>Models Count:</strong> {models?.length || 0}<br/>
-                <strong>Models Type:</strong> {typeof models}<br/>
-                <strong>Is Array:</strong> {Array.isArray(models) ? 'Yes' : 'No'}<br/>
-                <strong>Models Defined:</strong> {models !== undefined ? 'Yes' : 'No'}<br/>
-                <strong>Has Error:</strong> {isError ? 'Yes' : 'No'}<br/>
-                <strong>Error Message:</strong> {error?.message || 'None'}
-              </div>
-              <div>
-                <strong>Debug Status:</strong> {debugStatus ? 'Loaded' : 'Not loaded'}<br/>
-                <strong>Environment:</strong> {(debugStatus as any)?.environment || 'Unknown'}<br/>
-                <strong>Database:</strong> {(debugStatus as any)?.databaseConnected ? 'Connected' : 'Disconnected'}<br/>
-                <strong>API Endpoint:</strong> /api/ai-models<br/>
-                <strong>First Model Name:</strong> {models?.[0]?.name || 'None'}<br/>
-                <strong>Second Model Name:</strong> {models?.[1]?.name || 'None'}
-              </div>
+        {/* Models List */}
+        <div style={{
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', 
+          gap: '24px'
+        }}>
+          {/* Debug: Display template count and list */}
+          {console.log(`🎨 [TEMPLATES RENDER] Rendering ${templates.length} templates:`, templates.map(t => ({ id: t.id, name: t.name })))}
+          {templates.length === 0 ? (
+            <div style={{
+              gridColumn: '1 / -1',
+              textAlign: 'center',
+              padding: '48px',
+              backgroundColor: '#f8fafc',
+              borderRadius: '12px',
+              border: '2px dashed #cbd5e1'
+            }}>
+              <Bot style={{ width: '48px', height: '48px', color: '#64748b', margin: '0 auto 16px auto' }} />
+              <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#475569', margin: '0 0 8px 0' }}>
+                No Templates Created Yet
+              </h3>
+              <p style={{ fontSize: '14px', color: '#64748b', margin: 0 }}>
+                Create your first AI model template to get started
+              </p>
             </div>
-          </div>
-        )}
-
-        {/* Models Grid */}
-        {modelsLoading ? (
-          <div style={{ textAlign: 'center', padding: '40px' }}>
-            <div>Loading AI models...</div>
-          </div>
-        ) : (models && Array.isArray(models) && models.length > 0) ? (
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
-            gap: '20px'
-          }}>
-            {models.map((model: AiModel) => (
-            <div
-              key={model.id}
-              style={{
-                backgroundColor: 'white',
-                border: '1px solid #e5e7eb',
-                borderRadius: '12px',
-                padding: '20px',
-                boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-                transition: 'all 0.2s ease-in-out'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = '#3b82f6';
-                e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = '#e5e7eb';
-                e.currentTarget.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.1)';
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-                <div>
-                  <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#1e293b', margin: '0 0 4px 0' }}>
-                    {model.name}
-                  </h3>
-                  <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>
-                    {model.provider} • {model.modelId}
-                  </p>
-                </div>
-                <div style={{
-                  backgroundColor: model.isEnabled ? '#10b981' : '#6b7280',
-                  color: 'white',
-                  padding: '4px 8px',
-                  borderRadius: '4px',
-                  fontSize: '12px',
-                  fontWeight: '500',
-                  marginLeft: '144px'
-                }}>
-                  {model.isEnabled ? 'Enabled' : 'Disabled'}
-                </div>
-              </div>
-
-              {model.description && (
-                <p style={{ fontSize: '14px', color: '#6b7280', margin: '0 0 12px 0' }}>
-                  {model.description}
-                </p>
-              )}
-
-              <div style={{ marginBottom: '16px' }}>
-                <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '4px' }}>API Key</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <code style={{
-                    backgroundColor: '#f3f4f6',
+          ) : (
+            templates.map((template: any) => (
+              <div
+                key={template.id}
+                style={{
+                  backgroundColor: 'white',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+                  <div>
+                    <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#1e293b', margin: '0 0 4px 0' }}>
+                      {template.name}
+                    </h3>
+                    <p style={{ fontSize: '14px', color: '#64748b', margin: '0 0 8px 0' }}>
+                      {template.provider} • {template.modelId}
+                    </p>
+                    {template.description && (
+                      <p style={{ fontSize: '14px', color: '#475569', margin: 0, lineHeight: '1.4' }}>
+                        {template.description}
+                      </p>
+                    )}
+                  </div>
+                  <div style={{
+                    backgroundColor: template.isEnabled ? '#10b981' : '#ef4444',
+                    color: 'white',
                     padding: '4px 8px',
                     borderRadius: '4px',
                     fontSize: '12px',
-                    fontFamily: 'monospace',
-                    flex: 1
+                    fontWeight: '500'
                   }}>
-                    {showApiKeys[model.id] ? model.apiKey : maskApiKey(model.apiKey)}
-                  </code>
+                    {template.isEnabled ? 'Active' : 'Disabled'}
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+                  <div>
+                    <p style={{ fontSize: '12px', color: '#64748b', margin: '0 0 4px 0' }}>Context Window</p>
+                    <p style={{ fontSize: '14px', fontWeight: '500', color: '#1e293b', margin: 0 }}>
+                      {template.contextWindow?.toLocaleString() || 'Not set'}
+                    </p>
+                  </div>
+                  <div>
+                    <p style={{ fontSize: '12px', color: '#64748b', margin: '0 0 4px 0' }}>Capabilities</p>
+                    <p style={{ fontSize: '14px', fontWeight: '500', color: '#1e293b', margin: 0 }}>
+                      {template.capabilities?.length || 0} configured
+                    </p>
+                  </div>
+                </div>
+
+                <div style={{ marginBottom: '16px' }}>
+                  <p style={{ fontSize: '12px', color: '#64748b', margin: '0 0 4px 0' }}>Template Type</p>
+                  <div style={{
+                    backgroundColor: '#f0f9ff',
+                    color: '#0369a1',
+                    padding: '8px 12px',
+                    borderRadius: '6px',
+                    fontSize: '13px',
+                    fontWeight: '500'
+                  }}>
+                    🌐 Universal Template - Companies configure their own API keys
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginTop: '8px' }}>
                   <button
-                    onClick={() => toggleApiKeyVisibility(model.id)}
+                    onClick={() => handleEditTemplate(template)}
                     style={{
-                      backgroundColor: 'transparent',
-                      border: 'none',
+                      backgroundColor: '#f8fafc',
+                      color: '#475569',
+                      padding: '6px 12px',
+                      borderRadius: '6px',
+                      border: '1px solid #e2e8f0',
+                      fontSize: '14px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
                       cursor: 'pointer',
-                      padding: '4px',
-                      color: '#6b7280'
+                      fontWeight: '500'
                     }}
                   >
-                    {showApiKeys[model.id] ? <EyeOff size={16} /> : <Eye size={16} />}
+                    <Edit style={{ width: '14px', height: '14px' }} />
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDeleteTemplate(template.id)}
+                    style={{
+                      backgroundColor: '#fef2f2',
+                      color: '#dc2626',
+                      padding: '6px 12px',
+                      borderRadius: '6px',
+                      border: '1px solid #fecaca',
+                      fontSize: '14px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      cursor: 'pointer',
+                      fontWeight: '500'
+                    }}
+                  >
+                    <Trash2 style={{ width: '14px', height: '14px' }} />
+                    Delete
                   </button>
                 </div>
               </div>
-
-              <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                <Button
-                  onClick={() => handleTestConfig(model.id)}
-                  disabled={testConfigMutation.isPending}
-                  style={{
-                    backgroundColor: '#3b82f6',
-                    color: 'white',
-                    padding: '6px 12px',
-                    borderRadius: '4px',
-                    border: 'none',
-                    fontSize: '12px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px'
-                  }}
-                >
-                  <TestTube size={14} />
-                  Test
-                </Button>
-                {!isDemoMode ? (
-                  <>
-                    <Button
-                      onClick={() => handleEditModel(model)}
-                      style={{
-                        backgroundColor: '#10b981',
-                        color: 'white',
-                        padding: '6px 12px',
-                        borderRadius: '4px',
-                        border: 'none',
-                        fontSize: '12px',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px'
-                      }}
-                    >
-                      <Edit size={14} />
-                      Edit
-                    </Button>
-                    <Button
-                      onClick={() => handleDeleteModel(model.id)}
-                      style={{
-                        backgroundColor: '#ef4444',
-                        color: 'white',
-                        padding: '6px 12px',
-                        borderRadius: '4px',
-                        border: 'none',
-                        fontSize: '12px',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px'
-                      }}
-                    >
-                      <Trash2 size={14} />
-                      Delete
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button
-                      onClick={() => showDialog({
-                        title: 'Edit AI Model',
-                        description: 'In demo mode, model editing shows how you can modify API endpoints, adjust parameters like temperature and token limits, and configure advanced settings for your custom AI models.'
-                      })}
-                      style={{
-                        backgroundColor: '#10b981',
-                        color: 'white',
-                        padding: '6px 12px',
-                        borderRadius: '4px',
-                        border: 'none',
-                        fontSize: '12px',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px'
-                      }}
-                    >
-                      <Edit size={14} />
-                      Edit
-                    </Button>
-                    <Button
-                      onClick={() => showDialog({
-                        title: 'Delete AI Model',
-                        description: 'In demo mode, model deletion demonstrates the confirmation process and safety measures in place when removing AI models from your organization\'s configuration.'
-                      })}
-                      style={{
-                        backgroundColor: '#ef4444',
-                        color: 'white',
-                        padding: '6px 12px',
-                        borderRadius: '4px',
-                        border: 'none',
-                        fontSize: '12px',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px'
-                      }}
-                    >
-                      <Trash2 size={14} />
-                      Delete
-                    </Button>
-                  </>
-                )}
-              </div>
-            </div>
-          ))}
-          </div>
-        ) : (
-          <div style={{ textAlign: 'center', padding: '40px', color: '#6b7280' }}>
-            <div>No AI models found. Create your first model to get started.</div>
-          </div>
-        )}
+            ))
+          )}
+        </div>
 
         {/* Edit Dialog */}
         <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
-          <DialogContent style={{ maxWidth: '80vw', maxHeight: '90vh', overflowY: 'auto' }}>
+          <DialogContent style={{ maxWidth: '600px', maxHeight: '90vh', overflowY: 'auto' }}>
             <DialogHeader>
-              <DialogTitle>Edit AI Model</DialogTitle>
+              <DialogTitle>Edit Universal Template</DialogTitle>
+              <DialogDescription>
+                Modify this universal AI model template. Changes will affect all companies using this template.
+              </DialogDescription>
             </DialogHeader>
-            <ModelForm 
-              form={modelForm}
-              onSubmit={onSubmitModel}
+            <TemplateForm 
+              form={templateForm}
+              onSubmit={onSubmitTemplate}
               activeTab={activeTab}
               setActiveTab={setActiveTab}
               providers={providers}
               capabilities={capabilities}
               handleProviderChange={handleProviderChange}
-              isSubmitting={updateModelMutation.isPending}
-              onCancel={() => setShowEditDialog(false)}
+              isSubmitting={updateTemplateMutation.isPending}
+              onCancel={() => {
+                setShowEditDialog(false);
+                resetForm();
+              }}
             />
           </DialogContent>
         </Dialog>
-        
-        {/* Demo Info Dialog */}
-        <DialogComponent />
+
       </div>
     </AdminLayout>
   );
 }
 
-// Model Form Component
-function ModelForm({ 
+// Template Form Component (NO API keys)
+function TemplateForm({ 
   form, 
   onSubmit, 
   activeTab, 
@@ -824,11 +749,11 @@ function ModelForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+
+        
         <Tabs value={activeTab} onValueChange={setActiveTab} style={{ width: '100%' }}>
-          <TabsList style={{ display: 'grid', width: '100%', gridTemplateColumns: '1fr 1fr 1fr 1fr' }}>
+          <TabsList style={{ display: 'grid', width: '100%', gridTemplateColumns: '1fr 1fr' }}>
             <TabsTrigger value="basic">Basic Info</TabsTrigger>
-            <TabsTrigger value="api">API Config</TabsTrigger>
-            <TabsTrigger value="settings">Parameters</TabsTrigger>
             <TabsTrigger value="advanced">Advanced</TabsTrigger>
           </TabsList>
           
@@ -839,9 +764,21 @@ function ModelForm({
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Model Name</FormLabel>
+                    <FormLabel style={{ 
+                      fontSize: '14px',
+                      fontWeight: '500'
+                    }}>
+                      <span style={{ color: '#dc2626' }}>*</span> Model Name
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g., Custom GPT-4" {...field} />
+                      <Input 
+                        placeholder="e.g., Custom GPT-4" 
+                        {...field} 
+                        style={{
+                          borderColor: field.value ? '#10b981' : '#dc2626',
+                          borderWidth: '2px'
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -853,13 +790,21 @@ function ModelForm({
                 name="provider"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Provider</FormLabel>
+                    <FormLabel style={{ 
+                      fontSize: '14px',
+                      fontWeight: '500'
+                    }}>
+                      <span style={{ color: '#dc2626' }}>*</span> Provider
+                    </FormLabel>
                     <Select onValueChange={(value) => {
                       field.onChange(value);
                       handleProviderChange(value);
                     }} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger style={{
+                          borderColor: field.value ? '#10b981' : '#dc2626',
+                          borderWidth: '2px'
+                        }}>
                           <SelectValue placeholder="Select provider" />
                         </SelectTrigger>
                       </FormControl>
@@ -881,9 +826,21 @@ function ModelForm({
                 name="modelId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Model ID</FormLabel>
+                    <FormLabel style={{ 
+                      fontSize: '14px',
+                      fontWeight: '500'
+                    }}>
+                      <span style={{ color: '#dc2626' }}>*</span> Model ID
+                    </FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g., gpt-4" {...field} />
+                      <Input 
+                        placeholder="e.g., gpt-4" 
+                        {...field} 
+                        style={{
+                          borderColor: field.value ? '#10b981' : '#dc2626',
+                          borderWidth: '2px'
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -895,7 +852,12 @@ function ModelForm({
                 name="contextWindow"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Context Window</FormLabel>
+                    <FormLabel style={{ 
+                      fontSize: '14px',
+                      fontWeight: '500'
+                    }}>
+                      <span style={{ color: '#dc2626' }}>*</span> Context Window
+                    </FormLabel>
                     <FormControl>
                       <Input 
                         type="number" 
@@ -903,6 +865,10 @@ function ModelForm({
                         max="2000000" 
                         {...field}
                         onChange={(e) => field.onChange(parseInt(e.target.value))}
+                        style={{
+                          borderColor: field.value ? '#10b981' : '#dc2626',
+                          borderWidth: '2px'
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -916,11 +882,21 @@ function ModelForm({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel style={{ 
+                    color: '#64748b', 
+                    fontWeight: '500',
+                    fontSize: '14px'
+                  }}>
+                    Description (Optional)
+                  </FormLabel>
                   <FormControl>
                     <Textarea 
                       placeholder="Describe this model's capabilities and use cases..." 
                       {...field} 
+                      style={{
+                        borderColor: '#e2e8f0',
+                        borderWidth: '1px'
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -939,177 +915,50 @@ function ModelForm({
                       onCheckedChange={field.onChange}
                     />
                   </FormControl>
-                  <FormLabel>Enable this model</FormLabel>
-                  <FormMessage />
+                  <FormLabel style={{ margin: 0 }}>Enable this model</FormLabel>
                 </FormItem>
               )}
             />
           </TabsContent>
           
-          <TabsContent value="api" style={{ marginTop: '16px' }}>
-            <FormField
-              control={form.control}
-              name="apiKey"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>API Key</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder="Enter your API key" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <FormField
-              control={form.control}
-              name="apiEndpoint"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>API Endpoint</FormLabel>
-                  <FormControl>
-                    <Input placeholder="API endpoint URL" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </TabsContent>
-          
-          <TabsContent value="settings" style={{ marginTop: '16px' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-              <FormField
-                control={form.control}
-                name="maxTokens"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Max Tokens</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="number" 
-                        min="1" 
-                        max="100000" 
-                        {...field}
-                        onChange={(e) => field.onChange(parseInt(e.target.value))}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="temperature"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Temperature</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="number" 
-                        min="0" 
-                        max="2" 
-                        step="0.1" 
-                        {...field}
-                        onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            
-            <div>
-              <FormLabel>Capabilities</FormLabel>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginTop: '8px' }}>
-                {capabilities?.map((capability) => (
-                  <FormField
-                    key={capability}
-                    control={form.control}
-                    name="capabilities"
-                    render={({ field }) => (
-                      <FormItem style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <FormControl>
-                          <Switch
-                            checked={Array.isArray(field.value) && field.value.includes(capability)}
-                            onCheckedChange={(checked) => {
-                              const current = Array.isArray(field.value) ? field.value : [];
-                              if (checked) {
-                                field.onChange([...current, capability]);
-                              } else {
-                                field.onChange(current.filter((c: string) => c !== capability));
-                              }
-                            }}
-                          />
-                        </FormControl>
-                        <FormLabel style={{ fontSize: '14px' }}>{capability}</FormLabel>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                ))}
-              </div>
-            </div>
-          </TabsContent>
+
           
           <TabsContent value="advanced" style={{ marginTop: '16px' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
+            <div style={{ display: 'grid', gap: '16px' }}>
               <FormField
                 control={form.control}
-                name="maxRetries"
+                name="capabilities"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Max Retries</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="number" 
-                        min="0" 
-                        max="10" 
-                        {...field}
-                        onChange={(e) => field.onChange(parseInt(e.target.value))}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="timeout"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Timeout (ms)</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="number" 
-                        min="1000" 
-                        max="120000" 
-                        {...field}
-                        onChange={(e) => field.onChange(parseInt(e.target.value))}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="rateLimit"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Rate Limit</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="number" 
-                        min="1" 
-                        max="10000" 
-                        {...field}
-                        onChange={(e) => field.onChange(parseInt(e.target.value))}
-                      />
-                    </FormControl>
+                    <FormLabel style={{ 
+                      color: '#64748b', 
+                      fontWeight: '500',
+                      fontSize: '14px'
+                    }}>
+                      Capabilities (Optional)
+                    </FormLabel>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', marginTop: '8px' }}>
+                      {capabilities.map((capability) => (
+                        <label key={capability} style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
+                          <input
+                            type="checkbox"
+                            checked={field.value?.includes(capability) || false}
+                            onChange={(e) => {
+                              const currentCapabilities = field.value || [];
+                              if (e.target.checked) {
+                                field.onChange([...currentCapabilities, capability]);
+                              } else {
+                                field.onChange(currentCapabilities.filter((c: string) => c !== capability));
+                              }
+                            }}
+                            style={{ marginRight: '4px' }}
+                          />
+                          <span style={{ fontSize: '14px', textTransform: 'capitalize' }}>
+                            {capability.replace('-', ' ')}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -1119,12 +968,39 @@ function ModelForm({
         </Tabs>
         
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', paddingTop: '16px' }}>
-          <Button type="button" variant="outline" onClick={onCancel}>
+          <button type="button" onClick={onCancel} style={{
+            backgroundColor: '#f8fafc',
+            color: '#475569',
+            padding: '8px 16px',
+            borderRadius: '6px',
+            border: '1px solid #e2e8f0',
+            cursor: 'pointer',
+            fontSize: '14px',
+            fontWeight: '500'
+          }}>
             Cancel
-          </Button>
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Saving..." : "Save Model"}
-          </Button>
+          </button>
+          <button 
+            type="submit" 
+            disabled={isSubmitting}
+            onClick={(e) => {
+              console.log('🔥 Button clicked - triggering form submission');
+              e.preventDefault();
+              form.handleSubmit(onSubmit)();
+            }}
+            style={{
+              backgroundColor: isSubmitting ? '#9ca3af' : '#3b82f6',
+              color: 'white',
+              padding: '8px 16px',
+              borderRadius: '6px',
+              border: 'none',
+              cursor: isSubmitting ? 'not-allowed' : 'pointer',
+              fontSize: '14px',
+              fontWeight: '500'
+            }}
+          >
+            {isSubmitting ? "Processing..." : "Save Template"}
+          </button>
         </div>
       </form>
     </Form>

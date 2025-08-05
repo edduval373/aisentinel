@@ -1,7 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { getAuthHeaders, initializeAuthFromURL } from "@/lib/authHeaders";
-import React from "react";
 
 interface User {
   id: string;
@@ -107,7 +105,7 @@ export function useAuth() {
     retry: false,
     refetchOnWindowFocus: false,
     staleTime: 5 * 60 * 1000, // 5 minutes
-    cacheTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 10 * 60 * 1000 // 10 minutes (replaces deprecated cacheTime)
   });
 
   const logout = async () => {

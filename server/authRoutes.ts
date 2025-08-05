@@ -668,4 +668,46 @@ export function setupAuthRoutes(app: Express) {
       });
     }
   });
+
+  // Email verification request endpoint - accepts POST requests
+  app.post('/api/auth/request-verification', async (req, res) => {
+    try {
+      console.log('🔐 [EMAIL VERIFICATION] POST request received');
+      const { email } = req.body;
+
+      if (!email) {
+        console.log('❌ [EMAIL VERIFICATION] No email provided');
+        return res.status(400).json({ 
+          success: false, 
+          message: 'Email address is required' 
+        });
+      }
+
+      console.log('🔐 [EMAIL VERIFICATION] Processing email:', email);
+
+      // Use the authentication service to send verification email
+      const emailSent = await authService.initiateEmailVerification(email);
+
+      if (emailSent) {
+        console.log('✅ [EMAIL VERIFICATION] Email sent successfully to:', email);
+        return res.json({
+          success: true,
+          message: 'Verification email sent successfully'
+        });
+      } else {
+        console.log('❌ [EMAIL VERIFICATION] Failed to send email to:', email);
+        return res.status(500).json({
+          success: false,
+          message: 'Failed to send verification email'
+        });
+      }
+
+    } catch (error) {
+      console.error('💥 [EMAIL VERIFICATION] Error:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Internal server error'
+      });
+    }
+  });
 }

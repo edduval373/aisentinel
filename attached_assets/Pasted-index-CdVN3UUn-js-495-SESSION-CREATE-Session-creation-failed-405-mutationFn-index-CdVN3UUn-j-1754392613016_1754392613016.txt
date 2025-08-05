@@ -1,0 +1,113 @@
+index-CdVN3UUn.js:495 ❌ [SESSION CREATE] Session creation failed: 405 
+mutationFn @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 ❌ [SESSION CREATE] Full error response: Object
+mutationFn @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 ❌ [SESSION CREATE] Failed to create session: Error: Failed to create chat session: 405 
+    at Object.mutationFn (index-CdVN3UUn.js:495:25708)
+onError @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 ❌ [SESSION CREATE] Error details: Object
+onError @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 AI Models error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-CdVN3UUn.js:48:45459
+MG @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 Activity Types error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-CdVN3UUn.js:48:45459
+MG @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 AI Models error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-CdVN3UUn.js:48:45459
+MG @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 Activity Types error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-CdVN3UUn.js:48:45459
+MG @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 ❌ [SESSION CREATE] Session creation failed: 405 
+mutationFn @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 ❌ [SESSION CREATE] Full error response: Object
+mutationFn @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 ❌ [SESSION CREATE] Failed to create session: Error: Failed to create chat session: 405 
+    at Object.mutationFn (index-CdVN3UUn.js:495:25708)
+onError @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 ❌ [SESSION CREATE] Error details: Object
+onError @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 AI Models error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-CdVN3UUn.js:48:45459
+MG @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 Activity Types error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-CdVN3UUn.js:48:45459
+MG @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 AI Models error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-CdVN3UUn.js:48:45459
+MG @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 Activity Types error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-CdVN3UUn.js:48:45459
+MG @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 ❌ [SESSION CREATE] Session creation failed: 405 
+mutationFn @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 ❌ [SESSION CREATE] Full error response: Object
+mutationFn @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 ❌ [SESSION CREATE] Failed to create session: Error: Failed to create chat session: 405 
+    at Object.mutationFn (index-CdVN3UUn.js:495:25708)
+onError @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 ❌ [SESSION CREATE] Error details: Object
+onError @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 AI Models error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-CdVN3UUn.js:48:45459
+MG @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 Activity Types error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-CdVN3UUn.js:48:45459
+MG @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 AI Models error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-CdVN3UUn.js:48:45459
+MG @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 Activity Types error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-CdVN3UUn.js:48:45459
+MG @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 ❌ [SESSION CREATE] Session creation failed: 405 
+mutationFn @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 ❌ [SESSION CREATE] Full error response: Object
+mutationFn @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 ❌ [SESSION CREATE] Failed to create session: Error: Failed to create chat session: 405 
+    at Object.mutationFn (index-CdVN3UUn.js:495:25708)
+onError @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 ❌ [SESSION CREATE] Error details: Object
+onError @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 AI Models error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-CdVN3UUn.js:48:45459
+MG @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 Activity Types error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-CdVN3UUn.js:48:45459
+MG @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 AI Models error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-CdVN3UUn.js:48:45459
+MG @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 Activity Types error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-CdVN3UUn.js:48:45459
+MG @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 ❌ [SESSION CREATE] Session creation failed: 405 
+mutationFn @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 ❌ [SESSION CREATE] Full error response: Object
+mutationFn @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 ❌ [SESSION CREATE] Failed to create session: Error: Failed to create chat session: 405 
+    at Object.mutationFn (index-CdVN3UUn.js:495:25708)
+onError @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 ❌ [SESSION CREATE] Error details: Object
+onError @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 AI Models error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-CdVN3UUn.js:48:45459
+MG @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 Activity Types error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-CdVN3UUn.js:48:45459
+MG @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 AI Models error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-CdVN3UUn.js:48:45459
+MG @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 Activity Types error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-CdVN3UUn.js:48:45459
+MG @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 ❌ [SESSION CREATE] Session creation failed: 405 
+mutationFn @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 ❌ [SESSION CREATE] Full error response: Object
+mutationFn @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 ❌ [SESSION CREATE] Failed to create session: Error: Failed to create chat session: 405 
+    at Object.mutationFn (index-CdVN3UUn.js:495:25708)
+onError @ index-CdVN3UUn.js:495Understand this error
+index-CdVN3UUn.js:495 ❌ [SESSION CREATE] Error details: Object

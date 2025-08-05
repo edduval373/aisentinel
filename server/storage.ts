@@ -3,6 +3,7 @@ import {
   companies,
   companyEmployees,
   companyRoles,
+  aiProviders,
   aiModels,
   aiModelTemplates,
   companyApiKeys,
@@ -35,6 +36,8 @@ import {
   type InsertCompanyEmployee,
   type CompanyRole,
   type InsertCompanyRole,
+  type AiProvider,
+  type InsertAiProvider,
   type AiModel,
   type InsertAiModel,
   type AiModelTemplate,
@@ -122,6 +125,12 @@ export interface IStorage {
   updateCompany(id: number, company: Partial<InsertCompany>): Promise<Company>;
   deleteCompany(id: number): Promise<void>;
   getCompanyById(id: number): Promise<Company | undefined>;
+
+  // AI Provider operations (Super-user only)
+  getAiProviders(): Promise<AiProvider[]>;
+  createAiProvider(providerData: InsertAiProvider): Promise<AiProvider>;
+  updateAiProvider(id: number, updates: Partial<InsertAiProvider>): Promise<AiProvider>;
+  deleteAiProvider(id: number): Promise<void>;
   getCompanyEmployees(companyId: number): Promise<CompanyEmployee[]>;
   addCompanyEmployee(employee: InsertCompanyEmployee): Promise<CompanyEmployee>;
   isEmployeeAuthorized(email: string, companyId: number): Promise<boolean>;
@@ -427,6 +436,29 @@ export class DatabaseStorage implements IStorage {
     return await db.select().from(companies).orderBy(companies.name);
   }
 
+  // AI Providers operations - Super-user only
+  async getAiProviders(): Promise<AiProvider[]> {
+    return await db.select().from(aiProviders).orderBy(aiProviders.displayName);
+  }
+
+  async createAiProvider(providerData: InsertAiProvider): Promise<AiProvider> {
+    const [newProvider] = await db.insert(aiProviders).values(providerData).returning();
+    return newProvider;
+  }
+
+  async updateAiProvider(id: number, updates: Partial<InsertAiProvider>): Promise<AiProvider> {
+    const [updatedProvider] = await db
+      .update(aiProviders)
+      .set(updates)
+      .where(eq(aiProviders.id, id))
+      .returning();
+    return updatedProvider;
+  }
+
+  async deleteAiProvider(id: number): Promise<void> {
+    await db.delete(aiProviders).where(eq(aiProviders.id, id));
+  }
+
   async createCompany(company: InsertCompany): Promise<Company> {
     const [newCompany] = await db
       .insert(companies)
@@ -671,7 +703,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createAiModelTemplate(template: InsertAiModelTemplate): Promise<AiModelTemplate> {
-    const [created] = await db.insert(aiModelTemplates).values(template).returning();
+    // Provide default apiEndpoint if not specified
+    const templateData = {
+      ...template,
+      apiEndpoint: template.apiEndpoint || `https://api.${template.provider}.com/v1/completions`
+    };
+    const [created] = await db.insert(aiModelTemplates).values(templateData).returning();
     return created;
   }
 

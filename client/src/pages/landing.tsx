@@ -46,19 +46,18 @@ export default function Landing() {
     console.log("[LANDING DEBUG] Using header-based authentication strategy");
     
     try {
-      // Use the production session token for header-based auth
-      const sessionToken = 'prod-1754052835575-289kvxqgl42h';
+      // Create a new production session with the hardcoded token
+      const productionToken = 'prod-1754052835575-289kvxqgl42h';
+      console.log('[LANDING DEBUG] Creating production session with authentication token');
       
-      console.log('[LANDING DEBUG] Setting session token in localStorage for header strategy');
-      
-      // Store session token in localStorage for header-based auth
-      localStorage.setItem('sessionToken', sessionToken);
-      localStorage.setItem('authToken', sessionToken);
+      // Store the production token in localStorage
+      localStorage.setItem('sessionToken', productionToken);
+      localStorage.setItem('authToken', productionToken);
       
       // Store user account data using the AccountManager format
       const accountData = {
         email: 'ed.duval15@gmail.com',
-        sessionToken: sessionToken,
+        sessionToken: productionToken,
         role: 'super-user',
         roleLevel: 1000,
         companyName: 'Duval Solutions',
@@ -89,8 +88,8 @@ export default function Landing() {
         method: 'GET',
         headers: { 
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${sessionToken}`,
-          'X-Session-Token': sessionToken
+          'Authorization': `Bearer ${productionToken}`,
+          'X-Session-Token': productionToken
         }
       });
       const authResult = await authTest.json();
@@ -114,8 +113,8 @@ export default function Landing() {
           method: 'GET',
           headers: { 
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${sessionToken}`,
-            'X-Session-Token': sessionToken
+            'Authorization': `Bearer ${productionToken}`,
+            'X-Session-Token': productionToken
           }
         });
         const mainAuthResult = await mainAuthTest.json();

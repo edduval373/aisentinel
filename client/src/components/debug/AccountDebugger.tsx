@@ -91,7 +91,7 @@ export default function AccountDebugger() {
     // Get current session token from cookies
     const cookies = document.cookie.split(';');
     const sessionCookie = cookies.find(c => c.trim().startsWith('sessionToken='));
-    const sessionToken = sessionCookie ? sessionCookie.split('=')[1] : 'prod-1754052835575-289kvxqgl42h';
+    const sessionToken = sessionCookie ? sessionCookie.split('=')[1] : localStorage.getItem('sessionToken');
 
     const currentAccount = {
       email: 'ed.duval15@gmail.com',
@@ -111,7 +111,7 @@ export default function AccountDebugger() {
     // For testing, create a second account with a placeholder that will trigger email verification
     const secondAccount = {
       email: 'ed.duval@duvalsolutions.net',
-      sessionToken: 'prod-1754052835575-SECOND', // Mock token for testing
+      sessionToken: 'test-token-second', // Mock token for testing
       role: 'Super User',
       roleLevel: 1000,
       companyName: 'Duval Solutions'
@@ -130,7 +130,7 @@ export default function AccountDebugger() {
     const accounts = [
       {
         email: 'ed.duval15@gmail.com',
-        sessionToken: 'prod-1754052835575-289kvxqgl42h',
+        sessionToken: localStorage.getItem('sessionToken') || 'test-token-1',
         role: 'Super User',
         roleLevel: 1000,
         companyName: 'Duval Solutions',
@@ -138,7 +138,7 @@ export default function AccountDebugger() {
       },
       {
         email: 'ed.duval@duvalsolutions.net',
-        sessionToken: 'prod-1754052835575-289kvxqgl42h', // Use the SAME valid token for testing
+        sessionToken: localStorage.getItem('sessionToken') || 'test-token-2', // Use the SAME valid token for testing
         role: 'Super User',
         roleLevel: 1000,
         companyName: 'Duval Solutions',
@@ -179,7 +179,10 @@ export default function AccountDebugger() {
       console.log('🧪 [TEST] Cleared cookies');
       
       // Set the same session token
-      document.cookie = `sessionToken=prod-1754052835575-289kvxqgl42h; path=/; samesite=lax; max-age=2592000`;
+      const token = localStorage.getItem('sessionToken');
+      if (token) {
+        document.cookie = `sessionToken=${token}; path=/; samesite=lax; max-age=2592000`;
+      }
       console.log('🧪 [TEST] Set new session token');
       console.log('🧪 [TEST] Current cookies:', document.cookie);
       

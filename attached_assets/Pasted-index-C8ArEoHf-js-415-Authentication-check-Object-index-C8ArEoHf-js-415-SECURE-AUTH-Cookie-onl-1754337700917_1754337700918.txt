@@ -1,0 +1,32 @@
+index-C8ArEoHf.js:415 Authentication check: Object
+index-C8ArEoHf.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-C8ArEoHf.js:415 Authentication check: Object
+index-C8ArEoHf.js:415 🔧 [SIDEBAR] Role check: Object
+index-C8ArEoHf.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-C8ArEoHf.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-C8ArEoHf.js:415 🔧 [SIDEBAR] Role detection: Object
+index-C8ArEoHf.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-C8ArEoHf.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-C8ArEoHf.js:615 Update template error: Error: HTTP 404
+    at Object.mutationFn (index-C8ArEoHf.js:615:4022)
+onError @ index-C8ArEoHf.js:615Understand this error
+index-C8ArEoHf.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-C8ArEoHf.js:415 Authentication check: Object
+index-C8ArEoHf.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-C8ArEoHf.js:415 Authentication check: Object
+index-C8ArEoHf.js:415 🔧 [SIDEBAR] Role check: Object
+index-C8ArEoHf.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-C8ArEoHf.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-C8ArEoHf.js:415 🔧 [SIDEBAR] Role detection: Object
+index-C8ArEoHf.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-C8ArEoHf.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-C8ArEoHf.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-C8ArEoHf.js:415 Authentication check: Object
+index-C8ArEoHf.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-C8ArEoHf.js:415 Authentication check: Object
+index-C8ArEoHf.js:415 🔧 [SIDEBAR] Role check: Object
+index-C8ArEoHf.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-C8ArEoHf.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-C8ArEoHf.js:415 🔧 [SIDEBAR] Role detection: Object
+index-C8ArEoHf.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-C8ArEoHf.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models

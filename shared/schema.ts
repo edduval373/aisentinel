@@ -59,7 +59,7 @@ export const userSessions = pgTable("user_sessions", {
 // Companies table
 export const companies = pgTable("companies", {
   id: serial("id").primaryKey(),
-  name: varchar("name").notNull(),
+  name: varchar("name").notNull().unique(),
   domain: varchar("domain").unique(),
   primaryAdminName: varchar("primary_admin_name"),
   primaryAdminEmail: varchar("primary_admin_email"),
@@ -187,6 +187,19 @@ export const trialUsage = pgTable("trial_usage", {
   index("idx_trial_ip").on(table.ipAddress),
   index("idx_trial_device").on(table.deviceFingerprint),
 ]);
+
+// AI Providers - Universal providers managed by super-users
+export const aiProviders = pgTable("ai_providers", {
+  id: serial("id").primaryKey(),
+  name: varchar("name").notNull(),
+  displayName: varchar("display_name").notNull(), // Human-friendly name like "OpenAI"
+  description: text("description"),
+  website: varchar("website"),
+  apiDocUrl: varchar("api_doc_url"),
+  isEnabled: boolean("is_enabled").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
 
 // AI Model Templates - Universal templates managed by super-users
 export const aiModelTemplates = pgTable("ai_model_templates", {
@@ -389,6 +402,7 @@ export const insertCompanySchema = createInsertSchema(companies).omit({ id: true
 export const insertCompanyEmployeeSchema = createInsertSchema(companyEmployees).omit({ id: true, addedAt: true });
 export const insertCompanyRoleSchema = createInsertSchema(companyRoles).omit({ id: true, createdAt: true });
 export const insertUserSchema = createInsertSchema(users).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertAiProviderSchema = createInsertSchema(aiProviders).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertAiModelTemplateSchema = createInsertSchema(aiModelTemplates).omit({ id: true, createdAt: true });
 export const insertCompanyApiKeySchema = createInsertSchema(companyApiKeys).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertAiModelSchema = createInsertSchema(aiModels).omit({ id: true, createdAt: true });
@@ -428,6 +442,8 @@ export type CompanyRole = typeof companyRoles.$inferSelect;
 export type InsertCompanyRole = z.infer<typeof insertCompanyRoleSchema>;
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
+export type AiProvider = typeof aiProviders.$inferSelect;
+export type InsertAiProvider = z.infer<typeof insertAiProviderSchema>;
 export type AiModelTemplate = typeof aiModelTemplates.$inferSelect;
 export type InsertAiModelTemplate = z.infer<typeof insertAiModelTemplateSchema>;
 export type CompanyApiKey = typeof companyApiKeys.$inferSelect;

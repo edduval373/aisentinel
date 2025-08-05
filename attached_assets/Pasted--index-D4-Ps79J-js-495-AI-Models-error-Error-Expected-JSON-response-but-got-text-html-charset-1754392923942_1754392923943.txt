@@ -1,0 +1,93 @@
+
+﻿
+index-D4-Ps79J.js:495 AI Models error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-D4-Ps79J.js:48:45459
+
+index-D4-Ps79J.js:495 Activity Types error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-D4-Ps79J.js:48:45459
+index-D4-Ps79J.js:495 AI Models error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-D4-Ps79J.js:48:45459
+index-D4-Ps79J.js:495 Activity Types error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-D4-Ps79J.js:48:45459
+index-D4-Ps79J.js:495 ❌ [SESSION CREATE] Session creation failed: 405 
+index-D4-Ps79J.js:495 ❌ [SESSION CREATE] Full error response: 
+Object
+index-D4-Ps79J.js:495 ❌ [SESSION CREATE] Failed to create session: Error: Failed to create chat session: 405 
+    at Object.mutationFn (index-D4-Ps79J.js:495:25708)
+index-D4-Ps79J.js:495 ❌ [SESSION CREATE] Error details: 
+Object
+index-D4-Ps79J.js:495 AI Models error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-D4-Ps79J.js:48:45459
+index-D4-Ps79J.js:495 Activity Types error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-D4-Ps79J.js:48:45459
+index-D4-Ps79J.js:495 AI Models error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-D4-Ps79J.js:48:45459
+index-D4-Ps79J.js:495 Activity Types error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-D4-Ps79J.js:48:45459
+index-D4-Ps79J.js:495 ❌ [SESSION CREATE] Session creation failed: 405 
+index-D4-Ps79J.js:495 ❌ [SESSION CREATE] Full error response: 
+Object
+index-D4-Ps79J.js:495 ❌ [SESSION CREATE] Failed to create session: Error: Failed to create chat session: 405 
+    at Object.mutationFn (index-D4-Ps79J.js:495:25708)
+index-D4-Ps79J.js:495 ❌ [SESSION CREATE] Error details: 
+Object
+index-D4-Ps79J.js:495 AI Models error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-D4-Ps79J.js:48:45459
+index-D4-Ps79J.js:495 Activity Types error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-D4-Ps79J.js:48:45459
+index-D4-Ps79J.js:495 AI Models error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-D4-Ps79J.js:48:45459
+index-D4-Ps79J.js:495 Activity Types error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-D4-Ps79J.js:48:45459
+index-D4-Ps79J.js:495 ❌ [SESSION CREATE] Session creation failed: 405 
+index-D4-Ps79J.js:495 ❌ [SESSION CREATE] Full error response: 
+Object
+index-D4-Ps79J.js:495 ❌ [SESSION CREATE] Failed to create session: Error: Failed to create chat session: 405 
+    at Object.mutationFn (index-D4-Ps79J.js:495:25708)
+index-D4-Ps79J.js:495 ❌ [SESSION CREATE] Error details: 
+Object
+index-D4-Ps79J.js:495 AI Models error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-D4-Ps79J.js:48:45459
+index-D4-Ps79J.js:495 Activity Types error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-D4-Ps79J.js:48:45459
+index-D4-Ps79J.js:495 AI Models error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-D4-Ps79J.js:48:45459
+index-D4-Ps79J.js:495 Activity Types error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-D4-Ps79J.js:48:45459
+index-D4-Ps79J.js:495 ❌ [SESSION CREATE] Session creation failed: 405 
+index-D4-Ps79J.js:495 ❌ [SESSION CREATE] Full error response: 
+Object
+index-D4-Ps79J.js:495 ❌ [SESSION CREATE] Failed to create session: Error: Failed to create chat session: 405 
+    at Object.mutationFn (index-D4-Ps79J.js:495:25708)
+index-D4-Ps79J.js:495 ❌ [SESSION CREATE] Error details: 
+Object
+index-D4-Ps79J.js:495 AI Models error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-D4-Ps79J.js:48:45459
+index-D4-Ps79J.js:495 Activity Types error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-D4-Ps79J.js:48:45459
+index-D4-Ps79J.js:495 AI Models error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-D4-Ps79J.js:48:45459
+index-D4-Ps79J.js:495 Activity Types error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-D4-Ps79J.js:48:45459
+index-D4-Ps79J.js:495 ❌ [SESSION CREATE] Session creation failed: 405 
+index-D4-Ps79J.js:495 ❌ [SESSION CREATE] Full error response: 
+Object
+index-D4-Ps79J.js:495 ❌ [SESSION CREATE] Failed to create session: Error: Failed to create chat session: 405 
+    at Object.mutationFn (index-D4-Ps79J.js:495:25708)
+index-D4-Ps79J.js:495 ❌ [SESSION CREATE] Error details: 
+Object
+index-D4-Ps79J.js:495 AI Models error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-D4-Ps79J.js:48:45459
+index-D4-Ps79J.js:495 Activity Types error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-D4-Ps79J.js:48:45459
+index-D4-Ps79J.js:495 AI Models error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-D4-Ps79J.js:48:45459
+index-D4-Ps79J.js:495 Activity Types error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-D4-Ps79J.js:48:45459
+index-D4-Ps79J.js:495 ❌ [SESSION CREATE] Session creation failed: 405 
+index-D4-Ps79J.js:495 ❌ [SESSION CREATE] Full error response: 
+Object
+index-D4-Ps79J.js:495 ❌ [SESSION CREATE] Failed to create session: Error: Failed to create chat session: 405 
+    at Object.mutationFn (index-D4-Ps79J.js:495:25708)
+index-D4-Ps79J.js:495 ❌ [SESSION CREATE] Error details: 
+Object

@@ -1,0 +1,942 @@
+=== SESSION CREATION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 currentSession: undefined
+index-DXcgAg9S.js:492 createSessionMutation.isPending: false
+index-DXcgAg9S.js:492 Should create session: true
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 User auth: Object
+index-DXcgAg9S.js:492 === END SESSION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Starting chat session creation...
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] User auth status: Object
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Selected Model ID: 1
+index-DXcgAg9S.js:492 Selected Model Object: Object
+index-DXcgAg9S.js:492 Select Model Value (string): 1
+index-DXcgAg9S.js:492 AI Models for Select: Array(2)
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 Selected Activity Type ID: 1
+index-DXcgAg9S.js:492 Selected Activity Type Object: Object
+index-DXcgAg9S.js:492 Select Activity Type Value (string): 1
+index-DXcgAg9S.js:492 Activity Types for Select: Array(2)
+index-DXcgAg9S.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 currentSession: undefined
+index-DXcgAg9S.js:492 createSessionMutation.isPending: true
+index-DXcgAg9S.js:492 Should create session: false
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 User auth: Object
+index-DXcgAg9S.js:492 === END SESSION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Using header-based authentication
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+index-DXcgAg9S.js:50 📊 [QUERY] /api/chat/sessions - Status: 200 (1440ms)
+index-DXcgAg9S.js:50 📊 [QUERY] Headers: Object
+index-DXcgAg9S.js:50 📊 [QUERY] Content-Type: application/json; charset=utf-8
+index-DXcgAg9S.js:50 ✅ [QUERY] /api/chat/sessions - Success: Array(20)
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Response status: 200
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Response headers: Object
+index-DXcgAg9S.js:492 ✅ [SESSION CREATE] Session created successfully: Object
+index-DXcgAg9S.js:492 ✅ Setting current session to: undefined
+index-DXcgAg9S.js:50 🔄 [QUERY] /api/chat/sessions - Start
+index-DXcgAg9S.js:50 🔄 [QUERY] Full URL: https://aisentinel-d8zvc74wl-ed-duvals-projects.vercel.app/api/chat/sessions
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Selected Model ID: 1
+index-DXcgAg9S.js:492 Selected Model Object: Object
+index-DXcgAg9S.js:492 Select Model Value (string): 1
+index-DXcgAg9S.js:492 AI Models for Select: Array(2)
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 Selected Activity Type ID: 1
+index-DXcgAg9S.js:492 Selected Activity Type Object: Object
+index-DXcgAg9S.js:492 Select Activity Type Value (string): 1
+index-DXcgAg9S.js:492 Activity Types for Select: Array(2)
+index-DXcgAg9S.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 currentSession: undefined
+index-DXcgAg9S.js:492 createSessionMutation.isPending: false
+index-DXcgAg9S.js:492 Should create session: true
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 User auth: Object
+index-DXcgAg9S.js:492 === END SESSION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Starting chat session creation...
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] User auth status: Object
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Selected Model ID: 1
+index-DXcgAg9S.js:492 Selected Model Object: Object
+index-DXcgAg9S.js:492 Select Model Value (string): 1
+index-DXcgAg9S.js:492 AI Models for Select: Array(2)
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 Selected Activity Type ID: 1
+index-DXcgAg9S.js:492 Selected Activity Type Object: Object
+index-DXcgAg9S.js:492 Select Activity Type Value (string): 1
+index-DXcgAg9S.js:492 Activity Types for Select: Array(2)
+index-DXcgAg9S.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 currentSession: undefined
+index-DXcgAg9S.js:492 createSessionMutation.isPending: true
+index-DXcgAg9S.js:492 Should create session: false
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 User auth: Object
+index-DXcgAg9S.js:492 === END SESSION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Using header-based authentication
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Response status: 200
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Response headers: Object
+index-DXcgAg9S.js:492 ✅ [SESSION CREATE] Session created successfully: Object
+index-DXcgAg9S.js:492 ✅ Setting current session to: undefined
+index-DXcgAg9S.js:50 🔄 [QUERY] /api/chat/sessions - Start
+index-DXcgAg9S.js:50 🔄 [QUERY] Full URL: https://aisentinel-d8zvc74wl-ed-duvals-projects.vercel.app/api/chat/sessions
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Selected Model ID: 1
+index-DXcgAg9S.js:492 Selected Model Object: Object
+index-DXcgAg9S.js:492 Select Model Value (string): 1
+index-DXcgAg9S.js:492 AI Models for Select: Array(2)
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 Selected Activity Type ID: 1
+index-DXcgAg9S.js:492 Selected Activity Type Object: Object
+index-DXcgAg9S.js:492 Select Activity Type Value (string): 1
+index-DXcgAg9S.js:492 Activity Types for Select: Array(2)
+index-DXcgAg9S.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 currentSession: undefined
+index-DXcgAg9S.js:492 createSessionMutation.isPending: false
+index-DXcgAg9S.js:492 Should create session: true
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 User auth: Object
+index-DXcgAg9S.js:492 === END SESSION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Starting chat session creation...
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] User auth status: Object
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Selected Model ID: 1
+index-DXcgAg9S.js:492 Selected Model Object: Object
+index-DXcgAg9S.js:492 Select Model Value (string): 1
+index-DXcgAg9S.js:492 AI Models for Select: Array(2)
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 Selected Activity Type ID: 1
+index-DXcgAg9S.js:492 Selected Activity Type Object: Object
+index-DXcgAg9S.js:492 Select Activity Type Value (string): 1
+index-DXcgAg9S.js:492 Activity Types for Select: Array(2)
+index-DXcgAg9S.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 currentSession: undefined
+index-DXcgAg9S.js:492 createSessionMutation.isPending: true
+index-DXcgAg9S.js:492 Should create session: false
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 User auth: Object
+index-DXcgAg9S.js:492 === END SESSION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Using header-based authentication
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+index-DXcgAg9S.js:50 📊 [QUERY] /api/chat/sessions - Status: 200 (1496ms)
+index-DXcgAg9S.js:50 📊 [QUERY] Headers: Object
+index-DXcgAg9S.js:50 📊 [QUERY] Content-Type: application/json; charset=utf-8
+index-DXcgAg9S.js:50 ✅ [QUERY] /api/chat/sessions - Success: Array(20)
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Response status: 200
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Response headers: Object
+index-DXcgAg9S.js:492 ✅ [SESSION CREATE] Session created successfully: Object
+index-DXcgAg9S.js:492 ✅ Setting current session to: undefined
+index-DXcgAg9S.js:50 🔄 [QUERY] /api/chat/sessions - Start
+index-DXcgAg9S.js:50 🔄 [QUERY] Full URL: https://aisentinel-d8zvc74wl-ed-duvals-projects.vercel.app/api/chat/sessions
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Selected Model ID: 1
+index-DXcgAg9S.js:492 Selected Model Object: Object
+index-DXcgAg9S.js:492 Select Model Value (string): 1
+index-DXcgAg9S.js:492 AI Models for Select: Array(2)
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 Selected Activity Type ID: 1
+index-DXcgAg9S.js:492 Selected Activity Type Object: Object
+index-DXcgAg9S.js:492 Select Activity Type Value (string): 1
+index-DXcgAg9S.js:492 Activity Types for Select: Array(2)
+index-DXcgAg9S.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 currentSession: undefined
+index-DXcgAg9S.js:492 createSessionMutation.isPending: false
+index-DXcgAg9S.js:492 Should create session: true
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 User auth: Object
+index-DXcgAg9S.js:492 === END SESSION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Starting chat session creation...
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] User auth status: Object
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Selected Model ID: 1
+index-DXcgAg9S.js:492 Selected Model Object: Object
+index-DXcgAg9S.js:492 Select Model Value (string): 1
+index-DXcgAg9S.js:492 AI Models for Select: Array(2)
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 Selected Activity Type ID: 1
+index-DXcgAg9S.js:492 Selected Activity Type Object: Object
+index-DXcgAg9S.js:492 Select Activity Type Value (string): 1
+index-DXcgAg9S.js:492 Activity Types for Select: Array(2)
+index-DXcgAg9S.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 currentSession: undefined
+index-DXcgAg9S.js:492 createSessionMutation.isPending: true
+index-DXcgAg9S.js:492 Should create session: false
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 User auth: Object
+index-DXcgAg9S.js:492 === END SESSION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Using header-based authentication
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Response status: 200
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Response headers: Object
+index-DXcgAg9S.js:492 ✅ [SESSION CREATE] Session created successfully: Object
+index-DXcgAg9S.js:492 ✅ Setting current session to: undefined
+index-DXcgAg9S.js:50 🔄 [QUERY] /api/chat/sessions - Start
+index-DXcgAg9S.js:50 🔄 [QUERY] Full URL: https://aisentinel-d8zvc74wl-ed-duvals-projects.vercel.app/api/chat/sessions
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Selected Model ID: 1
+index-DXcgAg9S.js:492 Selected Model Object: Object
+index-DXcgAg9S.js:492 Select Model Value (string): 1
+index-DXcgAg9S.js:492 AI Models for Select: Array(2)
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 Selected Activity Type ID: 1
+index-DXcgAg9S.js:492 Selected Activity Type Object: Object
+index-DXcgAg9S.js:492 Select Activity Type Value (string): 1
+index-DXcgAg9S.js:492 Activity Types for Select: Array(2)
+index-DXcgAg9S.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 currentSession: undefined
+index-DXcgAg9S.js:492 createSessionMutation.isPending: false
+index-DXcgAg9S.js:492 Should create session: true
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 User auth: Object
+index-DXcgAg9S.js:492 === END SESSION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Starting chat session creation...
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] User auth status: Object
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Selected Model ID: 1
+index-DXcgAg9S.js:492 Selected Model Object: Object
+index-DXcgAg9S.js:492 Select Model Value (string): 1
+index-DXcgAg9S.js:492 AI Models for Select: Array(2)
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 Selected Activity Type ID: 1
+index-DXcgAg9S.js:492 Selected Activity Type Object: Object
+index-DXcgAg9S.js:492 Select Activity Type Value (string): 1
+index-DXcgAg9S.js:492 Activity Types for Select: Array(2)
+index-DXcgAg9S.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 currentSession: undefined
+index-DXcgAg9S.js:492 createSessionMutation.isPending: true
+index-DXcgAg9S.js:492 Should create session: false
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 User auth: Object
+index-DXcgAg9S.js:492 === END SESSION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Using header-based authentication
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+index-DXcgAg9S.js:50 📊 [QUERY] /api/chat/sessions - Status: 200 (1543ms)
+index-DXcgAg9S.js:50 📊 [QUERY] Headers: Object
+index-DXcgAg9S.js:50 📊 [QUERY] Content-Type: application/json; charset=utf-8
+index-DXcgAg9S.js:50 ✅ [QUERY] /api/chat/sessions - Success: Array(20)
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:510 🔧 [HOME] Authentication status: Object
+index-DXcgAg9S.js:510 🔧 [HOME] Sidebar access check: Object
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:415 🔧 [SIDEBAR] Role check: Object
+index-DXcgAg9S.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-DXcgAg9S.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-DXcgAg9S.js:415 🔧 [SIDEBAR] Role detection: Object
+index-DXcgAg9S.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-DXcgAg9S.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:510 🎨 CompanyInfoLarge - Logo settings: Object
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:504 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+index-DXcgAg9S.js:504 🔧 [DEVELOPER CONTROLS] Visible for super user
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Selected Model ID: 1
+index-DXcgAg9S.js:492 Selected Model Object: Object
+index-DXcgAg9S.js:492 Select Model Value (string): 1
+index-DXcgAg9S.js:492 AI Models for Select: Array(2)
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 Selected Activity Type ID: 1
+index-DXcgAg9S.js:492 Selected Activity Type Object: Object
+index-DXcgAg9S.js:492 Select Activity Type Value (string): 1
+index-DXcgAg9S.js:492 Activity Types for Select: Array(2)
+index-DXcgAg9S.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 currentSession: undefined
+index-DXcgAg9S.js:492 createSessionMutation.isPending: true
+index-DXcgAg9S.js:492 Should create session: false
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 User auth: Object
+index-DXcgAg9S.js:492 === END SESSION TRIGGER DEBUG ===
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:510 🔧 [HOME] Authentication status: Object
+index-DXcgAg9S.js:510 🔧 [HOME] Sidebar access check: Object
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Response status: 200
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Response headers: Object
+index-DXcgAg9S.js:492 ✅ [SESSION CREATE] Session created successfully: Object
+index-DXcgAg9S.js:492 ✅ Setting current session to: undefined
+index-DXcgAg9S.js:50 🔄 [QUERY] /api/chat/sessions - Start
+index-DXcgAg9S.js:50 🔄 [QUERY] Full URL: https://aisentinel-d8zvc74wl-ed-duvals-projects.vercel.app/api/chat/sessions
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Selected Model ID: 1
+index-DXcgAg9S.js:492 Selected Model Object: Object
+index-DXcgAg9S.js:492 Select Model Value (string): 1
+index-DXcgAg9S.js:492 AI Models for Select: Array(2)
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 Selected Activity Type ID: 1
+index-DXcgAg9S.js:492 Selected Activity Type Object: Object
+index-DXcgAg9S.js:492 Select Activity Type Value (string): 1
+index-DXcgAg9S.js:492 Activity Types for Select: Array(2)
+index-DXcgAg9S.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 currentSession: undefined
+index-DXcgAg9S.js:492 createSessionMutation.isPending: false
+index-DXcgAg9S.js:492 Should create session: true
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 User auth: Object
+index-DXcgAg9S.js:492 === END SESSION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Starting chat session creation...
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] User auth status: Object
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Selected Model ID: 1
+index-DXcgAg9S.js:492 Selected Model Object: Object
+index-DXcgAg9S.js:492 Select Model Value (string): 1
+index-DXcgAg9S.js:492 AI Models for Select: Array(2)
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 Selected Activity Type ID: 1
+index-DXcgAg9S.js:492 Selected Activity Type Object: Object
+index-DXcgAg9S.js:492 Select Activity Type Value (string): 1
+index-DXcgAg9S.js:492 Activity Types for Select: Array(2)
+index-DXcgAg9S.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 currentSession: undefined
+index-DXcgAg9S.js:492 createSessionMutation.isPending: true
+index-DXcgAg9S.js:492 Should create session: false
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 User auth: Object
+index-DXcgAg9S.js:492 === END SESSION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Using header-based authentication
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+index-DXcgAg9S.js:50 📊 [QUERY] /api/chat/sessions - Status: 200 (1616ms)
+index-DXcgAg9S.js:50 📊 [QUERY] Headers: Object
+index-DXcgAg9S.js:50 📊 [QUERY] Content-Type: application/json; charset=utf-8
+index-DXcgAg9S.js:50 ✅ [QUERY] /api/chat/sessions - Success: Array(20)
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Response status: 200
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Response headers: Object
+index-DXcgAg9S.js:492 ✅ [SESSION CREATE] Session created successfully: Object
+index-DXcgAg9S.js:492 ✅ Setting current session to: undefined
+index-DXcgAg9S.js:50 🔄 [QUERY] /api/chat/sessions - Start
+index-DXcgAg9S.js:50 🔄 [QUERY] Full URL: https://aisentinel-d8zvc74wl-ed-duvals-projects.vercel.app/api/chat/sessions
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Selected Model ID: 1
+index-DXcgAg9S.js:492 Selected Model Object: Object
+index-DXcgAg9S.js:492 Select Model Value (string): 1
+index-DXcgAg9S.js:492 AI Models for Select: Array(2)
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 Selected Activity Type ID: 1
+index-DXcgAg9S.js:492 Selected Activity Type Object: Object
+index-DXcgAg9S.js:492 Select Activity Type Value (string): 1
+index-DXcgAg9S.js:492 Activity Types for Select: Array(2)
+index-DXcgAg9S.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 currentSession: undefined
+index-DXcgAg9S.js:492 createSessionMutation.isPending: false
+index-DXcgAg9S.js:492 Should create session: true
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 User auth: Object
+index-DXcgAg9S.js:492 === END SESSION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Starting chat session creation...
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] User auth status: Object
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Selected Model ID: 1
+index-DXcgAg9S.js:492 Selected Model Object: Object
+index-DXcgAg9S.js:492 Select Model Value (string): 1
+index-DXcgAg9S.js:492 AI Models for Select: Array(2)
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 Selected Activity Type ID: 1
+index-DXcgAg9S.js:492 Selected Activity Type Object: Object
+index-DXcgAg9S.js:492 Select Activity Type Value (string): 1
+index-DXcgAg9S.js:492 Activity Types for Select: Array(2)
+index-DXcgAg9S.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 currentSession: undefined
+index-DXcgAg9S.js:492 createSessionMutation.isPending: true
+index-DXcgAg9S.js:492 Should create session: false
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 User auth: Object
+index-DXcgAg9S.js:492 === END SESSION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Using header-based authentication
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Response status: 200
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Response headers: Object
+index-DXcgAg9S.js:492 ✅ [SESSION CREATE] Session created successfully: Object
+index-DXcgAg9S.js:492 ✅ Setting current session to: undefined
+index-DXcgAg9S.js:50 🔄 [QUERY] /api/chat/sessions - Start
+index-DXcgAg9S.js:50 🔄 [QUERY] Full URL: https://aisentinel-d8zvc74wl-ed-duvals-projects.vercel.app/api/chat/sessions
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Selected Model ID: 1
+index-DXcgAg9S.js:492 Selected Model Object: Object
+index-DXcgAg9S.js:492 Select Model Value (string): 1
+index-DXcgAg9S.js:492 AI Models for Select: Array(2)
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 Selected Activity Type ID: 1
+index-DXcgAg9S.js:492 Selected Activity Type Object: Object
+index-DXcgAg9S.js:492 Select Activity Type Value (string): 1
+index-DXcgAg9S.js:492 Activity Types for Select: Array(2)
+index-DXcgAg9S.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 currentSession: undefined
+index-DXcgAg9S.js:492 createSessionMutation.isPending: false
+index-DXcgAg9S.js:492 Should create session: true
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 User auth: Object
+index-DXcgAg9S.js:492 === END SESSION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Starting chat session creation...
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] User auth status: Object
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Selected Model ID: 1
+index-DXcgAg9S.js:492 Selected Model Object: Object
+index-DXcgAg9S.js:492 Select Model Value (string): 1
+index-DXcgAg9S.js:492 AI Models for Select: Array(2)
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 Selected Activity Type ID: 1
+index-DXcgAg9S.js:492 Selected Activity Type Object: Object
+index-DXcgAg9S.js:492 Select Activity Type Value (string): 1
+index-DXcgAg9S.js:492 Activity Types for Select: Array(2)
+index-DXcgAg9S.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 currentSession: undefined
+index-DXcgAg9S.js:492 createSessionMutation.isPending: true
+index-DXcgAg9S.js:492 Should create session: false
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 User auth: Object
+index-DXcgAg9S.js:492 === END SESSION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Using header-based authentication
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+index-DXcgAg9S.js:50 📊 [QUERY] /api/chat/sessions - Status: 200 (1691ms)
+index-DXcgAg9S.js:50 📊 [QUERY] Headers: Object
+index-DXcgAg9S.js:50 📊 [QUERY] Content-Type: application/json; charset=utf-8
+index-DXcgAg9S.js:50 ✅ [QUERY] /api/chat/sessions - Success: Array(20)
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Response status: 200
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Response headers: Object
+index-DXcgAg9S.js:492 ✅ [SESSION CREATE] Session created successfully: Object
+index-DXcgAg9S.js:492 ✅ Setting current session to: undefined
+index-DXcgAg9S.js:50 🔄 [QUERY] /api/chat/sessions - Start
+index-DXcgAg9S.js:50 🔄 [QUERY] Full URL: https://aisentinel-d8zvc74wl-ed-duvals-projects.vercel.app/api/chat/sessions
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Selected Model ID: 1
+index-DXcgAg9S.js:492 Selected Model Object: Object
+index-DXcgAg9S.js:492 Select Model Value (string): 1
+index-DXcgAg9S.js:492 AI Models for Select: Array(2)
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 Selected Activity Type ID: 1
+index-DXcgAg9S.js:492 Selected Activity Type Object: Object
+index-DXcgAg9S.js:492 Select Activity Type Value (string): 1
+index-DXcgAg9S.js:492 Activity Types for Select: Array(2)
+index-DXcgAg9S.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 currentSession: undefined
+index-DXcgAg9S.js:492 createSessionMutation.isPending: false
+index-DXcgAg9S.js:492 Should create session: true
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 User auth: Object
+index-DXcgAg9S.js:492 === END SESSION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Starting chat session creation...
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] User auth status: Object
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Selected Model ID: 1
+index-DXcgAg9S.js:492 Selected Model Object: Object
+index-DXcgAg9S.js:492 Select Model Value (string): 1
+index-DXcgAg9S.js:492 AI Models for Select: Array(2)
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 Selected Activity Type ID: 1
+index-DXcgAg9S.js:492 Selected Activity Type Object: Object
+index-DXcgAg9S.js:492 Select Activity Type Value (string): 1
+index-DXcgAg9S.js:492 Activity Types for Select: Array(2)
+index-DXcgAg9S.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 currentSession: undefined
+index-DXcgAg9S.js:492 createSessionMutation.isPending: true
+index-DXcgAg9S.js:492 Should create session: false
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 User auth: Object
+index-DXcgAg9S.js:492 === END SESSION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Using header-based authentication
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Response status: 200
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Response headers: Object
+index-DXcgAg9S.js:492 ✅ [SESSION CREATE] Session created successfully: Object
+index-DXcgAg9S.js:492 ✅ Setting current session to: undefined
+index-DXcgAg9S.js:50 🔄 [QUERY] /api/chat/sessions - Start
+index-DXcgAg9S.js:50 🔄 [QUERY] Full URL: https://aisentinel-d8zvc74wl-ed-duvals-projects.vercel.app/api/chat/sessions
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Selected Model ID: 1
+index-DXcgAg9S.js:492 Selected Model Object: Object
+index-DXcgAg9S.js:492 Select Model Value (string): 1
+index-DXcgAg9S.js:492 AI Models for Select: Array(2)
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 Selected Activity Type ID: 1
+index-DXcgAg9S.js:492 Selected Activity Type Object: Object
+index-DXcgAg9S.js:492 Select Activity Type Value (string): 1
+index-DXcgAg9S.js:492 Activity Types for Select: Array(2)
+index-DXcgAg9S.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 currentSession: undefined
+index-DXcgAg9S.js:492 createSessionMutation.isPending: false
+index-DXcgAg9S.js:492 Should create session: true
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 User auth: Object
+index-DXcgAg9S.js:492 === END SESSION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Starting chat session creation...
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] User auth status: Object
+index-DXcgAg9S.js:50 📊 [QUERY] /api/chat/sessions - Status: 200 (1762ms)
+index-DXcgAg9S.js:50 📊 [QUERY] Headers: Object
+index-DXcgAg9S.js:50 📊 [QUERY] Content-Type: application/json; charset=utf-8
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Selected Model ID: 1
+index-DXcgAg9S.js:492 Selected Model Object: Object
+index-DXcgAg9S.js:492 Select Model Value (string): 1
+index-DXcgAg9S.js:492 AI Models for Select: Array(2)
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 Selected Activity Type ID: 1
+index-DXcgAg9S.js:492 Selected Activity Type Object: Object
+index-DXcgAg9S.js:492 Select Activity Type Value (string): 1
+index-DXcgAg9S.js:492 Activity Types for Select: Array(2)
+index-DXcgAg9S.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 currentSession: undefined
+index-DXcgAg9S.js:492 createSessionMutation.isPending: true
+index-DXcgAg9S.js:492 Should create session: false
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 User auth: Object
+index-DXcgAg9S.js:492 === END SESSION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Using header-based authentication
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+index-DXcgAg9S.js:50 ✅ [QUERY] /api/chat/sessions - Success: Array(20)
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Response status: 200
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Response headers: Object
+index-DXcgAg9S.js:492 ✅ [SESSION CREATE] Session created successfully: Object
+index-DXcgAg9S.js:492 ✅ Setting current session to: undefined
+index-DXcgAg9S.js:50 🔄 [QUERY] /api/chat/sessions - Start
+index-DXcgAg9S.js:50 🔄 [QUERY] Full URL: https://aisentinel-d8zvc74wl-ed-duvals-projects.vercel.app/api/chat/sessions
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Selected Model ID: 1
+index-DXcgAg9S.js:492 Selected Model Object: Object
+index-DXcgAg9S.js:492 Select Model Value (string): 1
+index-DXcgAg9S.js:492 AI Models for Select: Array(2)
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 Selected Activity Type ID: 1
+index-DXcgAg9S.js:492 Selected Activity Type Object: Object
+index-DXcgAg9S.js:492 Select Activity Type Value (string): 1
+index-DXcgAg9S.js:492 Activity Types for Select: Array(2)
+index-DXcgAg9S.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 currentSession: undefined
+index-DXcgAg9S.js:492 createSessionMutation.isPending: false
+index-DXcgAg9S.js:492 Should create session: true
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 User auth: Object
+index-DXcgAg9S.js:492 === END SESSION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Starting chat session creation...
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] User auth status: Object
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Selected Model ID: 1
+index-DXcgAg9S.js:492 Selected Model Object: Object
+index-DXcgAg9S.js:492 Select Model Value (string): 1
+index-DXcgAg9S.js:492 AI Models for Select: Array(2)
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 Selected Activity Type ID: 1
+index-DXcgAg9S.js:492 Selected Activity Type Object: Object
+index-DXcgAg9S.js:492 Select Activity Type Value (string): 1
+index-DXcgAg9S.js:492 Activity Types for Select: Array(2)
+index-DXcgAg9S.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 currentSession: undefined
+index-DXcgAg9S.js:492 createSessionMutation.isPending: true
+index-DXcgAg9S.js:492 Should create session: false
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 User auth: Object
+index-DXcgAg9S.js:492 === END SESSION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Using header-based authentication
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+index-DXcgAg9S.js:50 📊 [QUERY] /api/chat/sessions - Status: 200 (1827ms)
+index-DXcgAg9S.js:50 📊 [QUERY] Headers: Object
+index-DXcgAg9S.js:50 📊 [QUERY] Content-Type: application/json; charset=utf-8
+index-DXcgAg9S.js:50 ✅ [QUERY] /api/chat/sessions - Success: Array(20)
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Response status: 200
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Response headers: Object
+index-DXcgAg9S.js:492 ✅ [SESSION CREATE] Session created successfully: Object
+index-DXcgAg9S.js:492 ✅ Setting current session to: undefined
+index-DXcgAg9S.js:50 🔄 [QUERY] /api/chat/sessions - Start
+index-DXcgAg9S.js:50 🔄 [QUERY] Full URL: https://aisentinel-d8zvc74wl-ed-duvals-projects.vercel.app/api/chat/sessions
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Selected Model ID: 1
+index-DXcgAg9S.js:492 Selected Model Object: Object
+index-DXcgAg9S.js:492 Select Model Value (string): 1
+index-DXcgAg9S.js:492 AI Models for Select: Array(2)
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 Selected Activity Type ID: 1
+index-DXcgAg9S.js:492 Selected Activity Type Object: Object
+index-DXcgAg9S.js:492 Select Activity Type Value (string): 1
+index-DXcgAg9S.js:492 Activity Types for Select: Array(2)
+index-DXcgAg9S.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 currentSession: undefined
+index-DXcgAg9S.js:492 createSessionMutation.isPending: false
+index-DXcgAg9S.js:492 Should create session: true
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 User auth: Object
+index-DXcgAg9S.js:492 === END SESSION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Starting chat session creation...
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] User auth status: Object
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Selected Model ID: 1
+index-DXcgAg9S.js:492 Selected Model Object: Object
+index-DXcgAg9S.js:492 Select Model Value (string): 1
+index-DXcgAg9S.js:492 AI Models for Select: Array(2)
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 Selected Activity Type ID: 1
+index-DXcgAg9S.js:492 Selected Activity Type Object: Object
+index-DXcgAg9S.js:492 Select Activity Type Value (string): 1
+index-DXcgAg9S.js:492 Activity Types for Select: Array(2)
+index-DXcgAg9S.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 currentSession: undefined
+index-DXcgAg9S.js:492 createSessionMutation.isPending: true
+index-DXcgAg9S.js:492 Should create session: false
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 User auth: Object
+index-DXcgAg9S.js:492 === END SESSION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Using header-based authentication
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Response status: 200
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Response headers: Object
+index-DXcgAg9S.js:492 ✅ [SESSION CREATE] Session created successfully: Object
+index-DXcgAg9S.js:492 ✅ Setting current session to: undefined
+index-DXcgAg9S.js:50 🔄 [QUERY] /api/chat/sessions - Start
+index-DXcgAg9S.js:50 🔄 [QUERY] Full URL: https://aisentinel-d8zvc74wl-ed-duvals-projects.vercel.app/api/chat/sessions
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Selected Model ID: 1
+index-DXcgAg9S.js:492 Selected Model Object: Object
+index-DXcgAg9S.js:492 Select Model Value (string): 1
+index-DXcgAg9S.js:492 AI Models for Select: Array(2)
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 Selected Activity Type ID: 1
+index-DXcgAg9S.js:492 Selected Activity Type Object: Object
+index-DXcgAg9S.js:492 Select Activity Type Value (string): 1
+index-DXcgAg9S.js:492 Activity Types for Select: Array(2)
+index-DXcgAg9S.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 currentSession: undefined
+index-DXcgAg9S.js:492 createSessionMutation.isPending: false
+index-DXcgAg9S.js:492 Should create session: true
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 User auth: Object
+index-DXcgAg9S.js:492 === END SESSION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Starting chat session creation...
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] User auth status: Object
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Selected Model ID: 1
+index-DXcgAg9S.js:492 Selected Model Object: Object
+index-DXcgAg9S.js:492 Select Model Value (string): 1
+index-DXcgAg9S.js:492 AI Models for Select: Array(2)
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 Selected Activity Type ID: 1
+index-DXcgAg9S.js:492 Selected Activity Type Object: Object
+index-DXcgAg9S.js:492 Select Activity Type Value (string): 1
+index-DXcgAg9S.js:492 Activity Types for Select: Array(2)
+index-DXcgAg9S.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 currentSession: undefined
+index-DXcgAg9S.js:492 createSessionMutation.isPending: true
+index-DXcgAg9S.js:492 Should create session: false
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 User auth: Object
+index-DXcgAg9S.js:492 === END SESSION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Using header-based authentication
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+index-DXcgAg9S.js:50 📊 [QUERY] /api/chat/sessions - Status: 200 (1899ms)
+index-DXcgAg9S.js:50 📊 [QUERY] Headers: Object
+index-DXcgAg9S.js:50 📊 [QUERY] Content-Type: application/json; charset=utf-8
+index-DXcgAg9S.js:50 ✅ [QUERY] /api/chat/sessions - Success: Array(20)
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Response status: 200
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Response headers: Object
+index-DXcgAg9S.js:492 ✅ [SESSION CREATE] Session created successfully: Object
+index-DXcgAg9S.js:492 ✅ Setting current session to: undefined
+index-DXcgAg9S.js:50 🔄 [QUERY] /api/chat/sessions - Start
+index-DXcgAg9S.js:50 🔄 [QUERY] Full URL: https://aisentinel-d8zvc74wl-ed-duvals-projects.vercel.app/api/chat/sessions
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Selected Model ID: 1
+index-DXcgAg9S.js:492 Selected Model Object: Object
+index-DXcgAg9S.js:492 Select Model Value (string): 1
+index-DXcgAg9S.js:492 AI Models for Select: Array(2)
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 Selected Activity Type ID: 1
+index-DXcgAg9S.js:492 Selected Activity Type Object: Object
+index-DXcgAg9S.js:492 Select Activity Type Value (string): 1
+index-DXcgAg9S.js:492 Activity Types for Select: Array(2)
+index-DXcgAg9S.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 currentSession: undefined
+index-DXcgAg9S.js:492 createSessionMutation.isPending: false
+index-DXcgAg9S.js:492 Should create session: true
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 User auth: Object
+index-DXcgAg9S.js:492 === END SESSION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Starting chat session creation...
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] User auth status: Object
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Selected Model ID: 1
+index-DXcgAg9S.js:492 Selected Model Object: Object
+index-DXcgAg9S.js:492 Select Model Value (string): 1
+index-DXcgAg9S.js:492 AI Models for Select: Array(2)
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 Selected Activity Type ID: 1
+index-DXcgAg9S.js:492 Selected Activity Type Object: Object
+index-DXcgAg9S.js:492 Select Activity Type Value (string): 1
+index-DXcgAg9S.js:492 Activity Types for Select: Array(2)
+index-DXcgAg9S.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 currentSession: undefined
+index-DXcgAg9S.js:492 createSessionMutation.isPending: true
+index-DXcgAg9S.js:492 Should create session: false
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 User auth: Object
+index-DXcgAg9S.js:492 === END SESSION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Using header-based authentication
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Response status: 200
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Response headers: Object
+index-DXcgAg9S.js:492 ✅ [SESSION CREATE] Session created successfully: Object
+index-DXcgAg9S.js:492 ✅ Setting current session to: undefined
+index-DXcgAg9S.js:50 🔄 [QUERY] /api/chat/sessions - Start
+index-DXcgAg9S.js:50 🔄 [QUERY] Full URL: https://aisentinel-d8zvc74wl-ed-duvals-projects.vercel.app/api/chat/sessions
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Selected Model ID: 1
+index-DXcgAg9S.js:492 Selected Model Object: Object
+index-DXcgAg9S.js:492 Select Model Value (string): 1
+index-DXcgAg9S.js:492 AI Models for Select: Array(2)
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 Selected Activity Type ID: 1
+index-DXcgAg9S.js:492 Selected Activity Type Object: Object
+index-DXcgAg9S.js:492 Select Activity Type Value (string): 1
+index-DXcgAg9S.js:492 Activity Types for Select: Array(2)
+index-DXcgAg9S.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 currentSession: undefined
+index-DXcgAg9S.js:492 createSessionMutation.isPending: false
+index-DXcgAg9S.js:492 Should create session: true
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 User auth: Object
+index-DXcgAg9S.js:492 === END SESSION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Starting chat session creation...
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] User auth status: Object
+index-DXcgAg9S.js:50 📊 [QUERY] /api/chat/sessions - Status: 200 (1978ms)
+index-DXcgAg9S.js:50 📊 [QUERY] Headers: Object
+index-DXcgAg9S.js:50 📊 [QUERY] Content-Type: application/json; charset=utf-8
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Selected Model ID: 1
+index-DXcgAg9S.js:492 Selected Model Object: Object
+index-DXcgAg9S.js:492 Select Model Value (string): 1
+index-DXcgAg9S.js:492 AI Models for Select: Array(2)
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 Selected Activity Type ID: 1
+index-DXcgAg9S.js:492 Selected Activity Type Object: Object
+index-DXcgAg9S.js:492 Select Activity Type Value (string): 1
+index-DXcgAg9S.js:492 Activity Types for Select: Array(2)
+index-DXcgAg9S.js:492 === SESSION CREATION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 currentSession: undefined
+index-DXcgAg9S.js:492 createSessionMutation.isPending: true
+index-DXcgAg9S.js:492 Should create session: false
+index-DXcgAg9S.js:492 AI Models loaded: 2 models
+index-DXcgAg9S.js:492 Activity Types loaded: 2 types
+index-DXcgAg9S.js:492 User auth: Object
+index-DXcgAg9S.js:492 === END SESSION TRIGGER DEBUG ===
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Using header-based authentication
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+index-DXcgAg9S.js:50 ✅ [QUERY] /api/chat/sessions - Success: Array(20)
+index-DXcgAg9S.js:415 🔧 [SIDEBAR] Button clicked: Create AI Models href: /admin/create-models
+index-DXcgAg9S.js:415 🔧 [SIDEBAR] Navigating to: /admin/create-models
+index-DXcgAg9S.js:640 [APP DEBUG] Router component rendering...
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:640 [APP DEBUG] Router state: Object
+index-DXcgAg9S.js:640 [APP DEBUG] Authentication check: Object
+index-DXcgAg9S.js:640 [APP DEBUG] useAuth hook returned: Object
+index-DXcgAg9S.js:640 [APP DEBUG] User is authenticated, proceeding with route-based navigation
+index-DXcgAg9S.js:640 🔐 [ROLE GUARD] Checking access for owner (level 999): Object
+index-DXcgAg9S.js:640 [ROLE GUARD] Access granted - user level 1000 >= required level 999
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:415 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-DXcgAg9S.js:415 Authentication check: Object
+index-DXcgAg9S.js:415 🔧 [SIDEBAR] Role check: Object
+index-DXcgAg9S.js:415 🔧 [SIDEBAR] Section visibility: Object
+index-DXcgAg9S.js:415 🔧 [SIDEBAR] Rendering with sections: Object
+index-DXcgAg9S.js:415 🔧 [SIDEBAR] Role detection: Object
+index-DXcgAg9S.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-DXcgAg9S.js:415 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Response status: 200
+index-DXcgAg9S.js:492 🔄 [SESSION CREATE] Response headers: Object
+index-DXcgAg9S.js:492 ✅ [SESSION CREATE] Session created successfully: Object
+index-DXcgAg9S.js:492 ✅ Setting current session to: undefined
+index-DXcgAg9S.js:50 📊 [QUERY] /api/chat/sessions - Status: 200 (2017ms)
+index-DXcgAg9S.js:50 📊 [QUERY] Headers: Object
+index-DXcgAg9S.js:50 📊 [QUERY] Content-Type: application/json; charset=utf-8
+index-DXcgAg9S.js:50 ✅ [QUERY] /api/chat/sessions - Success: Array(20)
+index-DXcgAg9S.js:50 📊 [QUERY] /api/chat/sessions - Status: 200 (2127ms)
+index-DXcgAg9S.js:50 📊 [QUERY] Headers: Object
+index-DXcgAg9S.js:50 📊 [QUERY] Content-Type: application/json; charset=utf-8
+index-DXcgAg9S.js:50 ✅ [QUERY] /api/chat/sessions - Success: Array(20)
+index-DXcgAg9S.js:50 📊 [QUERY] /api/chat/sessions - Status: 200 (2226ms)
+index-DXcgAg9S.js:50 📊 [QUERY] Headers: Object
+index-DXcgAg9S.js:50 📊 [QUERY] Content-Type: application/json; charset=utf-8
+index-DXcgAg9S.js:50 ✅ [QUERY] /api/chat/sessions - Success: Array(20)
+index-DXcgAg9S.js:50 📊 [QUERY] /api/chat/sessions - Status: 200 (2296ms)
+index-DXcgAg9S.js:50 📊 [QUERY] Headers: Object
+index-DXcgAg9S.js:50 📊 [QUERY] Content-Type: application/json; charset=utf-8
+index-DXcgAg9S.js:50 ✅ [QUERY] /api/chat/sessions - Success: Array(20)
+index-DXcgAg9S.js:50 📊 [QUERY] /api/chat/sessions - Status: 200 (2413ms)
+index-DXcgAg9S.js:50 📊 [QUERY] Headers: Object
+index-DXcgAg9S.js:50 📊 [QUERY] Content-Type: application/json; charset=utf-8
+index-DXcgAg9S.js:50 ✅ [QUERY] /api/chat/sessions - Success: Array(20)
+index-DXcgAg9S.js:50 📊 [QUERY] /api/chat/sessions - Status: 200 (2490ms)
+index-DXcgAg9S.js:50 📊 [QUERY] Headers: Object
+index-DXcgAg9S.js:50 📊 [QUERY] Content-Type: application/json; charset=utf-8
+index-DXcgAg9S.js:50 ✅ [QUERY] /api/chat/sessions - Success: Array(20)
+index-DXcgAg9S.js:50 📊 [QUERY] /api/chat/sessions - Status: 200 (2603ms)
+index-DXcgAg9S.js:50 📊 [QUERY] Headers: Object
+index-DXcgAg9S.js:50 📊 [QUERY] Content-Type: application/json; charset=utf-8
+index-DXcgAg9S.js:50 ✅ [QUERY] /api/chat/sessions - Success: Array(20)
+index-DXcgAg9S.js:50 📊 [QUERY] /api/chat/sessions - Status: 200 (2671ms)
+index-DXcgAg9S.js:50 📊 [QUERY] Headers: Object
+index-DXcgAg9S.js:50 📊 [QUERY] Content-Type: application/json; charset=utf-8
+index-DXcgAg9S.js:50 ✅ [QUERY] /api/chat/sessions - Success: Array(20)
+index-DXcgAg9S.js:50 📊 [QUERY] /api/chat/sessions - Status: 200 (3064ms)
+index-DXcgAg9S.js:50 📊 [QUERY] Headers: Object
+index-DXcgAg9S.js:50 📊 [QUERY] Content-Type: application/json; charset=utf-8
+index-DXcgAg9S.js:50 ✅ [QUERY] /api/chat/sessions - Success: Array(20)
+index-DXcgAg9S.js:50 📊 [QUERY] /api/chat/sessions - Status: 200 (3157ms)
+index-DXcgAg9S.js:50 📊 [QUERY] Headers: Object
+index-DXcgAg9S.js:50 📊 [QUERY] Content-Type: application/json; charset=utf-8
+index-DXcgAg9S.js:50 ✅ [QUERY] /api/chat/sessions - Success: Array(20)
+index-DXcgAg9S.js:50 📊 [QUERY] /api/chat/sessions - Status: 200 (3217ms)
+index-DXcgAg9S.js:50 📊 [QUERY] Headers: Object
+index-DXcgAg9S.js:50 📊 [QUERY] Content-Type: application/json; charset=utf-8
+index-DXcgAg9S.js:50 ✅ [QUERY] /api/chat/sessions - Success: Array(20)
+index-DXcgAg9S.js:50 📊 [QUERY] /api/chat/sessions - Status: 200 (3281ms)
+index-DXcgAg9S.js:50 📊 [QUERY] Headers: Object
+index-DXcgAg9S.js:50 📊 [QUERY] Content-Type: application/json; charset=utf-8
+index-DXcgAg9S.js:50 ✅ [QUERY] /api/chat/sessions - Success: Array(20)
+index-DXcgAg9S.js:50 📊 [QUERY] /api/chat/sessions - Status: 200 (3372ms)
+index-DXcgAg9S.js:50 📊 [QUERY] Headers: Object
+index-DXcgAg9S.js:50 📊 [QUERY] Content-Type: application/json; charset=utf-8
+index-DXcgAg9S.js:50 ✅ [QUERY] /api/chat/sessions - Success: Array(20)
+index-DXcgAg9S.js:50 📊 [QUERY] /api/chat/sessions - Status: 200 (3444ms)
+index-DXcgAg9S.js:50 📊 [QUERY] Headers: Object
+index-DXcgAg9S.js:50 📊 [QUERY] Content-Type: application/json; charset=utf-8
+index-DXcgAg9S.js:50 ✅ [QUERY] /api/chat/sessions - Success: Array(20)
+index-DXcgAg9S.js:50 📊 [QUERY] /api/chat/sessions - Status: 200 (3504ms)
+index-DXcgAg9S.js:50 📊 [QUERY] Headers: Object
+index-DXcgAg9S.js:50 📊 [QUERY] Content-Type: application/json; charset=utf-8
+index-DXcgAg9S.js:50 ✅ [QUERY] /api/chat/sessions - Success: Array(20)
+index-DXcgAg9S.js:50 📊 [QUERY] /api/chat/sessions - Status: 200 (3604ms)
+index-DXcgAg9S.js:50 📊 [QUERY] Headers: Object
+index-DXcgAg9S.js:50 📊 [QUERY] Content-Type: application/json; charset=utf-8
+index-DXcgAg9S.js:50 ✅ [QUERY] /api/chat/sessions - Success: Array(20)
+index-DXcgAg9S.js:50 📊 [QUERY] /api/chat/sessions - Status: 200 (3687ms)
+index-DXcgAg9S.js:50 📊 [QUERY] Headers: Object
+index-DXcgAg9S.js:50 📊 [QUERY] Content-Type: application/json; charset=utf-8
+index-DXcgAg9S.js:50 ✅ [QUERY] /api/chat/sessions - Success: Array(20)

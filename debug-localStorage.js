@@ -32,7 +32,7 @@ possibleKeys.forEach(key => {
 const testAccounts = [
   {
     email: 'ed.duval15@gmail.com',
-    sessionToken: 'prod-1754052835575-289kvxqgl42h',
+    sessionToken: '<PRODUCTION_TOKEN_REMOVED>',
     role: 'Super User',
     roleLevel: 1000,
     companyName: 'Duval Solutions',
@@ -40,7 +40,7 @@ const testAccounts = [
   },
   {
     email: 'ed.duval@duvalsolutions.net',
-    sessionToken: 'prod-1754052835575-289kvxqgl42h',
+    sessionToken: '<PRODUCTION_TOKEN_REMOVED>',
     role: 'Super User', 
     roleLevel: 1000,
     companyName: 'Duval Solutions',
@@ -48,7 +48,7 @@ const testAccounts = [
   },
   {
     email: 'test@example.com',
-    sessionToken: 'prod-1754052835575-289kvxqgl42h',
+    sessionToken: '<PRODUCTION_TOKEN_REMOVED>',
     role: 'User',
     roleLevel: 1,
     companyName: 'Test Company',

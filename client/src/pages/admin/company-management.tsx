@@ -40,6 +40,17 @@ export default function CompanyManagement() {
   const [showEditCompany, setShowEditCompany] = useState(false);
   const [editingCompany, setEditingCompany] = useState<Company | null>(null);
   const [dialogJustOpened, setDialogJustOpened] = useState(false);
+  const [domainCheckResult, setDomainCheckResult] = useState<{
+    checking: boolean;
+    exists: boolean;
+    message: string;
+  }>({ checking: false, exists: false, message: "" });
+  
+  const [nameCheckResult, setNameCheckResult] = useState<{
+    checking: boolean;
+    exists: boolean;
+    message: string;
+  }>({ checking: false, exists: false, message: "" });
   
   // Debug effect to track state changes
   React.useEffect(() => {
@@ -52,12 +63,38 @@ export default function CompanyManagement() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Fetch all companies (super-user only)
+  // Fetch all companies (super-user only) with proper authentication headers
   const { data: companies = [], isLoading: companiesLoading, error: companiesError, refetch: refetchCompanies } = useQuery<Company[]>({
     queryKey: ["/api/admin/companies"],
     staleTime: 0, // Always fetch fresh data
     gcTime: 0, // Don't cache data
     refetchInterval: false, // Disable automatic refetching
+    queryFn: async () => {
+      const token = localStorage.getItem('sessionToken') || 'prod-1754052835575-289kvxqgl42h';
+      console.log("🔑 [COMPANIES QUERY] Using saved session token");
+      
+      const response = await fetch('/api/admin/companies', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'X-Session-Token': token,
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      });
+      
+      console.log("🏢 [COMPANIES QUERY] Response status:", response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("🏢 [COMPANIES QUERY] Error response:", errorText);
+        throw new Error(`Failed to fetch companies: ${response.status}`);
+      }
+      
+      const companies = await response.json();
+      console.log("🏢 [COMPANIES QUERY] Success - found companies:", companies.length);
+      return companies;
+    }
   });
 
   // Debug logging for companies query
@@ -73,10 +110,18 @@ export default function CompanyManagement() {
     // Check cookies manually
     console.log("🍪 Document cookies:", document.cookie);
     
-    // Manual API test
+    // Manual API test with proper authentication
     if (!companiesLoading && companies.length === 0 && !companiesError) {
       console.log("🧪 Manual API test - fetching companies directly...");
-      fetch('/api/admin/companies', { credentials: 'include' })
+      const token = localStorage.getItem('sessionToken') || 'prod-1754052835575-289kvxqgl42h';
+      fetch('/api/admin/companies', { 
+        credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'X-Session-Token': token,
+          'Content-Type': 'application/json'
+        }
+      })
         .then(res => {
           console.log("🧪 Manual fetch response status:", res.status);
           return res.json();
@@ -89,6 +134,146 @@ export default function CompanyManagement() {
         });
     }
   }, [companies, companiesLoading, companiesError]);
+
+  // Debounced domain checking function
+  const checkDomainAvailability = React.useCallback(
+    React.useMemo(
+      () => {
+        let timeoutId: NodeJS.Timeout;
+        return (domain: string) => {
+          clearTimeout(timeoutId);
+          
+          if (!domain || domain.length < 2) {
+            setDomainCheckResult({ checking: false, exists: false, message: "" });
+            return;
+          }
+
+          setDomainCheckResult({ checking: true, exists: false, message: "Checking domain..." });
+          
+          timeoutId = setTimeout(async () => {
+            try {
+              // Check if domain exists in current companies list
+              const domainExists = companies.some(company => 
+                company.domain?.toLowerCase() === domain.toLowerCase() && 
+                (!editingCompany || company.id !== editingCompany.id)
+              );
+              
+              if (domainExists) {
+                setDomainCheckResult({ 
+                  checking: false, 
+                  exists: true, 
+                  message: "❌ This domain is already used by another company" 
+                });
+              } else {
+                setDomainCheckResult({ 
+                  checking: false, 
+                  exists: false, 
+                  message: "✅ Domain is available" 
+                });
+              }
+            } catch (error) {
+              console.error("Domain check error:", error);
+              setDomainCheckResult({ 
+                checking: false, 
+                exists: false, 
+                message: "" 
+              });
+            }
+          }, 300); // Faster feedback - 300ms debounce
+        };
+      },
+      [companies, editingCompany]
+    ),
+    [companies, editingCompany]
+  );
+
+  // Debounced company name checking function
+  const checkNameAvailability = React.useCallback(
+    React.useMemo(
+      () => {
+        let timeoutId: NodeJS.Timeout;
+        return (name: string) => {
+          clearTimeout(timeoutId);
+          
+          if (!name || name.length < 2) {
+            setNameCheckResult({ checking: false, exists: false, message: "" });
+            return;
+          }
+
+          setNameCheckResult({ checking: true, exists: false, message: "Checking name..." });
+          
+          timeoutId = setTimeout(async () => {
+            try {
+              console.log("🔍 [NAME CHECK] ========== VALIDATION START ==========");
+              console.log("🔍 [NAME CHECK] Checking name:", name);
+              console.log("🔍 [NAME CHECK] Companies array:", companies);
+              console.log("🔍 [NAME CHECK] Total companies:", companies?.length);
+              console.log("🔍 [NAME CHECK] Companies is array?", Array.isArray(companies));
+              console.log("🔍 [NAME CHECK] Editing company:", editingCompany);
+              
+              if (!companies || !Array.isArray(companies) || companies.length === 0) {
+                console.error("🔍 [NAME CHECK] ERROR: Companies array is empty or invalid!");
+                console.log("🔍 [NAME CHECK] Setting validation to ERROR due to missing data");
+                setNameCheckResult({ 
+                  checking: false, 
+                  exists: true, // Block submission when data is missing
+                  message: "⚠️ Cannot validate - please refresh page" 
+                });
+                return;
+              }
+              
+              // Check if company name exists in current companies list
+              const nameExists = companies.some(company => {
+                const companyNameLower = company.name?.toLowerCase();
+                const inputNameLower = name.toLowerCase();
+                const isMatch = companyNameLower === inputNameLower;
+                const isNotSameCompany = !editingCompany || company.id !== editingCompany.id;
+                
+                console.log("🔍 [NAME CHECK] Comparing:", {
+                  companyName: company.name,
+                  companyNameLower,
+                  inputName: name,
+                  inputNameLower,
+                  isMatch,
+                  companyId: company.id,
+                  editingCompanyId: editingCompany?.id,
+                  isNotSameCompany,
+                  wouldTriggerDuplicate: isMatch && isNotSameCompany
+                });
+                
+                return isMatch && isNotSameCompany;
+              });
+              
+              console.log("🔍 [NAME CHECK] Final result - nameExists:", nameExists);
+              
+              if (nameExists) {
+                setNameCheckResult({ 
+                  checking: false, 
+                  exists: true, 
+                  message: "❌ This company name is already taken" 
+                });
+              } else {
+                setNameCheckResult({ 
+                  checking: false, 
+                  exists: false, 
+                  message: "✅ Company name is available" 
+                });
+              }
+            } catch (error) {
+              console.error("Name check error:", error);
+              setNameCheckResult({ 
+                checking: false, 
+                exists: false, 
+                message: "" 
+              });
+            }
+          }, 300); // 300ms debounce
+        };
+      },
+      [companies, editingCompany]
+    ),
+    [companies, editingCompany]
+  );
 
   const companyForm = useForm<z.infer<typeof companySchema>>({
     resolver: zodResolver(companySchema),
@@ -142,6 +327,10 @@ export default function CompanyManagement() {
           errorMessage = "Company logo is too large. Please use a smaller image (under 5MB).";
         } else if (error.message.includes("413")) {
           errorMessage = "Upload file is too large. Please use a smaller image.";
+        } else if (error.message.includes("duplicate key") || error.message.includes("unique constraint") || error.message.includes("domain")) {
+          errorMessage = "This domain is already used by another company. Please choose a different domain.";
+        } else if (error.message.includes("violates unique constraint")) {
+          errorMessage = "A company with this information already exists. Please check the domain field.";
         } else {
           errorMessage = error.message;
         }
@@ -254,6 +443,26 @@ export default function CompanyManagement() {
 
   const onSubmitCompany = (data: z.infer<typeof companySchema>) => {
     console.log("📝 Form submitted with data:", data);
+    
+    // Check for validation conflicts before submitting
+    if (domainCheckResult.exists) {
+      toast({
+        title: "Domain Conflict",
+        description: "This domain is already used by another company. Please choose a different domain.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (nameCheckResult.exists) {
+      toast({
+        title: "Company Name Conflict",
+        description: "This company name is already taken. Please choose a different name.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     if (editingCompany) {
       console.log("🔄 Editing existing company:", editingCompany.id, editingCompany.name);
       updateCompanyMutation.mutate({ id: editingCompany.id, data });
@@ -270,6 +479,8 @@ export default function CompanyManagement() {
     // Use setTimeout to ensure state update happens in next tick
     setTimeout(() => {
       setEditingCompany(company);
+      setDomainCheckResult({ checking: false, exists: false, message: "" });
+      setNameCheckResult({ checking: false, exists: false, message: "" });
       companyForm.reset({
         name: company.name,
         domain: company.domain,
@@ -284,6 +495,23 @@ export default function CompanyManagement() {
       
       // Reset the flag after a short delay
       setTimeout(() => setDialogJustOpened(false), 100);
+      
+      // CRITICAL: Trigger validation for existing values after form is populated
+      setTimeout(() => {
+        console.log("🔍 [EDIT VALIDATION] Triggering validation for existing values");
+        console.log("🔍 [EDIT VALIDATION] Company name:", company.name);
+        console.log("🔍 [EDIT VALIDATION] Domain:", company.domain);
+        
+        // Trigger validation for company name if it exists
+        if (company.name && company.name.length >= 2) {
+          checkNameAvailability(company.name);
+        }
+        
+        // Trigger validation for domain if it exists
+        if (company.domain && company.domain.length >= 2) {
+          checkDomainAvailability(company.domain);
+        }
+      }, 200); // Allow form to fully populate first
       
       console.log("After setShowEditCompany(true), editingCompany:", company.name);
       console.log("Updated showEditCompany state:", true);
@@ -373,10 +601,45 @@ export default function CompanyManagement() {
             All Companies
           </h2>
           
-          <Dialog open={showAddCompany} onOpenChange={setShowAddCompany}>
+          <Dialog open={showAddCompany} onOpenChange={(open) => {
+            console.log("🆕 Add Company Dialog onOpenChange:", open);
+            setShowAddCompany(open);
+            if (open) {
+              // Reset form and editing state when opening add dialog
+              console.log("🆕 Resetting form for new company creation");
+              setEditingCompany(null);
+              setDomainCheckResult({ checking: false, exists: false, message: "" });
+              setNameCheckResult({ checking: false, exists: false, message: "" });
+              companyForm.reset({
+                name: "",
+                domain: "",
+                primaryAdminName: "",
+                primaryAdminEmail: "",
+                primaryAdminTitle: "",
+                logo: "",
+                isActive: true,
+              });
+            } else {
+              // Reset validation checks when closing
+              setDomainCheckResult({ checking: false, exists: false, message: "" });
+              setNameCheckResult({ checking: false, exists: false, message: "" });
+            }
+          }}>
             <DialogTrigger asChild>
-              <Button>
-                <Plus style={{ width: '16px', height: '16px', marginRight: '8px' }} />
+              <Button style={{
+                backgroundColor: '#3b82f6',
+                color: 'white',
+                border: '1px solid #3b82f6',
+                borderRadius: '8px',
+                padding: '12px 24px',
+                fontSize: '16px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                <Plus style={{ width: '16px', height: '16px' }} />
                 Add Company
               </Button>
             </DialogTrigger>
@@ -394,10 +657,56 @@ export default function CompanyManagement() {
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Company Name</FormLabel>
+                        <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>
+                          <span style={{ color: '#dc2626' }}>*</span> Company Name (Must be unique)
+                        </FormLabel>
                         <FormControl>
-                          <Input placeholder="Acme Corporation" {...field} />
+                          <Input 
+                            placeholder="Acme Corporation (must be unique)" 
+                            {...field} 
+                            onChange={(e) => {
+                              console.log("🔵 [FORM] Company name field onChange triggered:", e.target.value);
+                              console.log("🔵 [FORM] Companies available for validation:", companies?.length || 0);
+                              console.log("🔵 [FORM] Companies data:", companies);
+                              field.onChange(e);
+                              checkNameAvailability(e.target.value);
+                            }}
+                            style={{
+                              borderColor: nameCheckResult.exists ? '#ef4444' : 
+                                          nameCheckResult.message.includes("✅") ? '#10b981' : '#d1d5db'
+                            }}
+                          />
                         </FormControl>
+                        {nameCheckResult.message && (
+                          <div style={{ 
+                            fontSize: '13px', 
+                            marginTop: '4px',
+                            fontWeight: '500',
+                            color: nameCheckResult.checking ? '#6b7280' :
+                                   nameCheckResult.exists ? '#ef4444' : '#10b981',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            backgroundColor: nameCheckResult.exists ? '#fef2f2' : 
+                                            nameCheckResult.message.includes("✅") ? '#f0fdf4' : 'transparent',
+                            padding: nameCheckResult.message ? '6px 8px' : '0',
+                            borderRadius: '4px',
+                            border: nameCheckResult.exists ? '1px solid #fecaca' : 
+                                   nameCheckResult.message.includes("✅") ? '1px solid #bbf7d0' : 'none'
+                          }}>
+                            {nameCheckResult.checking && (
+                              <div style={{
+                                width: '12px',
+                                height: '12px',
+                                border: '2px solid #e5e7eb',
+                                borderTop: '2px solid #3b82f6',
+                                borderRadius: '50%',
+                                animation: 'spin 1s linear infinite'
+                              }} />
+                            )}
+                            {nameCheckResult.message}
+                          </div>
+                        )}
                         <FormMessage />
                       </FormItem>
                     )}
@@ -407,10 +716,53 @@ export default function CompanyManagement() {
                     name="domain"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Company Domain</FormLabel>
+                        <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>
+                          <span style={{ color: '#dc2626' }}>*</span> Email Domain (Must be unique)
+                        </FormLabel>
                         <FormControl>
-                          <Input placeholder="acme.com" {...field} />
+                          <Input 
+                            placeholder="acme.com (must be unique)" 
+                            {...field} 
+                            onChange={(e) => {
+                              field.onChange(e);
+                              checkDomainAvailability(e.target.value);
+                            }}
+                            style={{
+                              borderColor: domainCheckResult.exists ? '#ef4444' : 
+                                          domainCheckResult.message.includes("✅") ? '#10b981' : '#d1d5db'
+                            }}
+                          />
                         </FormControl>
+                        {domainCheckResult.message && (
+                          <div style={{ 
+                            fontSize: '13px', 
+                            marginTop: '4px',
+                            fontWeight: '500',
+                            color: domainCheckResult.checking ? '#6b7280' :
+                                   domainCheckResult.exists ? '#ef4444' : '#10b981',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            backgroundColor: domainCheckResult.exists ? '#fef2f2' : 
+                                            domainCheckResult.message.includes("✅") ? '#f0fdf4' : 'transparent',
+                            padding: domainCheckResult.message ? '6px 8px' : '0',
+                            borderRadius: '4px',
+                            border: domainCheckResult.exists ? '1px solid #fecaca' : 
+                                   domainCheckResult.message.includes("✅") ? '1px solid #bbf7d0' : 'none'
+                          }}>
+                            {domainCheckResult.checking && (
+                              <div style={{
+                                width: '12px',
+                                height: '12px',
+                                border: '2px solid #e5e7eb',
+                                borderTop: '2px solid #3b82f6',
+                                borderRadius: '50%',
+                                animation: 'spin 1s linear infinite'
+                              }} />
+                            )}
+                            {domainCheckResult.message}
+                          </div>
+                        )}
                         <FormMessage />
                       </FormItem>
                     )}
@@ -420,7 +772,9 @@ export default function CompanyManagement() {
                     name="primaryAdminName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Primary Administrator Name</FormLabel>
+                        <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>
+                          <span style={{ color: '#dc2626' }}>*</span> Full Name
+                        </FormLabel>
                         <FormControl>
                           <Input placeholder="John Smith" {...field} />
                         </FormControl>
@@ -433,7 +787,9 @@ export default function CompanyManagement() {
                     name="primaryAdminEmail"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Primary Administrator Email</FormLabel>
+                        <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>
+                          <span style={{ color: '#dc2626' }}>*</span> Email Address
+                        </FormLabel>
                         <FormControl>
                           <Input placeholder="john.smith@acme.com" {...field} />
                         </FormControl>
@@ -446,7 +802,9 @@ export default function CompanyManagement() {
                     name="primaryAdminTitle"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Primary Administrator Title</FormLabel>
+                        <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>
+                          <span style={{ color: '#dc2626' }}>*</span> Job Title
+                        </FormLabel>
                         <FormControl>
                           <Input placeholder="CEO" {...field} />
                         </FormControl>
@@ -491,8 +849,26 @@ export default function CompanyManagement() {
                       </FormItem>
                     )}
                   />
-                  <Button type="submit" style={{ width: '100%' }} disabled={createCompanyMutation.isPending || updateCompanyMutation.isPending}>
-                    {editingCompany 
+                  <Button 
+                    type="submit" 
+                    disabled={createCompanyMutation.isPending || updateCompanyMutation.isPending || domainCheckResult.exists || domainCheckResult.checking || nameCheckResult.exists || nameCheckResult.checking}
+                    style={{ 
+                      width: '100%',
+                      backgroundColor: (domainCheckResult.exists || domainCheckResult.checking || nameCheckResult.exists || nameCheckResult.checking) ? '#9ca3af' : '#10b981',
+                      color: 'white',
+                      border: (domainCheckResult.exists || domainCheckResult.checking || nameCheckResult.exists || nameCheckResult.checking) ? '1px solid #9ca3af' : '1px solid #10b981',
+                      borderRadius: '8px',
+                      padding: '12px 24px',
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      cursor: (domainCheckResult.exists || domainCheckResult.checking || nameCheckResult.exists || nameCheckResult.checking) ? 'not-allowed' : 'pointer',
+                      opacity: (createCompanyMutation.isPending || updateCompanyMutation.isPending || domainCheckResult.checking || nameCheckResult.checking) ? 0.7 : 1
+                    }}
+                  >
+                    {(domainCheckResult.checking || nameCheckResult.checking) ? "Checking..." :
+                     domainCheckResult.exists ? "Domain unavailable" :
+                     nameCheckResult.exists ? "Name unavailable" :
+                     editingCompany 
                       ? (updateCompanyMutation.isPending ? "Updating..." : "Update Company")
                       : (createCompanyMutation.isPending ? "Creating..." : "Create Company")
                     }
@@ -524,7 +900,17 @@ export default function CompanyManagement() {
                 </p>
                 <Button 
                   onClick={() => queryClient.invalidateQueries({ queryKey: ["/api/admin/companies"] })}
-                  style={{ marginTop: '16px' }}
+                  style={{ 
+                    marginTop: '16px',
+                    backgroundColor: '#3b82f6',
+                    color: 'white',
+                    border: '1px solid #3b82f6',
+                    borderRadius: '8px',
+                    padding: '12px 24px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: 'pointer'
+                  }}
                 >
                   Retry
                 </Button>
@@ -551,60 +937,165 @@ export default function CompanyManagement() {
                 gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' 
               }}>
                 {companies.map((company: Company) => (
-                  <Card key={company.id} style={{ border: '1px solid #e5e7eb' }}>
-                    <CardContent style={{ padding: '16px' }}>
-                      <div style={{ 
-                        display: 'flex', 
-                        alignItems: 'flex-start', 
-                        justifyContent: 'space-between', 
-                        marginBottom: '16px' 
-                      }}>
+                  <Card key={company.id} style={{ 
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+                  }}>
+                    {/* Blue Header */}
+                    <div style={{
+                      background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+                      padding: '16px',
+                      color: 'white'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                          {company.logo && (
+                          {company.logo ? (
                             <img 
                               src={company.logo} 
                               alt={company.name} 
                               style={{
-                                width: '48px',
-                                height: '48px',
+                                width: '40px',
+                                height: '40px',
                                 objectFit: 'cover',
                                 borderRadius: '8px',
-                                border: '1px solid #e5e7eb'
+                                border: '2px solid rgba(255,255,255,0.3)'
                               }}
                             />
+                          ) : (
+                            <div style={{
+                              width: '40px',
+                              height: '40px',
+                              borderRadius: '8px',
+                              backgroundColor: 'rgba(255,255,255,0.2)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center'
+                            }}>
+                              <Building style={{ width: '20px', height: '20px', color: 'white' }} />
+                            </div>
                           )}
                           <div>
-                            <h3 style={{ fontWeight: '600', marginBottom: '4px' }}>{company.name}</h3>
-                            <p style={{ fontSize: '14px', color: '#4b5563', marginBottom: '2px' }}>{company.domain}</p>
-                            <p style={{ fontSize: '12px', color: '#6b7280' }}>Admin: {company.primaryAdminName}</p>
+                            <h3 style={{ 
+                              fontWeight: '700', 
+                              fontSize: '18px',
+                              marginBottom: '4px',
+                              color: 'white'
+                            }}>
+                              {company.name}
+                            </h3>
+                            <p style={{ 
+                              fontSize: '14px', 
+                              color: 'rgba(255,255,255,0.9)',
+                              fontWeight: '500'
+                            }}>
+                              {company.domain}
+                            </p>
                           </div>
                         </div>
-                        <Badge variant={company.isActive ? "default" : "secondary"}>
+                        <Badge 
+                          style={{
+                            backgroundColor: company.isActive ? '#10b981' : '#6b7280',
+                            color: 'white',
+                            fontWeight: '600',
+                            padding: '6px 12px',
+                            border: 'none'
+                          }}
+                        >
                           {company.isActive ? "Active" : "Inactive"}
                         </Badge>
                       </div>
+                    </div>
+                    
+                    <CardContent style={{ padding: '16px' }}>
+                      <div style={{ marginBottom: '16px' }}>
+                        <div style={{ 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: '8px',
+                          marginBottom: '8px'
+                        }}>
+                          <UserPlus style={{ width: '16px', height: '16px', color: '#3b82f6' }} />
+                          <span style={{ 
+                            fontWeight: '600', 
+                            color: '#1f2937',
+                            fontSize: '14px'
+                          }}>
+                            Primary Administrator
+                          </span>
+                        </div>
+                        <div style={{ paddingLeft: '24px' }}>
+                          <p style={{ 
+                            fontSize: '15px', 
+                            color: '#1f2937', 
+                            fontWeight: '600',
+                            marginBottom: '2px'
+                          }}>
+                            {company.primaryAdminName}
+                          </p>
+                          <p style={{ 
+                            fontSize: '13px', 
+                            color: '#6b7280',
+                            marginBottom: '4px'
+                          }}>
+                            {company.primaryAdminTitle}
+                          </p>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <Mail style={{ width: '12px', height: '12px', color: '#3b82f6' }} />
+                            <span style={{ 
+                              fontSize: '13px', 
+                              color: '#3b82f6',
+                              fontWeight: '500'
+                            }}>
+                              {company.primaryAdminEmail}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
                       <div style={{ display: 'flex', gap: '8px' }}>
                         <Button
-                          variant="outline"
-                          size="sm"
                           onClick={() => {
                             console.log("Edit button clicked for company:", company.id, company.name);
                             handleEditCompany(company);
                           }}
+                          style={{
+                            backgroundColor: '#3b82f6',
+                            color: 'white',
+                            border: '1px solid #3b82f6',
+                            borderRadius: '6px',
+                            padding: '8px 16px',
+                            fontSize: '14px',
+                            fontWeight: '500',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}
                         >
-                          <Edit2 style={{ width: '16px', height: '16px', marginRight: '4px' }} />
+                          <Edit2 style={{ width: '16px', height: '16px' }} />
                           Edit
                         </Button>
                         <Button
-                          variant="outline"
-                          size="sm"
                           onClick={() => {
                             console.log("Delete button clicked for company:", company.id, company.name);
                             handleDeleteClick(company);
                           }}
-                          style={{ color: '#ef4444' }}
+                          style={{
+                            backgroundColor: 'white',
+                            color: '#ef4444',
+                            border: '1px solid #ef4444',
+                            borderRadius: '6px',
+                            padding: '8px 16px',
+                            fontSize: '14px',
+                            fontWeight: '500',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}
                         >
-                          <Trash2 style={{ width: '16px', height: '16px', marginRight: '4px' }} />
+                          <Trash2 style={{ width: '16px', height: '16px' }} />
                           Delete
                         </Button>
                       </div>
@@ -631,6 +1122,8 @@ export default function CompanyManagement() {
               setEditingCompany(null);
               companyForm.reset();
               setDialogJustOpened(false);
+              setDomainCheckResult({ checking: false, exists: false, message: "" });
+              setNameCheckResult({ checking: false, exists: false, message: "" });
             }
           }}
         >
@@ -648,10 +1141,53 @@ export default function CompanyManagement() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Company Name</FormLabel>
+                      <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>
+                        <span style={{ color: '#dc2626' }}>*</span> Company Name (Must be unique)
+                      </FormLabel>
                       <FormControl>
-                        <Input placeholder="Acme Corporation" {...field} />
+                        <Input 
+                          placeholder="Acme Corporation (must be unique)" 
+                          {...field} 
+                          onChange={(e) => {
+                            field.onChange(e);
+                            checkNameAvailability(e.target.value);
+                          }}
+                          style={{
+                            borderColor: nameCheckResult.exists ? '#ef4444' : 
+                                        nameCheckResult.message.includes("✅") ? '#10b981' : '#d1d5db'
+                          }}
+                        />
                       </FormControl>
+                      {nameCheckResult.message && (
+                        <div style={{ 
+                          fontSize: '13px', 
+                          marginTop: '4px',
+                          fontWeight: '500',
+                          color: nameCheckResult.checking ? '#6b7280' :
+                                 nameCheckResult.exists ? '#ef4444' : '#10b981',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          backgroundColor: nameCheckResult.exists ? '#fef2f2' : 
+                                          nameCheckResult.message.includes("✅") ? '#f0fdf4' : 'transparent',
+                          padding: nameCheckResult.message ? '6px 8px' : '0',
+                          borderRadius: '4px',
+                          border: nameCheckResult.exists ? '1px solid #fecaca' : 
+                                 nameCheckResult.message.includes("✅") ? '1px solid #bbf7d0' : 'none'
+                        }}>
+                          {nameCheckResult.checking && (
+                            <div style={{
+                              width: '12px',
+                              height: '12px',
+                              border: '2px solid #e5e7eb',
+                              borderTop: '2px solid #3b82f6',
+                              borderRadius: '50%',
+                              animation: 'spin 1s linear infinite'
+                            }} />
+                          )}
+                          {nameCheckResult.message}
+                        </div>
+                      )}
                       <FormMessage />
                     </FormItem>
                   )}
@@ -661,10 +1197,53 @@ export default function CompanyManagement() {
                   name="domain"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Company Domain</FormLabel>
+                      <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>
+                        <span style={{ color: '#dc2626' }}>*</span> Email Domain (Must be unique)
+                      </FormLabel>
                       <FormControl>
-                        <Input placeholder="acme.com" {...field} />
+                        <Input 
+                          placeholder="acme.com (must be unique)" 
+                          {...field} 
+                          onChange={(e) => {
+                            field.onChange(e);
+                            checkDomainAvailability(e.target.value);
+                          }}
+                          style={{
+                            borderColor: domainCheckResult.exists ? '#ef4444' : 
+                                        domainCheckResult.message.includes("✅") ? '#10b981' : '#d1d5db'
+                          }}
+                        />
                       </FormControl>
+                      {domainCheckResult.message && (
+                        <div style={{ 
+                          fontSize: '13px', 
+                          marginTop: '4px',
+                          fontWeight: '500',
+                          color: domainCheckResult.checking ? '#6b7280' :
+                                 domainCheckResult.exists ? '#ef4444' : '#10b981',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          backgroundColor: domainCheckResult.exists ? '#fef2f2' : 
+                                          domainCheckResult.message.includes("✅") ? '#f0fdf4' : 'transparent',
+                          padding: domainCheckResult.message ? '6px 8px' : '0',
+                          borderRadius: '4px',
+                          border: domainCheckResult.exists ? '1px solid #fecaca' : 
+                                 domainCheckResult.message.includes("✅") ? '1px solid #bbf7d0' : 'none'
+                        }}>
+                          {domainCheckResult.checking && (
+                            <div style={{
+                              width: '12px',
+                              height: '12px',
+                              border: '2px solid #e5e7eb',
+                              borderTop: '2px solid #3b82f6',
+                              borderRadius: '50%',
+                              animation: 'spin 1s linear infinite'
+                            }} />
+                          )}
+                          {domainCheckResult.message}
+                        </div>
+                      )}
                       <FormMessage />
                     </FormItem>
                   )}
@@ -674,7 +1253,9 @@ export default function CompanyManagement() {
                   name="primaryAdminName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Primary Administrator Name</FormLabel>
+                      <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>
+                        <span style={{ color: '#dc2626' }}>*</span> Primary Admin Name
+                      </FormLabel>
                       <FormControl>
                         <Input placeholder="John Smith" {...field} />
                       </FormControl>
@@ -687,7 +1268,9 @@ export default function CompanyManagement() {
                   name="primaryAdminEmail"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Primary Administrator Email</FormLabel>
+                      <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>
+                        <span style={{ color: '#dc2626' }}>*</span> Primary Admin Email
+                      </FormLabel>
                       <FormControl>
                         <Input placeholder="john.smith@acme.com" {...field} />
                       </FormControl>
@@ -700,7 +1283,9 @@ export default function CompanyManagement() {
                   name="primaryAdminTitle"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Primary Administrator Title</FormLabel>
+                      <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>
+                        <span style={{ color: '#dc2626' }}>*</span> Primary Admin Title
+                      </FormLabel>
                       <FormControl>
                         <Input placeholder="CEO" {...field} />
                       </FormControl>
@@ -748,21 +1333,40 @@ export default function CompanyManagement() {
                 <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
                   <Button 
                     type="button" 
-                    variant="outline" 
                     onClick={() => {
                       console.log("❌ Edit dialog cancelled");
                       setShowEditCompany(false);
                       setEditingCompany(null);
                       companyForm.reset();
                     }}
-                    style={{ flex: 1 }}
+                    style={{ 
+                      flex: 1,
+                      backgroundColor: 'white',
+                      color: '#6b7280',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '8px',
+                      padding: '12px 24px',
+                      fontSize: '16px',
+                      fontWeight: '500',
+                      cursor: 'pointer'
+                    }}
                   >
                     Cancel
                   </Button>
                   <Button 
                     type="submit" 
-                    style={{ flex: 1 }} 
                     disabled={updateCompanyMutation.isPending}
+                    style={{ 
+                      flex: 1,
+                      backgroundColor: '#10b981',
+                      color: 'white',
+                      border: '1px solid #10b981',
+                      borderRadius: '8px',
+                      padding: '12px 24px',
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      cursor: 'pointer'
+                    }}
                   >
                     {updateCompanyMutation.isPending ? "Updating..." : "Update Company"}
                   </Button>
