@@ -426,6 +426,23 @@ export default function CompanyManagement() {
       // Reset the flag after a short delay
       setTimeout(() => setDialogJustOpened(false), 100);
       
+      // CRITICAL: Trigger validation for existing values after form is populated
+      setTimeout(() => {
+        console.log("🔍 [EDIT VALIDATION] Triggering validation for existing values");
+        console.log("🔍 [EDIT VALIDATION] Company name:", company.name);
+        console.log("🔍 [EDIT VALIDATION] Domain:", company.domain);
+        
+        // Trigger validation for company name if it exists
+        if (company.name && company.name.length >= 2) {
+          checkNameAvailability(company.name);
+        }
+        
+        // Trigger validation for domain if it exists
+        if (company.domain && company.domain.length >= 2) {
+          checkDomainAvailability(company.domain);
+        }
+      }, 200); // Allow form to fully populate first
+      
       console.log("After setShowEditCompany(true), editingCompany:", company.name);
       console.log("Updated showEditCompany state:", true);
     }, 0);
@@ -639,7 +656,7 @@ export default function CompanyManagement() {
                             }}
                             style={{
                               borderColor: domainCheckResult.exists ? '#ef4444' : 
-                                          domainCheckResult.message === "Domain is available" ? '#10b981' : '#d1d5db'
+                                          domainCheckResult.message.includes("✅") ? '#10b981' : '#d1d5db'
                             }}
                           />
                         </FormControl>
@@ -1120,7 +1137,7 @@ export default function CompanyManagement() {
                           }}
                           style={{
                             borderColor: domainCheckResult.exists ? '#ef4444' : 
-                                        domainCheckResult.message === "Domain is available" ? '#10b981' : '#d1d5db'
+                                        domainCheckResult.message.includes("✅") ? '#10b981' : '#d1d5db'
                           }}
                         />
                       </FormControl>
