@@ -373,7 +373,24 @@ export default function CompanyManagement() {
             All Companies
           </h2>
           
-          <Dialog open={showAddCompany} onOpenChange={setShowAddCompany}>
+          <Dialog open={showAddCompany} onOpenChange={(open) => {
+            console.log("🆕 Add Company Dialog onOpenChange:", open);
+            setShowAddCompany(open);
+            if (open) {
+              // Reset form and editing state when opening add dialog
+              console.log("🆕 Resetting form for new company creation");
+              setEditingCompany(null);
+              companyForm.reset({
+                name: "",
+                domain: "",
+                primaryAdminName: "",
+                primaryAdminEmail: "",
+                primaryAdminTitle: "",
+                logo: "",
+                isActive: true,
+              });
+            }
+          }}>
             <DialogTrigger asChild>
               <Button style={{
                 backgroundColor: '#3b82f6',
