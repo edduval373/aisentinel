@@ -394,7 +394,9 @@ export default function CompanyManagement() {
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Company Name</FormLabel>
+                        <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>
+                          <span style={{ color: '#dc2626' }}>*</span> Company Name
+                        </FormLabel>
                         <FormControl>
                           <Input placeholder="Acme Corporation" {...field} />
                         </FormControl>
@@ -407,7 +409,9 @@ export default function CompanyManagement() {
                     name="domain"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Company Domain</FormLabel>
+                        <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>
+                          <span style={{ color: '#dc2626' }}>*</span> Email Domain
+                        </FormLabel>
                         <FormControl>
                           <Input placeholder="acme.com" {...field} />
                         </FormControl>
@@ -420,7 +424,9 @@ export default function CompanyManagement() {
                     name="primaryAdminName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Primary Administrator Name</FormLabel>
+                        <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>
+                          <span style={{ color: '#dc2626' }}>*</span> Full Name
+                        </FormLabel>
                         <FormControl>
                           <Input placeholder="John Smith" {...field} />
                         </FormControl>
@@ -433,7 +439,9 @@ export default function CompanyManagement() {
                     name="primaryAdminEmail"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Primary Administrator Email</FormLabel>
+                        <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>
+                          <span style={{ color: '#dc2626' }}>*</span> Email Address
+                        </FormLabel>
                         <FormControl>
                           <Input placeholder="john.smith@acme.com" {...field} />
                         </FormControl>
@@ -446,7 +454,9 @@ export default function CompanyManagement() {
                     name="primaryAdminTitle"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Primary Administrator Title</FormLabel>
+                        <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>
+                          <span style={{ color: '#dc2626' }}>*</span> Job Title
+                        </FormLabel>
                         <FormControl>
                           <Input placeholder="CEO" {...field} />
                         </FormControl>
@@ -648,7 +658,9 @@ export default function CompanyManagement() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Company Name</FormLabel>
+                      <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>
+                        <span style={{ color: '#dc2626' }}>*</span> Company Name
+                      </FormLabel>
                       <FormControl>
                         <Input placeholder="Acme Corporation" {...field} />
                       </FormControl>
@@ -661,7 +673,9 @@ export default function CompanyManagement() {
                   name="domain"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Company Domain</FormLabel>
+                      <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>
+                        <span style={{ color: '#dc2626' }}>*</span> Email Domain
+                      </FormLabel>
                       <FormControl>
                         <Input placeholder="acme.com" {...field} />
                       </FormControl>
@@ -674,7 +688,9 @@ export default function CompanyManagement() {
                   name="primaryAdminName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Primary Administrator Name</FormLabel>
+                      <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>
+                        <span style={{ color: '#dc2626' }}>*</span> Primary Admin Name
+                      </FormLabel>
                       <FormControl>
                         <Input placeholder="John Smith" {...field} />
                       </FormControl>
@@ -687,7 +703,9 @@ export default function CompanyManagement() {
                   name="primaryAdminEmail"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Primary Administrator Email</FormLabel>
+                      <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>
+                        <span style={{ color: '#dc2626' }}>*</span> Primary Admin Email
+                      </FormLabel>
                       <FormControl>
                         <Input placeholder="john.smith@acme.com" {...field} />
                       </FormControl>
@@ -700,7 +718,9 @@ export default function CompanyManagement() {
                   name="primaryAdminTitle"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Primary Administrator Title</FormLabel>
+                      <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>
+                        <span style={{ color: '#dc2626' }}>*</span> Primary Admin Title
+                      </FormLabel>
                       <FormControl>
                         <Input placeholder="CEO" {...field} />
                       </FormControl>
