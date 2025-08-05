@@ -561,37 +561,121 @@ export default function CompanyManagement() {
                 gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' 
               }}>
                 {companies.map((company: Company) => (
-                  <Card key={company.id} style={{ border: '1px solid #e5e7eb' }}>
-                    <CardContent style={{ padding: '16px' }}>
-                      <div style={{ 
-                        display: 'flex', 
-                        alignItems: 'flex-start', 
-                        justifyContent: 'space-between', 
-                        marginBottom: '16px' 
-                      }}>
+                  <Card key={company.id} style={{ 
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+                  }}>
+                    {/* Blue Header */}
+                    <div style={{
+                      background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+                      padding: '16px',
+                      color: 'white'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                          {company.logo && (
+                          {company.logo ? (
                             <img 
                               src={company.logo} 
                               alt={company.name} 
                               style={{
-                                width: '48px',
-                                height: '48px',
+                                width: '40px',
+                                height: '40px',
                                 objectFit: 'cover',
                                 borderRadius: '8px',
-                                border: '1px solid #e5e7eb'
+                                border: '2px solid rgba(255,255,255,0.3)'
                               }}
                             />
+                          ) : (
+                            <div style={{
+                              width: '40px',
+                              height: '40px',
+                              borderRadius: '8px',
+                              backgroundColor: 'rgba(255,255,255,0.2)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center'
+                            }}>
+                              <Building style={{ width: '20px', height: '20px', color: 'white' }} />
+                            </div>
                           )}
                           <div>
-                            <h3 style={{ fontWeight: '600', marginBottom: '4px' }}>{company.name}</h3>
-                            <p style={{ fontSize: '14px', color: '#4b5563', marginBottom: '2px' }}>{company.domain}</p>
-                            <p style={{ fontSize: '12px', color: '#6b7280' }}>Admin: {company.primaryAdminName}</p>
+                            <h3 style={{ 
+                              fontWeight: '700', 
+                              fontSize: '18px',
+                              marginBottom: '4px',
+                              color: 'white'
+                            }}>
+                              {company.name}
+                            </h3>
+                            <p style={{ 
+                              fontSize: '14px', 
+                              color: 'rgba(255,255,255,0.9)',
+                              fontWeight: '500'
+                            }}>
+                              {company.domain}
+                            </p>
                           </div>
                         </div>
-                        <Badge variant={company.isActive ? "default" : "secondary"}>
+                        <Badge 
+                          style={{
+                            backgroundColor: company.isActive ? '#10b981' : '#6b7280',
+                            color: 'white',
+                            fontWeight: '600',
+                            padding: '6px 12px',
+                            border: 'none'
+                          }}
+                        >
                           {company.isActive ? "Active" : "Inactive"}
                         </Badge>
+                      </div>
+                    </div>
+                    
+                    <CardContent style={{ padding: '16px' }}>
+                      <div style={{ marginBottom: '16px' }}>
+                        <div style={{ 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: '8px',
+                          marginBottom: '8px'
+                        }}>
+                          <UserPlus style={{ width: '16px', height: '16px', color: '#3b82f6' }} />
+                          <span style={{ 
+                            fontWeight: '600', 
+                            color: '#1f2937',
+                            fontSize: '14px'
+                          }}>
+                            Primary Administrator
+                          </span>
+                        </div>
+                        <div style={{ paddingLeft: '24px' }}>
+                          <p style={{ 
+                            fontSize: '15px', 
+                            color: '#1f2937', 
+                            fontWeight: '600',
+                            marginBottom: '2px'
+                          }}>
+                            {company.primaryAdminName}
+                          </p>
+                          <p style={{ 
+                            fontSize: '13px', 
+                            color: '#6b7280',
+                            marginBottom: '4px'
+                          }}>
+                            {company.primaryAdminTitle}
+                          </p>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <Mail style={{ width: '12px', height: '12px', color: '#3b82f6' }} />
+                            <span style={{ 
+                              fontSize: '13px', 
+                              color: '#3b82f6',
+                              fontWeight: '500'
+                            }}>
+                              {company.primaryAdminEmail}
+                            </span>
+                          </div>
+                        </div>
                       </div>
                       <div style={{ display: 'flex', gap: '8px' }}>
                         <Button
