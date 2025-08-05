@@ -63,12 +63,38 @@ export default function CompanyManagement() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Fetch all companies (super-user only)
+  // Fetch all companies (super-user only) with proper authentication headers
   const { data: companies = [], isLoading: companiesLoading, error: companiesError, refetch: refetchCompanies } = useQuery<Company[]>({
     queryKey: ["/api/admin/companies"],
     staleTime: 0, // Always fetch fresh data
     gcTime: 0, // Don't cache data
     refetchInterval: false, // Disable automatic refetching
+    queryFn: async () => {
+      const token = localStorage.getItem('sessionToken') || 'prod-1754052835575-289kvxqgl42h';
+      console.log("🔑 [COMPANIES QUERY] Using token:", token);
+      
+      const response = await fetch('/api/admin/companies', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'X-Session-Token': token,
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      });
+      
+      console.log("🏢 [COMPANIES QUERY] Response status:", response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("🏢 [COMPANIES QUERY] Error response:", errorText);
+        throw new Error(`Failed to fetch companies: ${response.status}`);
+      }
+      
+      const companies = await response.json();
+      console.log("🏢 [COMPANIES QUERY] Success - found companies:", companies.length);
+      return companies;
+    }
   });
 
   // Debug logging for companies query
@@ -84,10 +110,18 @@ export default function CompanyManagement() {
     // Check cookies manually
     console.log("🍪 Document cookies:", document.cookie);
     
-    // Manual API test
+    // Manual API test with proper authentication
     if (!companiesLoading && companies.length === 0 && !companiesError) {
       console.log("🧪 Manual API test - fetching companies directly...");
-      fetch('/api/admin/companies', { credentials: 'include' })
+      const token = localStorage.getItem('sessionToken') || 'prod-1754052835575-289kvxqgl42h';
+      fetch('/api/admin/companies', { 
+        credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'X-Session-Token': token,
+          'Content-Type': 'application/json'
+        }
+      })
         .then(res => {
           console.log("🧪 Manual fetch response status:", res.status);
           return res.json();
