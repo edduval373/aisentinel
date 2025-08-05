@@ -827,7 +827,7 @@ export default function CreateProviders() {
         }}>
           {providers.map((provider) => {
             // PRODUCTION DEBUG: Log individual provider rendering  
-            console.log('🔧 [PROVIDER-FULL-OBJECT] Complete provider data:', JSON.stringify(provider, null, 2));
+            console.log('🔧 [PROVIDER-FULL-OBJECT] Complete provider data:', provider);
             console.log('🔧 [PROVIDER-KEYS] Available keys:', Object.keys(provider));
             console.log('🔧 [PROVIDER-VALUES] Values:', Object.values(provider));
             console.log('🎨 [RENDER-DEBUG] Rendering provider:', {
@@ -884,29 +884,14 @@ export default function CreateProviders() {
                     </div>
                   </div>
                   <span style={{
-                    backgroundColor: provider.isEnabled === true ? '#10b981' : '#6b7280',
+                    backgroundColor: provider.isEnabled ? '#10b981' : '#6b7280',
                     color: 'white',
                     fontWeight: '600',
                     padding: '6px 12px',
                     borderRadius: '6px',
                     fontSize: '12px'
                   }}>
-                    {(() => {
-                      console.log(`🔧 [RENDER-OBJECT] Full provider object:`, provider);
-                      console.log(`🔧 [RENDER-KEYS] Provider keys:`, Object.keys(provider));
-                      console.log(`🔧 [RENDER-VALUES] Provider values:`, Object.values(provider));
-                      
-                      const isActiveCheck = provider.isEnabled === true;
-                      console.log(`🎨 [RENDER-STATUS] Provider ${provider.displayName || provider.name} (ID: ${provider.id}):`, {
-                        isEnabled: provider.isEnabled,
-                        isEnabledType: typeof provider.isEnabled,
-                        strictEquality: provider.isEnabled === true,
-                        booleanConversion: Boolean(provider.isEnabled),
-                        rendering: isActiveCheck ? "ACTIVE" : "INACTIVE",
-                        fullObject: provider
-                      });
-                      return isActiveCheck ? "ACTIVE" : "INACTIVE";
-                    })()}
+                    {provider.isEnabled ? "ACTIVE" : "INACTIVE"}
                   </span>
                 </div>
               </div>
