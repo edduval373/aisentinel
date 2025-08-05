@@ -650,44 +650,56 @@ export default function CreateProviders() {
                   control={form.control}
                   name="isEnabled"
                   render={({ field }) => (
-                    <FormItem style={{ 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      gap: '12px', 
-                      marginTop: '16px',
-                      padding: '12px 16px',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '8px',
-                      backgroundColor: '#f9fafb',
-                      cursor: 'pointer'
-                    }}>
-                      <FormControl>
-                        <Switch 
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                          style={{ cursor: 'pointer' }}
-                        />
-                      </FormControl>
-                      <FormLabel style={{ 
-                        fontSize: '14px', 
-                        fontWeight: '600', 
-                        margin: 0,
-                        cursor: 'pointer',
-                        color: field.value ? '#10b981' : '#6b7280'
-                      }}>
-                        {field.value ? '✅ Provider Enabled' : '⚪ Enable this provider'}
+                    <FormItem style={{ marginTop: '16px' }}>
+                      <FormLabel style={{ fontSize: '14px', fontWeight: '500', marginBottom: '8px', display: 'block' }}>
+                        Provider Status
                       </FormLabel>
-                      <div style={{ 
-                        marginLeft: 'auto',
-                        fontSize: '12px',
-                        fontWeight: '500',
-                        color: field.value ? '#10b981' : '#6b7280',
-                        backgroundColor: field.value ? '#dcfce7' : '#f3f4f6',
-                        padding: '4px 8px',
-                        borderRadius: '4px'
-                      }}>
-                        {field.value ? 'ACTIVE' : 'INACTIVE'}
-                      </div>
+                      <FormControl>
+                        <button
+                          type="button"
+                          onClick={() => field.onChange(!field.value)}
+                          style={{
+                            width: '100%',
+                            padding: '12px 16px',
+                            border: '2px solid',
+                            borderColor: field.value ? '#10b981' : '#ef4444',
+                            borderRadius: '8px',
+                            backgroundColor: field.value ? '#10b981' : '#ef4444',
+                            color: 'white',
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '8px',
+                            transition: 'all 0.2s ease',
+                            outline: 'none'
+                          }}
+                          onMouseOver={(e) => {
+                            (e.target as HTMLButtonElement).style.opacity = '0.9';
+                            (e.target as HTMLButtonElement).style.transform = 'translateY(-1px)';
+                          }}
+                          onMouseOut={(e) => {
+                            (e.target as HTMLButtonElement).style.opacity = '1';
+                            (e.target as HTMLButtonElement).style.transform = 'translateY(0)';
+                          }}
+                        >
+                          <span style={{ fontSize: '16px' }}>
+                            {field.value ? '✅' : '❌'}
+                          </span>
+                          {field.value ? 'PROVIDER ENABLED' : 'PROVIDER DISABLED'}
+                          <span style={{
+                            marginLeft: 'auto',
+                            fontSize: '12px',
+                            backgroundColor: 'rgba(255,255,255,0.2)',
+                            padding: '2px 6px',
+                            borderRadius: '4px'
+                          }}>
+                            {field.value ? 'ACTIVE' : 'INACTIVE'}
+                          </span>
+                        </button>
+                      </FormControl>
                     </FormItem>
                   )}
                 />
@@ -1080,44 +1092,56 @@ export default function CreateProviders() {
                 control={form.control}
                 name="isEnabled"
                 render={({ field }) => (
-                  <FormItem style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: '12px', 
-                    marginTop: '16px',
-                    padding: '12px 16px',
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '8px',
-                    backgroundColor: '#f9fafb',
-                    cursor: 'pointer'
-                  }}>
-                    <FormControl>
-                      <Switch 
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                        style={{ cursor: 'pointer' }}
-                      />
-                    </FormControl>
-                    <FormLabel style={{ 
-                      fontSize: '14px', 
-                      fontWeight: '600', 
-                      margin: 0,
-                      cursor: 'pointer',
-                      color: field.value ? '#10b981' : '#6b7280'
-                    }}>
-                      {field.value ? '✅ Provider Enabled' : '⚪ Enable this provider'}
+                  <FormItem style={{ marginTop: '16px' }}>
+                    <FormLabel style={{ fontSize: '14px', fontWeight: '500', marginBottom: '8px', display: 'block' }}>
+                      Provider Status
                     </FormLabel>
-                    <div style={{ 
-                      marginLeft: 'auto',
-                      fontSize: '12px',
-                      fontWeight: '500',
-                      color: field.value ? '#10b981' : '#6b7280',
-                      backgroundColor: field.value ? '#dcfce7' : '#f3f4f6',
-                      padding: '4px 8px',
-                      borderRadius: '4px'
-                    }}>
-                      {field.value ? 'ACTIVE' : 'INACTIVE'}
-                    </div>
+                    <FormControl>
+                      <button
+                        type="button"
+                        onClick={() => field.onChange(!field.value)}
+                        style={{
+                          width: '100%',
+                          padding: '12px 16px',
+                          border: '2px solid',
+                          borderColor: field.value ? '#10b981' : '#ef4444',
+                          borderRadius: '8px',
+                          backgroundColor: field.value ? '#10b981' : '#ef4444',
+                          color: 'white',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '8px',
+                          transition: 'all 0.2s ease',
+                          outline: 'none'
+                        }}
+                        onMouseOver={(e) => {
+                          (e.target as HTMLButtonElement).style.opacity = '0.9';
+                          (e.target as HTMLButtonElement).style.transform = 'translateY(-1px)';
+                        }}
+                        onMouseOut={(e) => {
+                          (e.target as HTMLButtonElement).style.opacity = '1';
+                          (e.target as HTMLButtonElement).style.transform = 'translateY(0)';
+                        }}
+                      >
+                        <span style={{ fontSize: '16px' }}>
+                          {field.value ? '✅' : '❌'}
+                        </span>
+                        {field.value ? 'PROVIDER ENABLED' : 'PROVIDER DISABLED'}
+                        <span style={{
+                          marginLeft: 'auto',
+                          fontSize: '12px',
+                          backgroundColor: 'rgba(255,255,255,0.2)',
+                          padding: '2px 6px',
+                          borderRadius: '4px'
+                        }}>
+                          {field.value ? 'ACTIVE' : 'INACTIVE'}
+                        </span>
+                      </button>
+                    </FormControl>
                   </FormItem>
                 )}
               />
