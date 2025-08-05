@@ -1,6 +1,13 @@
-import { db } from '../../server/db.js';
-import { aiProviders } from '../../shared/schema.js';
-import { eq } from 'drizzle-orm';
+// Vercel API endpoint for AI providers management
+import { Pool } from 'pg';
+
+// Database connection using Railway PostgreSQL
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
 
 export default async function handler(req, res) {
   console.log(`🌐 API Request: ${req.method} ${req.url} from ${req.headers['user-agent']?.substring(0, 50)}...`);
@@ -60,18 +67,38 @@ export default async function handler(req, res) {
     switch (req.method) {
       case 'GET':
         console.log('✅ [AI-PROVIDERS] Fetching AI providers for super-user...');
-        const providers = await db.select().from(aiProviders).orderBy(aiProviders.displayName);
-        console.log('✅ [AI-PROVIDERS] Found ' + providers.length + ' providers');
-        return res.json(providers);
+        const client = await pool.connect();
+        try {
+          const result = await client.query('SELECT * FROM ai_providers ORDER BY display_name');
+          console.log('✅ [AI-PROVIDERS] Found ' + result.rows.length + ' providers');
+          return res.json(result.rows);
+        } finally {
+          client.release();
+        }
 
       case 'POST':
         console.log('✅ [AI-PROVIDERS] Creating new AI provider...');
         const insertData = req.body;
         console.log('📝 [AI-PROVIDERS] Insert data:', insertData);
         
-        const [newProvider] = await db.insert(aiProviders).values(insertData).returning();
-        console.log('✅ [AI-PROVIDERS] Created provider:', newProvider.displayName);
-        return res.status(201).json(newProvider);
+        const createClient = await pool.connect();
+        try {
+          const { name, displayName, description, website, apiDocUrl, isEnabled } = insertData;
+          
+          const query = `
+            INSERT INTO ai_providers (name, display_name, description, website, api_doc_url, is_enabled, created_at, updated_at)
+            VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
+            RETURNING *
+          `;
+          
+          const values = [name, displayName, description, website, apiDocUrl, isEnabled !== false];
+          const result = await createClient.query(query, values);
+          
+          console.log('✅ [AI-PROVIDERS] Created provider:', result.rows[0].display_name);
+          return res.status(201).json(result.rows[0]);
+        } finally {
+          createClient.release();
+        }
 
       default:
         return res.status(405).json({ error: 'Method not allowed' });
