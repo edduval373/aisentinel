@@ -508,6 +508,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('✅ [AI-PROVIDERS] Fetching all AI providers...');
       const providers = await storage.getAiProviders();
       console.log(`✅ [AI-PROVIDERS] Found ${providers.length} providers`);
+      
+      // Debug: Log the first provider's data structure
+      if (providers.length > 0) {
+        console.log('🔍 [AI-PROVIDERS] Sample provider data:', {
+          id: providers[0].id,
+          name: providers[0].name,
+          displayName: providers[0].displayName,
+          isEnabled: providers[0].isEnabled,
+          typeof_isEnabled: typeof providers[0].isEnabled
+        });
+      }
+      
       res.json(providers);
     } catch (error) {
       console.error('❌ [AI-PROVIDERS] Error fetching providers:', error);

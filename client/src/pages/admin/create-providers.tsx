@@ -106,7 +106,7 @@ export default function CreateProviders() {
   const token = localStorage.getItem('sessionToken') || 'prod-1754052835575-289kvxqgl42h';
   
   const { data: providers = [], isLoading, error: providersError, refetch: refetchProviders } = useQuery({
-    queryKey: ['/api/admin/ai-providers'],
+    queryKey: ['/api/admin/ai-providers', Date.now()], // Cache busting
     staleTime: 0, // Always fetch fresh data
     gcTime: 0, // Don't cache data
     queryFn: async () => {
@@ -131,6 +131,19 @@ export default function CreateProviders() {
         
         const data = await response.json();
         console.log('✅ [AI-PROVIDERS] Fetched providers from database:', data.length, 'providers');
+        
+        // Debug: Check the data structure of the first provider
+        if (data.length > 0) {
+          console.log('🔍 [AI-PROVIDERS] Sample provider data structure:', {
+            id: data[0].id,
+            name: data[0].name,
+            displayName: data[0].displayName,
+            isEnabled: data[0].isEnabled,
+            typeof_isEnabled: typeof data[0].isEnabled,
+            raw_data: data[0]
+          });
+        }
+        
         return data;
       } catch (error) {
         console.error('❌ [AI-PROVIDERS] Network or parsing error:', error);
@@ -708,7 +721,11 @@ export default function CreateProviders() {
           gap: '16px', 
           gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' 
         }}>
-          {providers.map((provider) => (
+          {providers.map((provider) => {
+            // Debug: Log each provider's isEnabled status
+            console.log(`🔍 [RENDER] Provider ${provider.name} - isEnabled:`, provider.isEnabled, typeof provider.isEnabled);
+            
+            return (
             <Card key={provider.id} style={{ 
               border: '1px solid #e5e7eb',
               borderRadius: '12px',
@@ -752,14 +769,14 @@ export default function CreateProviders() {
                     </div>
                   </div>
                   <span style={{
-                    backgroundColor: provider.isEnabled ? '#10b981' : '#6b7280',
+                    backgroundColor: Boolean(provider.isEnabled) ? '#10b981' : '#6b7280',
                     color: 'white',
                     fontWeight: '600',
                     padding: '6px 12px',
                     borderRadius: '6px',
                     fontSize: '12px'
                   }}>
-                    {provider.isEnabled ? "ACTIVE" : "INACTIVE"}
+                    {Boolean(provider.isEnabled) ? "ACTIVE" : "INACTIVE"}
                   </span>
                 </div>
               </div>
@@ -860,7 +877,8 @@ export default function CreateProviders() {
                 </div>
               </CardContent>
             </Card>
-          ))}
+            );
+          })}
         </div>
       )}
 
