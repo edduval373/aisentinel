@@ -156,12 +156,7 @@ export async function apiRequest(
     const duration = Date.now() - startTime;
     console.error(`❌ [API ${method}] ${url} - Failed (${duration}ms):`, error);
 
-    // Try fallback response for production API failures
-    const fallback = await getFallbackResponse(url, method, data);
-    if (fallback) {
-      console.log(`🔄 [API ${method}] ${url} - Using production fallback`);
-      return fallback;
-    }
+    // No fallbacks - all requests must use real API endpoints
 
     throw error;
   }
