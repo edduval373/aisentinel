@@ -262,12 +262,17 @@ export default function CreateProviders() {
       const requestBody = JSON.stringify(data);
       console.log('🔄 [AI-PROVIDERS] Request body:', requestBody);
       
-      const response = await fetch(`/api/admin/ai-providers/${id}`, {
+      // Ensure clean URL without double slashes
+      const cleanUrl = `/api/admin/ai-providers/${id}`.replace(/\/+/g, '/');
+      console.log('🔄 [AI-PROVIDERS] Clean URL:', cleanUrl);
+      
+      const response = await fetch(cleanUrl, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
           'X-Session-Token': token,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         credentials: 'include',
         body: requestBody
@@ -339,15 +344,21 @@ export default function CreateProviders() {
         throw new Error('Authentication token not available');
       }
       
-      const deleteUrl = `/api/admin/ai-providers/${id}`;
+      const deleteUrl = `/api/admin/ai-providers/${id}`.replace(/\/+/g, '/');
       console.log('🔄 [AI-PROVIDERS DELETE] Making DELETE request to:', deleteUrl);
+      console.log('🔄 [AI-PROVIDERS DELETE] Full request headers:', {
+        'Authorization': `Bearer ${token?.substring(0, 20)}...`,
+        'X-Session-Token': token?.substring(0, 20) + '...',
+        'Content-Type': 'application/json'
+      });
       
       const response = await fetch(deleteUrl, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
           'X-Session-Token': token,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         credentials: 'include'
       });
