@@ -441,7 +441,21 @@ export class DatabaseStorage implements IStorage {
     console.log('🔍 [STORAGE] getAiProviders() called');
     try {
       console.log('🔍 [STORAGE] Executing SELECT query on aiProviders table...');
-      const providers = await db.select().from(aiProviders).orderBy(aiProviders.displayName);
+      const rawProviders = await db.select().from(aiProviders).orderBy(aiProviders.displayName);
+      
+      // CRITICAL FIX: Map database fields to frontend expectations
+      const providers = rawProviders.map(p => ({
+        id: p.id,
+        name: p.name,
+        displayName: p.displayName, // This should now work correctly with Drizzle auto-mapping
+        description: p.description,
+        website: p.website,
+        apiDocUrl: p.apiDocUrl,
+        isEnabled: p.isEnabled,
+        createdAt: p.createdAt,
+        updatedAt: p.updatedAt
+      }));
+      
       console.log(`✅ [STORAGE] Successfully retrieved ${providers.length} AI providers from database`);
       console.log('🔍 [STORAGE] Provider summary:', providers.map(p => ({
         id: p.id,
@@ -450,6 +464,12 @@ export class DatabaseStorage implements IStorage {
         isEnabled: p.isEnabled,
         isEnabledType: typeof p.isEnabled
       })));
+      console.log('🔍 [STORAGE] Raw database record sample:', rawProviders[0] ? {
+        keys: Object.keys(rawProviders[0]),
+        displayName: rawProviders[0].displayName,
+        display_name: (rawProviders[0] as any).display_name
+      } : 'No records');
+      
       return providers;
     } catch (error) {
       console.error('❌ [STORAGE] Error in getAiProviders():', error);
@@ -463,13 +483,31 @@ export class DatabaseStorage implements IStorage {
     console.log(`🔍 [STORAGE] getAiProviderById() called for ID ${id}`);
     try {
       console.log('🔍 [STORAGE] Executing SELECT query on aiProviders table...');
-      const [provider] = await db.select().from(aiProviders).where(eq(aiProviders.id, id));
-      if (provider) {
+      const [rawProvider] = await db.select().from(aiProviders).where(eq(aiProviders.id, id));
+      if (rawProvider) {
+        // CRITICAL FIX: Ensure proper field mapping
+        const provider = {
+          id: rawProvider.id,
+          name: rawProvider.name,
+          displayName: rawProvider.displayName,
+          description: rawProvider.description,
+          website: rawProvider.website,
+          apiDocUrl: rawProvider.apiDocUrl,
+          isEnabled: rawProvider.isEnabled,
+          createdAt: rawProvider.createdAt,
+          updatedAt: rawProvider.updatedAt
+        };
+        
         console.log(`✅ [STORAGE] Successfully retrieved AI provider with ID ${id}:`, {
           id: provider.id,
           name: provider.name,
           displayName: provider.displayName,
           isEnabled: provider.isEnabled
+        });
+        console.log('🔍 [STORAGE] Raw database record:', {
+          keys: Object.keys(rawProvider),
+          displayName: rawProvider.displayName,
+          display_name: (rawProvider as any).display_name
         });
         return provider;
       }
