@@ -255,6 +255,12 @@ export default function CreateProviders() {
   const updateProviderMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: AiProviderFormData }) => {
       console.log('🔄 [AI-PROVIDERS] Updating provider:', id, data.name);
+      console.log('🔄 [AI-PROVIDERS] Full update data:', data);
+      console.log('🔄 [AI-PROVIDERS] Request URL:', `/api/admin/ai-providers/${id}`);
+      console.log('🔄 [AI-PROVIDERS] Token:', token ? `${token.substring(0, 20)}...` : 'MISSING');
+      
+      const requestBody = JSON.stringify(data);
+      console.log('🔄 [AI-PROVIDERS] Request body:', requestBody);
       
       const response = await fetch(`/api/admin/ai-providers/${id}`, {
         method: 'PUT',
@@ -264,17 +270,21 @@ export default function CreateProviders() {
           'Content-Type': 'application/json'
         },
         credentials: 'include',
-        body: JSON.stringify(data)
+        body: requestBody
       });
+      
+      console.log('🔄 [AI-PROVIDERS] Response status:', response.status);
+      console.log('🔄 [AI-PROVIDERS] Response headers:', Object.fromEntries(response.headers.entries()));
       
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('❌ [AI-PROVIDERS] Update failed:', response.status, errorText);
-        throw new Error(errorText || `Failed to update provider: ${response.status}`);
+        console.error('❌ [AI-PROVIDERS] Update failed:', response.status, response.statusText);
+        console.error('❌ [AI-PROVIDERS] Error response:', errorText);
+        throw new Error(`Failed to update provider: ${response.status} - ${errorText}`);
       }
       
       const result = await response.json();
-      console.log('✅ [AI-PROVIDERS] Provider updated successfully:', id);
+      console.log('✅ [AI-PROVIDERS] Provider updated successfully:', id, result);
       return result;
     },
     onSuccess: () => {
