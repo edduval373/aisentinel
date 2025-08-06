@@ -200,9 +200,9 @@ export default function CreateModels() {
     console.log("🔧 [PROVIDERS] Transformed providers for dropdown:", providers);
     console.log("🔧 [PROVIDERS] Providers count:", providers.length);
     console.log("🔧 [PROVIDERS] Sample provider:", providers[0]);
-    console.log("🔧 [PROVIDERS] Loading state:", isLoading);
-    console.log("🔧 [PROVIDERS] Error state:", error);
-  }, [dbProviders, providers, isLoading, error]);
+    console.log("🔧 [PROVIDERS] Loading state:", providersLoading);
+    console.log("🔧 [PROVIDERS] Error state:", providersError);
+  }, [dbProviders, providers, providersLoading, providersError]);
 
   const templateForm = useForm<z.infer<typeof templateSchema>>({
     resolver: zodResolver(templateSchema),
@@ -862,7 +862,7 @@ function TemplateForm({
                         fontSize: '14px',
                         fontWeight: '500'
                       }}>
-                        <span style={{ color: '#dc2626' }}>*</span> Provider {isLoading && "(Loading...)"}
+                        <span style={{ color: '#dc2626' }}>*</span> Provider {providersLoading && "(Loading...)"}
                       </FormLabel>
                       <Select 
                         value={field.value} 
@@ -876,11 +876,11 @@ function TemplateForm({
                             borderColor: field.value ? '#10b981' : '#dc2626',
                             borderWidth: '2px'
                           }}>
-                            <SelectValue placeholder={isLoading ? "Loading providers..." : "Select provider"} />
+                            <SelectValue placeholder={providersLoading ? "Loading providers..." : "Select provider"} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {isLoading ? (
+                          {providersLoading ? (
                             <SelectItem value="loading" disabled>
                               Loading providers...
                             </SelectItem>
