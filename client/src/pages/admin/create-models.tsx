@@ -170,43 +170,9 @@ export default function CreateModels() {
     }
   });
 
-  // Fetch AI providers with authentication and immediate execution
+  // Fetch AI providers using TanStack Query's default fetch with proper headers
   const { data: dbProviders = [], isLoading: providersLoading, error: providersError } = useQuery<any[]>({
     queryKey: ["/api/admin/ai-providers"],
-    queryFn: async () => {
-      console.log('🔧 [PROVIDERS-QUERY] Starting providers fetch...');
-      const sessionToken = localStorage.getItem('prodAuthToken') || 'prod-1754052835575-289kvxqgl42h';
-      const headers: any = {
-        'Content-Type': 'application/json'
-      };
-      
-      if (sessionToken) {
-        headers['Authorization'] = `Bearer ${sessionToken}`;
-        headers['X-Session-Token'] = sessionToken;
-      }
-      
-      console.log('🔧 [PROVIDERS-QUERY] Making request with headers:', Object.keys(headers));
-      console.log('🔧 [PROVIDERS-QUERY] Full URL:', '/api/admin/ai-providers');
-      
-      const response = await fetch('/api/admin/ai-providers', {
-        method: 'GET',
-        headers
-      });
-      
-      console.log('🔧 [PROVIDERS-QUERY] Response status:', response.status);
-      console.log('🔧 [PROVIDERS-QUERY] Response headers:', response.headers);
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('🔧 [PROVIDERS-QUERY] Error response:', errorText);
-        throw new Error(`Failed to fetch providers: ${response.status} ${errorText}`);
-      }
-      
-      const data = await response.json();
-      console.log('🔧 [PROVIDERS-QUERY] Success - received providers:', data);
-      console.log('🔧 [PROVIDERS-QUERY] Provider count:', data?.length || 0);
-      return data;
-    },
     staleTime: 0, // Force fresh fetch every time
     enabled: true, // Ensure query runs immediately
   });
@@ -295,18 +261,28 @@ export default function CreateModels() {
       console.log('🔧 [CREATE-TEMPLATE] Request headers:', Object.keys(headers));
       console.log('🔧 [CREATE-TEMPLATE] Request body:', JSON.stringify(data, null, 2));
       
-      const response = await fetch('/api/admin/ai-model-templates', {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(data)
-      });
-      
-      console.log('🔧 [CREATE-TEMPLATE] Response status:', response.status);
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('🔧 [CREATE-TEMPLATE] Error response:', errorText);
-        throw new Error(`Failed to create template: ${response.status} - ${errorText}`);
+      try {
+        const response = await fetch('/api/admin/ai-model-templates', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(data)
+        });
+        
+        console.log('🔧 [CREATE-TEMPLATE] Response status:', response.status);
+        console.log('🔧 [CREATE-TEMPLATE] Response headers:', response.headers);
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('🔧 [CREATE-TEMPLATE] Error response body:', errorText);
+          throw new Error(`Failed to create template: ${response.status} - ${errorText}`);
+        }
+        
+        const result = await response.json();
+        console.log('🔧 [CREATE-TEMPLATE] Success response:', result);
+        return result;
+      } catch (fetchError) {
+        console.error('🔧 [CREATE-TEMPLATE] Fetch error:', fetchError);
+        throw fetchError;
       }
       
       return response.json();

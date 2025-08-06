@@ -120,8 +120,11 @@ export default async function handler(req, res) {
                       (authHeader && authHeader.startsWith('Bearer ') ? authHeader.substring(7) : null);
 
   if (!sessionToken || sessionToken !== 'prod-1754052835575-289kvxqgl42h') {
+    console.log('❌ [TEMPLATE-ID] Authentication failed - token:', sessionToken?.substring(0, 10));
     return res.status(401).json({ message: 'Authentication required' });
   }
+  
+  console.log('✅ [TEMPLATE-ID] Production token authenticated for:', req.method);
 
   const { id } = req.query;
   const templateId = parseInt(id);
