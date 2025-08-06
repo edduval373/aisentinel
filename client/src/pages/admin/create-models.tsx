@@ -151,6 +151,16 @@ export default function CreateModels() {
       
       const data = await response.json();
       console.log('✅ [AI-MODEL-TEMPLATES] Loaded templates:', data.length);
+      console.log('🔍 [AI-MODEL-TEMPLATES] Sample template data:', data[0] ? JSON.stringify(data[0], null, 2) : 'No data');
+      console.log('🔍 [AI-MODEL-TEMPLATES] Field name check on first template:', data[0] ? {
+        name: data[0].name,
+        modelId: data[0].modelId,
+        model_id: data[0].model_id,
+        contextWindow: data[0].contextWindow,
+        context_window: data[0].context_window,
+        isEnabled: data[0].isEnabled,
+        is_enabled: data[0].is_enabled
+      } : 'No data');
       return data;
     }
   });
@@ -380,16 +390,34 @@ export default function CreateModels() {
   };
 
   const handleEditTemplate = (template: any) => {
-    setEditingTemplate(template);
-    templateForm.reset({
+    console.log('🔍 [EDIT TEMPLATE] Raw template data received:', JSON.stringify(template, null, 2));
+    console.log('🔍 [EDIT TEMPLATE] Field check:', {
       name: template.name,
       provider: template.provider,
       modelId: template.modelId,
-      description: template.description || "",
+      model_id: template.model_id,
       contextWindow: template.contextWindow,
+      context_window: template.context_window,
       isEnabled: template.isEnabled,
-      capabilities: Array.isArray(template.capabilities) ? template.capabilities : [],
+      is_enabled: template.is_enabled
     });
+    
+    setEditingTemplate(template);
+    
+    // Handle both camelCase (frontend) and snake_case (database) field names
+    const formData = {
+      name: template.name,
+      provider: template.provider,
+      modelId: template.modelId || template.model_id,                    // Handle both formats
+      description: template.description || "",
+      contextWindow: template.contextWindow || template.context_window,  // Handle both formats  
+      isEnabled: template.isEnabled !== undefined ? template.isEnabled : template.is_enabled, // Handle both formats
+      capabilities: Array.isArray(template.capabilities) ? template.capabilities : [],
+    };
+    
+    console.log('🔍 [EDIT TEMPLATE] Formatted form data:', JSON.stringify(formData, null, 2));
+    
+    templateForm.reset(formData);
     setShowEditDialog(true);
   };
 
