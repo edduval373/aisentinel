@@ -200,7 +200,9 @@ export default function CreateModels() {
     console.log("🔧 [PROVIDERS] Transformed providers for dropdown:", providers);
     console.log("🔧 [PROVIDERS] Providers count:", providers.length);
     console.log("🔧 [PROVIDERS] Sample provider:", providers[0]);
-  }, [dbProviders, providers]);
+    console.log("🔧 [PROVIDERS] Loading state:", providersLoading);
+    console.log("🔧 [PROVIDERS] Error state:", providersError);
+  }, [dbProviders, providers, providersLoading, providersError]);
 
   const templateForm = useForm<z.infer<typeof templateSchema>>({
     resolver: zodResolver(templateSchema),
@@ -624,7 +626,6 @@ export default function CreateModels() {
           gap: '24px'
         }}>
           {/* Debug: Display template count and list */}
-          {console.log(`🎨 [TEMPLATES RENDER] Rendering ${(templates as any[]).length} templates:`, (templates as any[]).map((t: any) => ({ id: t.id, name: t.name })))}
           {(templates as any[]).length === 0 ? (
             <div style={{
               gridColumn: '1 / -1',
@@ -850,42 +851,54 @@ function TemplateForm({
               <FormField
                 control={form.control}
                 name="provider"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel style={{ 
-                      fontSize: '14px',
-                      fontWeight: '500'
-                    }}>
-                      <span style={{ color: '#dc2626' }}>*</span> Provider
-                    </FormLabel>
-                    <Select onValueChange={(value) => {
-                      field.onChange(value);
-                      handleProviderChange(value);
-                    }} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger style={{
-                          borderColor: field.value ? '#10b981' : '#dc2626',
-                          borderWidth: '2px'
+                render={({ field }) => {
+                  // Debug provider dropdown rendering
+                  console.log("🔧 [PROVIDER-DROPDOWN] Field value:", field.value);
+                  console.log("🔧 [PROVIDER-DROPDOWN] Available providers:", providers);
+                  
+                  return (
+                    <FormItem>
+                      <FormLabel style={{ 
+                        fontSize: '14px',
+                        fontWeight: '500'
+                      }}>
+                        <span style={{ color: '#dc2626' }}>*</span> Provider {providersLoading && "(Loading...)"}
+                      </FormLabel>
+                      <Select 
+                        value={field.value} 
+                        onValueChange={(value) => {
+                          console.log("🔧 [PROVIDER-DROPDOWN] Selected value:", value);
+                          field.onChange(value);
+                          handleProviderChange(value);
                         }}>
-                          <SelectValue placeholder="Select provider" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {console.log("🔧 [PROVIDER-DROPDOWN] Rendering providers:", providers)}
-                        {providers?.length > 0 ? providers.map((provider) => (
-                          <SelectItem key={provider.value} value={provider.value}>
-                            {provider.label}
-                          </SelectItem>
-                        )) : (
-                          <SelectItem value="no-providers" disabled>
-                            Loading providers...
-                          </SelectItem>
-                        )}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                        <FormControl>
+                          <SelectTrigger style={{
+                            borderColor: field.value ? '#10b981' : '#dc2626',
+                            borderWidth: '2px'
+                          }}>
+                            <SelectValue placeholder={providersLoading ? "Loading providers..." : "Select provider"} />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {providersLoading ? (
+                            <SelectItem value="loading" disabled>
+                              Loading providers...
+                            </SelectItem>
+                          ) : providers?.length > 0 ? providers.map((provider) => (
+                            <SelectItem key={provider.value} value={provider.value}>
+                              {provider.label}
+                            </SelectItem>
+                          )) : (
+                            <SelectItem value="no-providers" disabled>
+                              No providers found
+                            </SelectItem>
+                          )}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
               />
               
               <FormField
@@ -975,14 +988,54 @@ function TemplateForm({
               control={form.control}
               name="isEnabled"
               render={({ field }) => (
-                <FormItem style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <FormItem>
+                  <FormLabel style={{ 
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    marginBottom: '8px',
+                    display: 'block'
+                  }}>
+                    Model Status
+                  </FormLabel>
                   <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
+                    <button
+                      type="button"
+                      onClick={() => field.onChange(!field.value)}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        padding: '12px 16px',
+                        borderRadius: '8px',
+                        border: '2px solid',
+                        borderColor: field.value ? '#10b981' : '#ef4444',
+                        backgroundColor: field.value ? '#f0fdf4' : '#fef2f2',
+                        color: field.value ? '#059669' : '#dc2626',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        transition: 'all 0.2s ease',
+                        width: 'fit-content'
+                      }}
+                    >
+                      <div style={{
+                        width: '20px',
+                        height: '20px',
+                        borderRadius: '50%',
+                        backgroundColor: field.value ? '#10b981' : '#ef4444',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'white',
+                        fontSize: '12px',
+                        fontWeight: 'bold'
+                      }}>
+                        {field.value ? '✓' : '✕'}
+                      </div>
+                      {field.value ? 'Model Enabled' : 'Model Disabled'}
+                    </button>
                   </FormControl>
-                  <FormLabel style={{ margin: 0 }}>Enable this model</FormLabel>
+                  <FormMessage />
                 </FormItem>
               )}
             />
