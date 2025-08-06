@@ -227,7 +227,11 @@ export default function CreateProviders() {
     mutationFn: async (data: AiProviderFormData) => {
       console.log('🔄 [AI-PROVIDERS] Creating provider:', data.name);
       
-      const response = await fetch('/api/admin/ai-providers', {
+      // Use development URL in Replit, production URL for deployed version
+      const isDevelopment = window.location.hostname.includes('replit.dev');
+      const baseUrl = isDevelopment ? '' : '';
+      
+      const response = await fetch(`${baseUrl}/api/admin/ai-providers`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -291,7 +295,12 @@ export default function CreateProviders() {
       const cleanUrl = `/api/admin/ai-providers/${id}`.replace(/\/+/g, '/');
       console.log('🔄 [AI-PROVIDERS] Clean URL:', cleanUrl);
       
-      const response = await fetch(cleanUrl, {
+      // Use development URL in Replit, production URL for deployed version  
+      const isDevelopment = window.location.hostname.includes('replit.dev');
+      const baseUrl = isDevelopment ? '' : '';
+      const fullUrl = `${baseUrl}${cleanUrl}`;
+      
+      const response = await fetch(fullUrl, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -370,14 +379,20 @@ export default function CreateProviders() {
       }
       
       const deleteUrl = `/api/admin/ai-providers/${id}`.replace(/\/+/g, '/');
-      console.log('🔄 [AI-PROVIDERS DELETE] Making DELETE request to:', deleteUrl);
+      
+      // Use development URL in Replit, production URL for deployed version  
+      const isDevelopment = window.location.hostname.includes('replit.dev');
+      const baseUrl = isDevelopment ? '' : '';
+      const fullDeleteUrl = `${baseUrl}${deleteUrl}`;
+      
+      console.log('🔄 [AI-PROVIDERS DELETE] Making DELETE request to:', fullDeleteUrl);
       console.log('🔄 [AI-PROVIDERS DELETE] Full request headers:', {
         'Authorization': `Bearer ${token?.substring(0, 20)}...`,
         'X-Session-Token': token?.substring(0, 20) + '...',
         'Content-Type': 'application/json'
       });
       
-      const response = await fetch(deleteUrl, {
+      const response = await fetch(fullDeleteUrl, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
