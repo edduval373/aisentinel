@@ -125,10 +125,15 @@ SelectContent.displayName = SelectPrimitive.Content.displayName
 const SelectLabel = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Label>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Label>
->(({ className, ...props }, ref) => (
+>(({ style, ...props }, ref) => (
   <SelectPrimitive.Label
     ref={ref}
-    className={cn("py-1.5 pl-8 pr-2 text-sm font-semibold", className)}
+    style={{
+      padding: '6px 8px 6px 32px',
+      fontSize: '14px',
+      fontWeight: '600',
+      ...style
+    }}
     {...props}
   />
 ))
@@ -137,18 +142,35 @@ SelectLabel.displayName = SelectPrimitive.Label.displayName
 const SelectItem = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>
->(({ className, children, ...props }, ref) => (
+>(({ style, children, ...props }, ref) => (
   <SelectPrimitive.Item
     ref={ref}
-    className={cn(
-      "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-      className
-    )}
+    style={{
+      position: 'relative',
+      display: 'flex',
+      width: '100%',
+      cursor: 'default',
+      userSelect: 'none',
+      alignItems: 'center',
+      borderRadius: '4px',
+      padding: '6px 8px 6px 32px',
+      fontSize: '14px',
+      outline: 'none',
+      ...style
+    }}
     {...props}
   >
-    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+    <span style={{
+      position: 'absolute',
+      left: '8px',
+      display: 'flex',
+      height: '14px',
+      width: '14px',
+      alignItems: 'center',
+      justifyContent: 'center'
+    }}>
       <SelectPrimitive.ItemIndicator>
-        <Check className="h-4 w-4" />
+        <Check style={{ height: '16px', width: '16px' }} />
       </SelectPrimitive.ItemIndicator>
     </span>
 
@@ -160,10 +182,15 @@ SelectItem.displayName = SelectPrimitive.Item.displayName
 const SelectSeparator = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Separator>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Separator>
->(({ className, ...props }, ref) => (
+>(({ style, ...props }, ref) => (
   <SelectPrimitive.Separator
     ref={ref}
-    className={cn("-mx-1 my-1 h-px bg-muted", className)}
+    style={{
+      margin: '4px -4px',
+      height: '1px',
+      backgroundColor: '#e5e7eb',
+      ...style
+    }}
     {...props}
   />
 ))
