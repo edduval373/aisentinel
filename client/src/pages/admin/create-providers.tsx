@@ -158,19 +158,19 @@ export default function CreateProviders() {
         });
         
         // PRODUCTION DEBUG: Log actual data structure to identify caching issue
-        if (data.length > 0) {
+        if (transformedData.length > 0) {
           console.log('🔍 [PRODUCTION-DEBUG] First provider data structure:', {
-            id: data[0].id,
-            name: data[0].name,
-            displayName: data[0].displayName,
-            isEnabled: data[0].isEnabled,
-            isEnabledType: typeof data[0].isEnabled,
-            booleanCheck: Boolean(data[0].isEnabled),
-            allKeys: Object.keys(data[0])
+            id: transformedData[0].id,
+            name: transformedData[0].name,
+            displayName: transformedData[0].displayName,
+            isEnabled: transformedData[0].isEnabled,
+            isEnabledType: typeof transformedData[0].isEnabled,
+            booleanCheck: Boolean(transformedData[0].isEnabled),
+            allKeys: Object.keys(transformedData[0])
           });
           
           console.log('🔍 [PRODUCTION-DEBUG] All provider names and status:');
-          data.forEach((provider: any, index: number) => {
+          transformedData.forEach((provider: any, index: number) => {
             console.log(`  ${index + 1}. ${provider.displayName} (${provider.name}) - isEnabled: ${provider.isEnabled} (${typeof provider.isEnabled})`);
           });
         }
