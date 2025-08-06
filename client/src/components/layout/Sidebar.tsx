@@ -72,7 +72,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
     },
     {
       id: "create-models", 
-      name: "Create AI Models",
+      name: "Create AI Model Templates",
       href: "/admin/create-models",
       icon: Brain,
     }
