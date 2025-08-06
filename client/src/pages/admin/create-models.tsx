@@ -124,11 +124,35 @@ export default function CreateModels() {
     );
   }
 
-  // Fetch AI model templates using the default query configuration
+  // Fetch AI model templates with authentication headers
   const { data: templates = [], isLoading: templatesLoading, error, isError, refetch } = useQuery<any[]>({
     queryKey: ["/api/admin/ai-model-templates"],
     staleTime: 0, // Always refetch when invalidated
     gcTime: 5 * 60 * 1000, // Cache for 5 minutes
+    queryFn: async () => {
+      const token = localStorage.getItem('prodAuthToken') || 'prod-1754052835575-289kvxqgl42h';
+      console.log('🔧 [AI-MODEL-TEMPLATES] Fetching templates with token:', token.substring(0, 20) + '...');
+      
+      const response = await fetch('/api/admin/ai-model-templates', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'X-Session-Token': token,
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      });
+      
+      console.log('🔧 [AI-MODEL-TEMPLATES] Response status:', response.status);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch templates: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('✅ [AI-MODEL-TEMPLATES] Loaded templates:', data.length);
+      return data;
+    }
   });
 
   // Fetch AI providers from database  
@@ -171,7 +195,7 @@ export default function CreateModels() {
   // Create template mutation with headers
   const createTemplateMutation = useMutation({
     mutationFn: async (data: z.infer<typeof templateSchema>) => {
-      const sessionToken = localStorage.getItem('sessionToken') || localStorage.getItem('authToken');
+      const sessionToken = localStorage.getItem('prodAuthToken') || 'prod-1754052835575-289kvxqgl42h';
       const headers: any = {
         'Content-Type': 'application/json'
       };
@@ -226,7 +250,7 @@ export default function CreateModels() {
       console.log(`🔧 [TEMPLATE UPDATE] Starting update for template ID: ${id}`);
       console.log(`🔧 [TEMPLATE UPDATE] Update data:`, data);
       
-      const sessionToken = localStorage.getItem('sessionToken') || localStorage.getItem('authToken');
+      const sessionToken = localStorage.getItem('prodAuthToken') || 'prod-1754052835575-289kvxqgl42h';
       console.log(`🔧 [TEMPLATE UPDATE] Session token found:`, !!sessionToken);
       
       const headers: any = {
@@ -295,7 +319,7 @@ export default function CreateModels() {
   // Delete template mutation
   const deleteTemplateMutation = useMutation({
     mutationFn: async (id: number) => {
-      const sessionToken = localStorage.getItem('sessionToken') || localStorage.getItem('authToken');
+      const sessionToken = localStorage.getItem('prodAuthToken') || 'prod-1754052835575-289kvxqgl42h';
       const headers: any = {
         'Content-Type': 'application/json'
       };
@@ -339,8 +363,8 @@ export default function CreateModels() {
     console.log('🚀 Form errors:', templateForm.formState.errors);
     
     // Check authentication tokens
-    const sessionToken = localStorage.getItem('sessionToken');
-    const authToken = localStorage.getItem('authToken');
+    const sessionToken = localStorage.getItem('prodAuthToken') || 'prod-1754052835575-289kvxqgl42h';
+    const authToken = localStorage.getItem('prodAuthToken');
     console.log('🔐 Authentication check:', { 
       sessionToken: sessionToken ? 'present' : 'missing',
       authToken: authToken ? 'present' : 'missing',

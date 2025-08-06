@@ -212,6 +212,199 @@ app.delete('/api/admin/ai-providers/:id', async (req, res) => {
   }
 });
 
+// AI Model Templates Routes
+app.get('/api/admin/ai-model-templates', async (req, res) => {
+  try {
+    console.log('🌐 [AI-MODEL-TEMPLATES] GET request received');
+    
+    const auth = authenticateToken(req);
+    if (!auth.authenticated) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const result = await pool.query('SELECT * FROM ai_model_templates ORDER BY id ASC');
+    const templates = result.rows.map(template => ({
+      id: template.id,
+      name: template.name,
+      provider: template.provider,
+      modelId: template.model_id,
+      description: template.description,
+      contextWindow: template.context_window,
+      isEnabled: template.is_enabled,
+      capabilities: template.capabilities,
+      apiEndpoint: template.api_endpoint,
+      authMethod: template.auth_method,
+      requestHeaders: template.request_headers,
+      maxTokens: template.max_tokens,
+      temperature: template.temperature,
+      maxRetries: template.max_retries,
+      timeout: template.timeout,
+      rateLimit: template.rate_limit,
+      createdAt: template.created_at
+    }));
+    
+    console.log(`✅ [AI-MODEL-TEMPLATES] Returning ${templates.length} templates`);
+    res.json(templates);
+  } catch (error) {
+    console.error('❌ [AI-MODEL-TEMPLATES] Error:', error);
+    res.status(500).json({ error: 'Failed to fetch templates' });
+  }
+});
+
+app.post('/api/admin/ai-model-templates', async (req, res) => {
+  try {
+    console.log('🌐 [AI-MODEL-TEMPLATES] POST request received');
+    
+    const auth = authenticateToken(req);
+    if (!auth.authenticated || auth.user.roleLevel < 1000) {
+      return res.status(401).json({ error: 'Super-user access required' });
+    }
+
+    const { 
+      name, provider, modelId, description, contextWindow, isEnabled, 
+      capabilities, apiEndpoint, authMethod, requestHeaders, maxTokens, 
+      temperature, maxRetries, timeout, rateLimit 
+    } = req.body;
+    
+    const result = await pool.query(
+      `INSERT INTO ai_model_templates (
+        name, provider, model_id, description, context_window, is_enabled, 
+        capabilities, api_endpoint, auth_method, request_headers, max_tokens, 
+        temperature, max_retries, timeout, rate_limit, created_at
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, NOW()) 
+      RETURNING *`,
+      [
+        name, provider, modelId, description, contextWindow, isEnabled !== false,
+        capabilities, apiEndpoint, authMethod, requestHeaders, maxTokens,
+        temperature, maxRetries, timeout, rateLimit
+      ]
+    );
+    
+    const template = result.rows[0];
+    const formattedTemplate = {
+      id: template.id,
+      name: template.name,
+      provider: template.provider,
+      modelId: template.model_id,
+      description: template.description,
+      contextWindow: template.context_window,
+      isEnabled: template.is_enabled,
+      capabilities: template.capabilities,
+      apiEndpoint: template.api_endpoint,
+      authMethod: template.auth_method,
+      requestHeaders: template.request_headers,
+      maxTokens: template.max_tokens,
+      temperature: template.temperature,
+      maxRetries: template.max_retries,
+      timeout: template.timeout,
+      rateLimit: template.rate_limit,
+      createdAt: template.created_at
+    };
+    
+    console.log(`✅ [AI-MODEL-TEMPLATES] Created template: ${template.name}`);
+    res.status(201).json(formattedTemplate);
+  } catch (error) {
+    console.error('❌ [AI-MODEL-TEMPLATES] Create error:', error);
+    res.status(500).json({ error: 'Failed to create template' });
+  }
+});
+
+app.put('/api/admin/ai-model-templates/:id', async (req, res) => {
+  try {
+    console.log(`🌐 [AI-MODEL-TEMPLATES] PUT request received for ID: ${req.params.id}`);
+    
+    const auth = authenticateToken(req);
+    if (!auth.authenticated || auth.user.roleLevel < 1000) {
+      return res.status(401).json({ error: 'Super-user access required' });
+    }
+
+    const templateId = parseInt(req.params.id);
+    if (isNaN(templateId)) {
+      return res.status(400).json({ error: 'Invalid template ID' });
+    }
+
+    const { 
+      name, provider, modelId, description, contextWindow, isEnabled, 
+      capabilities, apiEndpoint, authMethod, requestHeaders, maxTokens, 
+      temperature, maxRetries, timeout, rateLimit 
+    } = req.body;
+    
+    const result = await pool.query(
+      `UPDATE ai_model_templates 
+       SET name = $1, provider = $2, model_id = $3, description = $4, context_window = $5, 
+           is_enabled = $6, capabilities = $7, api_endpoint = $8, auth_method = $9, 
+           request_headers = $10, max_tokens = $11, temperature = $12, max_retries = $13, 
+           timeout = $14, rate_limit = $15
+       WHERE id = $16 
+       RETURNING *`,
+      [
+        name, provider, modelId, description, contextWindow, isEnabled !== false,
+        capabilities, apiEndpoint, authMethod, requestHeaders, maxTokens,
+        temperature, maxRetries, timeout, rateLimit, templateId
+      ]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Template not found' });
+    }
+    
+    const template = result.rows[0];
+    const formattedTemplate = {
+      id: template.id,
+      name: template.name,
+      provider: template.provider,
+      modelId: template.model_id,
+      description: template.description,
+      contextWindow: template.context_window,
+      isEnabled: template.is_enabled,
+      capabilities: template.capabilities,
+      apiEndpoint: template.api_endpoint,
+      authMethod: template.auth_method,
+      requestHeaders: template.request_headers,
+      maxTokens: template.max_tokens,
+      temperature: template.temperature,
+      maxRetries: template.max_retries,
+      timeout: template.timeout,
+      rateLimit: template.rate_limit,
+      createdAt: template.created_at
+    };
+    
+    console.log(`✅ [AI-MODEL-TEMPLATES] Updated template: ${template.name}`);
+    res.json(formattedTemplate);
+  } catch (error) {
+    console.error('❌ [AI-MODEL-TEMPLATES] Update error:', error);
+    res.status(500).json({ error: 'Failed to update template' });
+  }
+});
+
+app.delete('/api/admin/ai-model-templates/:id', async (req, res) => {
+  try {
+    console.log(`🌐 [AI-MODEL-TEMPLATES] DELETE request received for ID: ${req.params.id}`);
+    
+    const auth = authenticateToken(req);
+    if (!auth.authenticated || auth.user.roleLevel < 1000) {
+      return res.status(401).json({ error: 'Super-user access required' });
+    }
+
+    const templateId = parseInt(req.params.id);
+    if (isNaN(templateId)) {
+      return res.status(400).json({ error: 'Invalid template ID' });
+    }
+
+    const result = await pool.query('DELETE FROM ai_model_templates WHERE id = $1 RETURNING *', [templateId]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Template not found' });
+    }
+    
+    console.log(`✅ [AI-MODEL-TEMPLATES] Deleted template: ${result.rows[0].name}`);
+    res.json({ success: true, message: 'Template deleted successfully' });
+  } catch (error) {
+    console.error('❌ [AI-MODEL-TEMPLATES] Delete error:', error);
+    res.status(500).json({ error: 'Failed to delete template' });
+  }
+});
+
 // Companies routes
 app.get('/api/admin/companies', async (req, res) => {
   try {
