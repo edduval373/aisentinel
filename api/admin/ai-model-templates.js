@@ -121,8 +121,30 @@ export default async function handler(req, res) {
       
       await client.end();
 
-      console.log('✅ [VERCEL TEMPLATES] Created new template:', newTemplate.id);
-      return res.status(201).json(newTemplate);
+      // Transform snake_case response back to camelCase for frontend consistency
+      const transformedNewTemplate = {
+        id: newTemplate.id,
+        name: newTemplate.name,
+        provider: newTemplate.provider,
+        modelId: newTemplate.model_id,
+        description: newTemplate.description,
+        contextWindow: newTemplate.context_window,
+        isEnabled: newTemplate.is_enabled,
+        capabilities: newTemplate.capabilities,
+        apiEndpoint: newTemplate.api_endpoint,
+        authMethod: newTemplate.auth_method,
+        requestHeaders: newTemplate.request_headers,
+        maxTokens: newTemplate.max_tokens,
+        temperature: newTemplate.temperature,
+        maxRetries: newTemplate.max_retries,
+        timeout: newTemplate.timeout,
+        rateLimit: newTemplate.rate_limit,
+        createdAt: newTemplate.created_at
+      };
+
+      console.log('✅ [VERCEL TEMPLATES] Created new template:', transformedNewTemplate.id);
+      console.log('🔍 [VERCEL TEMPLATES] Transformed response:', transformedNewTemplate);
+      return res.status(201).json(transformedNewTemplate);
     }
 
     // PUT and DELETE not supported at this endpoint - use /api/admin/ai-model-templates/[id] instead
