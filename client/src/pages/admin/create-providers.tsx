@@ -107,11 +107,12 @@ export default function CreateProviders() {
   const token = localStorage.getItem('sessionToken') || 'prod-1754052835575-289kvxqgl42h';
   
   const { data: providers = [], isLoading, error: providersError, refetch: refetchProviders } = useQuery({
-    queryKey: ['/api/admin/ai-providers', Date.now()], // Force fresh query every time
+    queryKey: ['/api/admin/ai-providers', Date.now(), Math.random()], // Force fresh query every render
     staleTime: 0, // Always fetch fresh data
     gcTime: 0, // Don't cache data
     refetchOnMount: true, // Always refetch when component mounts
     refetchOnWindowFocus: true, // Refetch when window gains focus
+    refetchInterval: 5000, // Refetch every 5 seconds during debugging
     queryFn: async () => {
       console.log('🔍 [AI-PROVIDERS] Fetching providers from Railway database...');
       
@@ -135,6 +136,9 @@ export default function CreateProviders() {
         const data = await response.json();
         console.log('✅ [AI-PROVIDERS] Fetched providers from database:', data.length, 'providers');
         
+        // CRITICAL: Log raw JSON response to see exact API data
+        console.log('🔍 [RAW-JSON-RESPONSE] Actual API response:', JSON.stringify(data, null, 2));
+        
         // PRODUCTION DEBUG: Log actual data structure to identify caching issue
         if (data.length > 0) {
           console.log('🔍 [PRODUCTION-DEBUG] First provider data structure:', {
@@ -143,7 +147,8 @@ export default function CreateProviders() {
             displayName: data[0].displayName,
             isEnabled: data[0].isEnabled,
             isEnabledType: typeof data[0].isEnabled,
-            booleanCheck: Boolean(data[0].isEnabled)
+            booleanCheck: Boolean(data[0].isEnabled),
+            allKeys: Object.keys(data[0])
           });
           
           console.log('🔍 [PRODUCTION-DEBUG] All provider names and status:');
