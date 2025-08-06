@@ -139,6 +139,24 @@ export default function CreateProviders() {
         // CRITICAL: Log raw JSON response to see exact API data
         console.log('🔍 [RAW-JSON-RESPONSE] Actual API response:', JSON.stringify(data, null, 2));
         
+        // CRITICAL FIX: Transform snake_case API response to camelCase for frontend
+        const transformedData = data.map((provider: any) => ({
+          id: provider.id,
+          name: provider.name,
+          displayName: provider.display_name || provider.displayName, // Handle both cases
+          description: provider.description,
+          website: provider.website,
+          apiDocUrl: provider.api_doc_url || provider.apiDocUrl, // Handle both cases
+          isEnabled: provider.is_enabled !== undefined ? provider.is_enabled : provider.isEnabled, // Handle both cases
+          createdAt: provider.created_at || provider.createdAt, // Handle both cases
+          updatedAt: provider.updated_at || provider.updatedAt  // Handle both cases
+        }));
+        
+        console.log('🔍 [FIELD-TRANSFORMATION] Transformed first provider:', {
+          original: data[0],
+          transformed: transformedData[0]
+        });
+        
         // PRODUCTION DEBUG: Log actual data structure to identify caching issue
         if (data.length > 0) {
           console.log('🔍 [PRODUCTION-DEBUG] First provider data structure:', {
@@ -157,8 +175,8 @@ export default function CreateProviders() {
           });
         }
         
-        // CRITICAL: Validate and return data with proper structure
-        const validatedData = Array.isArray(data) ? data : [];
+        // CRITICAL: Validate and return transformed data with proper structure
+        const validatedData = Array.isArray(transformedData) ? transformedData : [];
         console.log('🔍 [DATA-VALIDATION] Final validated data before return:', validatedData.length, 'providers');
         if (validatedData.length > 0) {
           console.log('🔍 [DATA-VALIDATION] Sample provider structure:', {
