@@ -274,12 +274,22 @@ export default function CreateProviders() {
       });
       
       console.log('🔄 [AI-PROVIDERS] Response status:', response.status);
+      console.log('🔄 [AI-PROVIDERS] Response statusText:', response.statusText);
       console.log('🔄 [AI-PROVIDERS] Response headers:', Object.fromEntries(response.headers.entries()));
+      console.log('🔄 [AI-PROVIDERS] Response URL:', response.url);
+      console.log('🔄 [AI-PROVIDERS] Response type:', response.type);
       
       if (!response.ok) {
         const errorText = await response.text();
         console.error('❌ [AI-PROVIDERS] Update failed:', response.status, response.statusText);
         console.error('❌ [AI-PROVIDERS] Error response:', errorText);
+        console.error('❌ [AI-PROVIDERS] Full response object:', {
+          status: response.status,
+          statusText: response.statusText,
+          url: response.url,
+          type: response.type,
+          headers: Object.fromEntries(response.headers.entries())
+        });
         throw new Error(`Failed to update provider: ${response.status} - ${errorText}`);
       }
       
@@ -300,9 +310,19 @@ export default function CreateProviders() {
     },
     onError: (error: any) => {
       console.error('❌ [AI-PROVIDERS] Update mutation error:', error);
+      console.error('❌ [AI-PROVIDERS] Error type:', typeof error);
+      console.error('❌ [AI-PROVIDERS] Error message:', error.message);
+      console.error('❌ [AI-PROVIDERS] Error stack:', error.stack);
+      console.error('❌ [AI-PROVIDERS] Error cause:', error.cause);
+      
+      // Log browser network information
+      if (navigator.onLine !== undefined) {
+        console.log('🌐 [AI-PROVIDERS] Browser online status:', navigator.onLine);
+      }
+      
       toast({
-        title: "Error",
-        description: error.message || "Failed to update provider",
+        title: "Update Failed",
+        description: error.message || "Failed to update provider. Check console for details.",
         variant: "destructive",
       });
     },
@@ -888,14 +908,14 @@ export default function CreateProviders() {
                     </div>
                   </div>
                   <span style={{
-                    backgroundColor: '#10b981', // Force ACTIVE color since all providers are enabled
+                    backgroundColor: provider.isEnabled ? '#10b981' : '#6b7280',
                     color: 'white',
                     fontWeight: '600',
                     padding: '6px 12px',
                     borderRadius: '6px',
                     fontSize: '12px'
                   }}>
-                    ACTIVE
+                    {provider.isEnabled ? 'ACTIVE' : 'INACTIVE'}
                   </span>
                 </div>
               </div>
