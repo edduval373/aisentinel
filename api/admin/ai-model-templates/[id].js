@@ -12,18 +12,41 @@ const pool = new Pool({
 async function updateTemplateInDB(id, updates) {
   const client = await pool.connect();
   try {
-    const setClause = Object.keys(updates)
-      .map((key, index) => `"${key}" = $${index + 2}`)
+    // Map camelCase frontend fields to snake_case database fields
+    const fieldMapping = {
+      'modelId': 'model_id',
+      'contextWindow': 'context_window',
+      'isEnabled': 'is_enabled',
+      'apiEndpoint': 'api_endpoint',
+      'authMethod': 'auth_method',
+      'requestHeaders': 'request_headers',
+      'maxTokens': 'max_tokens',
+      'maxRetries': 'max_retries',
+      'rateLimit': 'rate_limit'
+    };
+    
+    // Transform frontend field names to database field names
+    const dbUpdates = {};
+    Object.keys(updates).forEach(key => {
+      const dbFieldName = fieldMapping[key] || key;
+      dbUpdates[dbFieldName] = updates[key];
+    });
+    
+    const setClause = Object.keys(dbUpdates)
+      .map((key, index) => `${key} = $${index + 2}`)
       .join(', ');
     
-    const values = [id, ...Object.values(updates)];
+    const values = [id, ...Object.values(dbUpdates)];
     
     const query = `
       UPDATE ai_model_templates 
-      SET ${setClause}, "updatedAt" = NOW() 
+      SET ${setClause}, updated_at = NOW() 
       WHERE id = $1 
       RETURNING *
     `;
+    
+    console.log('🔧 [UPDATE] Database query:', query);
+    console.log('🔧 [UPDATE] Values:', values);
     
     const result = await client.query(query, values);
     
@@ -31,7 +54,30 @@ async function updateTemplateInDB(id, updates) {
       throw new Error('Template not found');
     }
     
-    return result.rows[0];
+    // Transform snake_case response back to camelCase for frontend
+    const template = result.rows[0];
+    const transformedTemplate = {
+      id: template.id,
+      name: template.name,
+      provider: template.provider,
+      modelId: template.model_id,
+      description: template.description,
+      contextWindow: template.context_window,
+      isEnabled: template.is_enabled,
+      capabilities: template.capabilities,
+      apiEndpoint: template.api_endpoint,
+      authMethod: template.auth_method,
+      requestHeaders: template.request_headers,
+      maxTokens: template.max_tokens,
+      temperature: template.temperature,
+      maxRetries: template.max_retries,
+      timeout: template.timeout,
+      rateLimit: template.rate_limit,
+      createdAt: template.created_at,
+      updatedAt: template.updated_at
+    };
+    
+    return transformedTemplate;
   } catch (error) {
     console.error('Database update error:', error);
     throw error;

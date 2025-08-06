@@ -47,9 +47,31 @@ export default async function handler(req, res) {
       
       await client.end();
       
+      // Transform snake_case database fields to camelCase for frontend
+      const transformedTemplates = templates.map(template => ({
+        id: template.id,
+        name: template.name,
+        provider: template.provider,
+        modelId: template.model_id,
+        description: template.description,
+        contextWindow: template.context_window,
+        isEnabled: template.is_enabled,
+        capabilities: template.capabilities,
+        apiEndpoint: template.api_endpoint,
+        authMethod: template.auth_method,
+        requestHeaders: template.request_headers,
+        maxTokens: template.max_tokens,
+        temperature: template.temperature,
+        maxRetries: template.max_retries,
+        timeout: template.timeout,
+        rateLimit: template.rate_limit,
+        createdAt: template.created_at
+      }));
+      
       console.log(`✅ [VERCEL TEMPLATES] Retrieved ${templates.length} templates from database`);
-      console.log('🔍 [VERCEL TEMPLATES] Sample raw data:', templates[0]);
-      return res.json(templates);
+      console.log('🔍 [VERCEL TEMPLATES] Sample raw data (snake_case):', templates[0]);
+      console.log('🔍 [VERCEL TEMPLATES] Sample transformed data (camelCase):', transformedTemplates[0]);
+      return res.json(transformedTemplates);
     }
 
     if (req.method === 'POST') {
@@ -71,7 +93,7 @@ export default async function handler(req, res) {
       console.log('🔍 [VERCEL TEMPLATES] Creating new template in Railway database...');
       
       const insertQuery = `
-        INSERT INTO ai_model_templates (name, provider, "modelId", description, "contextWindow", capabilities, "isEnabled", "apiEndpoint", "authMethod", "requestHeaders", "maxTokens", temperature, "maxRetries", timeout, "rateLimit")
+        INSERT INTO ai_model_templates (name, provider, model_id, description, context_window, capabilities, is_enabled, api_endpoint, auth_method, request_headers, max_tokens, temperature, max_retries, timeout, rate_limit)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
         RETURNING *
       `;
