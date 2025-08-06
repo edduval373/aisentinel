@@ -946,18 +946,22 @@ export default function CreateProviders() {
                   <Button
                     onClick={() => handleEdit(provider)}
                     style={{
-                      backgroundColor: '#f97316',
+                      background: 'linear-gradient(135deg, rgb(102, 126, 234) 0%, rgb(118, 75, 162) 100%)',
                       color: 'white',
-                      border: '1px solid #f97316',
+                      border: 'none',
                       borderRadius: '6px',
-                      padding: '2px 4px',
-                      fontSize: '14px',
+                      padding: '8px 12px',
+                      fontSize: '12px',
                       fontWeight: '500',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '4px',
-                      flex: 1
+                      justifyContent: 'center',
+                      gap: '6px',
+                      transition: '0.2s',
+                      boxShadow: 'rgba(102, 126, 234, 0.3) 0px 1px 3px',
+                      flex: 1,
+                      transform: 'translateY(0px)'
                     }}
                   >
                     <Edit2 style={{ width: '16px', height: '16px' }} />
