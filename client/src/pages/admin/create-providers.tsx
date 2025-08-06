@@ -150,7 +150,22 @@ export default function CreateProviders() {
           });
         }
         
-        return data;
+        // CRITICAL: Validate and return data with proper structure
+        const validatedData = Array.isArray(data) ? data : [];
+        console.log('🔍 [DATA-VALIDATION] Final validated data before return:', validatedData.length, 'providers');
+        if (validatedData.length > 0) {
+          console.log('🔍 [DATA-VALIDATION] Sample provider structure:', {
+            keys: Object.keys(validatedData[0]),
+            sampleValues: {
+              id: validatedData[0].id,
+              name: validatedData[0].name,
+              displayName: validatedData[0].displayName,
+              isEnabled: validatedData[0].isEnabled
+            }
+          });
+        }
+        
+        return validatedData;
       } catch (error) {
         console.error('❌ [AI-PROVIDERS] Network or parsing error:', error);
         throw error;
