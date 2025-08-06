@@ -20,7 +20,8 @@ import {
   FileText,
   Brain,
   Key,
-  UserCog
+  UserCog,
+  Layers
 } from "lucide-react";
 
 
@@ -74,7 +75,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       id: "create-models", 
       name: "Create AI Model Templates",
       href: "/admin/create-models",
-      icon: Brain,
+      icon: Layers,
     }
   ];
 
