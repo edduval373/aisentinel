@@ -594,6 +594,7 @@ export default function CreateModels() {
               capabilities={capabilities}
               handleProviderChange={handleProviderChange}
               isSubmitting={createTemplateMutation.isPending}
+              providersLoading={providersLoading}
               onCancel={() => {
                 setShowCreateDialog(false);
                 resetForm();
@@ -774,6 +775,7 @@ export default function CreateModels() {
               capabilities={capabilities}
               handleProviderChange={handleProviderChange}
               isSubmitting={updateTemplateMutation.isPending}
+              providersLoading={providersLoading}
               onCancel={() => {
                 setShowEditDialog(false);
                 resetForm();
@@ -797,6 +799,7 @@ function TemplateForm({
   capabilities, 
   handleProviderChange, 
   isSubmitting, 
+  providersLoading,
   onCancel 
 }: {
   form: any;
@@ -807,6 +810,7 @@ function TemplateForm({
   capabilities: string[];
   handleProviderChange: (provider: string) => void;
   isSubmitting: boolean;
+  providersLoading?: boolean;
   onCancel: () => void;
 }) {
   return (
