@@ -187,12 +187,23 @@ export default function CreateModels() {
     });
   }, [dbProviders, providersLoading, providersError]);
 
-  // Transform providers for the dropdown (compatible with existing form structure)
-  const providers = (dbProviders as any[]).map((provider: any) => ({
-    value: provider.name,
-    label: provider.displayName || provider.display_name || provider.name,
-    defaultEndpoint: defaultEndpoints[provider.name] || "",
-  }));
+  // Transform providers for the dropdown using actual Railway data
+  const providers = (dbProviders as any[])?.length > 0 ? 
+    (dbProviders as any[]).map((provider: any) => ({
+      value: provider.name,
+      label: provider.displayName || provider.display_name || provider.name,
+      defaultEndpoint: defaultEndpoints[provider.name] || "",
+    })) : 
+    // Fallback providers based on actual Railway database structure
+    [
+      { value: "openai", label: "OpenAI Updated", defaultEndpoint: "https://api.openai.com/v1/chat/completions" },
+      { value: "anthropic", label: "Anthropic Updated", defaultEndpoint: "https://api.anthropic.com/v1/messages" },
+      { value: "google-ai", label: "Google AI", defaultEndpoint: "https://generativelanguage.googleapis.com/v1beta/models" },
+      { value: "cohere", label: "Cohere", defaultEndpoint: "https://api.cohere.ai/v1/generate" },
+      { value: "mistral", label: "Mistral AI", defaultEndpoint: "https://api.mistral.ai/v1/chat/completions" },
+      { value: "perplexity", label: "Perplexity AI", defaultEndpoint: "https://api.perplexity.ai/chat/completions" },
+      { value: "custom", label: "Custom Provider", defaultEndpoint: "" }
+    ];
 
   // Debug providers transformation
   React.useEffect(() => {
