@@ -186,9 +186,25 @@ export default function CreateProviders() {
       name: providers[0].name,
       displayName: providers[0].displayName,
       isEnabled: providers[0].isEnabled
-    } : null,
-    rawProviders: providers
+    } : null
   });
+  
+  // CRITICAL: Log each provider individually to see structure
+  if (providers && providers.length > 0) {
+    console.log('🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:');
+    providers.slice(0, 3).forEach((provider, index) => {
+      console.log(`  Provider ${index + 1}:`, {
+        fullObject: provider,
+        id: provider?.id,
+        name: provider?.name,
+        displayName: provider?.displayName,
+        isEnabled: provider?.isEnabled,
+        allKeys: Object.keys(provider || {}),
+        hasDisplayName: 'displayName' in (provider || {}),
+        hasDisplay_name: 'display_name' in (provider || {})
+      });
+    });
+  }
 
   // Name availability checking (following ScreenStandards.md exact pattern)
   const checkNameAvailability = React.useCallback(
