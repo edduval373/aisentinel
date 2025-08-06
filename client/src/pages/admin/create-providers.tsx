@@ -826,16 +826,13 @@ export default function CreateProviders() {
           gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' 
         }}>
           {providers.map((provider) => {
-            // Status debug for production
-            if (provider.id === 1) { // Only log first provider to avoid spam
-              console.log('✅ [STATUS-CHECK] Sample provider data:', {
-                id: provider.id,
-                displayName: provider.displayName,
-                isEnabled: provider.isEnabled,
-                isEnabledType: typeof provider.isEnabled,
-                statusWillShow: provider.isEnabled ? "ACTIVE" : "INACTIVE"
-              });
-            }
+            // CRITICAL DEBUG: Log all provider status data
+            console.log(`🔧 [RENDER-DEBUG] Provider ${provider.id} (${provider.displayName}):`, {
+              isEnabled: provider.isEnabled,
+              isEnabledType: typeof provider.isEnabled,
+              statusWillShow: provider.isEnabled ? "ACTIVE" : "INACTIVE",
+              rawObject: provider
+            });
             
             return (
             <Card key={provider.id} style={{ 
@@ -881,14 +878,14 @@ export default function CreateProviders() {
                     </div>
                   </div>
                   <span style={{
-                    backgroundColor: provider.isEnabled ? '#10b981' : '#6b7280',
+                    backgroundColor: (provider.isEnabled === true || provider.isEnabled === 'true' || provider.isEnabled === 1) ? '#10b981' : '#6b7280',
                     color: 'white',
                     fontWeight: '600',
                     padding: '6px 12px',
                     borderRadius: '6px',
                     fontSize: '12px'
                   }}>
-                    {provider.isEnabled ? "ACTIVE" : "INACTIVE"}
+                    {(provider.isEnabled === true || provider.isEnabled === 'true' || provider.isEnabled === 1) ? "ACTIVE" : "INACTIVE"}
                   </span>
                 </div>
               </div>
