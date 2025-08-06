@@ -131,7 +131,9 @@ export default function CreateModels() {
     gcTime: 5 * 60 * 1000, // Cache for 5 minutes
     queryFn: async () => {
       const token = localStorage.getItem('prodAuthToken') || 'prod-1754052835575-289kvxqgl42h';
-      console.log('🔧 [AI-MODEL-TEMPLATES] Fetching templates with token:', token.substring(0, 20) + '...');
+      console.log('🔧 [AI-MODEL-TEMPLATES] QUERY STARTING - Fetching templates with token:', token.substring(0, 20) + '...');
+      console.log('🔧 [AI-MODEL-TEMPLATES] Current URL:', window.location.href);
+      console.log('🔧 [AI-MODEL-TEMPLATES] Making request to:', '/api/admin/ai-model-templates');
       
       const response = await fetch('/api/admin/ai-model-templates', {
         method: 'GET',
@@ -143,14 +145,17 @@ export default function CreateModels() {
         credentials: 'include'
       });
       
-      console.log('🔧 [AI-MODEL-TEMPLATES] Response status:', response.status);
+      console.log('🔧 [AI-MODEL-TEMPLATES] Response received - Status:', response.status);
+      console.log('🔧 [AI-MODEL-TEMPLATES] Response headers:', response.headers);
       
       if (!response.ok) {
-        throw new Error(`Failed to fetch templates: ${response.status}`);
+        const errorText = await response.text();
+        console.error('❌ [AI-MODEL-TEMPLATES] Error response body:', errorText);
+        throw new Error(`Failed to fetch templates: ${response.status} - ${errorText}`);
       }
       
       const data = await response.json();
-      console.log('✅ [AI-MODEL-TEMPLATES] Loaded templates:', data.length);
+      console.log('✅ [AI-MODEL-TEMPLATES] SUCCESS - Loaded templates count:', data.length);
       console.log('🔍 [AI-MODEL-TEMPLATES] Sample template data:', data[0] ? JSON.stringify(data[0], null, 2) : 'No data');
       console.log('🔍 [AI-MODEL-TEMPLATES] Field name check on first template:', data[0] ? {
         name: data[0].name,
