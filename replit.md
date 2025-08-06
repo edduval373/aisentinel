@@ -16,6 +16,15 @@ UI Standards: Complete standard CSS implementation - NO Tailwind CSS allowed any
 Component styling: All UI components use inline styles for cross-environment consistency
 Demo mode identification: Demo mode uses role level 0, shows orange "DEMO" badge, and displays "Using AI Sentinel API Keys" message.
 
+## Recent Changes
+**August 6, 2025**: Major production authentication fix completed
+- **Issue**: AI Providers CRUD operations failing in production due to inconsistent authentication token usage
+- **Root Cause**: Frontend used `sessionToken` while Company Management used `prodAuthToken` for localStorage key
+- **Solution**: Standardized all admin pages to use `prodAuthToken` for consistent authentication 
+- **Additional Fixes**: Updated Vercel CORS configuration to allow proper API access with wildcard origins
+- **Result**: All CRUD operations (Create, Read, Update, Delete) now work perfectly in both development and production
+- **Verification**: Successfully tested with 8 AI providers loading correctly, full CRUD functionality restored
+
 ## System Architecture
 **Frontend Architecture**: React 18 with TypeScript, Pure CSS with inline styles, TanStack Query for server state, Wouter for routing, and Vite for builds.
 **Backend Architecture**: Node.js with Express.js, PostgreSQL with Drizzle ORM, Replit Auth for authentication, Express sessions for session management, and WebSocket support for real-time communication.
@@ -28,7 +37,7 @@ Demo mode identification: Demo mode uses role level 0, shows orange "DEMO" badge
 - **Authentication System**: Replit Auth integration with PostgreSQL-backed sessions, role-based access with hierarchical levels (998+ admin, 999+ owner, 1000+ super-user), and secure HTTP-only cookies.
 - **AI Integration**: Support for multiple AI providers (OpenAI, Anthropic), configurable AI models with company-specific organization IDs, and structured response handling. Universal template system for AI models.
 - **Content Security**: Multi-layered content filtering, PII detection, security flagging, and compliance tracking.
-- **Administrative Features**: Real-time dashboard, configuration management for models and activity types, analytics, and report export. All admin panel pages load existing data correctly. Standardized card-based UI design implemented across Company Management and AI Providers pages (August 5, 2025). AI Providers page data transformation issue resolved - snake_case database fields properly converted to camelCase for frontend display (August 6, 2025).
+- **Administrative Features**: Real-time dashboard, configuration management for models and activity types, analytics, and report export. All admin panel pages load existing data correctly. Standardized card-based UI design implemented across Company Management and AI Providers pages (August 5, 2025). AI Providers page data transformation issue resolved - snake_case database fields properly converted to camelCase for frontend display (August 6, 2025). Production authentication issue completely resolved - AI Providers CRUD operations now work flawlessly in both development and production environments by standardizing authentication token usage across all admin pages (August 6, 2025).
 - **Data Flow**: Secure user authentication with company and employee verification. AI interactions flow through content filters and are logged for audit. Real-time updates utilize WebSockets and server-sent events.
 - **Deployment Strategy**: Configured for Vercel with serverless functions for API routes and static file serving for the client. Uses Vite for client builds, ESBuild for server, and Drizzle Kit for database migrations. Environment variables manage secrets. Comprehensive monitoring and logging are integrated.
 
