@@ -1,6 +1,13 @@
-import { db } from '../../../server/db.js';
-import { aiProviders } from '../../../shared/schema.js';
-import { eq } from 'drizzle-orm';
+// Vercel API endpoint for AI providers by ID management
+import { Pool } from 'pg';
+
+// Database connection using Railway PostgreSQL
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
 
 export default async function handler(req, res) {
   console.log(`🌐 API Request: ${req.method} ${req.url} from ${req.headers['user-agent']?.substring(0, 50)}...`);
@@ -57,33 +64,47 @@ export default async function handler(req, res) {
         const updateData = req.body;
         console.log('📝 [AI-PROVIDERS] Update data:', updateData);
         
-        const [updatedProvider] = await db
-          .update(aiProviders)
-          .set({ ...updateData, updatedAt: new Date() })
-          .where(eq(aiProviders.id, parseInt(id)))
-          .returning();
+        const updateClient = await pool.connect();
+        try {
+          const { name, displayName, description, website, apiDocUrl, isEnabled } = updateData;
           
-        if (!updatedProvider) {
-          return res.status(404).json({ error: 'Provider not found' });
+          const query = `
+            UPDATE ai_providers 
+            SET name = $1, display_name = $2, description = $3, website = $4, api_doc_url = $5, is_enabled = $6, updated_at = NOW()
+            WHERE id = $7 
+            RETURNING *
+          `;
+          
+          const values = [name, displayName, description, website, apiDocUrl, isEnabled, parseInt(id)];
+          const result = await updateClient.query(query, values);
+          
+          if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Provider not found' });
+          }
+          
+          console.log('✅ [AI-PROVIDERS] Updated provider:', result.rows[0].display_name);
+          return res.json(result.rows[0]);
+        } finally {
+          updateClient.release();
         }
-        
-        console.log('✅ [AI-PROVIDERS] Updated provider:', updatedProvider.displayName);
-        return res.json(updatedProvider);
 
       case 'DELETE':
         console.log('✅ [AI-PROVIDERS] Deleting provider ' + id + '...');
         
-        const [deletedProvider] = await db
-          .delete(aiProviders)
-          .where(eq(aiProviders.id, parseInt(id)))
-          .returning();
+        const deleteClient = await pool.connect();
+        try {
+          const query = 'DELETE FROM ai_providers WHERE id = $1 RETURNING *';
+          const result = await deleteClient.query(query, [parseInt(id)]);
           
-        if (!deletedProvider) {
-          return res.status(404).json({ error: 'Provider not found' });
+          if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Provider not found' });
+          }
+          
+          console.log('✅ [AI-PROVIDERS] Deleted provider:', result.rows[0].display_name);
+          return res.json({ message: 'Provider deleted successfully', provider: result.rows[0] });
+        } finally {
+          deleteClient.release();
         }
-        
-        console.log('✅ [AI-PROVIDERS] Deleted provider:', deletedProvider.displayName);
-        return res.json({ message: 'Provider deleted successfully', provider: deletedProvider });
 
       default:
         return res.status(405).json({ error: 'Method not allowed' });

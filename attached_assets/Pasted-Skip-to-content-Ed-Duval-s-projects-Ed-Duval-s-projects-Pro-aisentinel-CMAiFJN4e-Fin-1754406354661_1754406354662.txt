@@ -1,0 +1,113 @@
+Skip to content
+Ed Duval's projects
+Ed Duval's projects
+
+Pro
+
+aisentinel
+
+CMAiFJN4e
+
+
+Find…
+F
+
+Deployment Details
+Created
+edduval15-4606 Avatar
+edduval15-4606
+4m ago
+Status
+Ready
+Latest
+Time to Ready
+45s
+3m ago
+Environment
+Preview
+Domains
+aisentinel-git-test-ed-duvals-projects.vercel.app
+aisentinel-jzp4187wo-ed-duvals-projects.vercel.app
+Source
+test
+69bc10a
+Improve debugging information for provider status on the admin page
+
+Deployment Configuration
+Fluid Compute
+Deployment Protection
+Skew Protection
+Build Logs
+3m 43s
+
+All Logs (147)
+
+Errors (63)
+
+Warnings (3)
+Find in logs
+CtrlF
+shared/schema.ts(404,76): error TS2322: Type 'boolean' is not assignable to type 'never'.
+shared/schema.ts(404,93): error TS2322: Type 'boolean' is not assignable to type 'never'.
+shared/schema.ts(405,78): error TS2322: Type 'boolean' is not assignable to type 'never'.
+shared/schema.ts(405,88): error TS2322: Type 'boolean' is not assignable to type 'never'.
+shared/schema.ts(405,105): error TS2322: Type 'boolean' is not assignable to type 'never'.
+shared/schema.ts(406,88): error TS2322: Type 'boolean' is not assignable to type 'never'.
+shared/schema.ts(406,98): error TS2322: Type 'boolean' is not assignable to type 'never'.
+shared/schema.ts(407,84): error TS2322: Type 'boolean' is not assignable to type 'never'.
+shared/schema.ts(407,94): error TS2322: Type 'boolean' is not assignable to type 'never'.
+shared/schema.ts(407,111): error TS2322: Type 'boolean' is not assignable to type 'never'.
+shared/schema.ts(408,72): error TS2322: Type 'boolean' is not assignable to type 'never'.
+shared/schema.ts(408,82): error TS2322: Type 'boolean' is not assignable to type 'never'.
+shared/schema.ts(409,82): error TS2322: Type 'boolean' is not assignable to type 'never'.
+shared/schema.ts(409,92): error TS2322: Type 'boolean' is not assignable to type 'never'.
+shared/schema.ts(410,78): error TS2322: Type 'boolean' is not assignable to type 'never'.
+shared/schema.ts(410,88): error TS2322: Type 'boolean' is not assignable to type 'never'.
+shared/schema.ts(411,83): error TS2322: Type 'boolean' is not assignable to type 'never'.
+shared/schema.ts(411,93): error TS2322: Type 'boolean' is not assignable to type 'never'.
+shared/schema.ts(412,80): error TS2322: Type 'boolean' is not assignable to type 'never'.
+shared/schema.ts(412,90): error TS2322: Type 'boolean' is not assignable to type 'never'.
+shared/schema.ts(412,107): error TS2322: Type 'boolean' is not assignable to type 'never'.
+shared/schema.ts(413,80): error TS2322: Type 'boolean' is not assignable to type 'never'.
+shared/schema.ts(413,90): error TS2322: Type 'boolean' is not assignable to type 'never'.
+shared/schema.ts(414,86): error TS2322: Type 'boolean' is not assignable to type 'never'.
+shared/schema.ts(414,96): error TS2322: Type 'boolean' is not assignable to type 'never'.
+shared/schema.ts(415,88): error TS2322: Type 'boolean' is not assignable to type 'never'.
+Deployment Summary
+Assigning Custom Domains
+Skipped
+Runtime Logs
+
+View and debug runtime logs & errors
+
+Observability
+
+Monitor app health & performance
+
+Web Analytics
+
+Not Enabled
+Analyze visitors & traffic in real-time
+
+Speed Insights
+
+Not Enabled
+Performance metrics from real users
+
+Home
+Docs
+Guides
+Help
+Contact
+All systems normal
+
+Select a display theme:
+
+system
+
+light
+
+dark
+© 2025, Vercel Inc.
+
+aisentinel – Deployment Overview

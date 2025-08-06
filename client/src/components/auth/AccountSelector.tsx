@@ -135,12 +135,20 @@ export default function AccountSelector({ onAccountSelected, onNewAccount }: Acc
           <div style={{ 
             width: '40px', 
             height: '40px', 
-            border: '3px solid #e2e8f0', 
-            borderTop: '3px solid #3b82f6', 
-            borderRadius: '50%', 
             animation: 'spin 1s linear infinite',
             margin: '0 auto 16px'
-          }} />
+          }}>
+            <img 
+              src="/ai-sentinel-logo.png" 
+              alt="Loading accounts..." 
+              style={{ 
+                width: '100%', 
+                height: '100%', 
+                objectFit: 'contain',
+                filter: 'brightness(1.2) saturate(1.4) contrast(1.1)'
+              }} 
+            />
+          </div>
           <div style={{ color: '#64748b' }}>Loading accounts...</div>
         </div>
       </div>

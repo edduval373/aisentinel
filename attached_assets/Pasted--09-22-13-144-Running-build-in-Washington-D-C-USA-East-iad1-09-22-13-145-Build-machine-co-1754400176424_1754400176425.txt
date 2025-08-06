@@ -1,0 +1,79 @@
+[09:22:13.144] Running build in Washington, D.C., USA (East) – iad1
+[09:22:13.145] Build machine configuration: 4 cores, 8 GB
+[09:22:13.158] Cloning github.com/edduval373/aisentinel (Branch: test, Commit: 8af5431)
+[09:22:15.936] Cloning completed: 2.778s
+[09:22:16.053] Found .vercelignore
+[09:22:16.164] Removed 1024 ignored files defined in .vercelignore
+[09:22:16.164]   /.git/config
+[09:22:16.164]   /.git/description
+[09:22:16.164]   /.git/FETCH_HEAD
+[09:22:16.164]   /.git/HEAD
+[09:22:16.164]   /.git/hooks/applypatch-msg.sample
+[09:22:16.164]   /.git/hooks/commit-msg.sample
+[09:22:16.164]   /.git/hooks/fsmonitor-watchman.sample
+[09:22:16.165]   /.git/hooks/post-update.sample
+[09:22:16.165]   /.git/hooks/pre-applypatch.sample
+[09:22:16.165]   /.git/hooks/pre-commit.sample
+[09:22:16.221] Restored build cache from previous deployment (BhESiFzQ1vjFokWG3ww8PJoXKQSm)
+[09:22:20.687] Running "vercel build"
+[09:22:21.179] Vercel CLI 44.7.2
+[09:22:22.343] Running "install" command: `npm install`...
+[09:22:24.869] 
+[09:22:24.870] up to date, audited 746 packages in 2s
+[09:22:24.870] 
+[09:22:24.870] 168 packages are looking for funding
+[09:22:24.870]   run `npm fund` for details
+[09:22:24.885] 
+[09:22:24.885] 12 vulnerabilities (3 low, 5 moderate, 3 high, 1 critical)
+[09:22:24.885] 
+[09:22:24.885] To address issues that do not require attention, run:
+[09:22:24.885]   npm audit fix
+[09:22:24.885] 
+[09:22:24.885] To address all issues possible (including breaking changes), run:
+[09:22:24.886]   npm audit fix --force
+[09:22:24.886] 
+[09:22:24.886] Some issues need review, and may require choosing
+[09:22:24.886] a different dependency.
+[09:22:24.886] 
+[09:22:24.886] Run `npm audit` for details.
+[09:22:25.139] 
+[09:22:25.140] > rest-express@1.0.0 build
+[09:22:25.140] > vite build --config vite.config.production.ts && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist --external:../vite.config --external:vite
+[09:22:25.140] 
+[09:22:25.446] [36mvite v5.4.19 [32mbuilding for production...[36m[39m
+[09:22:25.504] transforming...
+[09:22:26.260] [32m✓[39m 74 modules transformed.
+[09:22:26.261] [31mx[39m Build failed in 788ms
+[09:22:26.261] [31merror during build:
+[09:22:26.261] [31m[vite:esbuild] Transform failed with 2 errors:
+[09:22:26.261] /vercel/path0/client/src/pages/admin/create-providers.tsx:1201:8: ERROR: Unexpected closing "div" tag does not match opening "AdminLayout" tag
+[09:22:26.261] /vercel/path0/client/src/pages/admin/create-providers.tsx:1202:18: ERROR: Unterminated regular expression[31m
+[09:22:26.262] file: [36m/vercel/path0/client/src/pages/admin/create-providers.tsx:1201:8[31m
+[09:22:26.262] [33m
+[09:22:26.262] [33mUnexpected closing "div" tag does not match opening "AdminLayout" tag[33m
+[09:22:26.262] 1199|          `}
+[09:22:26.262] 1200|        </style>
+[09:22:26.262] 1201|        </div>
+[09:22:26.262]    |          ^
+[09:22:26.262] 1202|      </AdminLayout>
+[09:22:26.262] 1203|    );
+[09:22:26.262] 
+[09:22:26.262] [33mUnterminated regular expression[33m
+[09:22:26.263] 1200|        </style>
+[09:22:26.263] 1201|        </div>
+[09:22:26.263] 1202|      </AdminLayout>
+[09:22:26.263]    |                    ^
+[09:22:26.263] 1203|    );
+[09:22:26.263] 1204|  }
+[09:22:26.263] [31m
+[09:22:26.263]     at failureErrorWithLog (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:1472:15)
+[09:22:26.263]     at /vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:755:50
+[09:22:26.263]     at responseCallbacks.<computed> (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:622:9)
+[09:22:26.263]     at handleIncomingPacket (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:677:12)
+[09:22:26.263]     at Socket.readFromStdout (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:600:7)
+[09:22:26.263]     at Socket.emit (node:events:518:28)
+[09:22:26.263]     at addChunk (node:internal/streams/readable:561:12)
+[09:22:26.264]     at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+[09:22:26.264]     at Readable.push (node:internal/streams/readable:392:5)
+[09:22:26.264]     at Pipe.onStreamRead (node:internal/stream_base_commons:189:23)[39m
+[09:22:26.283] Error: Command "rm -f public/index.html && npm run build" exited with 1

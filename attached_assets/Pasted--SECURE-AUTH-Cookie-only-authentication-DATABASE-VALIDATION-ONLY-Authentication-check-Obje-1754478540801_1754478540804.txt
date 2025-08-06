@@ -1,0 +1,1013 @@
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🎨 CompanyInfoLarge - Logo settings: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+ 🔧 [DEVELOPER CONTROLS] Visible for super user
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 0 models
+ Selected Model ID: null
+ Selected Model Object: undefined
+ Select Model Value (string): undefined
+ AI Models for Select: undefined
+index-BIttt5c9.js:495 AI Models error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-BIttt5c9.js:48:45459
+MG @ index-BIttt5c9.js:495
+ Activity Types loaded: 0 types
+ Selected Activity Type ID: null
+ Selected Activity Type Object: undefined
+ Select Activity Type Value (string): undefined
+ Activity Types for Select: undefined
+index-BIttt5c9.js:495 Activity Types error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-BIttt5c9.js:48:45459
+MG @ index-BIttt5c9.js:495
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: false
+ Should create session: true
+ AI Models loaded: 0 models
+ Activity Types loaded: 0 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+ 🔄 [SESSION CREATE] Starting chat session creation...
+ 🔄 [SESSION CREATE] User auth status: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 0 models
+ Selected Model ID: null
+ Selected Model Object: undefined
+ Select Model Value (string): undefined
+ AI Models for Select: undefined
+index-BIttt5c9.js:495 AI Models error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-BIttt5c9.js:48:45459
+MG @ index-BIttt5c9.js:495
+ Activity Types loaded: 0 types
+ Selected Activity Type ID: null
+ Selected Activity Type Object: undefined
+ Select Activity Type Value (string): undefined
+ Activity Types for Select: undefined
+index-BIttt5c9.js:495 Activity Types error: Error: Expected JSON response but got text/html; charset=utf-8
+    at index-BIttt5c9.js:48:45459
+MG @ index-BIttt5c9.js:495
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: true
+ Should create session: false
+ AI Models loaded: 0 models
+ Activity Types loaded: 0 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔧 [SIDEBAR] Button clicked: Create AI Providers href: /admin/create-providers
+ 🔧 [SIDEBAR] Navigating to: /admin/create-providers
+ [APP DEBUG] Router component rendering...
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ [APP DEBUG] Router state: Object
+ [APP DEBUG] Authentication check: Object
+ [APP DEBUG] useAuth hook returned: Object
+ [APP DEBUG] User is authenticated, proceeding with route-based navigation
+ 🔐 [ROLE GUARD] Checking access for super-user (level 1000): Object
+ [ROLE GUARD] Access granted - user level 1000 >= required level 1000
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔍 [AI-PROVIDERS] Fetching providers from Railway database...
+ 🔍 [AUTH HEADERS] Getting authentication headers...
+ ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+ 🔄 [SESSION CREATE] Using header-based authentication
+ 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+ 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+ [APP DEBUG] Router component rendering...
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ [APP DEBUG] Router state: Object
+ [APP DEBUG] Authentication check: Object
+ [APP DEBUG] useAuth hook returned: Object
+ [APP DEBUG] User is authenticated, proceeding with route-based navigation
+ 🔄 [SESSION CREATE] Response status: 405
+ 🔄 [SESSION CREATE] Response headers: Object
+index-BIttt5c9.js:495 ❌ [SESSION CREATE] Session creation failed: 405 
+mutationFn @ index-BIttt5c9.js:495
+index-BIttt5c9.js:495 ❌ [SESSION CREATE] Full error response: Object
+mutationFn @ index-BIttt5c9.js:495
+index-BIttt5c9.js:495 ❌ [SESSION CREATE] Failed to create session: Error: Failed to create chat session: 405 
+    at Object.mutationFn (index-BIttt5c9.js:495:25708)
+onError @ index-BIttt5c9.js:495
+index-BIttt5c9.js:495 ❌ [SESSION CREATE] Error details: Object
+onError @ index-BIttt5c9.js:495
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ ✅ [AI-PROVIDERS] Fetched providers from database: 8 providers
+ 🔍 [PRODUCTION-DEBUG] First provider data structure: Object
+ 🔍 [PRODUCTION-DEBUG] All provider names and status:
+   1. undefined (anthropic) - isEnabled: undefined (undefined)
+   2. undefined (cohere) - isEnabled: undefined (undefined)
+   3. undefined (custom) - isEnabled: undefined (undefined)
+   4. undefined (google-ai) - isEnabled: undefined (undefined)
+   5. undefined (mistral) - isEnabled: undefined (undefined)
+   6. undefined (Horizon Edge Enterprises) - isEnabled: undefined (undefined)
+   7. undefined (openai) - isEnabled: undefined (undefined)
+   8. undefined (perplexity) - isEnabled: undefined (undefined)
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔧 [AI-PROVIDERS] Editing provider: 2 anthropic
+ 🔧 [AI-PROVIDERS] Provider data: Object
+ 🔧 [AI-PROVIDERS] Form data being set: Object
+ 🔧 [AI-PROVIDERS] Form reset with values, opening edit dialog...
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔧 [AI-PROVIDERS] All fields explicitly set: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+index-BIttt5c9.js:418 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-BIttt5c9.js:418 Authentication check: Object
+index-BIttt5c9.js:418 🔧 [SIDEBAR] Role check: Object
+index-BIttt5c9.js:418 🔧 [SIDEBAR] Section visibility: Object
+index-BIttt5c9.js:418 🔧 [SIDEBAR] Rendering with sections: Object
+index-BIttt5c9.js:418 🔧 [SIDEBAR] Role detection: Object
+index-BIttt5c9.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-BIttt5c9.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-BIttt5c9.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-BIttt5c9.js:418 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-BIttt5c9.js:418 Authentication check: Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+index-BIttt5c9.js:418 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-BIttt5c9.js:418 Authentication check: Object
+index-BIttt5c9.js:418 🔧 [SIDEBAR] Role check: Object
+index-BIttt5c9.js:418 🔧 [SIDEBAR] Section visibility: Object
+index-BIttt5c9.js:418 🔧 [SIDEBAR] Rendering with sections: Object
+index-BIttt5c9.js:418 🔧 [SIDEBAR] Role detection: Object
+index-BIttt5c9.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-BIttt5c9.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-BIttt5c9.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-BIttt5c9.js:418 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-BIttt5c9.js:418 Authentication check: Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+index-BIttt5c9.js:418 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-BIttt5c9.js:418 Authentication check: Object
+index-BIttt5c9.js:418 🔧 [SIDEBAR] Role check: Object
+index-BIttt5c9.js:418 🔧 [SIDEBAR] Section visibility: Object
+index-BIttt5c9.js:418 🔧 [SIDEBAR] Rendering with sections: Object
+index-BIttt5c9.js:418 🔧 [SIDEBAR] Role detection: Object
+index-BIttt5c9.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-BIttt5c9.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-BIttt5c9.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-BIttt5c9.js:418 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-BIttt5c9.js:418 Authentication check: Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+index-BIttt5c9.js:418 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-BIttt5c9.js:418 Authentication check: Object
+index-BIttt5c9.js:418 🔧 [SIDEBAR] Role check: Object
+index-BIttt5c9.js:418 🔧 [SIDEBAR] Section visibility: Object
+index-BIttt5c9.js:418 🔧 [SIDEBAR] Rendering with sections: Object
+index-BIttt5c9.js:418 🔧 [SIDEBAR] Role detection: Object
+index-BIttt5c9.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-BIttt5c9.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-BIttt5c9.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-BIttt5c9.js:418 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-BIttt5c9.js:418 Authentication check: Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+index-BIttt5c9.js:418 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-BIttt5c9.js:418 Authentication check: Object
+index-BIttt5c9.js:418 🔧 [SIDEBAR] Role check: Object
+index-BIttt5c9.js:418 🔧 [SIDEBAR] Section visibility: Object
+index-BIttt5c9.js:418 🔧 [SIDEBAR] Rendering with sections: Object
+index-BIttt5c9.js:418 🔧 [SIDEBAR] Role detection: Object
+index-BIttt5c9.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-BIttt5c9.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-BIttt5c9.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-BIttt5c9.js:418 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-BIttt5c9.js:418 Authentication check: Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+index-BIttt5c9.js:618 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+index-BIttt5c9.js:418 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-BIttt5c9.js:418 Authentication check: Object
+index-BIttt5c9.js:418 🔧 [SIDEBAR] Role check: Object
+index-BIttt5c9.js:418 🔧 [SIDEBAR] Section visibility: Object
+index-BIttt5c9.js:418 🔧 [SIDEBAR] Rendering with sections: Object
+index-BIttt5c9.js:418 🔧 [SIDEBAR] Role detection: Object
+index-BIttt5c9.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-BIttt5c9.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-BIttt5c9.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models

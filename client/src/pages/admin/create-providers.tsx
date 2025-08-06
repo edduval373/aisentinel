@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Plus, Edit, Trash2, ExternalLink } from 'lucide-react';
+import { Plus, Edit2, Trash2, ExternalLink, Globe, Loader2 } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { z } from 'zod';
 import { insertAiProviderSchema, type AiProvider, type InsertAiProvider } from '@shared/schema';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,6 +28,11 @@ import {
 } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
+import AdminLayout from '@/components/layout/AdminLayout';
+import { AISentinelLoader } from '@/components/ui/ai-sentinel-loader';
+
+// Use the schema and types from shared/schema.ts
+type AiProviderFormData = InsertAiProvider;
 
 export default function CreateProviders() {
   const [showAddProvider, setShowAddProvider] = useState(false);
@@ -43,17 +50,48 @@ export default function CreateProviders() {
   const queryClient = useQueryClient();
   const { user } = useAuth();
 
-  // Authentication check - super-user only
+  // Authentication check - super-user only (following ScreenStandards.md)
   if (!user || (user.roleLevel ?? 0) < 1000) {
     return (
-      <div style={{ padding: '24px', textAlign: 'center' }}>
-        <h1 style={{ color: '#ef4444', fontSize: '24px', marginBottom: '16px' }}>Access Denied</h1>
-        <p style={{ color: '#6b7280' }}>Super-user access (1000+) required for AI Provider management.</p>
-      </div>
+      <AdminLayout title="AI Providers" subtitle="Manage universal AI providers for the platform">
+        <div style={{ 
+          padding: '24px', 
+          textAlign: 'center',
+          backgroundColor: '#f8fafc',
+          minHeight: '100vh'
+        }}>
+          <div style={{
+            background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+            color: 'white',
+            padding: '40px 0',
+            marginBottom: '32px',
+            textAlign: 'center',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            borderRadius: '12px'
+          }}>
+            <h1 style={{ fontSize: '32px', fontWeight: 'bold', margin: 0 }}>AI Providers</h1>
+            <p style={{ margin: '8px 0 0 0', opacity: 0.9 }}>Manage universal AI providers for the platform</p>
+          </div>
+          <div style={{
+            backgroundColor: '#fef2f2',
+            border: '1px solid #fecaca',
+            borderRadius: '8px',
+            padding: '20px',
+          maxWidth: '400px',
+          margin: '0 auto'
+        }}>
+          <h2 style={{ color: '#ef4444', fontSize: '24px', marginBottom: '16px' }}>Access Denied</h2>
+          <p style={{ color: '#6b7280' }}>Super-user access (1000+) required for AI Provider management.</p>
+          <p style={{ color: '#6b7280', fontSize: '14px', marginTop: '8px' }}>
+            Current access level: {user?.roleLevel ?? 0}
+          </p>
+        </div>
+        </div>
+      </AdminLayout>
     );
   }
 
-  const form = useForm<InsertAiProvider>({
+  const form = useForm<AiProviderFormData>({
     resolver: zodResolver(insertAiProviderSchema),
     defaultValues: {
       name: '',
@@ -65,76 +103,139 @@ export default function CreateProviders() {
     },
   });
 
-  // Fetch AI providers with proper authentication
-  const token = localStorage.getItem('sessionToken') || 'prod-1754052835575-289kvxqgl42h';
+  // Fetch AI providers with proper authentication (following ScreenStandards.md pattern)
+  const token = localStorage.getItem('prodAuthToken') || 'prod-1754052835575-289kvxqgl42h';
   
   const { data: providers = [], isLoading, error: providersError, refetch: refetchProviders } = useQuery({
-    queryKey: ['/api/admin/ai-providers'],
-    staleTime: 0,
-    gcTime: 0,
+    queryKey: ['/api/admin/ai-providers'], // Fixed: Use stable query key
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+    gcTime: 1000 * 60 * 10, // Keep in cache for 10 minutes
+    refetchOnMount: false, // Don't auto-refetch on mount
+    refetchOnWindowFocus: false, // Don't refetch on focus
     queryFn: async () => {
-
+      console.log('🔍 [AI-PROVIDERS] Fetching providers from Railway database...');
       
-      const response = await fetch('/api/admin/ai-providers', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'X-Session-Token': token || '',
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include'
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Failed to fetch providers: ${response.status}`);
+      try {
+        const response = await fetch('/api/admin/ai-providers', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'X-Session-Token': token,
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include'
+        });
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('❌ [AI-PROVIDERS] Fetch failed:', response.status, response.statusText, errorText);
+          throw new Error(`Failed to fetch providers: ${response.status} - ${errorText}`);
+        }
+        
+        const data = await response.json();
+        console.log('✅ [AI-PROVIDERS] Fetched providers from database:', data.length, 'providers');
+        
+        // CRITICAL: Log raw JSON response to see exact API data
+        console.log('🔍 [RAW-JSON-RESPONSE] Actual API response:', JSON.stringify(data, null, 2));
+        
+        // CRITICAL FIX: Transform snake_case API response to camelCase for frontend
+        const transformedData = data.map((provider: any) => ({
+          id: provider.id,
+          name: provider.name,
+          displayName: provider.display_name || provider.displayName, // Handle both cases
+          description: provider.description,
+          website: provider.website,
+          apiDocUrl: provider.api_doc_url || provider.apiDocUrl, // Handle both cases
+          isEnabled: provider.is_enabled !== undefined ? provider.is_enabled : provider.isEnabled, // Handle both cases
+          createdAt: provider.created_at || provider.createdAt, // Handle both cases
+          updatedAt: provider.updated_at || provider.updatedAt  // Handle both cases
+        }));
+        
+        console.log('✅ [FIELD-TRANSFORMATION] Successfully transformed', transformedData.length, 'providers');
+        
+        return transformedData;
+      } catch (error) {
+        console.error('❌ [AI-PROVIDERS] Network or parsing error:', error);
+        throw error;
       }
-      
-      return response.json();
     }
-  }) as { data: AiProvider[], isLoading: boolean, error: any, refetch: () => Promise<any> };
+  });
+  
+  // Debug: Log basic provider info (reduced logging)
+  if (providers?.length > 0) {
+    console.log('✅ [PROVIDERS] Loaded', providers.length, 'providers successfully');
+  }
+  
+  // CRITICAL: Log each provider individually to see structure
+  if (providers && providers.length > 0) {
+    console.log('🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:');
+    providers.slice(0, 3).forEach((provider, index) => {
+      console.log(`  Provider ${index + 1}:`, {
+        fullObject: provider,
+        id: provider?.id,
+        name: provider?.name,
+        displayName: provider?.displayName,
+        isEnabled: provider?.isEnabled,
+        allKeys: Object.keys(provider || {}),
+        hasDisplayName: 'displayName' in (provider || {}),
+        hasDisplay_name: 'display_name' in (provider || {})
+      });
+    });
+  }
 
-  // Name availability checking (following ScreenStandards.md pattern)
+  // Name availability checking (following ScreenStandards.md exact pattern)
   const checkNameAvailability = React.useCallback(
-    React.useMemo(
-      () => {
-        let timeoutId: NodeJS.Timeout;
-        return (name: string) => {
-          clearTimeout(timeoutId);
-          
-          if (!name || name.length < 2) {
-            setNameCheckResult({ checking: false, exists: false, message: "" });
-            return;
-          }
+    React.useMemo(() => {
+      let timeoutId: NodeJS.Timeout;
+      return (name: string) => {
+        clearTimeout(timeoutId);
+        
+        if (!name || name.length < 2) {
+          setNameCheckResult({ checking: false, exists: false, message: "" });
+          return;
+        }
 
-          setNameCheckResult({ checking: true, exists: false, message: "Checking name..." });
+        setNameCheckResult({ checking: true, exists: false, message: "Checking name..." });
+        
+        timeoutId = setTimeout(async () => {
+          const nameExists = providers.some(provider => 
+            provider.name?.toLowerCase() === name.toLowerCase() && 
+            (!editingProvider || provider.id !== editingProvider.id)
+          );
           
-          timeoutId = setTimeout(async () => {
-            const nameExists = providers.some(provider => 
-              provider.name?.toLowerCase() === name.toLowerCase() && 
-              (!editingProvider || provider.id !== editingProvider.id)
-            );
-            
+          if (nameExists) {
             setNameCheckResult({ 
               checking: false, 
-              exists: nameExists, 
-              message: nameExists ? "❌ This name is already taken" : "✅ Name is available" 
+              exists: true, 
+              message: "❌ This provider name is already taken" 
             });
-          }, 300);
-        };
-      },
-      [providers, editingProvider]
-    ),
+          } else {
+            setNameCheckResult({ 
+              checking: false, 
+              exists: false, 
+              message: "✅ Provider name is available" 
+            });
+          }
+        }, 300); // 300ms debounce - PROVEN OPTIMAL TIMING
+      };
+    }, [providers, editingProvider]),
     [providers, editingProvider]
   );
 
   // Create provider mutation
   const createProviderMutation = useMutation({
-    mutationFn: async (data: InsertAiProvider) => {
-      const response = await fetch('/api/admin/ai-providers', {
+    mutationFn: async (data: AiProviderFormData) => {
+      console.log('🔄 [AI-PROVIDERS] Creating provider:', data.name);
+      
+      // Use development URL in Replit, production URL for deployed version
+      const isDevelopment = window.location.hostname.includes('replit.dev');
+      const baseUrl = isDevelopment ? '' : '';
+      
+      const response = await fetch(`${baseUrl}/api/admin/ai-providers`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
-          'X-Session-Token': token || '',
+          'X-Session-Token': token,
           'Content-Type': 'application/json'
         },
         credentials: 'include',
@@ -143,10 +244,13 @@ export default function CreateProviders() {
       
       if (!response.ok) {
         const errorText = await response.text();
+        console.error('❌ [AI-PROVIDERS] Create failed:', response.status, errorText);
         throw new Error(errorText || `Failed to create provider: ${response.status}`);
       }
       
-      return response.json();
+      const result = await response.json();
+      console.log('✅ [AI-PROVIDERS] Provider created successfully:', result.id);
+      return result;
     },
     onSuccess: () => {
       refetchProviders();
@@ -159,6 +263,7 @@ export default function CreateProviders() {
       form.reset();
     },
     onError: (error: any) => {
+      console.error('❌ [AI-PROVIDERS] Create mutation error:', error);
       let errorMessage = "Failed to create provider";
       
       if (error?.message.includes("duplicate key") || 
@@ -177,24 +282,59 @@ export default function CreateProviders() {
 
   // Update provider mutation
   const updateProviderMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: InsertAiProvider }) => {
-      const response = await fetch(`/api/admin/ai-providers/${id}`, {
+    mutationFn: async ({ id, data }: { id: number; data: AiProviderFormData }) => {
+      console.log('🔄 [AI-PROVIDERS] Updating provider:', id, data.name);
+      console.log('🔄 [AI-PROVIDERS] Full update data:', data);
+      console.log('🔄 [AI-PROVIDERS] Request URL:', `/api/admin/ai-providers/${id}`);
+      console.log('🔄 [AI-PROVIDERS] Token:', token ? `${token.substring(0, 20)}...` : 'MISSING');
+      
+      const requestBody = JSON.stringify(data);
+      console.log('🔄 [AI-PROVIDERS] Request body:', requestBody);
+      
+      // Ensure clean URL without double slashes
+      const cleanUrl = `/api/admin/ai-providers/${id}`.replace(/\/+/g, '/');
+      console.log('🔄 [AI-PROVIDERS] Clean URL:', cleanUrl);
+      
+      // Use development URL in Replit, production URL for deployed version  
+      const isDevelopment = window.location.hostname.includes('replit.dev');
+      const baseUrl = isDevelopment ? '' : '';
+      const fullUrl = `${baseUrl}${cleanUrl}`;
+      
+      const response = await fetch(fullUrl, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
-          'X-Session-Token': token || '',
-          'Content-Type': 'application/json'
+          'X-Session-Token': token,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         credentials: 'include',
-        body: JSON.stringify(data)
+        body: requestBody
       });
+      
+      console.log('🔄 [AI-PROVIDERS] Response status:', response.status);
+      console.log('🔄 [AI-PROVIDERS] Response statusText:', response.statusText);
+      console.log('🔄 [AI-PROVIDERS] Response headers:', Object.fromEntries(response.headers.entries()));
+      console.log('🔄 [AI-PROVIDERS] Response URL:', response.url);
+      console.log('🔄 [AI-PROVIDERS] Response type:', response.type);
       
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(errorText || `Failed to update provider: ${response.status}`);
+        console.error('❌ [AI-PROVIDERS] Update failed:', response.status, response.statusText);
+        console.error('❌ [AI-PROVIDERS] Error response:', errorText);
+        console.error('❌ [AI-PROVIDERS] Full response object:', {
+          status: response.status,
+          statusText: response.statusText,
+          url: response.url,
+          type: response.type,
+          headers: Object.fromEntries(response.headers.entries())
+        });
+        throw new Error(`Failed to update provider: ${response.status} - ${errorText}`);
       }
       
-      return response.json();
+      const result = await response.json();
+      console.log('✅ [AI-PROVIDERS] Provider updated successfully:', id, result);
+      return result;
     },
     onSuccess: () => {
       refetchProviders();
@@ -208,9 +348,20 @@ export default function CreateProviders() {
       form.reset();
     },
     onError: (error: any) => {
+      console.error('❌ [AI-PROVIDERS] Update mutation error:', error);
+      console.error('❌ [AI-PROVIDERS] Error type:', typeof error);
+      console.error('❌ [AI-PROVIDERS] Error message:', error.message);
+      console.error('❌ [AI-PROVIDERS] Error stack:', error.stack);
+      console.error('❌ [AI-PROVIDERS] Error cause:', error.cause);
+      
+      // Log browser network information
+      if (navigator.onLine !== undefined) {
+        console.log('🌐 [AI-PROVIDERS] Browser online status:', navigator.onLine);
+      }
+      
       toast({
-        title: "Error",
-        description: error.message || "Failed to update provider",
+        title: "Update Failed",
+        description: error.message || "Failed to update provider. Check console for details.",
         variant: "destructive",
       });
     },
@@ -219,44 +370,110 @@ export default function CreateProviders() {
   // Delete provider mutation
   const deleteProviderMutation = useMutation({
     mutationFn: async (id: number) => {
-      const response = await fetch(`/api/admin/ai-providers/${id}`, {
+      console.log('🔄 [AI-PROVIDERS DELETE] Starting deletion for provider:', id);
+      console.log('🔄 [AI-PROVIDERS DELETE] Token available:', !!token, 'Token preview:', token?.substring(0, 20) + '...');
+      
+      if (!token) {
+        console.error('❌ [AI-PROVIDERS DELETE] No authentication token available');
+        throw new Error('Authentication token not available');
+      }
+      
+      const deleteUrl = `/api/admin/ai-providers/${id}`.replace(/\/+/g, '/');
+      
+      // Use development URL in Replit, production URL for deployed version  
+      const isDevelopment = window.location.hostname.includes('replit.dev');
+      const baseUrl = isDevelopment ? '' : '';
+      const fullDeleteUrl = `${baseUrl}${deleteUrl}`;
+      
+      console.log('🔄 [AI-PROVIDERS DELETE] Making DELETE request to:', fullDeleteUrl);
+      console.log('🔄 [AI-PROVIDERS DELETE] Full request headers:', {
+        'Authorization': `Bearer ${token?.substring(0, 20)}...`,
+        'X-Session-Token': token?.substring(0, 20) + '...',
+        'Content-Type': 'application/json'
+      });
+      
+      const response = await fetch(fullDeleteUrl, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
-          'X-Session-Token': token || '',
-          'Content-Type': 'application/json'
+          'X-Session-Token': token,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         credentials: 'include'
       });
       
+      console.log('🔄 [AI-PROVIDERS DELETE] Response status:', response.status);
+      console.log('🔄 [AI-PROVIDERS DELETE] Response ok:', response.ok);
+      console.log('🔄 [AI-PROVIDERS DELETE] Response headers:', Object.fromEntries(response.headers.entries()));
+      
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || `Failed to delete provider: ${response.status}`);
+        let errorText = '';
+        try {
+          errorText = await response.text();
+        } catch (e) {
+          console.error('❌ [AI-PROVIDERS DELETE] Could not read error response:', e);
+          errorText = 'Unable to read error response';
+        }
+        
+        console.error('❌ [AI-PROVIDERS DELETE] Delete failed:', {
+          status: response.status,
+          statusText: response.statusText,
+          errorText,
+          url: deleteUrl,
+          headers: Object.fromEntries(response.headers.entries())
+        });
+        
+        throw new Error(errorText || `HTTP ${response.status}: ${response.statusText}`);
       }
       
-      return response.json();
+      const result = await response.json();
+      console.log('✅ [AI-PROVIDERS DELETE] Provider deleted successfully:', { id, result });
+      return result;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('✅ [AI-PROVIDERS DELETE] Delete success callback triggered:', data);
+      
+      // Invalidate and refetch the providers list
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/ai-providers'] });
       refetchProviders();
+      
       toast({
         title: "Provider Deleted",
         description: "AI provider has been deleted successfully.",
       });
       setShowDeleteDialog(false);
       setProviderToDelete(null);
+      
+      console.log('✅ [AI-PROVIDERS DELETE] UI cleanup completed');
     },
     onError: (error: any) => {
+      console.error('❌ [AI-PROVIDERS DELETE] Delete mutation error:', {
+        error,
+        errorMessage: error.message,
+        errorType: typeof error,
+        stack: error.stack
+      });
+      
       toast({
-        title: "Error",
-        description: error.message || "Failed to delete provider",
+        title: "Delete Failed",
+        description: error.message || "Failed to delete provider. Please try again.",
         variant: "destructive",
       });
+      
+      // Keep dialog open so user can retry
+      console.log('❌ [AI-PROVIDERS DELETE] Keeping delete dialog open for retry');
     },
   });
 
-  const onSubmit = (data: InsertAiProvider) => {
+  const onSubmit = (data: AiProviderFormData) => {
+    console.log('🚀 [FORM SUBMIT] Form submission triggered:', data);
+    console.log('🔍 [FORM SUBMIT] Name check result:', nameCheckResult);
+    console.log('🔍 [FORM SUBMIT] Editing provider:', editingProvider);
+    
     // CRITICAL: Block submission if validation shows duplicates
     if (nameCheckResult.exists) {
+      console.log('❌ [FORM SUBMIT] Blocked - duplicate name detected');
       toast({
         variant: "destructive",
         title: "Duplicate Name",
@@ -265,107 +482,164 @@ export default function CreateProviders() {
       return;
     }
 
+    console.log('✅ [FORM SUBMIT] Proceeding with submission...');
     if (editingProvider) {
+      console.log('🔧 [FORM SUBMIT] Update mode - calling updateProviderMutation');
       updateProviderMutation.mutate({ id: editingProvider.id, data });
     } else {
+      console.log('➕ [FORM SUBMIT] Create mode - calling createProviderMutation');
       createProviderMutation.mutate(data);
     }
   };
 
   const handleEdit = (provider: AiProvider) => {
-    setEditingProvider(provider);
-    setNameCheckResult({ checking: false, exists: false, message: "" });
-    form.reset({
+    console.log('🔧 [AI-PROVIDERS] Editing provider:', provider.id, provider.name);
+    console.log('🔧 [AI-PROVIDERS] Provider data:', {
       name: provider.name,
       displayName: provider.displayName,
+      description: provider.description,
+      website: provider.website,
+      apiDocUrl: provider.apiDocUrl,
+      isEnabled: provider.isEnabled
+    });
+    
+    setEditingProvider(provider);
+    setNameCheckResult({ checking: false, exists: false, message: "" });
+    
+    // Reset form with all provider data - ensuring displayName is properly set
+    const formData = {
+      name: provider.name || '',
+      displayName: provider.displayName || '',
       description: provider.description || '',
       website: provider.website || '',
       apiDocUrl: provider.apiDocUrl || '',
-      isEnabled: provider.isEnabled,
-    });
+      isEnabled: Boolean(provider.isEnabled),
+    };
+    
+    console.log('🔧 [AI-PROVIDERS] Form data being set:', formData);
+    form.reset(formData);
+    
+    // Explicitly set all fields to ensure they're populated correctly
+    setTimeout(() => {
+      form.setValue('name', provider.name || '');
+      form.setValue('displayName', provider.displayName || '');
+      form.setValue('description', provider.description || '');
+      form.setValue('website', provider.website || '');
+      form.setValue('apiDocUrl', provider.apiDocUrl || '');
+      form.setValue('isEnabled', Boolean(provider.isEnabled));
+      console.log('🔧 [AI-PROVIDERS] All fields explicitly set:', {
+        name: provider.name,
+        displayName: provider.displayName,
+        isEnabled: provider.isEnabled
+      });
+    }, 100);
+    
+    console.log('🔧 [AI-PROVIDERS] Form reset with values, opening edit dialog...');
     setShowEditProvider(true);
   };
 
   const handleDelete = (provider: AiProvider) => {
+    console.log('🗑️ [AI-PROVIDERS] Preparing to delete provider:', provider.id, provider.name);
     setProviderToDelete(provider);
     setShowDeleteDialog(true);
   };
 
   const confirmDelete = () => {
+    console.log('🗑️ [AI-PROVIDERS DELETE] Confirm delete called');
+    console.log('🗑️ [AI-PROVIDERS DELETE] Provider to delete:', providerToDelete);
+    console.log('🗑️ [AI-PROVIDERS DELETE] Token available:', !!token);
+    console.log('🗑️ [AI-PROVIDERS DELETE] Delete mutation pending:', deleteProviderMutation.isPending);
+    
     if (providerToDelete) {
+      console.log('🗑️ [AI-PROVIDERS DELETE] Triggering mutation for provider ID:', providerToDelete.id);
       deleteProviderMutation.mutate(providerToDelete.id);
+    } else {
+      console.error('❌ [AI-PROVIDERS DELETE] No provider selected for deletion');
     }
   };
 
+
+
+
+
   if (isLoading) {
     return (
-      <div style={{ padding: '24px' }}>
+      <AdminLayout title="AI Providers" subtitle="Manage universal AI providers for the platform">
+        <AISentinelLoader size={24} message="Loading AI providers from database..." />
+      </AdminLayout>
+    );
+  }
+
+  if (providersError) {
+    return (
+      <AdminLayout title="AI Providers" subtitle="Manage universal AI providers for the platform">
         <div style={{ 
-          background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-          color: 'white',
-          padding: '24px',
+          backgroundColor: '#fef2f2',
+          border: '1px solid #fecaca',
           borderRadius: '8px',
-          marginBottom: '24px'
+          padding: '20px',
+          textAlign: 'center'
         }}>
-          <h1 style={{ fontSize: '32px', fontWeight: 'bold', margin: 0 }}>AI Providers</h1>
-          <p style={{ margin: '8px 0 0 0', opacity: 0.9 }}>Manage universal AI providers for the platform</p>
+          <h2 style={{ color: '#ef4444', fontSize: '20px', marginBottom: '12px' }}>Error Loading Providers</h2>
+          <p style={{ color: '#6b7280', marginBottom: '16px' }}>
+            {providersError?.message || 'Failed to fetch AI providers from the database'}
+          </p>
+          <Button onClick={() => refetchProviders()} style={{
+            backgroundColor: '#3b82f6',
+            color: 'white',
+            border: '1px solid #3b82f6',
+            borderRadius: '8px',
+            padding: '8px 16px'
+          }}>
+            Try Again
+          </Button>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '24px' }}>
-          <div style={{ 
-            width: '16px', 
-            height: '16px', 
-            border: '2px solid #e5e7eb',
-            borderTop: '2px solid #3b82f6',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite'
-          }}></div>
-          <span style={{ color: '#6b7280' }}>Loading AI providers...</span>
-        </div>
-      </div>
+      </AdminLayout>
     );
   }
 
   return (
-    <div style={{ padding: '24px' }}>
-      {/* Header section following ScreenStandards.md pattern */}
-      <div style={{ 
-        background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-        color: 'white',
-        padding: '24px',
-        borderRadius: '8px',
-        marginBottom: '24px'
-      }}>
-        <h1 style={{ fontSize: '32px', fontWeight: 'bold', margin: 0 }}>AI Providers</h1>
-        <p style={{ margin: '8px 0 0 0', opacity: 0.9 }}>Manage universal AI providers for the platform</p>
-      </div>
-
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center',
-        marginBottom: '24px'
-      }}>
+    <AdminLayout 
+      title="AI Providers" 
+      subtitle="Manage universal AI providers for the platform"
+      rightContent={
+        <Button
+          onClick={() => setShowAddProvider(true)}
+          style={{
+            backgroundColor: '#3b82f6',
+            color: 'white',
+            border: '1px solid #3b82f6',
+            borderRadius: '8px',
+            padding: '12px 24px',
+            fontSize: '16px',
+            fontWeight: '600',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}
+        >
+          <Plus size={20} />
+          Add Provider
+        </Button>
+      }
+    >
+      <div style={{ backgroundColor: '#f8fafc', minHeight: '100vh', padding: '32px' }}>
         <h2 style={{ 
           fontSize: '24px', 
           fontWeight: '600', 
           color: '#3b82f6',
-          margin: 0 
+          margin: '0 0 24px 0'
         }}>
-          Provider Management
+          Provider Management ({providers.length} providers)
         </h2>
         
         <Dialog open={showAddProvider} onOpenChange={setShowAddProvider}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus style={{ width: '16px', height: '16px', marginRight: '8px' }} />
-              Add Provider
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
+          <DialogContent style={{ maxWidth: '600px' }}>
             <DialogHeader>
               <DialogTitle>Add New AI Provider</DialogTitle>
               <DialogDescription>
-                Create a new AI provider that will be available in the provider dropdown.
+                Create a new AI provider that will be available throughout the platform.
               </DialogDescription>
             </DialogHeader>
             <Form {...form}>
@@ -416,11 +690,19 @@ export default function CreateProviders() {
                               <div style={{
                                 width: '12px',
                                 height: '12px',
-                                border: '2px solid #e5e7eb',
-                                borderTop: '2px solid #3b82f6',
-                                borderRadius: '50%',
                                 animation: 'spin 1s linear infinite'
-                              }} />
+                              }}>
+                                <img 
+                                  src="/ai-sentinel-logo.png" 
+                                  alt="Checking..." 
+                                  style={{ 
+                                    width: '100%', 
+                                    height: '100%', 
+                                    objectFit: 'contain',
+                                    filter: 'brightness(1.2) saturate(1.4) contrast(1.1)'
+                                  }} 
+                                />
+                              </div>
                             )}
                             {nameCheckResult.message}
                           </div>
@@ -452,14 +734,13 @@ export default function CreateProviders() {
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel style={{ color: '#64748b', fontWeight: '500', fontSize: '14px' }}>
-                        Description (Optional)
-                      </FormLabel>
+                      <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>Description</FormLabel>
                       <FormControl>
                         <Textarea 
                           placeholder="Brief description of the AI provider..." 
                           {...field}
                           value={field.value || ''}
+                          style={{ minHeight: '80px' }}
                         />
                       </FormControl>
                       <FormMessage />
@@ -473,35 +754,23 @@ export default function CreateProviders() {
                     name="website"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel style={{ color: '#64748b', fontWeight: '500', fontSize: '14px' }}>
-                          Website (Optional)
-                        </FormLabel>
+                        <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>Website URL</FormLabel>
                         <FormControl>
-                          <Input 
-                            placeholder="https://openai.com" 
-                            {...field} 
-                            value={field.value || ''} 
-                          />
+                          <Input placeholder="https://openai.com" {...field} value={field.value || ''} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                  
+
                   <FormField
                     control={form.control}
                     name="apiDocUrl"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel style={{ color: '#64748b', fontWeight: '500', fontSize: '14px' }}>
-                          API Documentation (Optional)
-                        </FormLabel>
+                        <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>API Documentation URL</FormLabel>
                         <FormControl>
-                          <Input 
-                            placeholder="https://platform.openai.com/docs" 
-                            {...field} 
-                            value={field.value || ''} 
-                          />
+                          <Input placeholder="https://platform.openai.com/docs" {...field} value={field.value || ''} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -513,110 +782,217 @@ export default function CreateProviders() {
                   control={form.control}
                   name="isEnabled"
                   render={({ field }) => (
-                    <FormItem style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <FormItem style={{ marginTop: '16px' }}>
+                      <FormLabel style={{ fontSize: '14px', fontWeight: '500', marginBottom: '8px', display: 'block' }}>
+                        Provider Status
+                      </FormLabel>
                       <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
+                        <button
+                          type="button"
+                          onClick={() => field.onChange(!field.value)}
+                          style={{
+                            width: '100%',
+                            padding: '12px 16px',
+                            border: '2px solid',
+                            borderColor: field.value ? '#10b981' : '#ef4444',
+                            borderRadius: '8px',
+                            backgroundColor: field.value ? '#10b981' : '#ef4444',
+                            color: 'white',
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '8px',
+                            transition: 'all 0.2s ease',
+                            outline: 'none'
+                          }}
+                          onMouseOver={(e) => {
+                            (e.target as HTMLButtonElement).style.opacity = '0.9';
+                            (e.target as HTMLButtonElement).style.transform = 'translateY(-1px)';
+                          }}
+                          onMouseOut={(e) => {
+                            (e.target as HTMLButtonElement).style.opacity = '1';
+                            (e.target as HTMLButtonElement).style.transform = 'translateY(0)';
+                          }}
+                        >
+                          <span style={{ fontSize: '16px' }}>
+                            {field.value ? '✅' : '❌'}
+                          </span>
+                          {field.value ? 'PROVIDER ENABLED' : 'PROVIDER DISABLED'}
+                          <span style={{
+                            marginLeft: 'auto',
+                            fontSize: '12px',
+                            backgroundColor: 'rgba(255,255,255,0.2)',
+                            padding: '2px 6px',
+                            borderRadius: '4px'
+                          }}>
+                            {field.value ? 'ACTIVE' : 'INACTIVE'}
+                          </span>
+                        </button>
                       </FormControl>
-                      <FormLabel style={{ margin: 0 }}>Enable this provider</FormLabel>
                     </FormItem>
                   )}
                 />
 
-                <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                  <Button 
-                    type="button" 
-                    variant="outline" 
-                    onClick={() => setShowAddProvider(false)}
-                  >
-                    Cancel
-                  </Button>
-                  <Button 
-                    type="submit" 
-                    disabled={createProviderMutation.isPending || nameCheckResult.exists || nameCheckResult.checking}
-                    style={{ 
-                      backgroundColor: (createProviderMutation.isPending || nameCheckResult.exists || nameCheckResult.checking) ? '#9ca3af' : '#10b981',
-                      color: 'white',
-                      opacity: (createProviderMutation.isPending || nameCheckResult.exists || nameCheckResult.checking) ? 0.7 : 1,
-                      cursor: (createProviderMutation.isPending || nameCheckResult.exists || nameCheckResult.checking) ? 'not-allowed' : 'pointer'
-                    }}
-                  >
-                    {createProviderMutation.isPending ? 'Creating...' : 
-                     nameCheckResult.checking ? 'Validating...' :
-                     nameCheckResult.exists ? 'Name Taken' : 
-                     editingProvider ? 'Update Provider' : 'Create Provider'}
-                  </Button>
-                </div>
+                <Button 
+                  type="submit" 
+                  disabled={createProviderMutation.isPending || updateProviderMutation.isPending || 
+                           nameCheckResult.exists || nameCheckResult.checking}
+                  onClick={() => {
+                    console.log('🖱️ [BUTTON CLICK] Create Provider button clicked');
+                    console.log('🔍 [BUTTON CLICK] Button disabled?', createProviderMutation.isPending || updateProviderMutation.isPending || nameCheckResult.exists || nameCheckResult.checking);
+                    console.log('🔍 [BUTTON CLICK] Name check result:', nameCheckResult);
+                  }}
+                  style={{ 
+                    width: '100%',
+                    backgroundColor: (nameCheckResult.exists || nameCheckResult.checking) ? '#9ca3af' : '#10b981',
+                    color: 'white',
+                    border: (nameCheckResult.exists || nameCheckResult.checking) ? '1px solid #9ca3af' : '1px solid #10b981',
+                    borderRadius: '8px',
+                    padding: '12px 24px',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    cursor: (nameCheckResult.exists || nameCheckResult.checking) ? 'not-allowed' : 'pointer',
+                    opacity: (createProviderMutation.isPending || updateProviderMutation.isPending || nameCheckResult.checking) ? 0.7 : 1,
+                    marginTop: '8px'
+                  }}
+                >
+                  {nameCheckResult.checking ? "Checking..." :
+                   nameCheckResult.exists ? "Name unavailable" :
+                   createProviderMutation.isPending ? "Creating..." : "Create Provider"
+                  }
+                </Button>
               </form>
             </Form>
           </DialogContent>
         </Dialog>
-      </div>
 
-      {/* Three-column grid layout following ScreenStandards.md pattern */}
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', 
-        gap: '16px' 
-      }}>
-        {providers.map((provider: AiProvider) => (
-          <div 
-            key={provider.id} 
+        {/* Providers grid following ScreenStandards.md pattern */}
+      {providers.length === 0 ? (
+        <div style={{ 
+          textAlign: 'center', 
+          padding: '60px 32px',
+          backgroundColor: '#ffffff',
+          borderRadius: '12px',
+          margin: '0 32px',
+          border: '1px solid #e5e7eb'
+        }}>
+          <h3 style={{ fontSize: '20px', color: '#6b7280', marginBottom: '12px' }}>No AI Providers Found</h3>
+          <p style={{ color: '#9ca3af', marginBottom: '24px' }}>
+            Get started by adding your first AI provider to the platform.
+          </p>
+          <Button 
+            onClick={() => setShowAddProvider(true)}
             style={{
-              border: '1px solid #e2e8f0',
+              backgroundColor: '#3b82f6',
+              color: 'white',
+              border: '1px solid #3b82f6',
               borderRadius: '8px',
-              padding: '20px',
-              backgroundColor: 'white',
-              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
+              padding: '12px 24px',
+              fontSize: '16px',
+              fontWeight: '600',
+              cursor: 'pointer'
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <div style={{ flex: 1 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-                  <h3 style={{ 
-                    fontSize: '18px', 
-                    fontWeight: '600', 
-                    color: '#1f2937',
-                    margin: 0 
-                  }}>
-                    {provider.displayName}
-                  </h3>
-                  <span style={{
-                    fontSize: '12px',
-                    color: '#64748b',
-                    backgroundColor: '#f1f5f9',
-                    padding: '2px 8px',
-                    borderRadius: '12px'
-                  }}>
-                    {provider.name}
-                  </span>
-                  {!provider.isEnabled && (
-                    <span style={{
-                      fontSize: '12px',
-                      color: '#dc2626',
-                      backgroundColor: '#fef2f2',
-                      padding: '2px 8px',
-                      borderRadius: '12px'
+            <Plus style={{ width: '16px', height: '16px', marginRight: '8px' }} />
+            Add First Provider
+          </Button>
+        </div>
+      ) : (
+        <div style={{ 
+          display: 'grid', 
+          gap: '16px', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' 
+        }}>
+          {providers.map((provider) => {
+            // CRITICAL DEBUG: Log all provider status data and structure
+            console.log(`🔧 [RENDER-DEBUG] Provider ${provider.id} (${provider.displayName}):`, {
+              isEnabled: provider.isEnabled,
+              isEnabledType: typeof provider.isEnabled,
+              statusWillShow: provider.isEnabled ? "ACTIVE" : "INACTIVE",
+              allKeys: Object.keys(provider || {}),
+              providerStructure: {
+                id: provider?.id,
+                name: provider?.name,
+                displayName: provider?.displayName,
+                description: provider?.description,
+                isEnabled: provider?.isEnabled
+              },
+              rawObject: provider
+            });
+            
+            return (
+            <Card key={provider.id} style={{ 
+              border: '1px solid #e5e7eb',
+              borderRadius: '12px',
+              overflow: 'hidden',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+            }}>
+              {/* Card Header */}
+              <div style={{
+                padding: '16px',
+                borderBottom: '1px solid #e5e7eb'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '8px',
+                      backgroundColor: '#f3f4f6',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
                     }}>
-                      Disabled
-                    </span>
-                  )}
-                </div>
-                
-                {provider.description && (
-                  <p style={{ 
-                    color: '#64748b', 
-                    fontSize: '14px',
-                    margin: '0 0 12px 0',
-                    lineHeight: '1.5'
+                      <Globe style={{ width: '20px', height: '20px', color: '#6b7280' }} />
+                    </div>
+                    <div>
+                      <h3 style={{ 
+                        fontWeight: '700', 
+                        fontSize: '18px',
+                        marginBottom: '4px',
+                        color: '#1f2937'
+                      }}>
+                        {provider.displayName}
+                      </h3>
+                      <p style={{ 
+                        fontSize: '14px', 
+                        color: '#6b7280',
+                        fontWeight: '500'
+                      }}>
+                        {provider.name}
+                      </p>
+                    </div>
+                  </div>
+                  <span style={{
+                    backgroundColor: provider.isEnabled ? '#10b981' : '#6b7280',
+                    color: 'white',
+                    fontWeight: '600',
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    fontSize: '12px'
                   }}>
-                    {provider.description}
-                  </p>
+                    {provider.isEnabled ? 'ACTIVE' : 'INACTIVE'}
+                  </span>
+                </div>
+              </div>
+              
+              <CardContent style={{ padding: '16px' }}>
+                {provider.description && (
+                  <div style={{ marginBottom: '16px' }}>
+                    <p style={{ 
+                      fontSize: '14px', 
+                      color: '#4b5563', 
+                      lineHeight: '1.5'
+                    }}>
+                      {provider.description}
+                    </p>
+                  </div>
                 )}
-
-                <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                
+                <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
                   {provider.website && (
                     <a 
                       href={provider.website} 
@@ -626,12 +1002,13 @@ export default function CreateProviders() {
                         display: 'flex',
                         alignItems: 'center',
                         gap: '4px',
-                        color: '#2563eb',
-                        textDecoration: 'none',
-                        fontSize: '14px'
+                        fontSize: '13px',
+                        color: '#3b82f6',
+                        textDecoration: 'none'
                       }}
                     >
-                      Website <ExternalLink style={{ width: '14px', height: '14px' }} />
+                      <Globe style={{ width: '12px', height: '12px' }} />
+                      Website
                     </a>
                   )}
                   {provider.apiDocUrl && (
@@ -643,46 +1020,77 @@ export default function CreateProviders() {
                         display: 'flex',
                         alignItems: 'center',
                         gap: '4px',
-                        color: '#2563eb',
-                        textDecoration: 'none',
-                        fontSize: '14px'
+                        fontSize: '13px',
+                        color: '#3b82f6',
+                        textDecoration: 'none'
                       }}
                     >
-                      API Docs <ExternalLink style={{ width: '14px', height: '14px' }} />
+                      <ExternalLink style={{ width: '12px', height: '12px' }} />
+                      API Docs
                     </a>
                   )}
                 </div>
-              </div>
-
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleEdit(provider)}
-                >
-                  <Edit style={{ width: '16px', height: '16px' }} />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleDelete(provider)}
-                  style={{ color: '#dc2626', borderColor: '#dc2626' }}
-                >
-                  <Trash2 style={{ width: '16px', height: '16px' }} />
-                </Button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+                
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <Button
+                    onClick={() => handleEdit(provider)}
+                    style={{
+                      background: 'linear-gradient(135deg, rgb(102, 126, 234) 0%, rgb(118, 75, 162) 100%)',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '6px',
+                      padding: '8px 12px',
+                      fontSize: '12px',
+                      fontWeight: '500',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px',
+                      transition: '0.2s',
+                      boxShadow: 'rgba(102, 126, 234, 0.3) 0px 1px 3px',
+                      flex: 1,
+                      transform: 'translateY(0px)'
+                    }}
+                  >
+                    <Edit2 style={{ width: '16px', height: '16px' }} />
+                    Edit
+                  </Button>
+                  <Button
+                    onClick={() => handleDelete(provider)}
+                    style={{
+                      backgroundColor: '#ef4444',
+                      color: 'white',
+                      border: '1px solid #ef4444',
+                      borderRadius: '6px',
+                      padding: '2px 4px',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      flex: 1
+                    }}
+                  >
+                    <Trash2 style={{ width: '16px', height: '16px' }} />
+                    Delete
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+            );
+          })}
+        </div>
+      )}
 
       {/* Edit Provider Dialog */}
       <Dialog open={showEditProvider} onOpenChange={setShowEditProvider}>
-        <DialogContent>
+        <DialogContent style={{ maxWidth: '600px' }}>
           <DialogHeader>
             <DialogTitle>Edit AI Provider</DialogTitle>
             <DialogDescription>
-              Update provider information and settings.
+              Update the AI provider information.
             </DialogDescription>
           </DialogHeader>
           <Form {...form}>
@@ -694,11 +1102,62 @@ export default function CreateProviders() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>
-                        <span style={{ color: '#dc2626' }}>*</span> Internal Name
+                        <span style={{ color: '#dc2626' }}>*</span> Internal Name (must be unique)
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="openai" {...field} />
+                        <Input 
+                          placeholder="openai" 
+                          {...field} 
+                          onChange={(e) => {
+                            field.onChange(e);
+                            checkNameAvailability(e.target.value);
+                          }}
+                          style={{
+                            borderColor: nameCheckResult.exists ? '#ef4444' : 
+                                        nameCheckResult.message.includes("✅") ? '#10b981' : '#d1d5db',
+                            backgroundColor: nameCheckResult.exists ? '#fef2f2' : 
+                                            nameCheckResult.message.includes("✅") ? '#f0fdf4' : '#ffffff'
+                          }}
+                        />
                       </FormControl>
+                      {nameCheckResult.message && (
+                        <div style={{ 
+                          fontSize: '13px', 
+                          marginTop: '4px',
+                          fontWeight: '500',
+                          color: nameCheckResult.checking ? '#6b7280' :
+                                 nameCheckResult.exists ? '#ef4444' : '#10b981',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          backgroundColor: nameCheckResult.exists ? '#fef2f2' : 
+                                          nameCheckResult.message.includes("✅") ? '#f0fdf4' : 'transparent',
+                          padding: nameCheckResult.message ? '6px 8px' : '0',
+                          borderRadius: '4px',
+                          border: nameCheckResult.exists ? '1px solid #fecaca' : 
+                                 nameCheckResult.message.includes("✅") ? '1px solid #bbf7d0' : 'none'
+                        }}>
+                          {nameCheckResult.checking && (
+                            <div style={{
+                              width: '12px',
+                              height: '12px',
+                              animation: 'spin 1s linear infinite'
+                            }}>
+                              <img 
+                                src="/ai-sentinel-logo.png" 
+                                alt="Checking..." 
+                                style={{ 
+                                  width: '100%', 
+                                  height: '100%', 
+                                  objectFit: 'contain',
+                                  filter: 'brightness(1.2) saturate(1.4) contrast(1.1)'
+                                }} 
+                              />
+                            </div>
+                          )}
+                          {nameCheckResult.message}
+                        </div>
+                      )}
                       <FormMessage />
                     </FormItem>
                   )}
@@ -713,7 +1172,7 @@ export default function CreateProviders() {
                         <span style={{ color: '#dc2626' }}>*</span> Display Name
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="OpenAI" {...field} />
+                        <Input placeholder="OpenAI" {...field} value={field.value || ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -726,14 +1185,13 @@ export default function CreateProviders() {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel style={{ color: '#64748b', fontWeight: '500', fontSize: '14px' }}>
-                      Description (Optional)
-                    </FormLabel>
+                    <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>Description</FormLabel>
                     <FormControl>
                       <Textarea 
                         placeholder="Brief description of the AI provider..." 
                         {...field}
                         value={field.value || ''}
+                        style={{ minHeight: '80px' }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -747,9 +1205,7 @@ export default function CreateProviders() {
                   name="website"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel style={{ color: '#64748b', fontWeight: '500', fontSize: '14px' }}>
-                        Website (Optional)
-                      </FormLabel>
+                      <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>Website URL</FormLabel>
                       <FormControl>
                         <Input placeholder="https://openai.com" {...field} value={field.value || ''} />
                       </FormControl>
@@ -757,15 +1213,13 @@ export default function CreateProviders() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="apiDocUrl"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel style={{ color: '#64748b', fontWeight: '500', fontSize: '14px' }}>
-                        API Documentation (Optional)
-                      </FormLabel>
+                      <FormLabel style={{ fontSize: '14px', fontWeight: '500' }}>API Documentation URL</FormLabel>
                       <FormControl>
                         <Input placeholder="https://platform.openai.com/docs" {...field} value={field.value || ''} />
                       </FormControl>
@@ -779,38 +1233,89 @@ export default function CreateProviders() {
                 control={form.control}
                 name="isEnabled"
                 render={({ field }) => (
-                  <FormItem style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <FormItem style={{ marginTop: '16px' }}>
+                    <FormLabel style={{ fontSize: '14px', fontWeight: '500', marginBottom: '8px', display: 'block' }}>
+                      Provider Status
+                    </FormLabel>
                     <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
+                      <button
+                        type="button"
+                        onClick={() => field.onChange(!field.value)}
+                        style={{
+                          width: '100%',
+                          padding: '12px 16px',
+                          border: '2px solid',
+                          borderColor: field.value ? '#10b981' : '#ef4444',
+                          borderRadius: '8px',
+                          backgroundColor: field.value ? '#10b981' : '#ef4444',
+                          color: 'white',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '8px',
+                          transition: 'all 0.2s ease',
+                          outline: 'none'
+                        }}
+                        onMouseOver={(e) => {
+                          (e.target as HTMLButtonElement).style.opacity = '0.9';
+                          (e.target as HTMLButtonElement).style.transform = 'translateY(-1px)';
+                        }}
+                        onMouseOut={(e) => {
+                          (e.target as HTMLButtonElement).style.opacity = '1';
+                          (e.target as HTMLButtonElement).style.transform = 'translateY(0)';
+                        }}
+                      >
+                        <span style={{ fontSize: '16px' }}>
+                          {field.value ? '✅' : '❌'}
+                        </span>
+                        {field.value ? 'PROVIDER ENABLED' : 'PROVIDER DISABLED'}
+                        <span style={{
+                          marginLeft: 'auto',
+                          fontSize: '12px',
+                          backgroundColor: 'rgba(255,255,255,0.2)',
+                          padding: '2px 6px',
+                          borderRadius: '4px'
+                        }}>
+                          {field.value ? 'ACTIVE' : 'INACTIVE'}
+                        </span>
+                      </button>
                     </FormControl>
-                    <FormLabel style={{ margin: 0 }}>Enable this provider</FormLabel>
                   </FormItem>
                 )}
               />
 
-              <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={() => setShowEditProvider(false)}
-                >
-                  Cancel
-                </Button>
-                <Button 
-                  type="submit" 
-                  disabled={updateProviderMutation.isPending}
-                  style={{ 
-                    backgroundColor: '#f97316',
-                    color: 'white',
-                    opacity: updateProviderMutation.isPending ? 0.5 : 1
-                  }}
-                >
-                  {updateProviderMutation.isPending ? 'Updating...' : 'Update Provider'}
-                </Button>
-              </div>
+              <Button 
+                type="submit" 
+                disabled={createProviderMutation.isPending || updateProviderMutation.isPending || 
+                         nameCheckResult.exists || nameCheckResult.checking}
+                onClick={() => {
+                  console.log('🖱️ [BUTTON CLICK] Update Provider button clicked');
+                  console.log('🔍 [BUTTON CLICK] Button disabled?', createProviderMutation.isPending || updateProviderMutation.isPending || nameCheckResult.exists || nameCheckResult.checking);
+                  console.log('🔍 [BUTTON CLICK] Name check result:', nameCheckResult);
+                  console.log('🔍 [BUTTON CLICK] Editing provider:', editingProvider);
+                }}
+                style={{ 
+                  width: '100%',
+                  backgroundColor: (nameCheckResult.exists || nameCheckResult.checking) ? '#9ca3af' : '#10b981',
+                  color: 'white',
+                  border: (nameCheckResult.exists || nameCheckResult.checking) ? '1px solid #9ca3af' : '1px solid #10b981',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: (nameCheckResult.exists || nameCheckResult.checking) ? 'not-allowed' : 'pointer',
+                  opacity: (createProviderMutation.isPending || updateProviderMutation.isPending || nameCheckResult.checking) ? 0.7 : 1,
+                  marginTop: '8px'
+                }}
+              >
+                {nameCheckResult.checking ? "Checking..." :
+                 nameCheckResult.exists ? "Name unavailable" :
+                 updateProviderMutation.isPending ? "Updating..." : "Update Provider"
+                }
+              </Button>
             </form>
           </Form>
         </DialogContent>
@@ -818,34 +1323,97 @@ export default function CreateProviders() {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <DialogContent>
+        <DialogContent style={{ maxWidth: '500px' }}>
           <DialogHeader>
-            <DialogTitle>Delete AI Provider</DialogTitle>
+            <DialogTitle style={{ color: '#ef4444' }}>Delete AI Provider</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete "{providerToDelete?.displayName}"? This action cannot be undone.
+              This action cannot be undone. This will permanently delete the AI provider and remove it from all configurations.
             </DialogDescription>
           </DialogHeader>
-          <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-            <Button 
-              variant="outline" 
+          {providerToDelete && (
+            <div style={{
+              backgroundColor: '#fef2f2',
+              border: '1px solid #fecaca',
+              borderRadius: '8px',
+              padding: '16px',
+              margin: '16px 0'
+            }}>
+              <h4 style={{ fontSize: '16px', fontWeight: '600', color: '#ef4444', margin: '0 0 8px 0' }}>
+                {providerToDelete.displayName}
+              </h4>
+              <p style={{ fontSize: '14px', color: '#6b7280', margin: '0 0 4px 0' }}>
+                Internal name: {providerToDelete.name}
+              </p>
+              <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>
+                Status: {providerToDelete.isEnabled ? 'Enabled' : 'Disabled'}
+              </p>
+            </div>
+          )}
+          <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+            <Button
+              variant="outline"
               onClick={() => setShowDeleteDialog(false)}
+              style={{
+                backgroundColor: '#ffffff',
+                border: '1px solid #d1d5db',
+                borderRadius: '8px',
+                padding: '8px 16px',
+                cursor: 'pointer'
+              }}
             >
               Cancel
             </Button>
-            <Button 
+            <Button
               onClick={confirmDelete}
               disabled={deleteProviderMutation.isPending}
-              style={{ 
-                backgroundColor: '#dc2626',
+              style={{
+                backgroundColor: '#ef4444',
                 color: 'white',
-                opacity: deleteProviderMutation.isPending ? 0.5 : 1
+                border: '1px solid #ef4444',
+                borderRadius: '8px',
+                padding: '8px 16px',
+                cursor: 'pointer',
+                opacity: deleteProviderMutation.isPending ? 0.7 : 1
               }}
             >
-              {deleteProviderMutation.isPending ? 'Deleting...' : 'Delete Provider'}
+              {deleteProviderMutation.isPending ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{
+                    width: '14px',
+                    height: '14px',
+                    animation: 'spin 1s linear infinite'
+                  }}>
+                    <img 
+                      src="/ai-sentinel-logo.png" 
+                      alt="Deleting..." 
+                      style={{ 
+                        width: '100%', 
+                        height: '100%', 
+                        objectFit: 'contain',
+                        filter: 'brightness(2) saturate(0) contrast(1)' // White version for red button
+                      }} 
+                    />
+                  </div>
+                  Deleting...
+                </div>
+              ) : (
+                'Delete Provider'
+              )}
             </Button>
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+
+      {/* Add CSS animation keyframes */}
+      <style>
+        {`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}
+      </style>
+      </div>
+    </AdminLayout>
   );
 }

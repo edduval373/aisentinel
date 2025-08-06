@@ -47,11 +47,11 @@ export default function RefreshAuth() {
       <div style={{
         width: '80px',
         height: '80px',
-        animation: 'spin 2s linear infinite'
+        animation: 'spin 1.5s linear infinite'
       }}>
         <img 
           src="/ai-sentinel-logo.png" 
-          alt="Loading..." 
+          alt="Refreshing authentication..." 
           style={{ 
             width: '100%', 
             height: '100%', 

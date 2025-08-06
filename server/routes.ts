@@ -9,7 +9,7 @@ import { authService } from "./services/authService";
 import { aiService } from "./services/aiService";
 import { contentFilter } from "./services/contentFilter";
 import { fileStorageService } from "./services/fileStorageService";
-import { insertUserActivitySchema, insertChatMessageSchema, insertCompanyRoleSchema, insertModelFusionConfigSchema, chatAttachments } from "@shared/schema";
+import { insertUserActivitySchema, insertChatMessageSchema, insertCompanyRoleSchema, insertModelFusionConfigSchema, chatAttachments, aiProviders } from "@shared/schema";
 import { z } from "zod";
 import type { UploadedFile } from "express-fileupload";
 import { db } from "./db";
@@ -38,31 +38,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Database test endpoint for debug panel
   app.get('/api/debug/database', async (req, res) => {
     try {
-      console.log('Database test endpoint hit');
+      console.log('🔍 [DATABASE-TEST] Database test endpoint hit');
       
       // Test database connectivity by querying companies table
+      console.log('🔍 [DATABASE-TEST] Testing companies table...');
       const companies = await storage.getCompanies();
       const companyCount = companies.length;
+      console.log(`✅ [DATABASE-TEST] Companies query successful: ${companyCount} companies found`);
+      
+      // Test AI providers table
+      console.log('🔍 [DATABASE-TEST] Testing AI providers table...');
+      const providers = await storage.getAiProviders();
+      const providerCount = providers.length;
+      console.log(`✅ [DATABASE-TEST] AI providers query successful: ${providerCount} providers found`);
       
       // Get first company for detailed info
       const firstCompany = companies[0];
+      const firstProvider = providers[0];
       
       res.json({ 
         status: 'connected',
         timestamp: new Date().toISOString(),
-        companyCount,
-        firstCompany: firstCompany ? {
-          id: firstCompany.id,
-          name: firstCompany.name,
-          primaryAdminTitle: firstCompany.primaryAdminTitle
-        } : null
+        tables: {
+          companies: {
+            count: companyCount,
+            sample: firstCompany ? {
+              id: firstCompany.id,
+              name: firstCompany.name,
+              primaryAdminTitle: firstCompany.primaryAdminTitle
+            } : null
+          },
+          aiProviders: {
+            count: providerCount,
+            sample: firstProvider ? {
+              id: firstProvider.id,
+              name: firstProvider.name,
+              displayName: firstProvider.displayName,
+              isEnabled: firstProvider.isEnabled,
+              isEnabledType: typeof firstProvider.isEnabled
+            } : null
+          }
+        },
+        databaseUrl: process.env.DATABASE_URL ? `${process.env.DATABASE_URL.substring(0, 30)}...` : 'Not set'
       });
     } catch (error) {
-      console.error('Database test failed:', error);
+      console.error('❌ [DATABASE-TEST] Database test failed:', error);
       res.status(500).json({ 
         status: 'error', 
         error: error instanceof Error ? error.message : 'Unknown database error',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        stack: error instanceof Error ? error.stack : 'No stack trace'
       });
     }
   });
@@ -393,6 +418,89 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin companies PATCH route with query parameters (for frontend compatibility)
+  app.patch('/api/admin/companies', async (req, res) => {
+    try {
+      let user: any = null;
+
+      // Check for header-based authentication only
+      const bearerToken = req.headers.authorization?.replace('Bearer ', '');
+      const sessionToken = req.headers['x-session-token'] as string;
+      const authToken = bearerToken || sessionToken;
+
+      if (authToken === 'prod-1754052835575-289kvxqgl42h') {
+        user = { 
+          userId: '42450602', 
+          companyId: 1,
+          roleLevel: 1000,
+          email: 'ed.duval15@gmail.com'
+        };
+        console.log(`✅ [COMPANIES UPDATE PATCH] Header auth successful: userId=${user.userId}`);
+      }
+
+      if (!user || user.roleLevel < 1000) {
+        console.log('❌ [COMPANIES UPDATE PATCH] Unauthorized - super-user access required');
+        return res.status(401).json({ message: 'Super-user access required' });
+      }
+
+      const companyId = parseInt(req.query.id as string);
+      if (!companyId || isNaN(companyId)) {
+        return res.status(400).json({ message: 'Invalid company ID in query parameter' });
+      }
+
+      const updates = req.body;
+      console.log(`✅ [COMPANIES UPDATE PATCH] Updating company ID: ${companyId}`, updates);
+      const updatedCompany = await storage.updateCompany(companyId, updates);
+
+      console.log(`✅ [COMPANIES UPDATE PATCH] Company ${companyId} updated successfully`);
+      res.json(updatedCompany);
+    } catch (error) {
+      console.error("❌ [COMPANIES UPDATE PATCH] Error updating company:", error);
+      res.status(500).json({ message: "Failed to update company" });
+    }
+  });
+
+  // Admin companies DELETE route with query parameters (for frontend compatibility)  
+  app.delete('/api/admin/companies', async (req, res) => {
+    try {
+      let user: any = null;
+
+      // Check for header-based authentication only
+      const bearerToken = req.headers.authorization?.replace('Bearer ', '');
+      const sessionToken = req.headers['x-session-token'] as string;
+      const authToken = bearerToken || sessionToken;
+
+      if (authToken === 'prod-1754052835575-289kvxqgl42h') {
+        user = { 
+          userId: '42450602', 
+          companyId: 1,
+          roleLevel: 1000,
+          email: 'ed.duval15@gmail.com'
+        };
+        console.log(`✅ [COMPANIES DELETE QUERY] Header auth successful: userId=${user.userId}`);
+      }
+
+      if (!user || user.roleLevel < 1000) {
+        console.log('❌ [COMPANIES DELETE QUERY] Unauthorized - super-user access required');
+        return res.status(401).json({ message: 'Super-user access required' });
+      }
+
+      const companyId = parseInt(req.query.id as string);
+      if (!companyId || isNaN(companyId)) {
+        return res.status(400).json({ message: 'Invalid company ID in query parameter' });
+      }
+
+      console.log(`✅ [COMPANIES DELETE QUERY] Deleting company ID: ${companyId}`);
+      await storage.deleteCompany(companyId);
+
+      console.log(`✅ [COMPANIES DELETE QUERY] Company ${companyId} deleted successfully`);
+      res.json({ message: 'Company deleted successfully', id: companyId });
+    } catch (error) {
+      console.error("❌ [COMPANIES DELETE QUERY] Error deleting company:", error);
+      res.status(500).json({ message: "Failed to delete company" });
+    }
+  });
+
   // Admin companies PUT route - Update company
   app.put('/api/admin/companies/:id', async (req, res) => {
     try {
@@ -507,7 +615,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       console.log('✅ [AI-PROVIDERS] Fetching all AI providers...');
       const providers = await storage.getAiProviders();
+      
       console.log(`✅ [AI-PROVIDERS] Found ${providers.length} providers`);
+      console.log('🔍 [API-ROUTE-DEBUG] Sample provider from storage:', {
+        id: providers[0]?.id,
+        name: providers[0]?.name,
+        displayName: providers[0]?.displayName,
+        isEnabled: providers[0]?.isEnabled,
+        allKeys: providers[0] ? Object.keys(providers[0]) : []
+      });
+      
       res.json(providers);
     } catch (error) {
       console.error('❌ [AI-PROVIDERS] Error fetching providers:', error);
@@ -515,9 +632,296 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Create AI Provider - Super-user only
+  app.post('/api/admin/ai-providers', async (req, res) => {
+    try {
+      console.log(`🌐 API Request: ${req.method} ${req.url}`);
+
+      // Header-based authentication for super-users (1000+ level)
+      const authHeader = req.headers.authorization;
+      const sessionToken = req.headers['x-session-token'];
+      
+      let isAuthenticated = false;
+      let roleLevel = 0;
+
+      // ⚠️  CRITICAL WARNING: DO NOT MODIFY AUTHENTICATION STRATEGY ⚠️
+      // This hardcoded production token authentication is REQUIRED and WORKING
+      // User specifically requested NO changes to auth system - it works in production
+      // ANY CHANGES TO THIS AUTHENTICATION WILL BREAK THE WORKING SYSTEM
+      const productionToken = 'prod-1754052835575-289kvxqgl42h';
+      const extractedToken = authHeader?.replace('Bearer ', '') || sessionToken;
+      
+      if (extractedToken === productionToken) {
+        console.log('✅ [AI-PROVIDERS CREATE] Production token authenticated');
+        isAuthenticated = true;
+        roleLevel = 1000;
+      } else {
+        console.log('❌ [AI-PROVIDERS CREATE] Authentication failed');
+        return res.status(401).json({ 
+          error: 'Authentication failed',
+          requiredRole: '1000+ (Super-user)'
+        });
+      }
+
+      // Super-user access required (1000+)
+      if (roleLevel < 1000) {
+        return res.status(403).json({ 
+          error: 'Super-user access required'
+        });
+      }
+
+      console.log('✅ [AI-PROVIDERS CREATE] Creating AI provider with data:', req.body);
+      
+      // Validate required fields
+      const { name, displayName, description, website, apiDocUrl, isEnabled } = req.body;
+      
+      if (!name || !displayName) {
+        console.log('❌ [AI-PROVIDERS CREATE] Missing required fields');
+        return res.status(400).json({ 
+          error: 'Missing required fields: name and displayName are required' 
+        });
+      }
+      
+      const providerData = {
+        name,
+        displayName,
+        description: description || null,
+        website: website || null,
+        apiDocUrl: apiDocUrl || null,
+        isEnabled: isEnabled !== false,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      
+      console.log('✅ [AI-PROVIDERS CREATE] Processed provider data:', providerData);
+      const newProvider = await storage.createAiProvider(providerData);
+      console.log(`✅ [AI-PROVIDERS CREATE] Provider created successfully: ID ${newProvider.id}, Name: ${newProvider.name}`);
+      res.status(201).json(newProvider);
+    } catch (error) {
+      console.error('❌ [AI-PROVIDERS CREATE] Error creating provider:', error);
+      console.error('❌ [AI-PROVIDERS CREATE] Error details:', error instanceof Error ? error.message : 'Unknown error');
+      console.error('❌ [AI-PROVIDERS CREATE] Stack trace:', error instanceof Error ? error.stack : 'No stack trace');
+      
+      let errorMessage = 'Failed to create AI provider';
+      if (error instanceof Error) {
+        if (error.message.includes('duplicate key') || error.message.includes('unique constraint')) {
+          errorMessage = 'A provider with this name already exists';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
+      res.status(500).json({ 
+        error: errorMessage,
+        details: error instanceof Error ? error.message : 'Unknown database error'
+      });
+    }
+  });
+
+  // Get single AI Provider by ID - Super-user only
+  app.get('/api/admin/ai-providers/:id', async (req, res) => {
+    try {
+      console.log(`🌐 API Request: ${req.method} ${req.url}`);
+
+      // Header-based authentication for super-users (1000+ level)
+      const authHeader = req.headers.authorization;
+      const sessionToken = req.headers['x-session-token'];
+      
+      let isAuthenticated = false;
+      let roleLevel = 0;
+
+      // Production token authentication
+      const productionToken = 'prod-1754052835575-289kvxqgl42h';
+      const extractedToken = authHeader?.replace('Bearer ', '') || sessionToken;
+      
+      if (extractedToken === productionToken) {
+        console.log('✅ [AI-PROVIDER GET] Production token authenticated');
+        isAuthenticated = true;
+        roleLevel = 1000;
+      } else {
+        console.log('❌ [AI-PROVIDER GET] Authentication failed');
+        return res.status(401).json({ 
+          error: 'Authentication failed',
+          requiredRole: '1000+ (Super-user)'
+        });
+      }
+
+      // Super-user access required (1000+)
+      if (roleLevel < 1000) {
+        return res.status(403).json({ 
+          error: 'Super-user access required'
+        });
+      }
+
+      const id = parseInt(req.params.id, 10);
+      if (!id || isNaN(id)) {
+        return res.status(400).json({ error: 'Invalid provider ID' });
+      }
+
+      console.log(`✅ [AI-PROVIDER GET] Fetching AI provider: ${id}`);
+      const provider = await storage.getAiProviderById(id);
+      
+      if (!provider) {
+        console.log(`❌ [AI-PROVIDER GET] Provider not found: ${id}`);
+        return res.status(404).json({ error: 'AI provider not found' });
+      }
+      
+      console.log(`✅ [AI-PROVIDER GET] Provider found:`, { 
+        id: provider.id, 
+        name: provider.name, 
+        displayName: provider.displayName 
+      });
+      res.json(provider);
+    } catch (error) {
+      console.error('❌ [AI-PROVIDER GET] Error fetching provider:', error);
+      res.status(500).json({ error: 'Failed to fetch AI provider' });
+    }
+  });
+
+  // Update AI Provider - Super-user only
+  app.put('/api/admin/ai-providers/:id', async (req, res) => {
+    try {
+      console.log(`🌐 [AI-PROVIDERS UPDATE] API Request: ${req.method} ${req.url}`);
+      console.log('📝 [AI-PROVIDERS UPDATE] Update data:', req.body);
+
+      // Header-based authentication for super-users (1000+ level)
+      const authHeader = req.headers.authorization;
+      const sessionToken = req.headers['x-session-token'];
+      
+      let isAuthenticated = false;
+      let roleLevel = 0;
+
+      // ⚠️  CRITICAL WARNING: DO NOT MODIFY AUTHENTICATION STRATEGY ⚠️
+      // This hardcoded production token authentication is REQUIRED and WORKING
+      // User specifically requested NO changes to auth system - it works in production
+      // ANY CHANGES TO THIS AUTHENTICATION WILL BREAK THE WORKING SYSTEM
+      const productionToken = 'prod-1754052835575-289kvxqgl42h';
+      const extractedToken = authHeader?.replace('Bearer ', '') || sessionToken;
+      
+      console.log('🔍 [AI-PROVIDERS UPDATE] Auth check:', extractedToken ? `${extractedToken.substring(0, 20)}...` : 'none');
+      
+      if (extractedToken === productionToken) {
+        console.log('✅ [AI-PROVIDERS UPDATE] Production token authenticated');
+        isAuthenticated = true;
+        roleLevel = 1000;
+      } else {
+        console.log('❌ [AI-PROVIDERS UPDATE] Authentication failed');
+        return res.status(401).json({ 
+          error: 'Authentication failed',
+          requiredRole: '1000+ (Super-user)'
+        });
+      }
+
+      // Super-user access required (1000+)
+      if (roleLevel < 1000) {
+        console.log('❌ [AI-PROVIDERS UPDATE] Insufficient role level:', roleLevel);
+        return res.status(403).json({ 
+          error: 'Super-user access required'
+        });
+      }
+
+      const providerId = parseInt(req.params.id);
+      
+      if (isNaN(providerId)) {
+        console.log('❌ [AI-PROVIDERS UPDATE] Invalid provider ID:', req.params.id);
+        return res.status(400).json({ 
+          error: 'Invalid provider ID' 
+        });
+      }
+
+      // Validate and process update data
+      const { name, displayName, description, website, apiDocUrl, isEnabled } = req.body;
+      
+      const updateData = {
+        ...(name && { name }),
+        ...(displayName && { displayName }),
+        ...(description !== undefined && { description: description || null }),
+        ...(website !== undefined && { website: website || null }),
+        ...(apiDocUrl !== undefined && { apiDocUrl: apiDocUrl || null }),
+        ...(isEnabled !== undefined && { isEnabled: isEnabled !== false }),
+        updatedAt: new Date()
+      };
+
+      console.log('✅ [AI-PROVIDERS UPDATE] Updating AI provider:', providerId, 'with data:', updateData);
+      const updatedProvider = await storage.updateAiProvider(providerId, updateData);
+      console.log(`✅ [AI-PROVIDERS UPDATE] Provider updated successfully: ID ${providerId}, Name: ${updatedProvider.name}`);
+      res.json(updatedProvider);
+    } catch (error) {
+      console.error('❌ [AI-PROVIDERS UPDATE] Error updating provider:', error);
+      console.error('❌ [AI-PROVIDERS UPDATE] Error details:', error instanceof Error ? error.message : 'Unknown error');
+      
+      let errorMessage = 'Failed to update AI provider';
+      if (error instanceof Error) {
+        if (error.message.includes('duplicate key') || error.message.includes('unique constraint')) {
+          errorMessage = 'A provider with this name already exists';
+        } else if (error.message.includes('not found')) {
+          errorMessage = 'Provider not found';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
+      res.status(500).json({ 
+        error: errorMessage,
+        details: error instanceof Error ? error.message : 'Unknown database error'
+      });
+    }
+  });
+
+  // Delete AI Provider - Super-user only
+  app.delete('/api/admin/ai-providers/:id', async (req, res) => {
+    try {
+      console.log(`🌐 API Request: ${req.method} ${req.url}`);
+
+      // Header-based authentication for super-users (1000+ level)
+      const authHeader = req.headers.authorization;
+      const sessionToken = req.headers['x-session-token'];
+      
+      let isAuthenticated = false;
+      let roleLevel = 0;
+
+      // ⚠️  CRITICAL WARNING: DO NOT MODIFY AUTHENTICATION STRATEGY ⚠️
+      // This hardcoded production token authentication is REQUIRED and WORKING
+      // User specifically requested NO changes to auth system - it works in production
+      // ANY CHANGES TO THIS AUTHENTICATION WILL BREAK THE WORKING SYSTEM
+      const productionToken = 'prod-1754052835575-289kvxqgl42h';
+      const extractedToken = authHeader?.replace('Bearer ', '') || sessionToken;
+      
+      if (extractedToken === productionToken) {
+        console.log('✅ [AI-PROVIDERS DELETE] Production token authenticated');
+        isAuthenticated = true;
+        roleLevel = 1000;
+      } else {
+        console.log('❌ [AI-PROVIDERS DELETE] Authentication failed');
+        return res.status(401).json({ 
+          error: 'Authentication failed',
+          requiredRole: '1000+ (Super-user)'
+        });
+      }
+
+      // Super-user access required (1000+)
+      if (roleLevel < 1000) {
+        return res.status(403).json({ 
+          error: 'Super-user access required'
+        });
+      }
+
+      const providerId = parseInt(req.params.id);
+      console.log('✅ [AI-PROVIDERS DELETE] Deleting AI provider:', providerId);
+      await storage.deleteAiProvider(providerId);
+      console.log(`✅ [AI-PROVIDERS DELETE] Provider deleted successfully: ID ${providerId}`);
+      res.json({ message: 'AI provider deleted successfully', id: providerId });
+    } catch (error) {
+      console.error('❌ [AI-PROVIDERS DELETE] Error deleting provider:', error);
+      res.status(500).json({ error: 'Failed to delete AI provider' });
+    }
+  });
+
   // AI models route with header authentication support
   app.get('/api/ai-models', async (req, res) => {
     try {
+      console.log(`🌐 [AI-MODELS] API Request: ${req.method} ${req.url}`);
+      
       let companyId = 1; // Default to company 1 for demo users
       let user: any = null;
 
@@ -526,31 +930,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const sessionToken = req.headers['x-session-token'] as string;
       const authToken = bearerToken || sessionToken;
 
-      if (authToken && authToken.startsWith('prod-session-')) {
+      console.log('🔍 [AI-MODELS] Auth token check:', authToken ? `${authToken.substring(0, 20)}...` : 'none');
+
+      // Production token authentication - CRITICAL for chat functionality
+      if (authToken === 'prod-1754052835575-289kvxqgl42h') {
+        user = { userId: '42450602', companyId: 1 };
+        companyId = 1;
+        console.log('✅ [AI-MODELS] Production token authenticated - userId=42450602, companyId=1');
+      }
+      else if (authToken && authToken.startsWith('prod-session-')) {
         const authService = await import('./services/authService');
         const session = await authService.authService.verifySession(authToken);
         if (session) {
           user = { userId: session.userId, companyId: session.companyId };
           companyId = session.companyId;
-          console.log(`✅ Header auth for AI models: userId=${user.userId}, companyId=${companyId}`);
+          console.log(`✅ [AI-MODELS] Session auth: userId=${user.userId}, companyId=${companyId}`);
         }
-      }
-      
-      // Production token authentication
-      else if (authToken === 'prod-1754052835575-289kvxqgl42h') {
-        user = { userId: '42450602', companyId: 1 };
-        companyId = 1;
-        console.log('✅ [AI MODELS] Production token auth successful: userId=42450602, companyId=1');
       }
 
       if (!user) {
-        console.log("Demo mode AI models request");
+        console.log("❌ [AI-MODELS] No authentication - returning demo models");
+        return res.status(401).json({ 
+          error: 'Authentication required',
+          message: 'Please provide valid authentication to access AI models'
+        });
       }
 
-      // Get AI models from new template-based system
+      // Get AI models from Railway database
+      console.log('🔍 [AI-MODELS] Fetching models from Railway database for companyId:', companyId);
       let models = await storage.getAiModelsWithApiKeys(companyId);
       
-      console.log("Raw models from template database:", models.map(m => ({ 
+      console.log("✅ [AI-MODELS] Raw models from Railway database:", models.map(m => ({ 
         id: m.id, 
         name: m.name, 
         provider: m.provider,
@@ -561,27 +971,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Add warning for models without API keys
       models = models.map(model => ({
         ...model,
-        warning: !model.hasValidApiKey ? "Demo mode - configure API keys to enable" : undefined
+        warning: !model.hasValidApiKey ? "Configure API keys to enable this model" : undefined
       }));
 
-      console.log("Final processed template models:", models.map(m => ({ 
-        id: m.id, 
-        name: m.name, 
-        provider: m.provider, 
-        hasValidApiKey: m.hasValidApiKey
-      })));
-
-      console.log("Returning AI model templates for company", companyId + ":", models.length, "template models");
+      console.log(`✅ [AI-MODELS] Returning ${models.length} AI models from Railway database for company ${companyId}`);
       return res.json(models);
     } catch (error) {
-      console.error("Error fetching AI models:", error);
-      res.status(500).json({ message: "Failed to fetch AI models" });
+      console.error("❌ [AI-MODELS] Error fetching AI models:", error);
+      res.status(500).json({ message: "Failed to fetch AI models", error: error instanceof Error ? error.message : 'Unknown error' });
     }
   });
 
   // Activity types route with header authentication support
   app.get('/api/activity-types', async (req, res) => {
     try {
+      console.log(`🌐 [ACTIVITY-TYPES] API Request: ${req.method} ${req.url}`);
+      
       let companyId = 1; // Default to company 1 for demo users
       let user: any = null;
 
@@ -590,16 +995,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const sessionToken = req.headers['x-session-token'] as string;
       const authToken = bearerToken || sessionToken;
 
-      if (authToken && authToken.startsWith('prod-session-')) {
+      console.log('🔍 [ACTIVITY-TYPES] Auth token check:', authToken ? `${authToken.substring(0, 20)}...` : 'none');
+
+      // Production token authentication - CRITICAL for chat functionality
+      if (authToken === 'prod-1754052835575-289kvxqgl42h') {
+        user = { userId: '42450602', companyId: 1 };
+        companyId = 1;
+        console.log('✅ [ACTIVITY-TYPES] Production token authenticated - userId=42450602, companyId=1');
+      }
+      else if (authToken && authToken.startsWith('prod-session-')) {
         const authService = await import('./services/authService');
         const session = await authService.authService.verifySession(authToken);
         if (session) {
           user = { userId: session.userId, companyId: session.companyId };
           companyId = session.companyId;
-          console.log(`✅ Header auth for activity types: userId=${user.userId}, companyId=${companyId}`);
+          console.log(`✅ [ACTIVITY-TYPES] Session auth: userId=${user.userId}, companyId=${companyId}`);
         }
       }
-      
       // Fallback to cookie auth if no header auth
       else if (req.cookies?.sessionToken) {
         const authService = await import('./services/authService');
@@ -607,52 +1019,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (session) {
           user = { userId: session.userId, companyId: session.companyId };
           companyId = session.companyId;
-          console.log("Authenticated user requesting activity types:", { userId: user.userId, companyId });
+          console.log("✅ [ACTIVITY-TYPES] Cookie auth successful:", { userId: user.userId, companyId });
         }
       }
 
       if (!user) {
-        console.log("Demo mode activity types request");
+        console.log("❌ [ACTIVITY-TYPES] No authentication - returning error");
+        return res.status(401).json({ 
+          error: 'Authentication required',
+          message: 'Please provide valid authentication to access activity types'
+        });
       }
 
+      // Get activity types from Railway database
+      console.log('🔍 [ACTIVITY-TYPES] Fetching activity types from Railway database for companyId:', companyId);
       let activityTypes = await storage.getActivityTypes(companyId);
 
-      // If no activity types found, provide demo fallback
+      console.log(`✅ [ACTIVITY-TYPES] Found ${activityTypes.length} activity types in Railway database for company ${companyId}`);
+
+      // If no activity types found, log warning but don't provide fallback
       if (activityTypes.length === 0) {
-        console.log("No activity types found, providing demo fallback");
-        activityTypes = [
-          {
-            id: 1,
-            name: "General Chat (Demo)",
-            description: "General purpose AI conversation",
-            isEnabled: true
-          },
-          {
-            id: 2,
-            name: "Code Review (Demo)", 
-            description: "Code analysis and improvement suggestions",
-            isEnabled: true
-          },
-          {
-            id: 3,
-            name: "Business Analysis (Demo)",
-            description: "Business strategy and analysis",
-            isEnabled: true
-          },
-          {
-            id: 4,
-            name: "Document Review (Demo)",
-            description: "Document analysis and summarization", 
-            isEnabled: true
-          }
-        ];
+        console.log("⚠️ [ACTIVITY-TYPES] No activity types found in Railway database for company", companyId);
+        console.log("⚠️ [ACTIVITY-TYPES] Chat functionality may be limited without activity types");
       }
 
-      console.log("Returning activity types for company", companyId + ":", activityTypes.length, "types");
+      console.log(`✅ [ACTIVITY-TYPES] Returning ${activityTypes.length} activity types from Railway database`);
       return res.json(activityTypes);
     } catch (error) {
-      console.error("Error fetching activity types:", error);
-      res.status(500).json({ message: "Failed to fetch activity types" });
+      console.error("❌ [ACTIVITY-TYPES] Error fetching activity types:", error);
+      res.status(500).json({ message: "Failed to fetch activity types", error: error instanceof Error ? error.message : 'Unknown error' });
     }
   });
 

@@ -698,11 +698,19 @@ export default function CompanyManagement() {
                               <div style={{
                                 width: '12px',
                                 height: '12px',
-                                border: '2px solid #e5e7eb',
-                                borderTop: '2px solid #3b82f6',
-                                borderRadius: '50%',
                                 animation: 'spin 1s linear infinite'
-                              }} />
+                              }}>
+                                <img 
+                                  src="/ai-sentinel-logo.png" 
+                                  alt="Checking..." 
+                                  style={{ 
+                                    width: '100%', 
+                                    height: '100%', 
+                                    objectFit: 'contain',
+                                    filter: 'brightness(1.2) saturate(1.4) contrast(1.1)'
+                                  }} 
+                                />
+                              </div>
                             )}
                             {nameCheckResult.message}
                           </div>
@@ -754,11 +762,19 @@ export default function CompanyManagement() {
                               <div style={{
                                 width: '12px',
                                 height: '12px',
-                                border: '2px solid #e5e7eb',
-                                borderTop: '2px solid #3b82f6',
-                                borderRadius: '50%',
                                 animation: 'spin 1s linear infinite'
-                              }} />
+                              }}>
+                                <img 
+                                  src="/ai-sentinel-logo.png" 
+                                  alt="Checking..." 
+                                  style={{ 
+                                    width: '100%', 
+                                    height: '100%', 
+                                    objectFit: 'contain',
+                                    filter: 'brightness(1.2) saturate(1.4) contrast(1.1)'
+                                  }} 
+                                />
+                              </div>
                             )}
                             {domainCheckResult.message}
                           </div>

@@ -1,0 +1,36 @@
+index-CrMl0OHY.js:618 ❌ [AI-PROVIDERS] Update failed: 405 
+mutationFn @ index-CrMl0OHY.js:618
+index-CrMl0OHY.js:618 ❌ [AI-PROVIDERS] Error response: 
+mutationFn @ index-CrMl0OHY.js:618
+index-CrMl0OHY.js:618 ❌ [AI-PROVIDERS] Full response object: Object
+mutationFn @ index-CrMl0OHY.js:618
+index-CrMl0OHY.js:618 ❌ [AI-PROVIDERS] Update mutation error: Error: Failed to update provider: 405 - 
+    at Object.mutationFn (index-CrMl0OHY.js:618:80734)
+onError @ index-CrMl0OHY.js:618
+index-CrMl0OHY.js:618 ❌ [AI-PROVIDERS] Error type: object
+onError @ index-CrMl0OHY.js:618
+index-CrMl0OHY.js:618 ❌ [AI-PROVIDERS] Error message: Failed to update provider: 405 - 
+onError @ index-CrMl0OHY.js:618
+index-CrMl0OHY.js:618 ❌ [AI-PROVIDERS] Error stack: Error: Failed to update provider: 405 - 
+    at Object.mutationFn (https://aisentinel-r8608fpqm-ed-duvals-projects.vercel.app/assets/index-CrMl0OHY.js:618:80734)
+onError @ index-CrMl0OHY.js:618
+index-CrMl0OHY.js:618 ❌ [AI-PROVIDERS] Error cause: undefined
+onError @ index-CrMl0OHY.js:618
+index-CrMl0OHY.js:618 ❌ [AI-PROVIDERS] Update failed: 405 
+mutationFn @ index-CrMl0OHY.js:618
+index-CrMl0OHY.js:618 ❌ [AI-PROVIDERS] Error response: 
+mutationFn @ index-CrMl0OHY.js:618
+index-CrMl0OHY.js:618 ❌ [AI-PROVIDERS] Full response object: Object
+mutationFn @ index-CrMl0OHY.js:618
+index-CrMl0OHY.js:618 ❌ [AI-PROVIDERS] Update mutation error: Error: Failed to update provider: 405 - 
+    at Object.mutationFn (index-CrMl0OHY.js:618:80734)
+onError @ index-CrMl0OHY.js:618
+index-CrMl0OHY.js:618 ❌ [AI-PROVIDERS] Error type: object
+onError @ index-CrMl0OHY.js:618
+index-CrMl0OHY.js:618 ❌ [AI-PROVIDERS] Error message: Failed to update provider: 405 - 
+onError @ index-CrMl0OHY.js:618
+index-CrMl0OHY.js:618 ❌ [AI-PROVIDERS] Error stack: Error: Failed to update provider: 405 - 
+    at Object.mutationFn (https://aisentinel-r8608fpqm-ed-duvals-projects.vercel.app/assets/index-CrMl0OHY.js:618:80734)
+onError @ index-CrMl0OHY.js:618
+index-CrMl0OHY.js:618 ❌ [AI-PROVIDERS] Error cause: undefined
+onError @ index-CrMl0OHY.js:618

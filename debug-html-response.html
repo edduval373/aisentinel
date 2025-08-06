@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug: HTML Response Analysis</title>
+    <style>
+        body { font-family: monospace; margin: 20px; }
+        .error { color: red; background: #ffe6e6; padding: 10px; margin: 10px 0; }
+        .info { color: blue; background: #e6f3ff; padding: 10px; margin: 10px 0; }
+        .code { background: #f5f5f5; padding: 10px; margin: 10px 0; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <h1>AI Models API Response Analysis</h1>
+    
+    <div class="error">
+        <strong>ERROR:</strong> API returning HTML instead of JSON
+        <br>Error: Expected JSON response but got text/html; charset=utf-8
+    </div>
+    
+    <div class="info">
+        <strong>Testing API Endpoint:</strong> /api/ai-models
+        <br><strong>Expected:</strong> JSON response with AI models
+        <br><strong>Actual:</strong> HTML response (indicates server error)
+    </div>
+    
+    <div id="response-content" class="code">
+        Loading API response...
+    </div>
+    
+    <script>
+        // Test the API endpoint and display the HTML response
+        fetch('/api/ai-models', {
+            headers: {
+                'Authorization': 'Bearer prod-1754052835575-289kvxqgl42h',
+                'X-Session-Token': 'prod-1754052835575-289kvxqgl42h'
+            }
+        })
+        .then(response => {
+            console.log('Response status:', response.status);
+            console.log('Response headers:', [...response.headers.entries()]);
+            return response.text();
+        })
+        .then(html => {
+            document.getElementById('response-content').textContent = html;
+            console.log('HTML Response:', html);
+        })
+        .catch(error => {
+            document.getElementById('response-content').textContent = 'Error: ' + error.message;
+            console.error('Fetch error:', error);
+        });
+    </script>
+</body>
+</html>

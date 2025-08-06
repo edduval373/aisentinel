@@ -3,17 +3,262 @@
 ## Overview
 This document defines the comprehensive standards for all admin screens in the AI Sentinel platform based on the **Company Management screen** - our fully implemented, tested, and debugged reference implementation. These standards ensure consistency, security, and usability across all administrative interfaces. **CRITICAL: NO HARDCODING DATA, NO DUMMY DATA, MOCK DATA, ALTERNATE DATA, NO ALTERNATIVE SOLUTIONS OR HALLUCINATIONS ALLOWED.**
 
+## Layout Standards (Updated August 5, 2025)
+
+### Page Header Layout - NO BLUE BANNERS ALLOWED
+**CRITICAL: All admin pages must use clean header layout without colored banners**
+**NEW REQUIREMENT: Title must be positioned next to logo in header, not in separate colored banner**
+
+```css
+/* Main container */
+backgroundColor: '#f8fafc'
+minHeight: '100vh'
+padding: '32px'
+
+/* Header section - MATCHES COMPANY MANAGEMENT EXACTLY */
+display: 'flex'
+justifyContent: 'space-between'
+alignItems: 'center'
+marginBottom: '32px'
+
+/* Page title - NEXT TO LOGO */
+fontSize: '32px'
+fontWeight: 'bold'
+color: '#1f2937'
+margin: '0 0 8px 0'
+
+/* Page subtitle */
+fontSize: '16px'
+color: '#6b7280'
+margin: 0
+
+/* Primary action button - TOP RIGHT */
+backgroundColor: '#3b82f6'
+color: 'white'
+border: '1px solid #3b82f6'
+borderRadius: '8px'
+padding: '12px 24px'
+fontSize: '16px'
+fontWeight: '600'
+```
+
+### Action Button Standards (Company Management Pattern)
+**CRITICAL: All edit/delete buttons must match Company Management styling**
+
+```css
+/* Edit Button - Orange with text and icon */
+backgroundColor: '#f97316'
+color: 'white'
+border: '1px solid #f97316'
+borderRadius: '6px'
+padding: '8px 16px'
+fontSize: '14px'
+fontWeight: '500'
+display: 'flex'
+alignItems: 'center'
+gap: '4px'
+flex: 1
+
+/* Delete Button - Red with text and icon */
+backgroundColor: '#ef4444'
+color: 'white'
+border: '1px solid #ef4444'
+borderRadius: '6px'
+padding: '8px 16px'
+fontSize: '14px'
+fontWeight: '500'
+display: 'flex'
+alignItems: 'center'
+gap: '4px'
+flex: 1
+```
+
+### Section Headers
+```css
+fontSize: '24px'
+fontWeight: '600'
+color: '#3b82f6'
+margin: '0 0 24px 0'
+```
+
+### Card-Based Layout Standards (Updated August 5, 2025)
+**CRITICAL: All admin pages must use professional card design matching Company Management**
+
+```css
+/* Grid Container */
+display: 'grid'
+gap: '16px'
+gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))'
+
+/* Individual Card Styling */
+border: '1px solid #e5e7eb'
+borderRadius: '12px'
+overflow: 'hidden'
+boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+
+/* Card Header with Blue Gradient */
+background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)'
+padding: '16px'
+color: 'white'
+
+/* Card Content Area */
+padding: '16px'
+
+/* Status Badges in Header */
+backgroundColor: '#10b981' /* for active/enabled */
+backgroundColor: '#6b7280' /* for inactive/disabled */
+color: 'white'
+fontWeight: '600'
+padding: '6px 12px'
+borderRadius: '6px'
+fontSize: '12px'
+
+/* Action Buttons Container */
+display: 'flex'
+gap: '8px'
+marginTop: 'auto'
+```
+
+**FORBIDDEN ELEMENTS:**
+- Large colored banner headers with gradients
+- Blue background headers (pageHeaderStyle patterns)
+- Any gradient backgrounds on headers
+- Full-width colored sections above content
+
 ## Reference Implementation: Company Management Screen
 The Company Management screen (`client/src/pages/admin/company-management.tsx`) serves as the gold standard for all admin screens. It demonstrates:
 - Complete CRUD operations with real Railway PostgreSQL data
 - **Database-level unique constraints** with proper duplicate validation
 - Real-time validation with debounced checking (300ms delay)
 - **Multi-layer validation strategy**: Frontend validation + Database constraints + Submit blocking
-- Professional visual design with blue headers and green badges
+- Professional visual design with blue gradient headers and status badges
+- **Card-based layout**: Clean cards with blue gradient headers and organized content
+- **Action Button Pattern**: Orange Edit buttons and Red Delete buttons with proper styling
 - Comprehensive error handling and user feedback
 - Role-based authentication with super-user (1000+) access
 - Pure CSS inline styling (NO Tailwind CSS)
 - **Validation state management** with proper loading states and error messages
+
+## Updated Implementation: AI Providers Screen (August 5, 2025)
+The AI Providers screen (`client/src/pages/admin/create-providers.tsx`) now implements the same design pattern:
+- **Matching Card Design**: Blue gradient headers with provider icons and status badges
+- **Consistent Action Buttons**: Orange Edit (#f97316) and Red Delete (#ef4444) buttons
+- **Professional Layout**: Same grid system and spacing as Company Management
+- **Status Badges**: Clear "ACTIVE/INACTIVE" indicators in card headers
+- **Enhanced Content Organization**: Description, links, and actions properly structured
+
+### Card Component Implementation Pattern (August 5, 2025)
+```jsx
+// Standard Card Implementation Pattern - USE THIS ACROSS ALL ADMIN PAGES
+<Card key={item.id} style={{ 
+  border: '1px solid #e5e7eb',
+  borderRadius: '12px',
+  overflow: 'hidden',
+  boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+}}>
+  {/* Blue Gradient Header */}
+  <div style={{
+    background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+    padding: '16px',
+    color: 'white'
+  }}>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        {/* Icon Container */}
+        <div style={{
+          width: '40px',
+          height: '40px',
+          borderRadius: '8px',
+          backgroundColor: 'rgba(255,255,255,0.2)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          <IconComponent style={{ width: '20px', height: '20px', color: 'white' }} />
+        </div>
+        {/* Title and Subtitle */}
+        <div>
+          <h3 style={{ 
+            fontWeight: '700', 
+            fontSize: '18px',
+            marginBottom: '4px',
+            color: 'white'
+          }}>
+            {item.title}
+          </h3>
+          <p style={{ 
+            fontSize: '14px', 
+            color: 'rgba(255,255,255,0.9)',
+            fontWeight: '500'
+          }}>
+            {item.subtitle}
+          </p>
+        </div>
+      </div>
+      {/* Status Badge */}
+      <span style={{
+        backgroundColor: item.isActive ? '#10b981' : '#6b7280',
+        color: 'white',
+        fontWeight: '600',
+        padding: '6px 12px',
+        borderRadius: '6px',
+        fontSize: '12px'
+      }}>
+        {item.isActive ? "ACTIVE" : "INACTIVE"}
+      </span>
+    </div>
+  </div>
+  
+  {/* Card Content */}
+  <CardContent style={{ padding: '16px' }}>
+    {/* Content sections here */}
+    
+    {/* Action Buttons Container */}
+    <div style={{ display: 'flex', gap: '8px' }}>
+      <Button
+        onClick={() => handleEdit(item)}
+        style={{
+          backgroundColor: '#f97316',
+          color: 'white',
+          border: '1px solid #f97316',
+          borderRadius: '6px',
+          padding: '8px 16px',
+          fontSize: '14px',
+          fontWeight: '500',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '4px',
+          flex: 1
+        }}
+      >
+        <Edit2 style={{ width: '16px', height: '16px' }} />
+        Edit
+      </Button>
+      <Button
+        onClick={() => handleDelete(item)}
+        style={{
+          backgroundColor: '#ef4444',
+          color: 'white',
+          border: '1px solid #ef4444',
+          borderRadius: '6px',
+          padding: '8px 16px',
+          fontSize: '14px',
+          fontWeight: '500',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '4px',
+          flex: 1
+        }}
+      >
+        <Trash2 style={{ width: '16px', height: '16px' }} />
+        Delete
+      </Button>
+    </div>
+  </CardContent>
+</Card>
+```
 
 ## Authentication Strategy
 
@@ -71,10 +316,11 @@ const { data: companies, isLoading, error, refetch } = useQuery({
 
 ## Visual Design Standards
 
-### Color Palette (Company Management Reference)
+### Color Palette (Company Management Reference - Updated August 5, 2025)
 - **Primary Blue**: `#3b82f6` (headers, section titles, primary actions)
 - **Success Green**: `#10b981` (submit buttons, success validation, active badges)
 - **Error Red**: `#ef4444` (validation errors, destructive actions, required asterisks)
+- **Action Orange**: `#f97316` (edit buttons, secondary actions)
 - **Warning Orange**: `#f59e0b` (warnings, pending states)
 - **Gray Neutral**: `#6b7280` (secondary text, disabled states)
 - **Gradient Headers**: `linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)`
@@ -94,14 +340,19 @@ const { data: companies, isLoading, error, refetch } = useQuery({
 - **Success Text**: Green (`#10b981`) with light green background
 - **Badge Text**: White text on green (`#10b981`) background with `padding: '4px 8px'`
 
-### Layout Standards (Company Management Pattern)
-- **Grid Layout**: Three-column responsive grid (`display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '24px'`)
-- **Card Design**: White background, `boxShadow: '0 2px 4px rgba(0,0,0,0.1)'`, hover effects with scale transform
+### Layout Standards (Company Management Pattern - Updated August 5, 2025)
+- **Grid Layout**: Responsive auto-fit grid (`display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px'`)
+- **Card Design**: 
+  - White background with blue gradient headers
+  - `boxShadow: '0 2px 4px rgba(0,0,0,0.05)'`
+  - `border: '1px solid #e5e7eb'`
+  - Clean content organization with proper spacing
 - **Modal Width**: Standard Radix dialog width with `padding: '24px'`
-- **Header Layout**: Full-width gradient header with centered content
-- **Button Positioning**: "Add Company" button top-right with blue primary styling
-- **Spacing Standards**: `gap: '24px'` for grid, `margin: '16px 0'` for sections, `padding: '20px'` for cards
-- **Border Radius**: `borderRadius: '12px'` for cards, `8px` for buttons and inputs, `4px` for badges
+- **Header Layout**: Blue gradient headers with icons, titles, and status badges
+- **Button Positioning**: Primary action button top-right with blue styling
+- **Action Buttons**: Bottom of cards with orange Edit and red Delete buttons
+- **Spacing Standards**: `gap: '16px'` for grid, `padding: '16px'` for card content
+- **Border Radius**: `borderRadius: '12px'` for cards, `6px` for buttons and badges, `8px` for icons
 
 ## CRUD Operations Standards
 
@@ -366,12 +617,11 @@ const pageHeaderStyle = {
   boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
 };
 
-// Grid Container (EXACT from company-management.tsx)
+// Grid Container (Updated August 5, 2025 - matches Company Management and AI Providers)
 const gridContainerStyle = {
   display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))',
-  gap: '24px',
-  padding: '0 32px'
+  gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+  gap: '16px'
 };
 
 // Company Card Style (EXACT from company-management.tsx)

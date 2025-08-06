@@ -30,7 +30,7 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://aisentinel.app"
+          "value": "*"
         },
         {
           "key": "Access-Control-Allow-Methods",
@@ -38,7 +38,7 @@
         },
         {
           "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type, Authorization"
+          "value": "Content-Type, Authorization, X-Session-Token"
         }
       ]
     }
