@@ -170,9 +170,39 @@ export default function CreateModels() {
     }
   });
 
-  // Fetch AI providers from database  
+  // Fetch AI providers from database with proper authentication headers
   const { data: dbProviders = [], isLoading: providersLoading, error: providersError } = useQuery<any[]>({
     queryKey: ["/api/admin/ai-providers"],
+    queryFn: async () => {
+      const sessionToken = localStorage.getItem('prodAuthToken') || 'prod-1754052835575-289kvxqgl42h';
+      const headers: any = {
+        'Content-Type': 'application/json'
+      };
+      
+      if (sessionToken) {
+        headers['Authorization'] = `Bearer ${sessionToken}`;
+        headers['X-Session-Token'] = sessionToken;
+      }
+      
+      console.log('🔧 [PROVIDERS-QUERY] Making request with headers:', Object.keys(headers));
+      
+      const response = await fetch('/api/admin/ai-providers', {
+        method: 'GET',
+        headers
+      });
+      
+      console.log('🔧 [PROVIDERS-QUERY] Response status:', response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('🔧 [PROVIDERS-QUERY] Error response:', errorText);
+        throw new Error(`Failed to fetch providers: ${response.status} ${errorText}`);
+      }
+      
+      const data = await response.json();
+      console.log('🔧 [PROVIDERS-QUERY] Success - received providers:', data.length);
+      return data;
+    },
     staleTime: 5 * 60 * 1000, // Cache providers for 5 minutes
   });
 
@@ -246,15 +276,22 @@ export default function CreateModels() {
         headers['X-Session-Token'] = sessionToken;
       }
       
+      console.log('🔧 [CREATE-TEMPLATE] Starting template creation with data:', data);
+      console.log('🔧 [CREATE-TEMPLATE] Request headers:', Object.keys(headers));
+      console.log('🔧 [CREATE-TEMPLATE] Request body:', JSON.stringify(data, null, 2));
+      
       const response = await fetch('/api/admin/ai-model-templates', {
         method: 'POST',
         headers,
         body: JSON.stringify(data)
       });
       
+      console.log('🔧 [CREATE-TEMPLATE] Response status:', response.status);
+      
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
-        throw new Error(errorData.message || `HTTP ${response.status}`);
+        const errorText = await response.text();
+        console.error('🔧 [CREATE-TEMPLATE] Error response:', errorText);
+        throw new Error(`Failed to create template: ${response.status} - ${errorText}`);
       }
       
       return response.json();
