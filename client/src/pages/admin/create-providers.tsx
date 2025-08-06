@@ -104,7 +104,7 @@ export default function CreateProviders() {
   });
 
   // Fetch AI providers with proper authentication (following ScreenStandards.md pattern)
-  const token = localStorage.getItem('sessionToken') || 'prod-1754052835575-289kvxqgl42h';
+  const token = localStorage.getItem('prodAuthToken') || 'prod-1754052835575-289kvxqgl42h';
   
   const { data: providers = [], isLoading, error: providersError, refetch: refetchProviders } = useQuery({
     queryKey: ['/api/admin/ai-providers'], // Fixed: Use stable query key
