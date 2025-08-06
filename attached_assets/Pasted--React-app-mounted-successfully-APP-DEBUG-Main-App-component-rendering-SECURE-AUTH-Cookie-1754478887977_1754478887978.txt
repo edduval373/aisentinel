@@ -1,0 +1,159 @@
+ React app mounted successfully
+ [APP DEBUG] Main App component rendering
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ [APP DEBUG] Router component rendering...
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ [APP DEBUG] Router state: Object
+ [APP DEBUG] Authentication check: Object
+ [APP DEBUG] useAuth hook returned: Object
+ 🔒 [SECURE AUTH] Starting secure database authentication...
+ 🔍 [AUTH DEBUG] Starting authentication with detailed logging...
+ 🔍 [AUTH DEBUG] Current URL: https://aisentinel-8noxbi33g-ed-duvals-projects.vercel.app/admin/create-providers
+ 🔍 [AUTH DEBUG] Current domain: aisentinel-8noxbi33g-ed-duvals-projects.vercel.app
+ 🔍 [AUTH DEBUG] Saved accounts raw: [{"email":"ed.duval15@gmail.com","sessionToken":"prod-1754052835575-289kvxqgl42h","role":"super-user","roleLevel":1000,"companyName":"Duval Solutions","companyId":1,"lastUsed":"2025-08-06T11:12:35.661Z"}]
+ 🔍 [AUTH DEBUG] Parsed accounts: 1 accounts found
+ 🔍 [AUTH DEBUG] Account emails: Array(1)
+ 🔍 [AUTH DEBUG] Selected account: ed.duval15@gmail.com
+ 🔍 [AUTH DEBUG] Session token found: prod-1754052835575-2...
+ 🔍 [AUTH DEBUG] Making API request with headers...
+ 🔍 [AUTH DEBUG] Authorization header: Bearer prod-1754052835575-2...
+ 🔍 [AUTH DEBUG] X-Session-Token header: prod-1754052835575-2...
+ Checking saved accounts: 1
+ Single account found, auto-selecting
+ Selecting account with token: prod-1754052835575-2...
+ Unauthenticated user: No company context
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+index-BNl4dpJ8.js:648 Error selecting account: TypeError: g is not a function
+    at d (index-BNl4dpJ8.js:648:4780)
+    at async index-BNl4dpJ8.js:648:1016
+d @ index-BNl4dpJ8.js:648
+ [APP DEBUG] Router component rendering...
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ [APP DEBUG] Router state: Object
+ [APP DEBUG] Authentication check: Object
+ [APP DEBUG] useAuth hook returned: Object
+ 🔍 [AUTH DEBUG] Response status: 200
+ 🔍 [AUTH DEBUG] Response headers: Object
+ 🔍 [AUTH DEBUG] Response data: Object
+ ✅ [SECURE AUTH] Database validation successful for: ed.duval15@gmail.com
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ [APP DEBUG] Router component rendering...
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ [APP DEBUG] Router state: Object
+ [APP DEBUG] Authentication check: Object
+ [APP DEBUG] useAuth hook returned: Object
+ [APP DEBUG] User is authenticated, proceeding with route-based navigation
+index-BNl4dpJ8.js:648 🔐 [ROLE GUARD] Checking access for super-user (level 1000): Object
+index-BNl4dpJ8.js:648 [ROLE GUARD] Access granted - user level 1000 >= required level 1000
+index-BNl4dpJ8.js:418 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-BNl4dpJ8.js:418 Authentication check: Object
+index-BNl4dpJ8.js:418 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-BNl4dpJ8.js:418 Authentication check: Object
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] Role check: Object
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] Section visibility: Object
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] Rendering with sections: Object
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] Role detection: Object
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-BNl4dpJ8.js:48 🔄 [QUERY] /api/user/current-company - Start
+index-BNl4dpJ8.js:48 🔄 [QUERY] Full URL: https://aisentinel-8noxbi33g-ed-duvals-projects.vercel.app/api/user/current-company
+index-BNl4dpJ8.js:618 🔍 [AI-PROVIDERS] Fetching providers from Railway database...
+index-BNl4dpJ8.js:418 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-BNl4dpJ8.js:418 Authentication check: Object
+authHeaders-CIshTAes.js:1 🔍 [AUTH HEADERS] Getting authentication headers...
+authHeaders-CIshTAes.js:1 ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+index-BNl4dpJ8.js:48 📊 [QUERY] /api/user/current-company - Status: 200 (128ms)
+index-BNl4dpJ8.js:48 📊 [QUERY] Headers: Object
+index-BNl4dpJ8.js:48 📊 [QUERY] Content-Type: application/json; charset=utf-8
+index-BNl4dpJ8.js:48 ✅ [QUERY] /api/user/current-company - Success: Object
+index-BNl4dpJ8.js:418 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-BNl4dpJ8.js:418 Authentication check: Object
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] Role check: Object
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] Section visibility: Object
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] Rendering with sections: Object
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] Role detection: Object
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-BNl4dpJ8.js:618 ✅ [AI-PROVIDERS] Fetched providers from database: 8 providers
+index-BNl4dpJ8.js:618 🔍 [PRODUCTION-DEBUG] First provider data structure: Object
+index-BNl4dpJ8.js:618 🔍 [PRODUCTION-DEBUG] All provider names and status:
+index-BNl4dpJ8.js:618   1. undefined (anthropic) - isEnabled: undefined (undefined)
+index-BNl4dpJ8.js:618   2. undefined (cohere) - isEnabled: undefined (undefined)
+index-BNl4dpJ8.js:618   3. undefined (custom) - isEnabled: undefined (undefined)
+index-BNl4dpJ8.js:618   4. undefined (google-ai) - isEnabled: undefined (undefined)
+index-BNl4dpJ8.js:618   5. undefined (mistral) - isEnabled: undefined (undefined)
+index-BNl4dpJ8.js:618   6. undefined (Horizon Edge Enterprises) - isEnabled: undefined (undefined)
+index-BNl4dpJ8.js:618   7. undefined (openai) - isEnabled: undefined (undefined)
+index-BNl4dpJ8.js:618   8. undefined (perplexity) - isEnabled: undefined (undefined)
+index-BNl4dpJ8.js:618 🔍 [DATA-VALIDATION] Final validated data before return: 8 providers
+index-BNl4dpJ8.js:618 🔍 [DATA-VALIDATION] Sample provider structure: Object
+index-BNl4dpJ8.js:418 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-BNl4dpJ8.js:418 Authentication check: Object
+index-BNl4dpJ8.js:618 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+index-BNl4dpJ8.js:618 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+index-BNl4dpJ8.js:618 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+index-BNl4dpJ8.js:618 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+index-BNl4dpJ8.js:618 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+index-BNl4dpJ8.js:618 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+index-BNl4dpJ8.js:618 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+index-BNl4dpJ8.js:618 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+index-BNl4dpJ8.js:418 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-BNl4dpJ8.js:418 Authentication check: Object
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] Role check: Object
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] Section visibility: Object
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] Rendering with sections: Object
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] Role detection: Object
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-BNl4dpJ8.js:618 🔧 [AI-PROVIDERS] Editing provider: 2 anthropic
+index-BNl4dpJ8.js:618 🔧 [AI-PROVIDERS] Provider data: Object
+index-BNl4dpJ8.js:618 🔧 [AI-PROVIDERS] Form data being set: Object
+index-BNl4dpJ8.js:618 🔧 [AI-PROVIDERS] Form reset with values, opening edit dialog...
+index-BNl4dpJ8.js:418 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-BNl4dpJ8.js:418 Authentication check: Object
+index-BNl4dpJ8.js:618 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+index-BNl4dpJ8.js:618 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+index-BNl4dpJ8.js:618 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+index-BNl4dpJ8.js:618 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+index-BNl4dpJ8.js:618 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+index-BNl4dpJ8.js:618 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+index-BNl4dpJ8.js:618 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+index-BNl4dpJ8.js:618 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+index-BNl4dpJ8.js:418 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-BNl4dpJ8.js:418 Authentication check: Object
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] Role check: Object
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] Section visibility: Object
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] Rendering with sections: Object
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] Role detection: Object
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-BNl4dpJ8.js:618 🔧 [AI-PROVIDERS] All fields explicitly set: Object
+index-BNl4dpJ8.js:418 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-BNl4dpJ8.js:418 Authentication check: Object
+index-BNl4dpJ8.js:618 🔧 [RENDER-DEBUG] Provider 2 (undefined): Object
+index-BNl4dpJ8.js:618 🔧 [RENDER-DEBUG] Provider 5 (undefined): Object
+index-BNl4dpJ8.js:618 🔧 [RENDER-DEBUG] Provider 7 (undefined): Object
+index-BNl4dpJ8.js:618 🔧 [RENDER-DEBUG] Provider 3 (undefined): Object
+index-BNl4dpJ8.js:618 🔧 [RENDER-DEBUG] Provider 6 (undefined): Object
+index-BNl4dpJ8.js:618 🔧 [RENDER-DEBUG] Provider 8 (undefined): Object
+index-BNl4dpJ8.js:618 🔧 [RENDER-DEBUG] Provider 1 (undefined): Object
+index-BNl4dpJ8.js:618 🔧 [RENDER-DEBUG] Provider 4 (undefined): Object
+index-BNl4dpJ8.js:418 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-BNl4dpJ8.js:418 Authentication check: Object
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] Role check: Object
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] Section visibility: Object
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] Rendering with sections: Object
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] Role detection: Object
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-BNl4dpJ8.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models

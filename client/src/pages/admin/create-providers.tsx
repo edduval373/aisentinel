@@ -107,9 +107,11 @@ export default function CreateProviders() {
   const token = localStorage.getItem('sessionToken') || 'prod-1754052835575-289kvxqgl42h';
   
   const { data: providers = [], isLoading, error: providersError, refetch: refetchProviders } = useQuery({
-    queryKey: ['/api/admin/ai-providers'],
+    queryKey: ['/api/admin/ai-providers', Date.now()], // Force fresh query every time
     staleTime: 0, // Always fetch fresh data
     gcTime: 0, // Don't cache data
+    refetchOnMount: true, // Always refetch when component mounts
+    refetchOnWindowFocus: true, // Refetch when window gains focus
     queryFn: async () => {
       console.log('🔍 [AI-PROVIDERS] Fetching providers from Railway database...');
       
@@ -171,7 +173,22 @@ export default function CreateProviders() {
         throw error;
       }
     }
-  }) as { data: AiProvider[], isLoading: boolean, error: any, refetch: () => Promise<any> };
+  });
+  
+  // CRITICAL: Log provider data immediately after query to identify React Query transformation issue
+  console.log('🚨 [QUERY-DATA-DEBUG] React Query returned providers:', {
+    providersLength: providers?.length || 0,
+    isLoading,
+    hasError: !!providersError,
+    firstProviderKeys: providers?.[0] ? Object.keys(providers[0]) : [],
+    firstProviderSample: providers?.[0] ? {
+      id: providers[0].id,
+      name: providers[0].name,
+      displayName: providers[0].displayName,
+      isEnabled: providers[0].isEnabled
+    } : null,
+    rawProviders: providers
+  });
 
   // Name availability checking (following ScreenStandards.md exact pattern)
   const checkNameAvailability = React.useCallback(
@@ -882,11 +899,19 @@ export default function CreateProviders() {
           gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' 
         }}>
           {providers.map((provider) => {
-            // CRITICAL DEBUG: Log all provider status data
+            // CRITICAL DEBUG: Log all provider status data and structure
             console.log(`🔧 [RENDER-DEBUG] Provider ${provider.id} (${provider.displayName}):`, {
               isEnabled: provider.isEnabled,
               isEnabledType: typeof provider.isEnabled,
               statusWillShow: provider.isEnabled ? "ACTIVE" : "INACTIVE",
+              allKeys: Object.keys(provider || {}),
+              providerStructure: {
+                id: provider?.id,
+                name: provider?.name,
+                displayName: provider?.displayName,
+                description: provider?.description,
+                isEnabled: provider?.isEnabled
+              },
               rawObject: provider
             });
             
