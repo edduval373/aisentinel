@@ -107,12 +107,11 @@ export default function CreateProviders() {
   const token = localStorage.getItem('sessionToken') || 'prod-1754052835575-289kvxqgl42h';
   
   const { data: providers = [], isLoading, error: providersError, refetch: refetchProviders } = useQuery({
-    queryKey: ['/api/admin/ai-providers', Date.now(), Math.random()], // Force fresh query every render
-    staleTime: 0, // Always fetch fresh data
-    gcTime: 0, // Don't cache data
-    refetchOnMount: true, // Always refetch when component mounts
-    refetchOnWindowFocus: true, // Refetch when window gains focus
-    refetchInterval: 5000, // Refetch every 5 seconds during debugging
+    queryKey: ['/api/admin/ai-providers'], // Fixed: Use stable query key
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+    gcTime: 1000 * 60 * 10, // Keep in cache for 10 minutes
+    refetchOnMount: false, // Don't auto-refetch on mount
+    refetchOnWindowFocus: false, // Don't refetch on focus
     queryFn: async () => {
       console.log('🔍 [AI-PROVIDERS] Fetching providers from Railway database...');
       
@@ -152,45 +151,9 @@ export default function CreateProviders() {
           updatedAt: provider.updated_at || provider.updatedAt  // Handle both cases
         }));
         
-        console.log('🔍 [FIELD-TRANSFORMATION] Transformed first provider:', {
-          original: data[0],
-          transformed: transformedData[0]
-        });
+        console.log('✅ [FIELD-TRANSFORMATION] Successfully transformed', transformedData.length, 'providers');
         
-        // PRODUCTION DEBUG: Log actual data structure to identify caching issue
-        if (transformedData.length > 0) {
-          console.log('🔍 [PRODUCTION-DEBUG] First provider data structure:', {
-            id: transformedData[0].id,
-            name: transformedData[0].name,
-            displayName: transformedData[0].displayName,
-            isEnabled: transformedData[0].isEnabled,
-            isEnabledType: typeof transformedData[0].isEnabled,
-            booleanCheck: Boolean(transformedData[0].isEnabled),
-            allKeys: Object.keys(transformedData[0])
-          });
-          
-          console.log('🔍 [PRODUCTION-DEBUG] All provider names and status:');
-          transformedData.forEach((provider: any, index: number) => {
-            console.log(`  ${index + 1}. ${provider.displayName} (${provider.name}) - isEnabled: ${provider.isEnabled} (${typeof provider.isEnabled})`);
-          });
-        }
-        
-        // CRITICAL: Validate and return transformed data with proper structure
-        const validatedData = Array.isArray(transformedData) ? transformedData : [];
-        console.log('🔍 [DATA-VALIDATION] Final validated data before return:', validatedData.length, 'providers');
-        if (validatedData.length > 0) {
-          console.log('🔍 [DATA-VALIDATION] Sample provider structure:', {
-            keys: Object.keys(validatedData[0]),
-            sampleValues: {
-              id: validatedData[0].id,
-              name: validatedData[0].name,
-              displayName: validatedData[0].displayName,
-              isEnabled: validatedData[0].isEnabled
-            }
-          });
-        }
-        
-        return validatedData;
+        return transformedData;
       } catch (error) {
         console.error('❌ [AI-PROVIDERS] Network or parsing error:', error);
         throw error;
@@ -198,19 +161,10 @@ export default function CreateProviders() {
     }
   });
   
-  // CRITICAL: Log provider data immediately after query to identify React Query transformation issue
-  console.log('🚨 [QUERY-DATA-DEBUG] React Query returned providers:', {
-    providersLength: providers?.length || 0,
-    isLoading,
-    hasError: !!providersError,
-    firstProviderKeys: providers?.[0] ? Object.keys(providers[0]) : [],
-    firstProviderSample: providers?.[0] ? {
-      id: providers[0].id,
-      name: providers[0].name,
-      displayName: providers[0].displayName,
-      isEnabled: providers[0].isEnabled
-    } : null
-  });
+  // Debug: Log basic provider info (reduced logging)
+  if (providers?.length > 0) {
+    console.log('✅ [PROVIDERS] Loaded', providers.length, 'providers successfully');
+  }
   
   // CRITICAL: Log each provider individually to see structure
   if (providers && providers.length > 0) {
