@@ -190,18 +190,23 @@ export default function CreateModels() {
   // Transform providers for the dropdown (compatible with existing form structure)
   const providers = (dbProviders as any[]).map((provider: any) => ({
     value: provider.name,
-    label: provider.displayName,
+    label: provider.displayName || provider.display_name || provider.name,
     defaultEndpoint: defaultEndpoints[provider.name] || "",
   }));
 
   // Debug providers transformation
   React.useEffect(() => {
     console.log("🔧 [PROVIDERS] Raw dbProviders:", dbProviders);
+    console.log("🔧 [PROVIDERS] dbProviders array length:", (dbProviders as any[])?.length);
+    console.log("🔧 [PROVIDERS] Sample raw provider structure:", dbProviders[0]);
     console.log("🔧 [PROVIDERS] Transformed providers for dropdown:", providers);
     console.log("🔧 [PROVIDERS] Providers count:", providers.length);
     console.log("🔧 [PROVIDERS] Sample provider:", providers[0]);
     console.log("🔧 [PROVIDERS] Loading state:", providersLoading);
     console.log("🔧 [PROVIDERS] Error state:", providersError);
+    if (providersError) {
+      console.error("🔧 [PROVIDERS] Error details:", providersError);
+    }
   }, [dbProviders, providers, providersLoading, providersError]);
 
   const templateForm = useForm<z.infer<typeof templateSchema>>({
@@ -894,7 +899,7 @@ function TemplateForm({
                             </SelectItem>
                           )) : (
                             <SelectItem value="no-providers" disabled>
-                              No providers found
+                              No providers found - Check console for details
                             </SelectItem>
                           )}
                         </SelectContent>
