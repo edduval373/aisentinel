@@ -18,7 +18,7 @@ import {
   ChevronRight,
   Building,
   FileText,
-  Brain,
+  ShieldCheck,
   Key,
   UserCog,
   Layers
@@ -90,7 +90,7 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       id: "model-fusion",
       name: "Setup Model Fusion",
       href: "/admin/model-fusion", 
-      icon: Brain,
+      icon: ShieldCheck,
     },
     {
       id: "api-keys",
