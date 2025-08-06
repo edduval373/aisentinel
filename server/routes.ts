@@ -626,6 +626,66 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get single AI Provider by ID - Super-user only
+  app.get('/api/admin/ai-providers/:id', async (req, res) => {
+    try {
+      console.log(`🌐 API Request: ${req.method} ${req.url}`);
+
+      // Header-based authentication for super-users (1000+ level)
+      const authHeader = req.headers.authorization;
+      const sessionToken = req.headers['x-session-token'];
+      
+      let isAuthenticated = false;
+      let roleLevel = 0;
+
+      // Production token authentication
+      const productionToken = 'prod-1754052835575-289kvxqgl42h';
+      const extractedToken = authHeader?.replace('Bearer ', '') || sessionToken;
+      
+      if (extractedToken === productionToken) {
+        console.log('✅ [AI-PROVIDER GET] Production token authenticated');
+        isAuthenticated = true;
+        roleLevel = 1000;
+      } else {
+        console.log('❌ [AI-PROVIDER GET] Authentication failed');
+        return res.status(401).json({ 
+          error: 'Authentication failed',
+          requiredRole: '1000+ (Super-user)'
+        });
+      }
+
+      // Super-user access required (1000+)
+      if (roleLevel < 1000) {
+        return res.status(403).json({ 
+          error: 'Super-user access required'
+        });
+      }
+
+      const id = parseInt(req.params.id, 10);
+      if (!id || isNaN(id)) {
+        return res.status(400).json({ error: 'Invalid provider ID' });
+      }
+
+      console.log(`✅ [AI-PROVIDER GET] Fetching AI provider: ${id}`);
+      const provider = await storage.getAiProviderById(id);
+      
+      if (!provider) {
+        console.log(`❌ [AI-PROVIDER GET] Provider not found: ${id}`);
+        return res.status(404).json({ error: 'AI provider not found' });
+      }
+      
+      console.log(`✅ [AI-PROVIDER GET] Provider found:`, { 
+        id: provider.id, 
+        name: provider.name, 
+        displayName: provider.displayName 
+      });
+      res.json(provider);
+    } catch (error) {
+      console.error('❌ [AI-PROVIDER GET] Error fetching provider:', error);
+      res.status(500).json({ error: 'Failed to fetch AI provider' });
+    }
+  });
+
   // Update AI Provider - Super-user only
   app.put('/api/admin/ai-providers/:id', async (req, res) => {
     try {

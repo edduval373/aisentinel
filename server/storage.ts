@@ -459,6 +459,30 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
+  async getAiProviderById(id: number): Promise<AiProvider | undefined> {
+    console.log(`🔍 [STORAGE] getAiProviderById() called for ID ${id}`);
+    try {
+      console.log('🔍 [STORAGE] Executing SELECT query on aiProviders table...');
+      const [provider] = await db.select().from(aiProviders).where(eq(aiProviders.id, id));
+      if (provider) {
+        console.log(`✅ [STORAGE] Successfully retrieved AI provider with ID ${id}:`, {
+          id: provider.id,
+          name: provider.name,
+          displayName: provider.displayName,
+          isEnabled: provider.isEnabled
+        });
+        return provider;
+      }
+      console.log(`❌ [STORAGE] No provider found with ID ${id}`);
+      return undefined;
+    } catch (error) {
+      console.error(`❌ [STORAGE] Error in getAiProviderById() for ID ${id}:`, error);
+      console.error('❌ [STORAGE] Error details:', error instanceof Error ? error.message : 'Unknown error');
+      console.error('❌ [STORAGE] Stack trace:', error instanceof Error ? error.stack : 'No stack trace');
+      throw error;
+    }
+  }
+
   async createAiProvider(providerData: InsertAiProvider): Promise<AiProvider> {
     console.log('🔍 [STORAGE] createAiProvider() called with data:', providerData);
     try {
