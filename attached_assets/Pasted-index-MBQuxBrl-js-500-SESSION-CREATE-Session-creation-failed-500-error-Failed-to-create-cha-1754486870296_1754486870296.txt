@@ -1,0 +1,81 @@
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Session creation failed: 500 {"error":"Failed to create chat session"}
+mutationFn @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Full error response: Object
+mutationFn @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Failed to create session: Error: Failed to create chat session: 500 {"error":"Failed to create chat session"}
+    at Object.mutationFn (index-MBQuxBrl.js:500:25708)
+onError @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Error details: Object
+onError @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Session creation failed: 500 {"error":"Failed to create chat session"}
+mutationFn @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Full error response: Object
+mutationFn @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Failed to create session: Error: Failed to create chat session: 500 {"error":"Failed to create chat session"}
+    at Object.mutationFn (index-MBQuxBrl.js:500:25708)
+onError @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Error details: Object
+onError @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Session creation failed: 500 {"error":"Failed to create chat session"}
+mutationFn @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Full error response: Object
+mutationFn @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Failed to create session: Error: Failed to create chat session: 500 {"error":"Failed to create chat session"}
+    at Object.mutationFn (index-MBQuxBrl.js:500:25708)
+onError @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Error details: Object
+onError @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Session creation failed: 500 {"error":"Failed to create chat session"}
+mutationFn @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Full error response: Object
+mutationFn @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Failed to create session: Error: Failed to create chat session: 500 {"error":"Failed to create chat session"}
+    at Object.mutationFn (index-MBQuxBrl.js:500:25708)
+onError @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Error details: Object
+onError @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Session creation failed: 500 {"error":"Failed to create chat session"}
+mutationFn @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Full error response: Object
+mutationFn @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Failed to create session: Error: Failed to create chat session: 500 {"error":"Failed to create chat session"}
+    at Object.mutationFn (index-MBQuxBrl.js:500:25708)
+onError @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Error details: Object
+onError @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Session creation failed: 500 {"error":"Failed to create chat session"}
+mutationFn @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Full error response: Object
+mutationFn @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Failed to create session: Error: Failed to create chat session: 500 {"error":"Failed to create chat session"}
+    at Object.mutationFn (index-MBQuxBrl.js:500:25708)
+onError @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Error details: Object
+onError @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Session creation failed: 500 {"error":"Failed to create chat session"}
+mutationFn @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Full error response: Object
+mutationFn @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Failed to create session: Error: Failed to create chat session: 500 {"error":"Failed to create chat session"}
+    at Object.mutationFn (index-MBQuxBrl.js:500:25708)
+onError @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Error details: Object
+onError @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Session creation failed: 500 {"error":"Failed to create chat session"}
+mutationFn @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Full error response: Object
+mutationFn @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Failed to create session: Error: Failed to create chat session: 500 {"error":"Failed to create chat session"}
+    at Object.mutationFn (index-MBQuxBrl.js:500:25708)
+onError @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Error details: Object
+onError @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Session creation failed: 500 {"error":"Failed to create chat session"}
+mutationFn @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Full error response: Object
+mutationFn @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Failed to create session: Error: Failed to create chat session: 500 {"error":"Failed to create chat session"}
+    at Object.mutationFn (index-MBQuxBrl.js:500:25708)
+onError @ index-MBQuxBrl.js:500
+index-MBQuxBrl.js:500 ❌ [SESSION CREATE] Error details: Object
+onError @ index-MBQuxBrl.js:500

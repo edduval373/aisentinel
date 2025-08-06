@@ -223,25 +223,30 @@ app.get('/api/admin/ai-model-templates', async (req, res) => {
     }
 
     const result = await pool.query('SELECT * FROM ai_model_templates ORDER BY id ASC');
-    const templates = result.rows.map(template => ({
-      id: template.id,
-      name: template.name,
-      provider: template.provider,
-      modelId: template.model_id,
-      description: template.description,
-      contextWindow: template.context_window,
-      isEnabled: template.is_enabled,
-      capabilities: template.capabilities,
-      apiEndpoint: template.api_endpoint,
-      authMethod: template.auth_method,
-      requestHeaders: template.request_headers,
-      maxTokens: template.max_tokens,
-      temperature: template.temperature,
-      maxRetries: template.max_retries,
-      timeout: template.timeout,
-      rateLimit: template.rate_limit,
-      createdAt: template.created_at
-    }));
+    const templates = result.rows.map(template => {
+      console.log(`🔍 [ADMIN-AI-MODEL-TEMPLATES] Processing template ID ${template.id}: ${template.name}`);
+      const transformed = {
+        id: template.id,
+        name: template.name,
+        provider: template.provider,
+        modelId: template.model_id,                     // snake_case to camelCase
+        description: template.description,
+        contextWindow: template.context_window,         // snake_case to camelCase
+        isEnabled: template.is_enabled,                 // snake_case to camelCase
+        capabilities: template.capabilities,
+        apiEndpoint: template.api_endpoint,             // snake_case to camelCase
+        authMethod: template.auth_method,               // snake_case to camelCase
+        requestHeaders: template.request_headers,       // snake_case to camelCase
+        maxTokens: template.max_tokens,                 // snake_case to camelCase
+        temperature: template.temperature,
+        maxRetries: template.max_retries,               // snake_case to camelCase
+        timeout: template.timeout,
+        rateLimit: template.rate_limit,                 // snake_case to camelCase
+        createdAt: template.created_at                  // snake_case to camelCase
+      };
+      console.log(`✅ [ADMIN-AI-MODEL-TEMPLATES] Transformed template ${template.id}: modelId=${transformed.modelId}, contextWindow=${transformed.contextWindow}`);
+      return transformed;
+    });
     
     console.log(`✅ [AI-MODEL-TEMPLATES] Returning ${templates.length} templates`);
     res.json(templates);
@@ -472,38 +477,48 @@ app.get('/api/chat/sessions', async (req, res) => {
 app.post('/api/chat/session', async (req, res) => {
   try {
     console.log('🌐 [CHAT-SESSION] POST request received');
+    console.log(`🔍 [CHAT-SESSION] Request body:`, JSON.stringify(req.body, null, 2));
     
     const auth = authenticateToken(req);
     if (!auth.authenticated) {
+      console.log('❌ [CHAT-SESSION] Authentication failed');
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
+    console.log(`🔍 [CHAT-SESSION] Authenticated user: ${auth.user.email}, ID: ${auth.user.id}, Company: ${auth.user.companyId}`);
+
     const { title = 'New Chat', activityTypeId, modelId } = req.body;
+    console.log(`🔍 [CHAT-SESSION] Parsed parameters: title="${title}", activityTypeId=${activityTypeId}, modelId=${modelId}`);
     
+    // Check if we have the required schema fields
+    console.log('🔍 [CHAT-SESSION] Checking database schema compatibility...');
+    
+    // Based on the schema, chat_sessions only has: id, user_id, company_id, created_at, updated_at
+    // The activityTypeId and modelId might be causing the issue
     const result = await pool.query(
-      `INSERT INTO chat_sessions (user_id, company_id, title, activity_type_id, model_id, is_active, created_at, updated_at)
-       VALUES ($1, $2, $3, $4, $5, true, NOW(), NOW())
+      `INSERT INTO chat_sessions (user_id, company_id, created_at, updated_at)
+       VALUES ($1, $2, NOW(), NOW())
        RETURNING *`,
-      [auth.user.id, auth.user.companyId, title, activityTypeId, modelId]
+      [auth.user.id, auth.user.companyId]
     );
+    
+    console.log(`📊 [CHAT-SESSION] Database insert result:`, JSON.stringify(result.rows[0], null, 2));
     
     const session = result.rows[0];
     const formattedSession = {
       id: session.id,
-      userId: session.user_id,
-      companyId: session.company_id,
-      title: session.title,
-      activityTypeId: session.activity_type_id,
-      modelId: session.model_id,
-      isActive: session.is_active,
-      createdAt: session.created_at,
-      updatedAt: session.updated_at
+      userId: session.user_id,                      // snake_case to camelCase
+      companyId: session.company_id,                // snake_case to camelCase
+      createdAt: session.created_at,                // snake_case to camelCase
+      updatedAt: session.updated_at                 // snake_case to camelCase
     };
     
+    console.log(`📊 [CHAT-SESSION] Formatted response:`, JSON.stringify(formattedSession, null, 2));
     console.log(`✅ [CHAT-SESSION] Created session: ${session.id}`);
     res.status(201).json(formattedSession);
   } catch (error) {
     console.error('❌ [CHAT-SESSION] Create error:', error);
+    console.error('❌ [CHAT-SESSION] Error stack:', error.stack);
     res.status(500).json({ error: 'Failed to create chat session' });
   }
 });
@@ -571,6 +586,55 @@ app.get('/api/activity-types', async (req, res) => {
   } catch (error) {
     console.error('❌ [ACTIVITY-TYPES] Error:', error);
     res.status(500).json({ error: 'Failed to fetch activity types' });
+  }
+});
+
+// AI Model Templates Routes (Production Universal Templates)
+app.get('/api/ai-model-templates', async (req, res) => {
+  try {
+    console.log('🌐 [AI-MODEL-TEMPLATES] GET request received');
+    
+    const auth = authenticateToken(req);
+    if (!auth.authenticated) {
+      console.log('❌ [AI-MODEL-TEMPLATES] Authentication failed');
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    console.log(`🔍 [AI-MODEL-TEMPLATES] Authenticated user: ${auth.user.email}, role: ${auth.user.roleLevel}`);
+
+    const result = await pool.query('SELECT * FROM ai_model_templates WHERE is_enabled = true ORDER BY name ASC');
+    console.log(`📊 [AI-MODEL-TEMPLATES] Raw database results: ${result.rows.length} templates`);
+    console.log(`📊 [AI-MODEL-TEMPLATES] Sample raw row:`, result.rows[0] ? JSON.stringify(result.rows[0], null, 2) : 'No data');
+    
+    const templates = result.rows.map(template => {
+      const transformed = {
+        id: template.id,
+        name: template.name,
+        provider: template.provider,
+        modelId: template.model_id,                     // snake_case to camelCase
+        description: template.description,
+        contextWindow: template.context_window,         // snake_case to camelCase
+        isEnabled: template.is_enabled,                 // snake_case to camelCase
+        capabilities: template.capabilities,
+        apiEndpoint: template.api_endpoint,             // snake_case to camelCase
+        authMethod: template.auth_method,               // snake_case to camelCase
+        requestHeaders: template.request_headers,       // snake_case to camelCase
+        maxTokens: template.max_tokens,                 // snake_case to camelCase
+        temperature: template.temperature,
+        maxRetries: template.max_retries,               // snake_case to camelCase
+        timeout: template.timeout,
+        rateLimit: template.rate_limit,                 // snake_case to camelCase
+        createdAt: template.created_at                  // snake_case to camelCase
+      };
+      return transformed;
+    });
+    
+    console.log(`📊 [AI-MODEL-TEMPLATES] Sample transformed template:`, templates[0] ? JSON.stringify(templates[0], null, 2) : 'No data');
+    console.log(`✅ [AI-MODEL-TEMPLATES] Returning ${templates.length} templates with proper camelCase conversion`);
+    res.json(templates);
+  } catch (error) {
+    console.error('❌ [AI-MODEL-TEMPLATES] Error:', error);
+    res.status(500).json({ error: 'Failed to fetch AI model templates' });
   }
 });
 
