@@ -260,6 +260,81 @@ The AI Providers screen (`client/src/pages/admin/create-providers.tsx`) now impl
 </Card>
 ```
 
+## Critical Lessons Learned: AI Providers Authentication Fix (August 6, 2025)
+
+### Production Deployment Architecture Issue
+**Root Cause**: Missing `/api/index.js` file caused 405 Method Not Allowed errors for PUT/DELETE requests in Vercel production environment.
+
+**Key Discovery**: Vercel serverless functions require a main API entry point (`/api/index.js`) to handle all HTTP methods properly. Without this file:
+- GET requests work (basic routing)
+- POST requests may work (simple routing)
+- PUT/DELETE requests return 405 errors (no handler)
+
+**Evidence from Logs**:
+```
+🔄 [AI-PROVIDERS] Response status: 405
+🔄 [AI-PROVIDERS] Response URL: https://aisentinel-r1coq25fd-ed-duvals-projects.vercel.app/api/admin/ai-providers/8
+❌ [AI-PROVIDERS] Update failed: 405
+```
+
+**Solution Implementation**:
+1. Created `/api/index.js` as main Vercel serverless function entry point
+2. Implemented complete CRUD operations (GET, POST, PUT, DELETE) for AI Providers
+3. Added proper authentication with production token validation
+4. Included database field transformation (snake_case ↔ camelCase)
+5. Configured CORS headers for cross-origin requests
+
+### Authentication Token Consistency Lesson
+**Critical Finding**: Different admin pages using different localStorage keys caused authentication failures.
+- Company Management: `localStorage.getItem('prodAuthToken')`  ✅ Working
+- AI Providers: `localStorage.getItem('sessionToken')`  ❌ Failed
+
+**Fix**: Standardized all admin pages to use `prodAuthToken` key consistently.
+
+### Vercel Deployment Configuration Requirements
+**Essential Files for Production**:
+1. `/api/index.js` - Main API handler (CRITICAL - prevents 405 errors)
+2. `vercel.json` - Routing configuration
+3. Proper CORS headers in API responses
+4. Authentication header validation
+
+**Debugging Pattern for Production Issues**:
+1. Check if API works in development (`curl` tests)
+2. Verify Vercel routing configuration
+3. Confirm main API entry point exists
+4. Validate CORS and authentication headers
+5. Test authentication token consistency across pages
+
+### Database Field Transformation Standard
+**Required Pattern**: All API responses must transform database fields:
+```javascript
+// Database (snake_case) → Frontend (camelCase)
+const formattedProvider = {
+  id: provider.id,
+  name: provider.name,
+  displayName: provider.display_name,  // snake_case → camelCase
+  description: provider.description,
+  website: provider.website,
+  apiDocUrl: provider.api_doc_url,     // snake_case → camelCase
+  isEnabled: provider.is_enabled,      // snake_case → camelCase
+  createdAt: provider.created_at,      // snake_case → camelCase
+  updatedAt: provider.updated_at       // snake_case → camelCase
+};
+```
+
+### Production Testing Protocol
+**CRITICAL**: Always test CRUD operations in production environment after deployment:
+1. GET requests (list/read operations)
+2. POST requests (create operations)
+3. PUT requests (update operations) - **Most likely to fail**
+4. DELETE requests (delete operations)
+
+**Why PUT/DELETE Fail More Often**:
+- Require proper HTTP method handling
+- Need main API entry point in serverless functions
+- Complex routing configurations
+- Authentication header requirements
+
 ## Authentication Strategy
 
 ### Production Authentication Requirements
