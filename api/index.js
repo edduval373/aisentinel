@@ -638,9 +638,123 @@ app.get('/api/ai-model-templates', async (req, res) => {
   }
 });
 
-// Health check
+// Missing API endpoints that are causing 404 errors
+app.get('/api/chat/session/:sessionId/messages', async (req, res) => {
+  try {
+    console.log('🌐 [CHAT-MESSAGES] GET request received');
+    
+    const auth = authenticateToken(req);
+    if (!auth.authenticated) {
+      console.log('❌ [CHAT-MESSAGES] Authentication failed');
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const sessionId = parseInt(req.params.sessionId);
+    console.log(`🔍 [CHAT-MESSAGES] Fetching messages for session ${sessionId}`);
+    
+    const result = await pool.query(
+      'SELECT * FROM chat_messages WHERE session_id = $1 AND company_id = $2 ORDER BY timestamp ASC',
+      [sessionId, auth.user.companyId]
+    );
+    
+    console.log(`✅ [CHAT-MESSAGES] Found ${result.rows.length} messages for session ${sessionId}`);
+    res.json(result.rows);
+  } catch (error) {
+    console.error('❌ [CHAT-MESSAGES] Error:', error);
+    res.status(500).json({ error: 'Failed to fetch messages' });
+  }
+});
+
+app.post('/api/chat/message', async (req, res) => {
+  try {
+    console.log('🌐 [CHAT-MESSAGE] POST request received');
+    console.log(`🔍 [CHAT-MESSAGE] Request body:`, JSON.stringify(req.body, null, 2));
+    
+    const auth = authenticateToken(req);
+    if (!auth.authenticated) {
+      console.log('❌ [CHAT-MESSAGE] Authentication failed');
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const { sessionId, message, aiModelId, activityTypeId } = req.body;
+    console.log(`🔍 [CHAT-MESSAGE] Parsed: sessionId=${sessionId}, aiModelId=${aiModelId}, activityTypeId=${activityTypeId}`);
+    
+    const result = await pool.query(
+      `INSERT INTO chat_messages (company_id, session_id, user_id, ai_model_id, activity_type_id, message, status, timestamp)
+       VALUES ($1, $2, $3, $4, $5, $6, 'pending', NOW())
+       RETURNING *`,
+      [auth.user.companyId, sessionId, auth.user.id, aiModelId, activityTypeId, message]
+    );
+    
+    console.log(`✅ [CHAT-MESSAGE] Created message: ${result.rows[0].id}`);
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error('❌ [CHAT-MESSAGE] Error:', error);
+    res.status(500).json({ error: 'Failed to create message' });
+  }
+});
+
+app.get('/api/admin/api-keys', async (req, res) => {
+  try {
+    console.log('🌐 [ADMIN-API-KEYS] GET request received');
+    
+    const auth = authenticateToken(req);
+    if (!auth.authenticated || auth.user.roleLevel < 999) {
+      return res.status(401).json({ error: 'Owner access required' });
+    }
+
+    const result = await pool.query(
+      'SELECT * FROM company_api_keys WHERE company_id = $1 ORDER BY id ASC',
+      [auth.user.companyId]
+    );
+    
+    console.log(`✅ [ADMIN-API-KEYS] Returning ${result.rows.length} API keys`);
+    res.json(result.rows);
+  } catch (error) {
+    console.error('❌ [ADMIN-API-KEYS] Error:', error);
+    res.status(500).json({ error: 'Failed to fetch API keys' });
+  }
+});
+
+app.get('/api/version/current', async (req, res) => {
+  try {
+    console.log('🌐 [VERSION] GET request received');
+    res.json({ 
+      version: '1.0.0',
+      buildDate: new Date().toISOString(),
+      environment: 'production'
+    });
+  } catch (error) {
+    console.error('❌ [VERSION] Error:', error);
+    res.status(500).json({ error: 'Failed to fetch version' });
+  }
+});
+
+// Health check and debug endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  console.log('🌐 [HEALTH] Health check endpoint called');
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    version: '2025-08-06-update'
+  });
+});
+
+// Debug endpoint to check API deployment
+app.get('/api/debug', (req, res) => {
+  console.log('🌐 [DEBUG] Debug endpoint called');
+  res.json({ 
+    message: 'API is working',
+    timestamp: new Date().toISOString(),
+    endpoints: [
+      '/api/admin/ai-model-templates',
+      '/api/ai-model-templates',
+      '/api/chat/session/:id/messages',
+      '/api/chat/message',
+      '/api/admin/api-keys',
+      '/api/version/current'
+    ]
+  });
 });
 
 // Default export for Vercel
