@@ -1,22 +1,40 @@
 # Force Deployment Refresh - August 6, 2025
 
-## Issue
-Production Vercel deployment is not picking up the latest API route changes. The `/api/admin/ai-model-templates` and other endpoints are returning 404 "Not Found" errors.
+## Critical Fix Applied
+**File**: `/api/admin/ai-model-templates.js`
+**Issue**: API was returning raw snake_case database fields without transformation
+**Fix**: Added comprehensive field transformation from snake_case to camelCase
 
 ## Changes Made
-1. Added missing API endpoints:
-   - `/api/chat/session/:sessionId/messages`
-   - `/api/chat/message`
-   - `/api/admin/api-keys`
-   - `/api/version/current`
-   - `/api/ai-model-templates` (with camelCase conversion)
+```javascript
+// OLD: return res.json(templates);
+// NEW: 
+const transformedTemplates = templates.map(template => ({
+  id: template.id,
+  name: template.name,
+  provider: template.provider,
+  modelId: template.modelId || template.model_id,           // CRITICAL
+  description: template.description,
+  contextWindow: template.contextWindow || template.context_window,  // CRITICAL
+  isEnabled: template.isEnabled !== undefined ? template.isEnabled : template.is_enabled, // CRITICAL
+  capabilities: template.capabilities,
+  // ... all other fields transformed
+}));
+```
 
-2. Enhanced debugging with detailed transformation logs
-
-## Deployment Status
-- Development server working on port 5000
-- Production Vercel deployment needs refresh
-- Health endpoint returning "Not Found" in production
+## Production URL
+`https://aisentinel-i2sssbjjq-ed-duvals-projects.vercel.app`
 
 ## Next Steps
-The API changes are ready but need deployment refresh to take effect in production.
+1. The API transformation fix is now in place
+2. Vercel will automatically redeploy when these files change
+3. The form population issue should be resolved
+4. Test the edit functionality after deployment refresh
+
+## Expected Result
+- Form fields will now populate correctly with values from database
+- Edit dialog will show proper data instead of "Not set"
+- CRUD operations will work properly
+
+## Status
+🟡 **DEPLOYMENT PENDING** - Waiting for Vercel to deploy the API transformation fix
