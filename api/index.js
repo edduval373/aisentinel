@@ -434,6 +434,146 @@ app.get('/api/admin/companies', async (req, res) => {
   }
 });
 
+// Chat Sessions Routes
+app.get('/api/chat/sessions', async (req, res) => {
+  try {
+    console.log('🌐 [CHAT-SESSIONS] GET request received');
+    
+    const auth = authenticateToken(req);
+    if (!auth.authenticated) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const result = await pool.query(
+      'SELECT * FROM chat_sessions WHERE company_id = $1 ORDER BY created_at DESC',
+      [auth.user.companyId]
+    );
+    
+    const sessions = result.rows.map(session => ({
+      id: session.id,
+      userId: session.user_id,
+      companyId: session.company_id,
+      title: session.title,
+      activityTypeId: session.activity_type_id,
+      modelId: session.model_id,
+      isActive: session.is_active,
+      createdAt: session.created_at,
+      updatedAt: session.updated_at
+    }));
+    
+    console.log(`✅ [CHAT-SESSIONS] Returning ${sessions.length} sessions`);
+    res.json(sessions);
+  } catch (error) {
+    console.error('❌ [CHAT-SESSIONS] Error:', error);
+    res.status(500).json({ error: 'Failed to fetch chat sessions' });
+  }
+});
+
+app.post('/api/chat/session', async (req, res) => {
+  try {
+    console.log('🌐 [CHAT-SESSION] POST request received');
+    
+    const auth = authenticateToken(req);
+    if (!auth.authenticated) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const { title = 'New Chat', activityTypeId, modelId } = req.body;
+    
+    const result = await pool.query(
+      `INSERT INTO chat_sessions (user_id, company_id, title, activity_type_id, model_id, is_active, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, true, NOW(), NOW())
+       RETURNING *`,
+      [auth.user.id, auth.user.companyId, title, activityTypeId, modelId]
+    );
+    
+    const session = result.rows[0];
+    const formattedSession = {
+      id: session.id,
+      userId: session.user_id,
+      companyId: session.company_id,
+      title: session.title,
+      activityTypeId: session.activity_type_id,
+      modelId: session.model_id,
+      isActive: session.is_active,
+      createdAt: session.created_at,
+      updatedAt: session.updated_at
+    };
+    
+    console.log(`✅ [CHAT-SESSION] Created session: ${session.id}`);
+    res.status(201).json(formattedSession);
+  } catch (error) {
+    console.error('❌ [CHAT-SESSION] Create error:', error);
+    res.status(500).json({ error: 'Failed to create chat session' });
+  }
+});
+
+// AI Models Routes  
+app.get('/api/ai-models', async (req, res) => {
+  try {
+    console.log('🌐 [AI-MODELS] GET request received');
+    
+    const auth = authenticateToken(req);
+    if (!auth.authenticated) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const result = await pool.query('SELECT * FROM ai_model_templates WHERE is_enabled = true ORDER BY name ASC');
+    const models = result.rows.map(model => ({
+      id: model.id,
+      name: model.name,
+      provider: model.provider,
+      modelId: model.model_id,
+      description: model.description,
+      contextWindow: model.context_window,
+      isEnabled: model.is_enabled,
+      capabilities: model.capabilities,
+      createdAt: model.created_at
+    }));
+    
+    console.log(`✅ [AI-MODELS] Returning ${models.length} models`);
+    res.json(models);
+  } catch (error) {
+    console.error('❌ [AI-MODELS] Error:', error);
+    res.status(500).json({ error: 'Failed to fetch AI models' });
+  }
+});
+
+// Activity Types Routes
+app.get('/api/activity-types', async (req, res) => {
+  try {
+    console.log('🌐 [ACTIVITY-TYPES] GET request received');
+    
+    const auth = authenticateToken(req);
+    if (!auth.authenticated) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const result = await pool.query(
+      'SELECT * FROM activity_types WHERE company_id = $1 AND is_enabled = true ORDER BY name ASC',
+      [auth.user.companyId]
+    );
+    
+    const activityTypes = result.rows.map(type => ({
+      id: type.id,
+      companyId: type.company_id,
+      name: type.name,
+      description: type.description,
+      prePrompt: type.pre_prompt,
+      riskLevel: type.risk_level,
+      permissions: type.permissions,
+      isEnabled: type.is_enabled,
+      createdAt: type.created_at
+    }));
+    
+    console.log(`✅ [ACTIVITY-TYPES] Returning ${activityTypes.length} activity types`);
+    res.json(activityTypes);
+  } catch (error) {
+    console.error('❌ [ACTIVITY-TYPES] Error:', error);
+    res.status(500).json({ error: 'Failed to fetch activity types' });
+  }
+});
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
