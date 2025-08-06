@@ -170,9 +170,52 @@ export default function CreateModels() {
     }
   });
 
-  // Fetch AI providers using TanStack Query's default fetch with proper headers
+  // Fetch AI providers with explicit authentication for modal
   const { data: dbProviders = [], isLoading: providersLoading, error: providersError } = useQuery<any[]>({
     queryKey: ["/api/admin/ai-providers"],
+    queryFn: async () => {
+      console.log('🔧 [PROVIDERS-MODAL] Starting providers fetch for modal...');
+      
+      // Get auth headers
+      const sessionToken = localStorage.getItem('prodAuthToken') || 'prod-1754052835575-289kvxqgl42h';
+      const headers: any = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sessionToken}`,
+        'X-Session-Token': sessionToken
+      };
+      
+      console.log('🔧 [PROVIDERS-MODAL] Making authenticated request...');
+      console.log('🔧 [PROVIDERS-MODAL] Headers:', Object.keys(headers));
+      
+      const response = await fetch('/api/admin/ai-providers', {
+        method: 'GET',
+        headers
+      });
+      
+      console.log('🔧 [PROVIDERS-MODAL] Response status:', response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('🔧 [PROVIDERS-MODAL] Error response:', errorText);
+        throw new Error(`Failed to fetch providers: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('🔧 [PROVIDERS-MODAL] Success - providers:', data);
+      console.log('🔧 [PROVIDERS-MODAL] Provider count:', data?.length || 0);
+      
+      // Log each provider for debugging
+      data?.forEach((provider: any, index: number) => {
+        console.log(`🔧 [PROVIDERS-MODAL] Provider ${index + 1}:`, {
+          id: provider.id,
+          name: provider.name,
+          displayName: provider.displayName || provider.display_name,
+          isEnabled: provider.isEnabled || provider.is_enabled
+        });
+      });
+      
+      return data;
+    },
     staleTime: 0, // Force fresh fetch every time
     enabled: true, // Ensure query runs immediately
   });
@@ -284,8 +327,6 @@ export default function CreateModels() {
         console.error('🔧 [CREATE-TEMPLATE] Fetch error:', fetchError);
         throw fetchError;
       }
-      
-      return response.json();
     },
     onSuccess: async (data) => {
       console.log(`✅ [TEMPLATE CREATE] Success callback executed with data:`, data);
