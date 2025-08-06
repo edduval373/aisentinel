@@ -1,0 +1,1020 @@
+   Provider 1: Object
+   Provider 2: Object
+   Provider 3: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ ✅ [PROVIDERS] Loaded 8 providers successfully
+ 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+   Provider 1: Object
+   Provider 2: Object
+   Provider 3: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ ✅ [PROVIDERS] Loaded 8 providers successfully
+ 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+   Provider 1: Object
+   Provider 2: Object
+   Provider 3: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ ✅ [PROVIDERS] Loaded 8 providers successfully
+ 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+   Provider 1: Object
+   Provider 2: Object
+   Provider 3: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ ✅ [PROVIDERS] Loaded 8 providers successfully
+ 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+   Provider 1: Object
+   Provider 2: Object
+   Provider 3: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ ✅ [PROVIDERS] Loaded 8 providers successfully
+ 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+   Provider 1: Object
+   Provider 2: Object
+   Provider 3: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ ✅ [PROVIDERS] Loaded 8 providers successfully
+ 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+   Provider 1: Object
+   Provider 2: Object
+   Provider 3: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ ✅ [PROVIDERS] Loaded 8 providers successfully
+ 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+   Provider 1: Object
+   Provider 2: Object
+   Provider 3: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ ✅ [PROVIDERS] Loaded 8 providers successfully
+ 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+   Provider 1: Object
+   Provider 2: Object
+   Provider 3: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ ✅ [PROVIDERS] Loaded 8 providers successfully
+ 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+   Provider 1: Object
+   Provider 2: Object
+   Provider 3: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ ✅ [PROVIDERS] Loaded 8 providers successfully
+ 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+   Provider 1: Object
+   Provider 2: Object
+   Provider 3: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ ✅ [PROVIDERS] Loaded 8 providers successfully
+ 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+   Provider 1: Object
+   Provider 2: Object
+   Provider 3: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ ✅ [PROVIDERS] Loaded 8 providers successfully
+ 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+   Provider 1: Object
+   Provider 2: Object
+   Provider 3: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ ✅ [PROVIDERS] Loaded 8 providers successfully
+ 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+   Provider 1: Object
+   Provider 2: Object
+   Provider 3: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ ✅ [PROVIDERS] Loaded 8 providers successfully
+ 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+   Provider 1: Object
+   Provider 2: Object
+   Provider 3: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ ✅ [PROVIDERS] Loaded 8 providers successfully
+ 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+   Provider 1: Object
+   Provider 2: Object
+   Provider 3: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ ✅ [PROVIDERS] Loaded 8 providers successfully
+ 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+   Provider 1: Object
+   Provider 2: Object
+   Provider 3: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ ✅ [PROVIDERS] Loaded 8 providers successfully
+ 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+   Provider 1: Object
+   Provider 2: Object
+   Provider 3: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ ✅ [PROVIDERS] Loaded 8 providers successfully
+ 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+   Provider 1: Object
+   Provider 2: Object
+   Provider 3: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ ✅ [PROVIDERS] Loaded 8 providers successfully
+ 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+   Provider 1: Object
+   Provider 2: Object
+   Provider 3: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ ✅ [PROVIDERS] Loaded 8 providers successfully
+ 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+   Provider 1: Object
+   Provider 2: Object
+   Provider 3: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ ✅ [PROVIDERS] Loaded 8 providers successfully
+ 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+   Provider 1: Object
+   Provider 2: Object
+   Provider 3: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ ✅ [PROVIDERS] Loaded 8 providers successfully
+ 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+   Provider 1: Object
+   Provider 2: Object
+   Provider 3: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔧 [AI-PROVIDERS] Editing provider: 2 anthropic
+ 🔧 [AI-PROVIDERS] Provider data: Object
+ 🔧 [AI-PROVIDERS] Form data being set: Object
+ 🔧 [AI-PROVIDERS] Form reset with values, opening edit dialog...
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ ✅ [PROVIDERS] Loaded 8 providers successfully
+ 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+   Provider 1: Object
+   Provider 2: Object
+   Provider 3: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔧 [AI-PROVIDERS] All fields explicitly set: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ ✅ [PROVIDERS] Loaded 8 providers successfully
+ 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+   Provider 1: Object
+   Provider 2: Object
+   Provider 3: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ ✅ [PROVIDERS] Loaded 8 providers successfully
+ 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+   Provider 1: Object
+   Provider 2: Object
+   Provider 3: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🖱️ [BUTTON CLICK] Update Provider button clicked
+ 🔍 [BUTTON CLICK] Button disabled? false
+ 🔍 [BUTTON CLICK] Name check result: Object
+ 🔍 [BUTTON CLICK] Editing provider: Object
+ 🚀 [FORM SUBMIT] Form submission triggered: Object
+ 🔍 [FORM SUBMIT] Name check result: Object
+ 🔍 [FORM SUBMIT] Editing provider: Object
+ ✅ [FORM SUBMIT] Proceeding with submission...
+ 🔧 [FORM SUBMIT] Update mode - calling updateProviderMutation
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ ✅ [PROVIDERS] Loaded 8 providers successfully
+ 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+   Provider 1: Object
+   Provider 2: Object
+   Provider 3: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ ✅ [PROVIDERS] Loaded 8 providers successfully
+ 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+   Provider 1: Object
+   Provider 2: Object
+   Provider 3: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔄 [AI-PROVIDERS] Updating provider: 2 anthropic
+ 🔄 [AI-PROVIDERS] Full update data: Object
+ 🔄 [AI-PROVIDERS] Request URL: /api/admin/ai-providers/2
+ 🔄 [AI-PROVIDERS] Token: prod-1754052835575-2...
+ 🔄 [AI-PROVIDERS] Request body: {"name":"anthropic","displayName":"Anthropic","description":"Claude AI models for safe and helpful AI interactions","website":"https://anthropic.com","apiDocUrl":"https://docs.anthropic.com","isEnabled":true}
+ 🔄 [AI-PROVIDERS] Clean URL: /api/admin/ai-providers/2
+ 🔄 [AI-PROVIDERS] Response status: 405
+ 🔄 [AI-PROVIDERS] Response statusText: 
+ 🔄 [AI-PROVIDERS] Response headers: Object
+ 🔄 [AI-PROVIDERS] Response URL: https://aisentinel-r1coq25fd-ed-duvals-projects.vercel.app/api/admin/ai-providers/2
+ 🔄 [AI-PROVIDERS] Response type: basic
+index-BLSyPK-a.js:618 ❌ [AI-PROVIDERS] Update failed: 405 
+mutationFn @ index-BLSyPK-a.js:618
+index-BLSyPK-a.js:618 ❌ [AI-PROVIDERS] Error response: 
+mutationFn @ index-BLSyPK-a.js:618
+index-BLSyPK-a.js:618 ❌ [AI-PROVIDERS] Full response object: Object
+mutationFn @ index-BLSyPK-a.js:618
+index-BLSyPK-a.js:618 ❌ [AI-PROVIDERS] Update mutation error: Error: Failed to update provider: 405 - 
+    at Object.mutationFn (index-BLSyPK-a.js:618:80846)
+onError @ index-BLSyPK-a.js:618
+index-BLSyPK-a.js:618 ❌ [AI-PROVIDERS] Error type: object
+onError @ index-BLSyPK-a.js:618
+index-BLSyPK-a.js:618 ❌ [AI-PROVIDERS] Error message: Failed to update provider: 405 - 
+onError @ index-BLSyPK-a.js:618
+index-BLSyPK-a.js:618 ❌ [AI-PROVIDERS] Error stack: Error: Failed to update provider: 405 - 
+    at Object.mutationFn (https://aisentinel-r1coq25fd-ed-duvals-projects.vercel.app/assets/index-BLSyPK-a.js:618:80846)
+onError @ index-BLSyPK-a.js:618
+index-BLSyPK-a.js:618 ❌ [AI-PROVIDERS] Error cause: undefined
+onError @ index-BLSyPK-a.js:618
+ 🌐 [AI-PROVIDERS] Browser online status: true
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ ✅ [PROVIDERS] Loaded 8 providers successfully
+ 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+   Provider 1: Object
+   Provider 2: Object
+   Provider 3: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ ✅ [PROVIDERS] Loaded 8 providers successfully
+ 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+   Provider 1: Object
+   Provider 2: Object
+   Provider 3: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ ✅ [PROVIDERS] Loaded 8 providers successfully
+ 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+   Provider 1: Object
+   Provider 2: Object
+   Provider 3: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔧 [AI-PROVIDERS] Editing provider: 8 Horizon Edge Enterprises
+ 🔧 [AI-PROVIDERS] Provider data: Object
+ 🔧 [AI-PROVIDERS] Form data being set: Object
+ 🔧 [AI-PROVIDERS] Form reset with values, opening edit dialog...
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ ✅ [PROVIDERS] Loaded 8 providers successfully
+ 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+   Provider 1: Object
+   Provider 2: Object
+   Provider 3: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔧 [AI-PROVIDERS] All fields explicitly set: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ ✅ [PROVIDERS] Loaded 8 providers successfully
+ 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+   Provider 1: Object
+   Provider 2: Object
+   Provider 3: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ ✅ [PROVIDERS] Loaded 8 providers successfully
+ 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+   Provider 1: Object
+   Provider 2: Object
+   Provider 3: Object
+ 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+ 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+ 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+ 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+ 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+ 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+ 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+ 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ ✅ [PROVIDERS] Loaded 8 providers successfully
+ 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+index-BLSyPK-a.js:618   Provider 1: Object
+index-BLSyPK-a.js:618   Provider 2: Object
+index-BLSyPK-a.js:618   Provider 3: Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+index-BLSyPK-a.js:418 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-BLSyPK-a.js:418 Authentication check: Object
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] Role check: Object
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] Section visibility: Object
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] Rendering with sections: Object
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] Role detection: Object
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-BLSyPK-a.js:618 🖱️ [BUTTON CLICK] Update Provider button clicked
+index-BLSyPK-a.js:618 🔍 [BUTTON CLICK] Button disabled? false
+index-BLSyPK-a.js:618 🔍 [BUTTON CLICK] Name check result: Object
+index-BLSyPK-a.js:618 🔍 [BUTTON CLICK] Editing provider: Object
+index-BLSyPK-a.js:618 🚀 [FORM SUBMIT] Form submission triggered: Object
+index-BLSyPK-a.js:618 🔍 [FORM SUBMIT] Name check result: Object
+index-BLSyPK-a.js:618 🔍 [FORM SUBMIT] Editing provider: Object
+index-BLSyPK-a.js:618 ✅ [FORM SUBMIT] Proceeding with submission...
+index-BLSyPK-a.js:618 🔧 [FORM SUBMIT] Update mode - calling updateProviderMutation
+index-BLSyPK-a.js:418 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-BLSyPK-a.js:418 Authentication check: Object
+index-BLSyPK-a.js:618 ✅ [PROVIDERS] Loaded 8 providers successfully
+index-BLSyPK-a.js:618 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+index-BLSyPK-a.js:618   Provider 1: Object
+index-BLSyPK-a.js:618   Provider 2: Object
+index-BLSyPK-a.js:618   Provider 3: Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+index-BLSyPK-a.js:418 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-BLSyPK-a.js:418 Authentication check: Object
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] Role check: Object
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] Section visibility: Object
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] Rendering with sections: Object
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] Role detection: Object
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-BLSyPK-a.js:418 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-BLSyPK-a.js:418 Authentication check: Object
+index-BLSyPK-a.js:618 ✅ [PROVIDERS] Loaded 8 providers successfully
+index-BLSyPK-a.js:618 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+index-BLSyPK-a.js:618   Provider 1: Object
+index-BLSyPK-a.js:618   Provider 2: Object
+index-BLSyPK-a.js:618   Provider 3: Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+index-BLSyPK-a.js:418 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-BLSyPK-a.js:418 Authentication check: Object
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] Role check: Object
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] Section visibility: Object
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] Rendering with sections: Object
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] Role detection: Object
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-BLSyPK-a.js:618 🔄 [AI-PROVIDERS] Updating provider: 8 Horizon Edge Enterprises iii
+index-BLSyPK-a.js:618 🔄 [AI-PROVIDERS] Full update data: Object
+index-BLSyPK-a.js:618 🔄 [AI-PROVIDERS] Request URL: /api/admin/ai-providers/8
+index-BLSyPK-a.js:618 🔄 [AI-PROVIDERS] Token: prod-1754052835575-2...
+index-BLSyPK-a.js:618 🔄 [AI-PROVIDERS] Request body: {"name":"Horizon Edge Enterprises iii","displayName":"Mobile Pin Auth App","description":"test","website":"https://anthropic.com","apiDocUrl":"","isEnabled":true}
+index-BLSyPK-a.js:618 🔄 [AI-PROVIDERS] Clean URL: /api/admin/ai-providers/8
+index-BLSyPK-a.js:618 🔄 [AI-PROVIDERS] Response status: 405
+index-BLSyPK-a.js:618 🔄 [AI-PROVIDERS] Response statusText: 
+index-BLSyPK-a.js:618 🔄 [AI-PROVIDERS] Response headers: Object
+index-BLSyPK-a.js:618 🔄 [AI-PROVIDERS] Response URL: https://aisentinel-r1coq25fd-ed-duvals-projects.vercel.app/api/admin/ai-providers/8
+index-BLSyPK-a.js:618 🔄 [AI-PROVIDERS] Response type: basic
+index-BLSyPK-a.js:618 ❌ [AI-PROVIDERS] Update failed: 405 
+mutationFn @ index-BLSyPK-a.js:618
+index-BLSyPK-a.js:618 ❌ [AI-PROVIDERS] Error response: 
+mutationFn @ index-BLSyPK-a.js:618
+index-BLSyPK-a.js:618 ❌ [AI-PROVIDERS] Full response object: Object
+mutationFn @ index-BLSyPK-a.js:618
+index-BLSyPK-a.js:618 ❌ [AI-PROVIDERS] Update mutation error: Error: Failed to update provider: 405 - 
+    at Object.mutationFn (index-BLSyPK-a.js:618:80846)
+onError @ index-BLSyPK-a.js:618
+index-BLSyPK-a.js:618 ❌ [AI-PROVIDERS] Error type: object
+onError @ index-BLSyPK-a.js:618
+index-BLSyPK-a.js:618 ❌ [AI-PROVIDERS] Error message: Failed to update provider: 405 - 
+onError @ index-BLSyPK-a.js:618
+index-BLSyPK-a.js:618 ❌ [AI-PROVIDERS] Error stack: Error: Failed to update provider: 405 - 
+    at Object.mutationFn (https://aisentinel-r1coq25fd-ed-duvals-projects.vercel.app/assets/index-BLSyPK-a.js:618:80846)
+onError @ index-BLSyPK-a.js:618
+index-BLSyPK-a.js:618 ❌ [AI-PROVIDERS] Error cause: undefined
+onError @ index-BLSyPK-a.js:618
+index-BLSyPK-a.js:618 🌐 [AI-PROVIDERS] Browser online status: true
+index-BLSyPK-a.js:418 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-BLSyPK-a.js:418 Authentication check: Object
+index-BLSyPK-a.js:618 ✅ [PROVIDERS] Loaded 8 providers successfully
+index-BLSyPK-a.js:618 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+index-BLSyPK-a.js:618   Provider 1: Object
+index-BLSyPK-a.js:618   Provider 2: Object
+index-BLSyPK-a.js:618   Provider 3: Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+index-BLSyPK-a.js:418 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-BLSyPK-a.js:418 Authentication check: Object
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] Role check: Object
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] Section visibility: Object
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] Rendering with sections: Object
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] Role detection: Object
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
+index-BLSyPK-a.js:418 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-BLSyPK-a.js:418 Authentication check: Object
+index-BLSyPK-a.js:618 ✅ [PROVIDERS] Loaded 8 providers successfully
+index-BLSyPK-a.js:618 🔍 [QUERY-INDIVIDUAL] First 3 providers detailed structure:
+index-BLSyPK-a.js:618   Provider 1: Object
+index-BLSyPK-a.js:618   Provider 2: Object
+index-BLSyPK-a.js:618   Provider 3: Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 2 (Anthropic): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 5 (Cohere): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 7 (Custom Provider): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 3 (Google AI): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 6 (Mistral AI): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 8 (Mobile Pin Auth App): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 1 (OpenAI Updated): Object
+index-BLSyPK-a.js:618 🔧 [RENDER-DEBUG] Provider 4 (Perplexity AI): Object
+index-BLSyPK-a.js:418 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-BLSyPK-a.js:418 Authentication check: Object
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] Role check: Object
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] Section visibility: Object
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] Rendering with sections: Object
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] Role detection: Object
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-BLSyPK-a.js:418 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Models create-models
