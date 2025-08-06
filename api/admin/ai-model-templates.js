@@ -47,31 +47,9 @@ export default async function handler(req, res) {
       
       await client.end();
       
-      // Transform snake_case database fields to camelCase for frontend compatibility
-      const transformedTemplates = templates.map(template => ({
-        id: template.id,
-        name: template.name,
-        provider: template.provider,
-        modelId: template.modelId || template.model_id,
-        description: template.description,
-        contextWindow: template.contextWindow || template.context_window,
-        isEnabled: template.isEnabled !== undefined ? template.isEnabled : template.is_enabled,
-        capabilities: template.capabilities,
-        apiEndpoint: template.apiEndpoint || template.api_endpoint,
-        authMethod: template.authMethod || template.auth_method,
-        requestHeaders: template.requestHeaders || template.request_headers,
-        maxTokens: template.maxTokens || template.max_tokens,
-        temperature: template.temperature,
-        maxRetries: template.maxRetries || template.max_retries,
-        timeout: template.timeout,
-        rateLimit: template.rateLimit || template.rate_limit,
-        createdAt: template.createdAt || template.created_at,
-        updatedAt: template.updatedAt || template.updated_at
-      }));
-      
       console.log(`✅ [VERCEL TEMPLATES] Retrieved ${templates.length} templates from database`);
-      console.log('🔍 [VERCEL TEMPLATES] Sample transformed data:', transformedTemplates[0]);
-      return res.json(transformedTemplates);
+      console.log('🔍 [VERCEL TEMPLATES] Sample raw data:', templates[0]);
+      return res.json(templates);
     }
 
     if (req.method === 'POST') {
