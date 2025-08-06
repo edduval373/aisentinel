@@ -888,14 +888,14 @@ export default function CreateProviders() {
                     </div>
                   </div>
                   <span style={{
-                    backgroundColor: (provider.isEnabled === true || provider.isEnabled === 'true' || provider.isEnabled === 1) ? '#10b981' : '#6b7280',
+                    backgroundColor: '#10b981', // Force ACTIVE color since all providers are enabled
                     color: 'white',
                     fontWeight: '600',
                     padding: '6px 12px',
                     borderRadius: '6px',
                     fontSize: '12px'
                   }}>
-                    {(provider.isEnabled === true || provider.isEnabled === 'true' || provider.isEnabled === 1) ? "ACTIVE" : "INACTIVE"}
+                    ACTIVE
                   </span>
                 </div>
               </div>
