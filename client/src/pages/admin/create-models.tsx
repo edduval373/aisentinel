@@ -170,10 +170,11 @@ export default function CreateModels() {
     }
   });
 
-  // Fetch AI providers from database with proper authentication headers
+  // Fetch AI providers with authentication and immediate execution
   const { data: dbProviders = [], isLoading: providersLoading, error: providersError } = useQuery<any[]>({
     queryKey: ["/api/admin/ai-providers"],
     queryFn: async () => {
+      console.log('🔧 [PROVIDERS-QUERY] Starting providers fetch...');
       const sessionToken = localStorage.getItem('prodAuthToken') || 'prod-1754052835575-289kvxqgl42h';
       const headers: any = {
         'Content-Type': 'application/json'
@@ -185,6 +186,7 @@ export default function CreateModels() {
       }
       
       console.log('🔧 [PROVIDERS-QUERY] Making request with headers:', Object.keys(headers));
+      console.log('🔧 [PROVIDERS-QUERY] Full URL:', '/api/admin/ai-providers');
       
       const response = await fetch('/api/admin/ai-providers', {
         method: 'GET',
@@ -192,6 +194,7 @@ export default function CreateModels() {
       });
       
       console.log('🔧 [PROVIDERS-QUERY] Response status:', response.status);
+      console.log('🔧 [PROVIDERS-QUERY] Response headers:', response.headers);
       
       if (!response.ok) {
         const errorText = await response.text();
@@ -200,10 +203,12 @@ export default function CreateModels() {
       }
       
       const data = await response.json();
-      console.log('🔧 [PROVIDERS-QUERY] Success - received providers:', data.length);
+      console.log('🔧 [PROVIDERS-QUERY] Success - received providers:', data);
+      console.log('🔧 [PROVIDERS-QUERY] Provider count:', data?.length || 0);
       return data;
     },
-    staleTime: 5 * 60 * 1000, // Cache providers for 5 minutes
+    staleTime: 0, // Force fresh fetch every time
+    enabled: true, // Ensure query runs immediately
   });
 
   // Debug providers query
@@ -217,23 +222,33 @@ export default function CreateModels() {
     });
   }, [dbProviders, providersLoading, providersError]);
 
-  // Transform providers for the dropdown using actual Railway data
-  const providers = (dbProviders as any[])?.length > 0 ? 
-    (dbProviders as any[]).map((provider: any) => ({
-      value: provider.name,
-      label: provider.displayName || provider.display_name || provider.name,
-      defaultEndpoint: defaultEndpoints[provider.name] || "",
-    })) : 
-    // Fallback providers based on actual Railway database structure
-    [
-      { value: "openai", label: "OpenAI Updated", defaultEndpoint: "https://api.openai.com/v1/chat/completions" },
-      { value: "anthropic", label: "Anthropic Updated", defaultEndpoint: "https://api.anthropic.com/v1/messages" },
-      { value: "google-ai", label: "Google AI", defaultEndpoint: "https://generativelanguage.googleapis.com/v1beta/models" },
-      { value: "cohere", label: "Cohere", defaultEndpoint: "https://api.cohere.ai/v1/generate" },
-      { value: "mistral", label: "Mistral AI", defaultEndpoint: "https://api.mistral.ai/v1/chat/completions" },
-      { value: "perplexity", label: "Perplexity AI", defaultEndpoint: "https://api.perplexity.ai/chat/completions" },
-      { value: "custom", label: "Custom Provider", defaultEndpoint: "" }
-    ];
+  // Transform providers from Railway database - prioritize actual data
+  const providers = React.useMemo(() => {
+    console.log('🔧 [PROVIDERS-TRANSFORM] Processing providers:', dbProviders);
+    
+    if ((dbProviders as any[])?.length > 0) {
+      const transformed = (dbProviders as any[]).map((provider: any) => ({
+        value: provider.name,
+        label: provider.displayName || provider.display_name || provider.name,
+        defaultEndpoint: defaultEndpoints[provider.name] || "",
+      }));
+      console.log('🔧 [PROVIDERS-TRANSFORM] Using Railway data:', transformed);
+      return transformed;
+    } else {
+      // Use fallback only when no data received
+      const fallback = [
+        { value: "openai", label: "OpenAI", defaultEndpoint: "https://api.openai.com/v1/chat/completions" },
+        { value: "anthropic", label: "Anthropic", defaultEndpoint: "https://api.anthropic.com/v1/messages" },
+        { value: "google-ai", label: "Google AI", defaultEndpoint: "https://generativelanguage.googleapis.com/v1beta/models" },
+        { value: "cohere", label: "Cohere", defaultEndpoint: "https://api.cohere.ai/v1/generate" },
+        { value: "mistral", label: "Mistral AI", defaultEndpoint: "https://api.mistral.ai/v1/chat/completions" },
+        { value: "perplexity", label: "Perplexity AI", defaultEndpoint: "https://api.perplexity.ai/chat/completions" },
+        { value: "custom", label: "Custom Provider", defaultEndpoint: "" }
+      ];
+      console.log('🔧 [PROVIDERS-TRANSFORM] Using fallback data:', fallback);
+      return fallback;
+    }
+  }, [dbProviders]);
 
   // Debug providers transformation
   React.useEffect(() => {
