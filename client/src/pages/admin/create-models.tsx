@@ -194,6 +194,14 @@ export default function CreateModels() {
     defaultEndpoint: defaultEndpoints[provider.name] || "",
   }));
 
+  // Debug providers transformation
+  React.useEffect(() => {
+    console.log("🔧 [PROVIDERS] Raw dbProviders:", dbProviders);
+    console.log("🔧 [PROVIDERS] Transformed providers for dropdown:", providers);
+    console.log("🔧 [PROVIDERS] Providers count:", providers.length);
+    console.log("🔧 [PROVIDERS] Sample provider:", providers[0]);
+  }, [dbProviders, providers]);
+
   const templateForm = useForm<z.infer<typeof templateSchema>>({
     resolver: zodResolver(templateSchema),
     defaultValues: {
@@ -863,11 +871,16 @@ function TemplateForm({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {providers?.map((provider) => (
+                        {console.log("🔧 [PROVIDER-DROPDOWN] Rendering providers:", providers)}
+                        {providers?.length > 0 ? providers.map((provider) => (
                           <SelectItem key={provider.value} value={provider.value}>
                             {provider.label}
                           </SelectItem>
-                        ))}
+                        )) : (
+                          <SelectItem value="no-providers" disabled>
+                            Loading providers...
+                          </SelectItem>
+                        )}
                       </SelectContent>
                     </Select>
                     <FormMessage />
