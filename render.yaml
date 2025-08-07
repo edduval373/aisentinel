@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: aisentinel-app
+    runtime: node
+    plan: starter
+    buildCommand: npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: aisentinel-db
+          property: connectionString
+      - key: SENDGRID_API_KEY
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: APP_URL
+        value: https://aisentinel-app.onrender.com
+    healthCheckPath: /api/version/current
+
+databases:
+  - name: aisentinel-db
+    databaseName: aisentinel
+    plan: starter
