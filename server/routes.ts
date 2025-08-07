@@ -22,6 +22,14 @@ import multer from "multer";
 const upload = multer();
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Health check endpoint for Render deployment
+  app.get('/health', (_req, res) => {
+    res.status(200).json({ 
+      status: 'healthy', 
+      timestamp: new Date().toISOString(),
+      service: 'AI Sentinel'
+    });
+  });
   // Add cookie parser middleware first
   const cookieParserModule = await import('cookie-parser');
   const cookieParser = cookieParserModule.default;
