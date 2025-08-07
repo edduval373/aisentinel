@@ -1,0 +1,51 @@
+~/workspace$ git push origin test
+Enumerating objects: 30, done.
+Counting objects: 100% (30/30), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (25/25), done.
+Writing objects: 100% (25/25), 1.56 MiB | 4.65 MiB/s, done.
+Total 25 (delta 15), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (15/15), completed with 5 local objects.
+remote: This repository moved. Please use the new location:
+remote:   https://github.com/edduval373/aisentinel.git
+remote: error: GH013: Repository rule violations found for refs/heads/test.
+remote: 
+remote: - GITHUB PUSH PROTECTION
+remote:   —————————————————————————————————————————
+remote:     Resolve the following violations before pushing again
+remote: 
+remote:     - Push cannot contain secrets
+remote: 
+remote:     
+remote:      (?) Learn how to resolve a blocked push
+remote:      https://docs.github.com/code-security/secret-scanning/working-with-secret-scanning-and-push-protection/working-with-push-protection-from-the-command-line#resolving-a-blocked-push
+remote:     
+remote:     
+remote:       —— OpenAI API Key ————————————————————————————————————
+remote:        locations:
+remote:          - commit: faf24ed2bbc6d8f1df1691e6619b9bcd4458a0f8
+remote:            path: aisentinel_railway_backup.sql:1421
+remote:          - commit: faf24ed2bbc6d8f1df1691e6619b9bcd4458a0f8
+remote:            path: aisentinel_railway_backup.sql:1422
+remote:          - commit: faf24ed2bbc6d8f1df1691e6619b9bcd4458a0f8
+remote:            path: aisentinel_railway_backup.sql:1423
+remote:     
+remote:        (?) To push, remove secret from commit(s) or follow this URL to allow the secret.
+remote:        https://github.com/edduval373/aisentinel/security/secret-scanning/unblock-secret/30ymHEVJPH7WxFB9s5GgiBygVWF
+remote:     
+remote:     
+remote:       —— Anthropic API Key —————————————————————————————————
+remote:        locations:
+remote:          - commit: faf24ed2bbc6d8f1df1691e6619b9bcd4458a0f8
+remote:            path: aisentinel_railway_backup.sql:1425
+remote:          - commit: faf24ed2bbc6d8f1df1691e6619b9bcd4458a0f8
+remote:            path: aisentinel_railway_backup.sql:1426
+remote:     
+remote:        (?) To push, remove secret from commit(s) or follow this URL to allow the secret.
+remote:        https://github.com/edduval373/aisentinel/security/secret-scanning/unblock-secret/30ymHFYS2RV4IIgT4Cgn9KDtD9Q
+remote:     
+remote: 
+remote: 
+To https://github.com/edduval373/aiSentinel.git
+ ! [remote rejected] test -> test (push declined due to repository rule violations)
+error: failed to push some refs to 'https://github.com/edduval373/aiSentinel.git'
