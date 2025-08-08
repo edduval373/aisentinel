@@ -1,0 +1,50 @@
+2025-08-08T00:13:58.300905853Z ==> Build successful 🎉
+2025-08-08T00:14:01.448067958Z ==> Deploying...
+2025-08-08T00:14:30.227681709Z ==> Running 'npm run start'
+2025-08-08T00:14:30.629950258Z 
+2025-08-08T00:14:30.629976678Z > rest-express@1.0.0 start
+2025-08-08T00:14:30.630004509Z > NODE_ENV=production node dist/index.js
+2025-08-08T00:14:30.630007459Z 
+2025-08-08T00:14:30.830402838Z node:internal/modules/esm/resolve:275
+2025-08-08T00:14:30.830427098Z     throw new ERR_MODULE_NOT_FOUND(
+2025-08-08T00:14:30.830429908Z           ^
+2025-08-08T00:14:30.830431598Z 
+2025-08-08T00:14:30.830433968Z Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/opt/render/project/src/vite.config' imported from /opt/render/project/src/dist/index.js
+2025-08-08T00:14:30.830437918Z     at finalizeResolution (node:internal/modules/esm/resolve:275:11)
+2025-08-08T00:14:30.830440208Z     at moduleResolve (node:internal/modules/esm/resolve:860:10)
+2025-08-08T00:14:30.830443028Z     at defaultResolve (node:internal/modules/esm/resolve:984:11)
+2025-08-08T00:14:30.830445099Z     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:780:12)
+2025-08-08T00:14:30.830446828Z     at #cachedDefaultResolve (node:internal/modules/esm/loader:704:25)
+2025-08-08T00:14:30.830448459Z     at ModuleLoader.resolve (node:internal/modules/esm/loader:687:38)
+2025-08-08T00:14:30.830450609Z     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:305:38)
+2025-08-08T00:14:30.830452319Z     at ModuleJob._link (node:internal/modules/esm/module_job:137:49) {
+2025-08-08T00:14:30.830454609Z   code: 'ERR_MODULE_NOT_FOUND',
+2025-08-08T00:14:30.830456399Z   url: 'file:///opt/render/project/src/vite.config'
+2025-08-08T00:14:30.830458229Z }
+2025-08-08T00:14:30.830459839Z 
+2025-08-08T00:14:30.830461499Z Node.js v22.16.0
+2025-08-08T00:14:37.053754423Z ==> Exited with status 1
+2025-08-08T00:14:37.111214506Z ==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
+2025-08-08T00:14:38.843012591Z ==> Running 'npm run start'
+2025-08-08T00:14:39.125784092Z 
+2025-08-08T00:14:39.125809413Z > rest-express@1.0.0 start
+2025-08-08T00:14:39.125813653Z > NODE_ENV=production node dist/index.js
+2025-08-08T00:14:39.125815893Z 
+2025-08-08T00:14:39.321601445Z node:internal/modules/esm/resolve:275
+2025-08-08T00:14:39.321631786Z     throw new ERR_MODULE_NOT_FOUND(
+2025-08-08T00:14:39.321635416Z           ^
+2025-08-08T00:14:39.321638316Z 
+2025-08-08T00:14:39.321645156Z Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/opt/render/project/src/vite.config' imported from /opt/render/project/src/dist/index.js
+2025-08-08T00:14:39.321652616Z     at finalizeResolution (node:internal/modules/esm/resolve:275:11)
+2025-08-08T00:14:39.321658836Z     at moduleResolve (node:internal/modules/esm/resolve:860:10)
+2025-08-08T00:14:39.321662556Z     at defaultResolve (node:internal/modules/esm/resolve:984:11)
+2025-08-08T00:14:39.321666557Z     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:780:12)
+2025-08-08T00:14:39.321669937Z     at #cachedDefaultResolve (node:internal/modules/esm/loader:704:25)
+2025-08-08T00:14:39.321673977Z     at ModuleLoader.resolve (node:internal/modules/esm/loader:687:38)
+2025-08-08T00:14:39.321678257Z     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:305:38)
+2025-08-08T00:14:39.321681657Z     at ModuleJob._link (node:internal/modules/esm/module_job:137:49) {
+2025-08-08T00:14:39.321686477Z   code: 'ERR_MODULE_NOT_FOUND',
+2025-08-08T00:14:39.321689677Z   url: 'file:///opt/render/project/src/vite.config'
+2025-08-08T00:14:39.321692857Z }
+2025-08-08T00:14:39.321695587Z 
+2025-08-08T00:14:39.321698447Z Node.js v22.16.0
