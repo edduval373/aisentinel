@@ -1,4 +1,4 @@
 Deploy timestamp: 2025-07-22 14:12:00 UTC
 Fixed Vercel routing with negative lookahead regex to exclude /assets/ from HTML rewrite
 This prevents CSS/JS files from being served as HTML content
-Production deployment should now work correctly - v2
+Production deployment should now work correctly - v2Wed Aug  6 01:52:26 PM UTC 2025: Force deployment refresh by touching package.json

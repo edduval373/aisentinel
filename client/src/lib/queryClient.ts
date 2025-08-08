@@ -46,16 +46,16 @@ async function getFallbackResponse(url: string, method: string, data?: unknown):
     ];
   }
 
-  // Chat session creation fallback
-  if (url.includes('chat/session') && method === 'POST') {
-    return {
-      id: Math.floor(Math.random() * 100000) + 1,
-      companyId: 1,
-      userId: 'demo-user',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-  }
+  // Chat session creation fallback DISABLED - use real API
+  // if (url.includes('chat/session') && method === 'POST') {
+  //   return {
+  //     id: Math.floor(Math.random() * 100000) + 1,
+  //     companyId: 1,
+  //     userId: 'demo-user',
+  //     createdAt: new Date().toISOString(),
+  //     updatedAt: new Date().toISOString()
+  //   };
+  // }
 
   // Chat message fallback
   if (url.includes('chat/message') && method === 'POST') {

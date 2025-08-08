@@ -47,8 +47,31 @@ export default async function handler(req, res) {
       
       await client.end();
       
+      // Transform snake_case database fields to camelCase for frontend
+      const transformedTemplates = templates.map(template => ({
+        id: template.id,
+        name: template.name,
+        provider: template.provider,
+        modelId: template.model_id,
+        description: template.description,
+        contextWindow: template.context_window,
+        isEnabled: template.is_enabled,
+        capabilities: template.capabilities,
+        apiEndpoint: template.api_endpoint,
+        authMethod: template.auth_method,
+        requestHeaders: template.request_headers,
+        maxTokens: template.max_tokens,
+        temperature: template.temperature,
+        maxRetries: template.max_retries,
+        timeout: template.timeout,
+        rateLimit: template.rate_limit,
+        createdAt: template.created_at
+      }));
+      
       console.log(`✅ [VERCEL TEMPLATES] Retrieved ${templates.length} templates from database`);
-      return res.json(templates);
+      console.log('🔍 [VERCEL TEMPLATES] Sample raw data (snake_case):', templates[0]);
+      console.log('🔍 [VERCEL TEMPLATES] Sample transformed data (camelCase):', transformedTemplates[0]);
+      return res.json(transformedTemplates);
     }
 
     if (req.method === 'POST') {
@@ -70,7 +93,7 @@ export default async function handler(req, res) {
       console.log('🔍 [VERCEL TEMPLATES] Creating new template in Railway database...');
       
       const insertQuery = `
-        INSERT INTO ai_model_templates (name, provider, "modelId", description, "contextWindow", capabilities, "isEnabled", "apiEndpoint", "authMethod", "requestHeaders", "maxTokens", temperature, "maxRetries", timeout, "rateLimit")
+        INSERT INTO ai_model_templates (name, provider, model_id, description, context_window, capabilities, is_enabled, api_endpoint, auth_method, request_headers, max_tokens, temperature, max_retries, timeout, rate_limit)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
         RETURNING *
       `;
@@ -98,8 +121,30 @@ export default async function handler(req, res) {
       
       await client.end();
 
-      console.log('✅ [VERCEL TEMPLATES] Created new template:', newTemplate.id);
-      return res.status(201).json(newTemplate);
+      // Transform snake_case response back to camelCase for frontend consistency
+      const transformedNewTemplate = {
+        id: newTemplate.id,
+        name: newTemplate.name,
+        provider: newTemplate.provider,
+        modelId: newTemplate.model_id,
+        description: newTemplate.description,
+        contextWindow: newTemplate.context_window,
+        isEnabled: newTemplate.is_enabled,
+        capabilities: newTemplate.capabilities,
+        apiEndpoint: newTemplate.api_endpoint,
+        authMethod: newTemplate.auth_method,
+        requestHeaders: newTemplate.request_headers,
+        maxTokens: newTemplate.max_tokens,
+        temperature: newTemplate.temperature,
+        maxRetries: newTemplate.max_retries,
+        timeout: newTemplate.timeout,
+        rateLimit: newTemplate.rate_limit,
+        createdAt: newTemplate.created_at
+      };
+
+      console.log('✅ [VERCEL TEMPLATES] Created new template:', transformedNewTemplate.id);
+      console.log('🔍 [VERCEL TEMPLATES] Transformed response:', transformedNewTemplate);
+      return res.status(201).json(transformedNewTemplate);
     }
 
     // PUT and DELETE not supported at this endpoint - use /api/admin/ai-model-templates/[id] instead

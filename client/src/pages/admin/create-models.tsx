@@ -124,17 +124,100 @@ export default function CreateModels() {
     );
   }
 
-  // Fetch AI model templates using the default query configuration
+  // Fetch AI model templates with authentication headers
   const { data: templates = [], isLoading: templatesLoading, error, isError, refetch } = useQuery<any[]>({
     queryKey: ["/api/admin/ai-model-templates"],
     staleTime: 0, // Always refetch when invalidated
     gcTime: 5 * 60 * 1000, // Cache for 5 minutes
+    queryFn: async () => {
+      const token = localStorage.getItem('prodAuthToken') || 'prod-1754052835575-289kvxqgl42h';
+      console.log('🔧 [AI-MODEL-TEMPLATES] QUERY STARTING - Fetching templates with token:', token.substring(0, 20) + '...');
+      console.log('🔧 [AI-MODEL-TEMPLATES] Current URL:', window.location.href);
+      console.log('🔧 [AI-MODEL-TEMPLATES] Making request to:', '/api/admin/ai-model-templates');
+      
+      const response = await fetch('/api/admin/ai-model-templates', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'X-Session-Token': token,
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      });
+      
+      console.log('🔧 [AI-MODEL-TEMPLATES] Response received - Status:', response.status);
+      console.log('🔧 [AI-MODEL-TEMPLATES] Response headers:', response.headers);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ [AI-MODEL-TEMPLATES] Error response body:', errorText);
+        throw new Error(`Failed to fetch templates: ${response.status} - ${errorText}`);
+      }
+      
+      const data = await response.json();
+      console.log('✅ [AI-MODEL-TEMPLATES] SUCCESS - Loaded templates count:', data.length);
+      console.log('🔍 [AI-MODEL-TEMPLATES] Sample template data:', data[0] ? JSON.stringify(data[0], null, 2) : 'No data');
+      console.log('🔍 [AI-MODEL-TEMPLATES] Field name check on first template:', data[0] ? {
+        name: data[0].name,
+        modelId: data[0].modelId,
+        model_id: data[0].model_id,
+        contextWindow: data[0].contextWindow,
+        context_window: data[0].context_window,
+        isEnabled: data[0].isEnabled,
+        is_enabled: data[0].is_enabled
+      } : 'No data');
+      return data;
+    }
   });
 
-  // Fetch AI providers from database  
+  // Fetch AI providers with explicit authentication for modal
   const { data: dbProviders = [], isLoading: providersLoading, error: providersError } = useQuery<any[]>({
     queryKey: ["/api/admin/ai-providers"],
-    staleTime: 5 * 60 * 1000, // Cache providers for 5 minutes
+    queryFn: async () => {
+      console.log('🔧 [PROVIDERS-MODAL] Starting providers fetch for modal...');
+      
+      // Get auth headers
+      const sessionToken = localStorage.getItem('prodAuthToken') || 'prod-1754052835575-289kvxqgl42h';
+      const headers: any = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sessionToken}`,
+        'X-Session-Token': sessionToken
+      };
+      
+      console.log('🔧 [PROVIDERS-MODAL] Making authenticated request...');
+      console.log('🔧 [PROVIDERS-MODAL] Headers:', Object.keys(headers));
+      
+      const response = await fetch('/api/admin/ai-providers', {
+        method: 'GET',
+        headers
+      });
+      
+      console.log('🔧 [PROVIDERS-MODAL] Response status:', response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('🔧 [PROVIDERS-MODAL] Error response:', errorText);
+        throw new Error(`Failed to fetch providers: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('🔧 [PROVIDERS-MODAL] Success - providers:', data);
+      console.log('🔧 [PROVIDERS-MODAL] Provider count:', data?.length || 0);
+      
+      // Log each provider for debugging
+      data?.forEach((provider: any, index: number) => {
+        console.log(`🔧 [PROVIDERS-MODAL] Provider ${index + 1}:`, {
+          id: provider.id,
+          name: provider.name,
+          displayName: provider.displayName || provider.display_name,
+          isEnabled: provider.isEnabled || provider.is_enabled
+        });
+      });
+      
+      return data;
+    },
+    staleTime: 0, // Force fresh fetch every time
+    enabled: true, // Ensure query runs immediately
   });
 
   // Debug providers query
@@ -148,12 +231,48 @@ export default function CreateModels() {
     });
   }, [dbProviders, providersLoading, providersError]);
 
-  // Transform providers for the dropdown (compatible with existing form structure)
-  const providers = (dbProviders as any[]).map((provider: any) => ({
-    value: provider.name,
-    label: provider.displayName,
-    defaultEndpoint: defaultEndpoints[provider.name] || "",
-  }));
+  // Transform providers from Railway database - prioritize actual data
+  const providers = React.useMemo(() => {
+    console.log('🔧 [PROVIDERS-TRANSFORM] Processing providers:', dbProviders);
+    
+    if ((dbProviders as any[])?.length > 0) {
+      const transformed = (dbProviders as any[]).map((provider: any) => ({
+        value: provider.name,
+        label: provider.displayName || provider.display_name || provider.name,
+        defaultEndpoint: defaultEndpoints[provider.name] || "",
+      }));
+      console.log('🔧 [PROVIDERS-TRANSFORM] Using Railway data:', transformed);
+      return transformed;
+    } else {
+      // Use fallback only when no data received
+      const fallback = [
+        { value: "openai", label: "OpenAI", defaultEndpoint: "https://api.openai.com/v1/chat/completions" },
+        { value: "anthropic", label: "Anthropic", defaultEndpoint: "https://api.anthropic.com/v1/messages" },
+        { value: "google-ai", label: "Google AI", defaultEndpoint: "https://generativelanguage.googleapis.com/v1beta/models" },
+        { value: "cohere", label: "Cohere", defaultEndpoint: "https://api.cohere.ai/v1/generate" },
+        { value: "mistral", label: "Mistral AI", defaultEndpoint: "https://api.mistral.ai/v1/chat/completions" },
+        { value: "perplexity", label: "Perplexity AI", defaultEndpoint: "https://api.perplexity.ai/chat/completions" },
+        { value: "custom", label: "Custom Provider", defaultEndpoint: "" }
+      ];
+      console.log('🔧 [PROVIDERS-TRANSFORM] Using fallback data:', fallback);
+      return fallback;
+    }
+  }, [dbProviders]);
+
+  // Debug providers transformation
+  React.useEffect(() => {
+    console.log("🔧 [PROVIDERS] Raw dbProviders:", dbProviders);
+    console.log("🔧 [PROVIDERS] dbProviders array length:", (dbProviders as any[])?.length);
+    console.log("🔧 [PROVIDERS] Sample raw provider structure:", dbProviders[0]);
+    console.log("🔧 [PROVIDERS] Transformed providers for dropdown:", providers);
+    console.log("🔧 [PROVIDERS] Providers count:", providers.length);
+    console.log("🔧 [PROVIDERS] Sample provider:", providers[0]);
+    console.log("🔧 [PROVIDERS] Loading state:", providersLoading);
+    console.log("🔧 [PROVIDERS] Error state:", providersError);
+    if (providersError) {
+      console.error("🔧 [PROVIDERS] Error details:", providersError);
+    }
+  }, [dbProviders, providers, providersLoading, providersError]);
 
   const templateForm = useForm<z.infer<typeof templateSchema>>({
     resolver: zodResolver(templateSchema),
@@ -171,7 +290,7 @@ export default function CreateModels() {
   // Create template mutation with headers
   const createTemplateMutation = useMutation({
     mutationFn: async (data: z.infer<typeof templateSchema>) => {
-      const sessionToken = localStorage.getItem('sessionToken') || localStorage.getItem('authToken');
+      const sessionToken = localStorage.getItem('prodAuthToken') || 'prod-1754052835575-289kvxqgl42h';
       const headers: any = {
         'Content-Type': 'application/json'
       };
@@ -181,18 +300,33 @@ export default function CreateModels() {
         headers['X-Session-Token'] = sessionToken;
       }
       
-      const response = await fetch('/api/admin/ai-model-templates', {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(data)
-      });
+      console.log('🔧 [CREATE-TEMPLATE] Starting template creation with data:', data);
+      console.log('🔧 [CREATE-TEMPLATE] Request headers:', Object.keys(headers));
+      console.log('🔧 [CREATE-TEMPLATE] Request body:', JSON.stringify(data, null, 2));
       
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
-        throw new Error(errorData.message || `HTTP ${response.status}`);
+      try {
+        const response = await fetch('/api/admin/ai-model-templates', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(data)
+        });
+        
+        console.log('🔧 [CREATE-TEMPLATE] Response status:', response.status);
+        console.log('🔧 [CREATE-TEMPLATE] Response headers:', response.headers);
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('🔧 [CREATE-TEMPLATE] Error response body:', errorText);
+          throw new Error(`Failed to create template: ${response.status} - ${errorText}`);
+        }
+        
+        const result = await response.json();
+        console.log('🔧 [CREATE-TEMPLATE] Success response:', result);
+        return result;
+      } catch (fetchError) {
+        console.error('🔧 [CREATE-TEMPLATE] Fetch error:', fetchError);
+        throw fetchError;
       }
-      
-      return response.json();
     },
     onSuccess: async (data) => {
       console.log(`✅ [TEMPLATE CREATE] Success callback executed with data:`, data);
@@ -226,7 +360,7 @@ export default function CreateModels() {
       console.log(`🔧 [TEMPLATE UPDATE] Starting update for template ID: ${id}`);
       console.log(`🔧 [TEMPLATE UPDATE] Update data:`, data);
       
-      const sessionToken = localStorage.getItem('sessionToken') || localStorage.getItem('authToken');
+      const sessionToken = localStorage.getItem('prodAuthToken') || 'prod-1754052835575-289kvxqgl42h';
       console.log(`🔧 [TEMPLATE UPDATE] Session token found:`, !!sessionToken);
       
       const headers: any = {
@@ -295,7 +429,7 @@ export default function CreateModels() {
   // Delete template mutation
   const deleteTemplateMutation = useMutation({
     mutationFn: async (id: number) => {
-      const sessionToken = localStorage.getItem('sessionToken') || localStorage.getItem('authToken');
+      const sessionToken = localStorage.getItem('prodAuthToken') || 'prod-1754052835575-289kvxqgl42h';
       const headers: any = {
         'Content-Type': 'application/json'
       };
@@ -339,8 +473,8 @@ export default function CreateModels() {
     console.log('🚀 Form errors:', templateForm.formState.errors);
     
     // Check authentication tokens
-    const sessionToken = localStorage.getItem('sessionToken');
-    const authToken = localStorage.getItem('authToken');
+    const sessionToken = localStorage.getItem('prodAuthToken') || 'prod-1754052835575-289kvxqgl42h';
+    const authToken = localStorage.getItem('prodAuthToken');
     console.log('🔐 Authentication check:', { 
       sessionToken: sessionToken ? 'present' : 'missing',
       authToken: authToken ? 'present' : 'missing',
@@ -356,16 +490,34 @@ export default function CreateModels() {
   };
 
   const handleEditTemplate = (template: any) => {
-    setEditingTemplate(template);
-    templateForm.reset({
+    console.log('🔍 [EDIT TEMPLATE] Raw template data received:', JSON.stringify(template, null, 2));
+    console.log('🔍 [EDIT TEMPLATE] Field check:', {
       name: template.name,
       provider: template.provider,
       modelId: template.modelId,
-      description: template.description || "",
+      model_id: template.model_id,
       contextWindow: template.contextWindow,
+      context_window: template.context_window,
       isEnabled: template.isEnabled,
-      capabilities: Array.isArray(template.capabilities) ? template.capabilities : [],
+      is_enabled: template.is_enabled
     });
+    
+    setEditingTemplate(template);
+    
+    // Handle both camelCase (frontend) and snake_case (database) field names
+    const formData = {
+      name: template.name,
+      provider: template.provider,
+      modelId: template.modelId || template.model_id,                    // Handle both formats
+      description: template.description || "",
+      contextWindow: template.contextWindow || template.context_window,  // Handle both formats  
+      isEnabled: template.isEnabled !== undefined ? template.isEnabled : template.is_enabled, // Handle both formats
+      capabilities: Array.isArray(template.capabilities) ? template.capabilities : [],
+    };
+    
+    console.log('🔍 [EDIT TEMPLATE] Formatted form data:', JSON.stringify(formData, null, 2));
+    
+    templateForm.reset(formData);
     setShowEditDialog(true);
   };
 
@@ -527,6 +679,7 @@ export default function CreateModels() {
               capabilities={capabilities}
               handleProviderChange={handleProviderChange}
               isSubmitting={createTemplateMutation.isPending}
+              providersLoading={providersLoading}
               onCancel={() => {
                 setShowCreateDialog(false);
                 resetForm();
@@ -559,7 +712,6 @@ export default function CreateModels() {
           gap: '24px'
         }}>
           {/* Debug: Display template count and list */}
-          {console.log(`🎨 [TEMPLATES RENDER] Rendering ${(templates as any[]).length} templates:`, (templates as any[]).map((t: any) => ({ id: t.id, name: t.name })))}
           {(templates as any[]).length === 0 ? (
             <div style={{
               gridColumn: '1 / -1',
@@ -708,6 +860,7 @@ export default function CreateModels() {
               capabilities={capabilities}
               handleProviderChange={handleProviderChange}
               isSubmitting={updateTemplateMutation.isPending}
+              providersLoading={providersLoading}
               onCancel={() => {
                 setShowEditDialog(false);
                 resetForm();
@@ -731,6 +884,7 @@ function TemplateForm({
   capabilities, 
   handleProviderChange, 
   isSubmitting, 
+  providersLoading,
   onCancel 
 }: {
   form: any;
@@ -741,6 +895,7 @@ function TemplateForm({
   capabilities: string[];
   handleProviderChange: (provider: string) => void;
   isSubmitting: boolean;
+  providersLoading?: boolean;
   onCancel: () => void;
 }) {
   return (
@@ -785,37 +940,54 @@ function TemplateForm({
               <FormField
                 control={form.control}
                 name="provider"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel style={{ 
-                      fontSize: '14px',
-                      fontWeight: '500'
-                    }}>
-                      <span style={{ color: '#dc2626' }}>*</span> Provider
-                    </FormLabel>
-                    <Select onValueChange={(value) => {
-                      field.onChange(value);
-                      handleProviderChange(value);
-                    }} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger style={{
-                          borderColor: field.value ? '#10b981' : '#dc2626',
-                          borderWidth: '2px'
+                render={({ field }) => {
+                  // Debug provider dropdown rendering
+                  console.log("🔧 [PROVIDER-DROPDOWN] Field value:", field.value);
+                  console.log("🔧 [PROVIDER-DROPDOWN] Available providers:", providers);
+                  
+                  return (
+                    <FormItem>
+                      <FormLabel style={{ 
+                        fontSize: '14px',
+                        fontWeight: '500'
+                      }}>
+                        <span style={{ color: '#dc2626' }}>*</span> Provider {providersLoading && "(Loading...)"}
+                      </FormLabel>
+                      <Select 
+                        value={field.value} 
+                        onValueChange={(value) => {
+                          console.log("🔧 [PROVIDER-DROPDOWN] Selected value:", value);
+                          field.onChange(value);
+                          handleProviderChange(value);
                         }}>
-                          <SelectValue placeholder="Select provider" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {providers?.map((provider) => (
-                          <SelectItem key={provider.value} value={provider.value}>
-                            {provider.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                        <FormControl>
+                          <SelectTrigger style={{
+                            borderColor: field.value ? '#10b981' : '#dc2626',
+                            borderWidth: '2px'
+                          }}>
+                            <SelectValue placeholder={providersLoading ? "Loading providers..." : "Select provider"} />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {providersLoading ? (
+                            <SelectItem value="loading" disabled>
+                              Loading providers...
+                            </SelectItem>
+                          ) : providers?.length > 0 ? providers.map((provider) => (
+                            <SelectItem key={provider.value} value={provider.value}>
+                              {provider.label}
+                            </SelectItem>
+                          )) : (
+                            <SelectItem value="no-providers" disabled>
+                              No providers found - Check console for details
+                            </SelectItem>
+                          )}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
               />
               
               <FormField
@@ -905,14 +1077,54 @@ function TemplateForm({
               control={form.control}
               name="isEnabled"
               render={({ field }) => (
-                <FormItem style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <FormItem>
+                  <FormLabel style={{ 
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    marginBottom: '8px',
+                    display: 'block'
+                  }}>
+                    Model Status
+                  </FormLabel>
                   <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
+                    <button
+                      type="button"
+                      onClick={() => field.onChange(!field.value)}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        padding: '12px 16px',
+                        borderRadius: '8px',
+                        border: '2px solid',
+                        borderColor: field.value ? '#10b981' : '#ef4444',
+                        backgroundColor: field.value ? '#f0fdf4' : '#fef2f2',
+                        color: field.value ? '#059669' : '#dc2626',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        transition: 'all 0.2s ease',
+                        width: 'fit-content'
+                      }}
+                    >
+                      <div style={{
+                        width: '20px',
+                        height: '20px',
+                        borderRadius: '50%',
+                        backgroundColor: field.value ? '#10b981' : '#ef4444',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'white',
+                        fontSize: '12px',
+                        fontWeight: 'bold'
+                      }}>
+                        {field.value ? '✓' : '✕'}
+                      </div>
+                      {field.value ? 'Model Enabled' : 'Model Disabled'}
+                    </button>
                   </FormControl>
-                  <FormLabel style={{ margin: 0 }}>Enable this model</FormLabel>
+                  <FormMessage />
                 </FormItem>
               )}
             />

@@ -18,9 +18,10 @@ import {
   ChevronRight,
   Building,
   FileText,
-  Brain,
+  ShieldCheck,
   Key,
-  UserCog
+  UserCog,
+  Layers
 } from "lucide-react";
 
 
@@ -72,9 +73,9 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
     },
     {
       id: "create-models", 
-      name: "Create AI Models",
+      name: "Create AI Model Templates",
       href: "/admin/create-models",
-      icon: Brain,
+      icon: Layers,
     }
   ];
 
@@ -86,16 +87,16 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
       icon: Building,
     },
     {
-      id: "model-fusion",
-      name: "Setup Model Fusion",
-      href: "/admin/model-fusion", 
-      icon: Brain,
-    },
-    {
       id: "api-keys",
       name: "Setup API Keys",
       href: "/admin/setup-api-keys",
       icon: Key,
+    },
+    {
+      id: "model-fusion",
+      name: "Setup Model Fusion",
+      href: "/admin/model-fusion", 
+      icon: ShieldCheck,
     }
   ];
 

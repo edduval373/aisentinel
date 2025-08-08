@@ -1,0 +1,1036 @@
+ Should create session: true
+ AI Models loaded: 11 models
+ Activity Types loaded: 4 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+ 🔄 [SESSION CREATE] Starting chat session creation...
+ 🔄 [SESSION CREATE] User auth status: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 11 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(11)
+ Activity Types loaded: 4 types
+ Selected Activity Type ID: 1
+ Selected Activity Type Object: Object
+ Select Activity Type Value (string): 1
+ Activity Types for Select: Array(4)
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: true
+ Should create session: false
+ AI Models loaded: 11 models
+ Activity Types loaded: 4 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔍 [AUTH HEADERS] Getting authentication headers...
+ ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+ 🔄 [SESSION CREATE] Using header-based authentication
+ 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+ 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+ 🔄 [SESSION CREATE] Response status: 500
+ 🔄 [SESSION CREATE] Response headers: Object
+ ❌ [SESSION CREATE] Session creation failed: 500 {"error":"Failed to create chat session"}
+mutationFn @ index-MBQuxBrl.js:500
+ ❌ [SESSION CREATE] Full error response: Object
+mutationFn @ index-MBQuxBrl.js:500
+ ❌ [SESSION CREATE] Failed to create session: 
+onError @ index-MBQuxBrl.js:500
+ ❌ [SESSION CREATE] Error details: Object
+onError @ index-MBQuxBrl.js:500
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [HOME] Authentication status: Object
+ 🔧 [HOME] Sidebar access check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🎨 CompanyInfoLarge - Logo settings: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+ 🔧 [DEVELOPER CONTROLS] Visible for super user
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 11 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(11)
+ Activity Types loaded: 4 types
+ Selected Activity Type ID: 1
+ Selected Activity Type Object: Object
+ Select Activity Type Value (string): 1
+ Activity Types for Select: Array(4)
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: false
+ Should create session: true
+ AI Models loaded: 11 models
+ Activity Types loaded: 4 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+ 🔄 [SESSION CREATE] Starting chat session creation...
+ 🔄 [SESSION CREATE] User auth status: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 11 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(11)
+ Activity Types loaded: 4 types
+ Selected Activity Type ID: 1
+ Selected Activity Type Object: Object
+ Select Activity Type Value (string): 1
+ Activity Types for Select: Array(4)
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: true
+ Should create session: false
+ AI Models loaded: 11 models
+ Activity Types loaded: 4 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔍 [AUTH HEADERS] Getting authentication headers...
+ ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+ 🔄 [SESSION CREATE] Using header-based authentication
+ 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+ 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [HOME] Authentication status: Object
+ 🔧 [HOME] Sidebar access check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🎨 CompanyInfoLarge - Logo settings: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+ 🔧 [DEVELOPER CONTROLS] Visible for super user
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 11 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(11)
+ Activity Types loaded: 4 types
+ Selected Activity Type ID: 1
+ Selected Activity Type Object: Object
+ Select Activity Type Value (string): 1
+ Activity Types for Select: Array(4)
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: true
+ Should create session: false
+ AI Models loaded: 11 models
+ Activity Types loaded: 4 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔄 [SESSION CREATE] Response status: 500
+ 🔄 [SESSION CREATE] Response headers: Object
+ ❌ [SESSION CREATE] Session creation failed: 500 {"error":"Failed to create chat session"}
+mutationFn @ index-MBQuxBrl.js:500
+ ❌ [SESSION CREATE] Full error response: Object
+mutationFn @ index-MBQuxBrl.js:500
+ ❌ [SESSION CREATE] Failed to create session: 
+onError @ index-MBQuxBrl.js:500
+ ❌ [SESSION CREATE] Error details: Object
+onError @ index-MBQuxBrl.js:500
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [HOME] Authentication status: Object
+ 🔧 [HOME] Sidebar access check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🎨 CompanyInfoLarge - Logo settings: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+ 🔧 [DEVELOPER CONTROLS] Visible for super user
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 11 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(11)
+ Activity Types loaded: 4 types
+ Selected Activity Type ID: 1
+ Selected Activity Type Object: Object
+ Select Activity Type Value (string): 1
+ Activity Types for Select: Array(4)
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: false
+ Should create session: true
+ AI Models loaded: 11 models
+ Activity Types loaded: 4 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+ 🔄 [SESSION CREATE] Starting chat session creation...
+ 🔄 [SESSION CREATE] User auth status: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 11 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(11)
+ Activity Types loaded: 4 types
+ Selected Activity Type ID: 1
+ Selected Activity Type Object: Object
+ Select Activity Type Value (string): 1
+ Activity Types for Select: Array(4)
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: true
+ Should create session: false
+ AI Models loaded: 11 models
+ Activity Types loaded: 4 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔍 [AUTH HEADERS] Getting authentication headers...
+ ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+ 🔄 [SESSION CREATE] Using header-based authentication
+ 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+ 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+ 🔄 [SESSION CREATE] Response status: 500
+ 🔄 [SESSION CREATE] Response headers: Object
+ ❌ [SESSION CREATE] Session creation failed: 500 {"error":"Failed to create chat session"}
+mutationFn @ index-MBQuxBrl.js:500
+ ❌ [SESSION CREATE] Full error response: Object
+mutationFn @ index-MBQuxBrl.js:500
+ ❌ [SESSION CREATE] Failed to create session: 
+onError @ index-MBQuxBrl.js:500
+ ❌ [SESSION CREATE] Error details: Object
+onError @ index-MBQuxBrl.js:500
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [HOME] Authentication status: Object
+ 🔧 [HOME] Sidebar access check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🎨 CompanyInfoLarge - Logo settings: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+ 🔧 [DEVELOPER CONTROLS] Visible for super user
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 11 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(11)
+ Activity Types loaded: 4 types
+ Selected Activity Type ID: 1
+ Selected Activity Type Object: Object
+ Select Activity Type Value (string): 1
+ Activity Types for Select: Array(4)
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: false
+ Should create session: true
+ AI Models loaded: 11 models
+ Activity Types loaded: 4 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+ 🔄 [SESSION CREATE] Starting chat session creation...
+ 🔄 [SESSION CREATE] User auth status: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 11 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(11)
+ Activity Types loaded: 4 types
+ Selected Activity Type ID: 1
+ Selected Activity Type Object: Object
+ Select Activity Type Value (string): 1
+ Activity Types for Select: Array(4)
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: true
+ Should create session: false
+ AI Models loaded: 11 models
+ Activity Types loaded: 4 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔍 [AUTH HEADERS] Getting authentication headers...
+ ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+ 🔄 [SESSION CREATE] Using header-based authentication
+ 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+ 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+ 🔄 [SESSION CREATE] Response status: 500
+ 🔄 [SESSION CREATE] Response headers: Object
+ ❌ [SESSION CREATE] Session creation failed: 500 {"error":"Failed to create chat session"}
+mutationFn @ index-MBQuxBrl.js:500
+ ❌ [SESSION CREATE] Full error response: Object
+mutationFn @ index-MBQuxBrl.js:500
+ ❌ [SESSION CREATE] Failed to create session: 
+onError @ index-MBQuxBrl.js:500
+ ❌ [SESSION CREATE] Error details: Object
+onError @ index-MBQuxBrl.js:500
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [HOME] Authentication status: Object
+ 🔧 [HOME] Sidebar access check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🎨 CompanyInfoLarge - Logo settings: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+ 🔧 [DEVELOPER CONTROLS] Visible for super user
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 11 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(11)
+ Activity Types loaded: 4 types
+ Selected Activity Type ID: 1
+ Selected Activity Type Object: Object
+ Select Activity Type Value (string): 1
+ Activity Types for Select: Array(4)
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: false
+ Should create session: true
+ AI Models loaded: 11 models
+ Activity Types loaded: 4 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+ 🔄 [SESSION CREATE] Starting chat session creation...
+ 🔄 [SESSION CREATE] User auth status: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 11 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(11)
+ Activity Types loaded: 4 types
+ Selected Activity Type ID: 1
+ Selected Activity Type Object: Object
+ Select Activity Type Value (string): 1
+ Activity Types for Select: Array(4)
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: true
+ Should create session: false
+ AI Models loaded: 11 models
+ Activity Types loaded: 4 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔍 [AUTH HEADERS] Getting authentication headers...
+ ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+ 🔄 [SESSION CREATE] Using header-based authentication
+ 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+ 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+ 🔄 [SESSION CREATE] Response status: 500
+ 🔄 [SESSION CREATE] Response headers: Object
+ ❌ [SESSION CREATE] Session creation failed: 500 {"error":"Failed to create chat session"}
+mutationFn @ index-MBQuxBrl.js:500
+ ❌ [SESSION CREATE] Full error response: Object
+mutationFn @ index-MBQuxBrl.js:500
+ ❌ [SESSION CREATE] Failed to create session: 
+onError @ index-MBQuxBrl.js:500
+ ❌ [SESSION CREATE] Error details: Object
+onError @ index-MBQuxBrl.js:500
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [HOME] Authentication status: Object
+ 🔧 [HOME] Sidebar access check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🎨 CompanyInfoLarge - Logo settings: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+ 🔧 [DEVELOPER CONTROLS] Visible for super user
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 11 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(11)
+ Activity Types loaded: 4 types
+ Selected Activity Type ID: 1
+ Selected Activity Type Object: Object
+ Select Activity Type Value (string): 1
+ Activity Types for Select: Array(4)
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: false
+ Should create session: true
+ AI Models loaded: 11 models
+ Activity Types loaded: 4 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+ 🔄 [SESSION CREATE] Starting chat session creation...
+ 🔄 [SESSION CREATE] User auth status: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 11 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(11)
+ Activity Types loaded: 4 types
+ Selected Activity Type ID: 1
+ Selected Activity Type Object: Object
+ Select Activity Type Value (string): 1
+ Activity Types for Select: Array(4)
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: true
+ Should create session: false
+ AI Models loaded: 11 models
+ Activity Types loaded: 4 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔍 [AUTH HEADERS] Getting authentication headers...
+ ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+ 🔄 [SESSION CREATE] Using header-based authentication
+ 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+ 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+ 🔄 [SESSION CREATE] Response status: 500
+ 🔄 [SESSION CREATE] Response headers: Object
+ ❌ [SESSION CREATE] Session creation failed: 500 {"error":"Failed to create chat session"}
+mutationFn @ index-MBQuxBrl.js:500
+ ❌ [SESSION CREATE] Full error response: Object
+mutationFn @ index-MBQuxBrl.js:500
+ ❌ [SESSION CREATE] Failed to create session: 
+onError @ index-MBQuxBrl.js:500
+ ❌ [SESSION CREATE] Error details: Object
+onError @ index-MBQuxBrl.js:500
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [HOME] Authentication status: Object
+ 🔧 [HOME] Sidebar access check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🎨 CompanyInfoLarge - Logo settings: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+ 🔧 [DEVELOPER CONTROLS] Visible for super user
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 11 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(11)
+ Activity Types loaded: 4 types
+ Selected Activity Type ID: 1
+ Selected Activity Type Object: Object
+ Select Activity Type Value (string): 1
+ Activity Types for Select: Array(4)
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: false
+ Should create session: true
+ AI Models loaded: 11 models
+ Activity Types loaded: 4 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+ 🔄 [SESSION CREATE] Starting chat session creation...
+ 🔄 [SESSION CREATE] User auth status: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 11 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(11)
+ Activity Types loaded: 4 types
+ Selected Activity Type ID: 1
+ Selected Activity Type Object: Object
+ Select Activity Type Value (string): 1
+ Activity Types for Select: Array(4)
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: true
+ Should create session: false
+ AI Models loaded: 11 models
+ Activity Types loaded: 4 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔍 [AUTH HEADERS] Getting authentication headers...
+ ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+ 🔄 [SESSION CREATE] Using header-based authentication
+ 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+ 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+ 🔄 [SESSION CREATE] Response status: 500
+ 🔄 [SESSION CREATE] Response headers: Object
+ ❌ [SESSION CREATE] Session creation failed: 500 {"error":"Failed to create chat session"}
+mutationFn @ index-MBQuxBrl.js:500
+ ❌ [SESSION CREATE] Full error response: Object
+mutationFn @ index-MBQuxBrl.js:500
+ ❌ [SESSION CREATE] Failed to create session: 
+onError @ index-MBQuxBrl.js:500
+ ❌ [SESSION CREATE] Error details: Object
+onError @ index-MBQuxBrl.js:500
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [HOME] Authentication status: Object
+ 🔧 [HOME] Sidebar access check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🎨 CompanyInfoLarge - Logo settings: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+ 🔧 [DEVELOPER CONTROLS] Visible for super user
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 11 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(11)
+ Activity Types loaded: 4 types
+ Selected Activity Type ID: 1
+ Selected Activity Type Object: Object
+ Select Activity Type Value (string): 1
+ Activity Types for Select: Array(4)
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: false
+ Should create session: true
+ AI Models loaded: 11 models
+ Activity Types loaded: 4 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+ 🔄 [SESSION CREATE] Starting chat session creation...
+ 🔄 [SESSION CREATE] User auth status: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 11 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(11)
+ Activity Types loaded: 4 types
+ Selected Activity Type ID: 1
+ Selected Activity Type Object: Object
+ Select Activity Type Value (string): 1
+ Activity Types for Select: Array(4)
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: true
+ Should create session: false
+ AI Models loaded: 11 models
+ Activity Types loaded: 4 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔍 [AUTH HEADERS] Getting authentication headers...
+ ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+ 🔄 [SESSION CREATE] Using header-based authentication
+ 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+ 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+ 🔄 [SESSION CREATE] Response status: 500
+ 🔄 [SESSION CREATE] Response headers: Object
+ ❌ [SESSION CREATE] Session creation failed: 500 {"error":"Failed to create chat session"}
+mutationFn @ index-MBQuxBrl.js:500
+ ❌ [SESSION CREATE] Full error response: Object
+mutationFn @ index-MBQuxBrl.js:500
+ ❌ [SESSION CREATE] Failed to create session: 
+onError @ index-MBQuxBrl.js:500
+ ❌ [SESSION CREATE] Error details: Object
+onError @ index-MBQuxBrl.js:500
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [HOME] Authentication status: Object
+ 🔧 [HOME] Sidebar access check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🎨 CompanyInfoLarge - Logo settings: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+ 🔧 [DEVELOPER CONTROLS] Visible for super user
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 11 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(11)
+ Activity Types loaded: 4 types
+ Selected Activity Type ID: 1
+ Selected Activity Type Object: Object
+ Select Activity Type Value (string): 1
+ Activity Types for Select: Array(4)
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: false
+ Should create session: true
+ AI Models loaded: 11 models
+ Activity Types loaded: 4 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+ 🔄 [SESSION CREATE] Starting chat session creation...
+ 🔄 [SESSION CREATE] User auth status: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 11 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(11)
+ Activity Types loaded: 4 types
+ Selected Activity Type ID: 1
+ Selected Activity Type Object: Object
+ Select Activity Type Value (string): 1
+ Activity Types for Select: Array(4)
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: true
+ Should create session: false
+ AI Models loaded: 11 models
+ Activity Types loaded: 4 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔍 [AUTH HEADERS] Getting authentication headers...
+ ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+ 🔄 [SESSION CREATE] Using header-based authentication
+ 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+ 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+ 🔧 [SIDEBAR] Button clicked: Create AI Model Templates href: /admin/create-models
+ 🔧 [SIDEBAR] Navigating to: /admin/create-models
+ [APP DEBUG] Router component rendering...
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ [APP DEBUG] Router state: Object
+ [APP DEBUG] Authentication check: Object
+ [APP DEBUG] useAuth hook returned: Object
+ [APP DEBUG] User is authenticated, proceeding with route-based navigation
+ 🔐 [ROLE GUARD] Checking access for super-user (level 1000): Object
+ [ROLE GUARD] Access granted - user level 1000 >= required level 1000
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔧 [AI-MODEL-TEMPLATES] Fetching templates with token: prod-1754052835575-2...
+ 🔄 [QUERY] /api/admin/ai-providers - Start
+ 🔄 [QUERY] Full URL: https://aisentinel-p3emph2kw-ed-duvals-projects.vercel.app/api/admin/ai-providers
+ 🔧 [CREATE-MODELS] Providers query state: Object
+ 🔍 [AUTH HEADERS] Getting authentication headers...
+ ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+ 🔄 [SESSION CREATE] Response status: 500
+ 🔄 [SESSION CREATE] Response headers: Object
+ ❌ [SESSION CREATE] Session creation failed: 500 {"error":"Failed to create chat session"}
+mutationFn @ index-MBQuxBrl.js:500
+ ❌ [SESSION CREATE] Full error response: Object
+mutationFn @ index-MBQuxBrl.js:500
+ ❌ [SESSION CREATE] Failed to create session: 
+onError @ index-MBQuxBrl.js:500
+ ❌ [SESSION CREATE] Error details: Object
+onError @ index-MBQuxBrl.js:500
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔧 [CREATE-MODELS] Providers query state: Object
+ 🔧 [AI-MODEL-TEMPLATES] Response status: 200
+ ✅ [AI-MODEL-TEMPLATES] Loaded templates: 11
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Section visibility: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Rendering with sections: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role detection: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+index-MBQuxBrl.js:623 🔧 [CREATE-MODELS] Providers query state: Object
+index-MBQuxBrl.js:48 📊 [QUERY] /api/admin/ai-providers - Status: 200 (335ms)
+index-MBQuxBrl.js:48 📊 [QUERY] Headers: Object
+index-MBQuxBrl.js:48 📊 [QUERY] Content-Type: application/json; charset=utf-8
+index-MBQuxBrl.js:48 ✅ [QUERY] /api/admin/ai-providers - Success: Array(7)
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:623 🎨 [TEMPLATES RENDER] Rendering 11 templates: Array(11)
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Section visibility: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Rendering with sections: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role detection: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+index-MBQuxBrl.js:623 🔧 [CREATE-MODELS] Providers query state: Object
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:623 🎨 [TEMPLATES RENDER] Rendering 11 templates: Array(11)
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Section visibility: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Rendering with sections: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role detection: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:623 🎨 [TEMPLATES RENDER] Rendering 11 templates: Array(11)
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Section visibility: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Rendering with sections: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role detection: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:623 🎨 [TEMPLATES RENDER] Rendering 11 templates: Array(11)
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Section visibility: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Rendering with sections: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role detection: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:623 🎨 [TEMPLATES RENDER] Rendering 11 templates: Array(11)
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Section visibility: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Rendering with sections: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role detection: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:623 🎨 [TEMPLATES RENDER] Rendering 11 templates: Array(11)
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Section visibility: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Rendering with sections: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role detection: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:623 🎨 [TEMPLATES RENDER] Rendering 11 templates: Array(11)
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Section visibility: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Rendering with sections: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role detection: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:623 🎨 [TEMPLATES RENDER] Rendering 11 templates: Array(11)
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Section visibility: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Rendering with sections: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🎨 [TEMPLATES RENDER] Rendering 11 templates: Array(11)
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:623 🎨 [TEMPLATES RENDER] Rendering 11 templates: Array(11)
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Section visibility: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Rendering with sections: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role detection: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:623 🎨 [TEMPLATES RENDER] Rendering 11 templates: Array(11)
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Section visibility: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Rendering with sections: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role detection: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:623 🎨 [TEMPLATES RENDER] Rendering 11 templates: Array(11)
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Section visibility: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Rendering with sections: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role detection: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:623 🎨 [TEMPLATES RENDER] Rendering 11 templates: Array(11)
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Section visibility: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Rendering with sections: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role detection: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:623 🎨 [TEMPLATES RENDER] Rendering 11 templates: Array(11)
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Section visibility: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Rendering with sections: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role detection: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:623 🎨 [TEMPLATES RENDER] Rendering 11 templates: Array(11)
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Section visibility: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Rendering with sections: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role detection: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:623 🎨 [TEMPLATES RENDER] Rendering 11 templates: Array(11)
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Section visibility: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Rendering with sections: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role detection: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:623 🎨 [TEMPLATES RENDER] Rendering 11 templates: Array(11)
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Section visibility: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Rendering with sections: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role detection: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:623 🎨 [TEMPLATES RENDER] Rendering 11 templates: Array(11)
+index-MBQuxBrl.js:423 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-MBQuxBrl.js:423 Authentication check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role check: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Section visibility: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Rendering with sections: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] Role detection: Object
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-MBQuxBrl.js:423 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models

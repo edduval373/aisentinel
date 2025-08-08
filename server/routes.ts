@@ -22,6 +22,14 @@ import multer from "multer";
 const upload = multer();
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Health check endpoint for Render deployment
+  app.get('/health', (_req, res) => {
+    res.status(200).json({ 
+      status: 'healthy', 
+      timestamp: new Date().toISOString(),
+      service: 'AI Sentinel'
+    });
+  });
   // Add cookie parser middleware first
   const cookieParserModule = await import('cookie-parser');
   const cookieParser = cookieParserModule.default;
@@ -3670,13 +3678,19 @@ Stack: \${error.stack || 'No stack trace available'}\`;
         return res.status(401).json({ message: "Authentication required" });
       }
 
-      // Create new chat session
+      // Get request parameters (match frontend format)
+      const { title = 'New Chat', activityTypeId, modelId } = req.body;
+      
+      // Use the storage interface method to create the session
       const session = await storage.createChatSession({
-        companyId: companyId,
         userId: userId,
-        title: "New Chat",
-        aiModel: "General",
-        activityType: "general"
+        companyId: companyId,
+        title: title,
+        activityTypeId: activityTypeId,
+        modelId: modelId,
+        isActive: true,
+        createdAt: new Date(),
+        updatedAt: new Date()
       });
 
       console.log('✅ Chat session created successfully:', session.id);

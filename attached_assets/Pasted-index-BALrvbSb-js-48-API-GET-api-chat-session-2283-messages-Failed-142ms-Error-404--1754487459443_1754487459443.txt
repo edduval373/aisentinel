@@ -1,0 +1,67 @@
+index-BALrvbSb.js:48 ❌ [API GET] /api/chat/session/2283/messages - Failed (142ms): Error: 404: 
+    at hj (index-BALrvbSb.js:48:42957)
+    at async vt (index-BALrvbSb.js:48:43922)
+vt @ index-BALrvbSb.js:48
+index-BALrvbSb.js:48 ❌ [QUERY] /api/admin/api-keys - Failed (165ms): Error: 404: 
+    at hj (index-BALrvbSb.js:48:42957)
+    at async index-BALrvbSb.js:48:45163
+(anonymous) @ index-BALrvbSb.js:48
+index-BALrvbSb.js:48 ❌ [QUERY] /api/version/current - Failed (135ms): Error: 500: 
+    at hj (index-BALrvbSb.js:48:42957)
+    at async index-BALrvbSb.js:48:45163
+(anonymous) @ index-BALrvbSb.js:48
+index-BALrvbSb.js:48 ❌ [API GET] /api/chat/session/2284/messages - Failed (134ms): Error: 404: 
+    at hj (index-BALrvbSb.js:48:42957)
+    at async vt (index-BALrvbSb.js:48:43922)
+vt @ index-BALrvbSb.js:48
+index-BALrvbSb.js:505 Message send failed: 404 <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /api/chat/message</pre>
+</body>
+</html>
+
+mutationFn @ index-BALrvbSb.js:505
+index-BALrvbSb.js:505 ❌ [MESSAGE SEND] Failed to send message: Error: Failed to send message: 404
+    at Object.mutationFn (index-BALrvbSb.js:505:26623)
+onError @ index-BALrvbSb.js:505
+index-BALrvbSb.js:505 ❌ [MESSAGE SEND] Error details: Object
+onError @ index-BALrvbSb.js:505
+index-BALrvbSb.js:505 Message send failed: 404 <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /api/chat/message</pre>
+</body>
+</html>
+
+mutationFn @ index-BALrvbSb.js:505
+index-BALrvbSb.js:505 ❌ [MESSAGE SEND] Failed to send message: Error: Failed to send message: 404
+    at Object.mutationFn (index-BALrvbSb.js:505:26623)
+onError @ index-BALrvbSb.js:505
+index-BALrvbSb.js:505 ❌ [MESSAGE SEND] Error details: Object
+onError @ index-BALrvbSb.js:505
+index-BALrvbSb.js:505 Message send failed: 404 <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /api/chat/message</pre>
+</body>
+</html>
+
+mutationFn @ index-BALrvbSb.js:505
+index-BALrvbSb.js:505 ❌ [MESSAGE SEND] Failed to send message: Error: Failed to send message: 404
+    at Object.mutationFn (index-BALrvbSb.js:505:26623)
+onError @ index-BALrvbSb.js:505
+index-BALrvbSb.js:505 ❌ [MESSAGE SEND] Error details: Object
+onError @ index-BALrvbSb.js:505

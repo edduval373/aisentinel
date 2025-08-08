@@ -25,11 +25,11 @@ interface AuthData {
 export function useAuth() {
   const queryClient = useQueryClient();
   
-  console.log('🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY');
+  console.log('🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY');
   
   // No cookie initialization - using header-based authentication strategy
   
-  // SECURE AUTHENTICATION - COOKIE VALIDATION AGAINST RAILWAY DATABASE ONLY
+  // SECURE AUTHENTICATION - HEADER-BASED VALIDATION AGAINST RAILWAY DATABASE ONLY
   const { data, isLoading, error } = useQuery<AuthData>({
     queryKey: ['/api/auth/secure-me'],
     queryFn: async () => {
@@ -90,7 +90,7 @@ export function useAuth() {
           throw new Error(data.error || 'Authentication failed');
         }
         
-        console.log('✅ [SECURE AUTH] Database validation successful for:', data.user.email);
+        console.log('✅ [SECURE AUTH] Header-based database validation successful for:', data.user.email);
         
         return {
           authenticated: true,

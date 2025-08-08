@@ -1,0 +1,1172 @@
+ 🔍 [AUTH DEBUG] Current domain: aisentinel-40ym0m969-ed-duvals-projects.vercel.app
+ 🔍 [AUTH DEBUG] Saved accounts raw: [{"email":"ed.duval15@gmail.com","sessionToken":"prod-1754052835575-289kvxqgl42h","role":"super-user","roleLevel":1000,"companyName":"Duval Solutions","companyId":1,"lastUsed":"2025-08-06T15:10:01.274Z"}]
+ 🔍 [AUTH DEBUG] Parsed accounts: 1 accounts found
+ 🔍 [AUTH DEBUG] Account emails: Array(1)
+ 🔍 [AUTH DEBUG] Selected account: ed.duval15@gmail.com
+ 🔍 [AUTH DEBUG] Session token found: prod-1754052835575-2...
+ 🔍 [AUTH DEBUG] Making API request with headers...
+ 🔍 [AUTH DEBUG] Authorization header: Bearer prod-1754052835575-2...
+ 🔍 [AUTH DEBUG] X-Session-Token header: prod-1754052835575-2...
+ Checking saved accounts: 1
+ Single account found, auto-selecting
+ Selecting account with token: prod-1754052835575-2...
+ Unauthenticated user: No company context
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ Error selecting account: 
+d @ index-GLbZZSTd.js:658
+ 🔍 [AUTH DEBUG] Response status: 200
+ 🔍 [AUTH DEBUG] Response headers: Object
+ [APP DEBUG] Router component rendering...
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ [APP DEBUG] Router state: Object
+ [APP DEBUG] Authentication check: Object
+ [APP DEBUG] useAuth hook returned: Object
+ 🔍 [AUTH DEBUG] Response data: Object
+ ✅ [SECURE AUTH] Header-based database validation successful for: ed.duval15@gmail.com
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ [APP DEBUG] Router component rendering...
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ [APP DEBUG] Router state: Object
+ [APP DEBUG] Authentication check: Object
+ [APP DEBUG] useAuth hook returned: Object
+ [APP DEBUG] User is authenticated, proceeding with route-based navigation
+ [APP DEBUG] Chat access granted - showing Home component
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [HOME] Authentication status: Object
+ 🔧 [HOME] Sidebar access check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+ 🔧 [DEVELOPER CONTROLS] Visible for super user
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 0 models
+ Selected Model ID: null
+ Selected Model Object: undefined
+ Select Model Value (string): undefined
+ AI Models for Select: undefined
+ Activity Types loaded: 0 types
+ Selected Activity Type ID: null
+ Selected Activity Type Object: undefined
+ Select Activity Type Value (string): undefined
+ Activity Types for Select: undefined
+ 🔄 [QUERY] /api/user/current-company - Start
+ 🔄 [QUERY] Full URL: https://aisentinel-40ym0m969-ed-duvals-projects.vercel.app/api/user/current-company
+ 🔄 [QUERY] /api/ai-models - Start
+ 🔄 [QUERY] Full URL: https://aisentinel-40ym0m969-ed-duvals-projects.vercel.app/api/ai-models
+ 🔄 [QUERY] /api/activity-types - Start
+ 🔄 [QUERY] Full URL: https://aisentinel-40ym0m969-ed-duvals-projects.vercel.app/api/activity-types
+ 🔄 [ACCOUNT DROPDOWN] Loading saved accounts...
+ 🔄 [ACCOUNT DROPDOWN] Loaded accounts from AccountManager: 1
+ 🔄 [ACCOUNT DROPDOWN] Set saved accounts: 1 accounts
+ 🔄 [QUERY] /api/version/current - Start
+ 🔄 [QUERY] Full URL: https://aisentinel-40ym0m969-ed-duvals-projects.vercel.app/api/version/current
+ 🔄 [QUERY] /api/model-fusion-config - Start
+ 🔄 [QUERY] Full URL: https://aisentinel-40ym0m969-ed-duvals-projects.vercel.app/api/model-fusion-config
+ ✅ WebSocket connected successfully
+ WebSocket readyState: 1
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: false
+ Should create session: true
+ AI Models loaded: 0 models
+ Activity Types loaded: 0 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+ 🔄 [QUERY] /api/chat/sessions - Start
+ 🔄 [QUERY] Full URL: https://aisentinel-40ym0m969-ed-duvals-projects.vercel.app/api/chat/sessions
+ 🔄 [QUERY] /api/auth/developer-status - Start
+ 🔄 [QUERY] Full URL: https://aisentinel-40ym0m969-ed-duvals-projects.vercel.app/api/auth/developer-status
+ 🔄 [QUERY] /api/admin/companies - Start
+ 🔄 [QUERY] Full URL: https://aisentinel-40ym0m969-ed-duvals-projects.vercel.app/api/admin/companies
+ Authentication bypassed - direct access to main interface
+ 🔄 [SESSION CREATE] Starting chat session creation...
+ 🔄 [SESSION CREATE] User auth status: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [HOME] Authentication status: Object
+ 🔧 [HOME] Sidebar access check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+ 🔧 [DEVELOPER CONTROLS] Visible for super user
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 0 models
+ Selected Model ID: null
+ Selected Model Object: undefined
+ Select Model Value (string): undefined
+ AI Models for Select: undefined
+ Activity Types loaded: 0 types
+ Selected Activity Type ID: null
+ Selected Activity Type Object: undefined
+ Select Activity Type Value (string): undefined
+ Activity Types for Select: undefined
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: true
+ Should create session: false
+ AI Models loaded: 0 models
+ Activity Types loaded: 0 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔍 [AUTH HEADERS] Getting authentication headers...
+ ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+ 🔍 [AUTH HEADERS] Getting authentication headers...
+ ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+ 🔍 [AUTH HEADERS] Getting authentication headers...
+ ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+ 🔍 [AUTH HEADERS] Getting authentication headers...
+ ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+ 🔍 [AUTH HEADERS] Getting authentication headers...
+ ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+ 🔍 [AUTH HEADERS] Getting authentication headers...
+ ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+ 🔍 [AUTH HEADERS] Getting authentication headers...
+ ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+ 🔍 [AUTH HEADERS] Getting authentication headers...
+ ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+ 🔍 [AUTH HEADERS] Getting authentication headers...
+ ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+ 🔄 [SESSION CREATE] Using header-based authentication
+ 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+ 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+ 📊 [QUERY] /api/version/current - Status: 200 (249ms)
+ 📊 [QUERY] Headers: Object
+ 📊 [QUERY] Content-Type: application/json; charset=utf-8
+ ✅ [QUERY] /api/version/current - Success: Object
+ 📊 [QUERY] /api/model-fusion-config - Status: 200 (320ms)
+ 📊 [QUERY] Headers: Object
+ 📊 [QUERY] Content-Type: application/json; charset=utf-8
+ ✅ [QUERY] /api/model-fusion-config - Success: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 0 models
+ Selected Model ID: null
+ Selected Model Object: undefined
+ Select Model Value (string): undefined
+ AI Models for Select: undefined
+ Activity Types loaded: 0 types
+ Selected Activity Type ID: null
+ Selected Activity Type Object: undefined
+ Select Activity Type Value (string): undefined
+ Activity Types for Select: undefined
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: true
+ Should create session: false
+ AI Models loaded: 0 models
+ Activity Types loaded: 0 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 📊 [QUERY] /api/user/current-company - Status: 200 (452ms)
+ 📊 [QUERY] Headers: Object
+ 📊 [QUERY] Content-Type: application/json; charset=utf-8
+ ✅ [QUERY] /api/user/current-company - Success: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🎨 CompanyInfoLarge - Logo settings: Object
+ 📊 [QUERY] /api/auth/developer-status - Status: 200 (396ms)
+ 📊 [QUERY] Headers: Object
+ 📊 [QUERY] Content-Type: application/json; charset=utf-8
+ ✅ [QUERY] /api/auth/developer-status - Success: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [HOME] Authentication status: Object
+ 🔧 [HOME] Sidebar access check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🎨 CompanyInfoLarge - Logo settings: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+ 🔧 [DEVELOPER CONTROLS] Visible for super user
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 0 models
+ Selected Model ID: null
+ Selected Model Object: undefined
+ Select Model Value (string): undefined
+ AI Models for Select: undefined
+ Activity Types loaded: 0 types
+ Selected Activity Type ID: null
+ Selected Activity Type Object: undefined
+ Select Activity Type Value (string): undefined
+ Activity Types for Select: undefined
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: true
+ Should create session: false
+ AI Models loaded: 0 models
+ Activity Types loaded: 0 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 📊 [QUERY] /api/ai-models - Status: 200 (540ms)
+ 📊 [QUERY] Headers: Object
+ 📊 [QUERY] Content-Type: application/json; charset=utf-8
+ ✅ [QUERY] /api/ai-models - Success: Array(10)
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+ 🔧 [DEVELOPER CONTROLS] Visible for super user
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 10 models
+ Selected Model ID: null
+ Selected Model Object: undefined
+ Select Model Value (string): undefined
+ AI Models for Select: Array(10)
+ Activity Types loaded: 0 types
+ Selected Activity Type ID: null
+ Selected Activity Type Object: undefined
+ Select Activity Type Value (string): undefined
+ Activity Types for Select: undefined
+ Auto-selecting first model: Claude 3 Haiku ID: 5
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: true
+ Should create session: false
+ AI Models loaded: 10 models
+ Activity Types loaded: 0 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 10 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(10)
+ Activity Types loaded: 0 types
+ Selected Activity Type ID: null
+ Selected Activity Type Object: undefined
+ Select Activity Type Value (string): undefined
+ Activity Types for Select: undefined
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: true
+ Should create session: false
+ AI Models loaded: 10 models
+ Activity Types loaded: 0 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 📊 [QUERY] /api/admin/companies - Status: 200 (466ms)
+ 📊 [QUERY] Headers: Object
+ 📊 [QUERY] Content-Type: application/json; charset=utf-8
+ ✅ [QUERY] /api/admin/companies - Success: Array(6)
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [HOME] Authentication status: Object
+ 🔧 [HOME] Sidebar access check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🎨 CompanyInfoLarge - Logo settings: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+ 🔧 [DEVELOPER CONTROLS] Visible for super user
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 10 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(10)
+ Activity Types loaded: 0 types
+ Selected Activity Type ID: null
+ Selected Activity Type Object: undefined
+ Select Activity Type Value (string): undefined
+ Activity Types for Select: undefined
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: true
+ Should create session: false
+ AI Models loaded: 10 models
+ Activity Types loaded: 0 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 📊 [QUERY] /api/chat/sessions - Status: 200 (589ms)
+ 📊 [QUERY] Headers: Object
+ 📊 [QUERY] Content-Type: application/json; charset=utf-8
+ ✅ [QUERY] /api/chat/sessions - Success: Array(20)
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+ 🔧 [DEVELOPER CONTROLS] Visible for super user
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 10 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(10)
+ Activity Types loaded: 0 types
+ Selected Activity Type ID: null
+ Selected Activity Type Object: undefined
+ Select Activity Type Value (string): undefined
+ Activity Types for Select: undefined
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: true
+ Should create session: false
+ AI Models loaded: 10 models
+ Activity Types loaded: 0 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔄 [SESSION CREATE] Response status: 201
+ 🔄 [SESSION CREATE] Response headers: Object
+ ✅ [SESSION CREATE] Session created successfully: Object
+ ✅ Setting current session to: 2336
+ 🔄 [QUERY] /api/chat/sessions - Start
+ 🔄 [QUERY] Full URL: https://aisentinel-40ym0m969-ed-duvals-projects.vercel.app/api/chat/sessions
+ 📊 [QUERY] /api/activity-types - Status: 200 (1223ms)
+ 📊 [QUERY] Headers: Object
+ 📊 [QUERY] Content-Type: application/json; charset=utf-8
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [HOME] Authentication status: Object
+ 🔧 [HOME] Sidebar access check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🎨 CompanyInfoLarge - Logo settings: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+ 🔧 [DEVELOPER CONTROLS] Visible for super user
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 10 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(10)
+ Activity Types loaded: 0 types
+ Selected Activity Type ID: null
+ Selected Activity Type Object: undefined
+ Select Activity Type Value (string): undefined
+ Activity Types for Select: undefined
+ 🔄 [API GET] /api/chat/session/2336/messages - Start
+ 🔄 [API GET] Full URL: https://aisentinel-40ym0m969-ed-duvals-projects.vercel.app/api/chat/session/2336/messages
+ 🔄 [API GET] Data type: undefined
+ 🔄 [API GET] Environment: production
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: 2336
+ createSessionMutation.isPending: false
+ Should create session: false
+ AI Models loaded: 10 models
+ Activity Types loaded: 0 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔍 [AUTH HEADERS] Getting authentication headers...
+ ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+ 🔍 [AUTH HEADERS] Getting authentication headers...
+ ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+ 🔄 [API GET] Auth headers added: Array(2)
+ ✅ [QUERY] /api/activity-types - Success: Array(4)
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+ 🔧 [DEVELOPER CONTROLS] Visible for super user
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 10 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(10)
+ Activity Types loaded: 4 types
+ Selected Activity Type ID: null
+ Selected Activity Type Object: undefined
+ Select Activity Type Value (string): undefined
+ Activity Types for Select: Array(4)
+ Auto-selecting activity type: Brainstorming ID: 1
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: 2336
+ createSessionMutation.isPending: false
+ Should create session: false
+ AI Models loaded: 10 models
+ Activity Types loaded: 4 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 10 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(10)
+ Activity Types loaded: 4 types
+ Selected Activity Type ID: 1
+ Selected Activity Type Object: Object
+ Select Activity Type Value (string): 1
+ Activity Types for Select: Array(4)
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: 2336
+ createSessionMutation.isPending: false
+ Should create session: false
+ AI Models loaded: 10 models
+ Activity Types loaded: 4 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 📊 [API GET] /api/chat/session/2336/messages - Status: 200 (115ms)
+ 📊 [API GET] Headers: Object
+ 📊 [API GET] Content-Type: application/json; charset=utf-8
+ ✅ [API GET] /api/chat/session/2336/messages - Success: Array(0)
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 10 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(10)
+ Activity Types loaded: 4 types
+ Selected Activity Type ID: 1
+ Selected Activity Type Object: Object
+ Select Activity Type Value (string): 1
+ Activity Types for Select: Array(4)
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: 2336
+ createSessionMutation.isPending: false
+ Should create session: false
+ AI Models loaded: 10 models
+ Activity Types loaded: 4 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 10 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(10)
+ Activity Types loaded: 4 types
+ Selected Activity Type ID: 1
+ Selected Activity Type Object: Object
+ Select Activity Type Value (string): 1
+ Activity Types for Select: Array(4)
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: 2336
+ createSessionMutation.isPending: false
+ Should create session: false
+ AI Models loaded: 10 models
+ Activity Types loaded: 4 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 📊 [QUERY] /api/chat/sessions - Status: 200 (272ms)
+ 📊 [QUERY] Headers: Object
+ 📊 [QUERY] Content-Type: application/json; charset=utf-8
+ ✅ [QUERY] /api/chat/sessions - Success: Array(20)
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+ 🔧 [DEVELOPER CONTROLS] Visible for super user
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 10 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(10)
+ Activity Types loaded: 4 types
+ Selected Activity Type ID: 1
+ Selected Activity Type Object: Object
+ Select Activity Type Value (string): 1
+ Activity Types for Select: Array(4)
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: 2336
+ createSessionMutation.isPending: false
+ Should create session: false
+ AI Models loaded: 10 models
+ Activity Types loaded: 4 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [HOME] Authentication status: Object
+ 🔧 [HOME] Sidebar access check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🎨 CompanyInfoLarge - Logo settings: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+ 🔧 [DEVELOPER CONTROLS] Visible for super user
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 10 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(10)
+ Activity Types loaded: 4 types
+ Selected Activity Type ID: 1
+ Selected Activity Type Object: Object
+ Select Activity Type Value (string): 1
+ Activity Types for Select: Array(4)
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: 2336
+ createSessionMutation.isPending: false
+ Should create session: false
+ AI Models loaded: 10 models
+ Activity Types loaded: 4 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔧 [SIDEBAR] Button clicked: Create AI Model Templates href: /admin/create-models
+ 🔧 [SIDEBAR] Navigating to: /admin/create-models
+ [APP DEBUG] Router component rendering...
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ [APP DEBUG] Router state: Object
+ [APP DEBUG] Authentication check: Object
+ [APP DEBUG] useAuth hook returned: Object
+ [APP DEBUG] User is authenticated, proceeding with route-based navigation
+ 🔐 [ROLE GUARD] Checking access for super-user (level 1000): Object
+ [ROLE GUARD] Access granted - user level 1000 >= required level 1000
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [PROVIDERS-TRANSFORM] Processing providers: Array(0)
+ 🔧 [PROVIDERS-TRANSFORM] Using fallback data: Array(7)
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔧 [AI-MODEL-TEMPLATES] QUERY STARTING - Fetching templates with token: prod-1754052835575-2...
+ 🔧 [AI-MODEL-TEMPLATES] Current URL: https://aisentinel-40ym0m969-ed-duvals-projects.vercel.app/admin/create-models
+ 🔧 [AI-MODEL-TEMPLATES] Making request to: /api/admin/ai-model-templates
+ 🔄 [QUERY] /api/admin/ai-providers - Start
+ 🔄 [QUERY] Full URL: https://aisentinel-40ym0m969-ed-duvals-projects.vercel.app/api/admin/ai-providers
+ 🔧 [CREATE-MODELS] Providers query state: Object
+ 🔧 [PROVIDERS] Raw dbProviders: Array(0)
+ 🔧 [PROVIDERS] dbProviders array length: 0
+ 🔧 [PROVIDERS] Sample raw provider structure: undefined
+ 🔧 [PROVIDERS] Transformed providers for dropdown: Array(7)
+ 🔧 [PROVIDERS] Providers count: 7
+ 🔧 [PROVIDERS] Sample provider: Object
+ 🔧 [PROVIDERS] Loading state: true
+ 🔧 [PROVIDERS] Error state: null
+ 🔍 [AUTH HEADERS] Getting authentication headers...
+ ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+ 📊 [QUERY] /api/admin/ai-providers - Status: 200 (330ms)
+ 📊 [QUERY] Headers: Object
+ 📊 [QUERY] Content-Type: application/json; charset=utf-8
+ ✅ [QUERY] /api/admin/ai-providers - Success: Array(7)
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [PROVIDERS-TRANSFORM] Processing providers: Array(7)
+ 🔧 [PROVIDERS-TRANSFORM] Using Railway data: Array(7)
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔧 [CREATE-MODELS] Providers query state: Object
+ 🔧 [PROVIDERS] Raw dbProviders: Array(7)
+ 🔧 [PROVIDERS] dbProviders array length: 7
+ 🔧 [PROVIDERS] Sample raw provider structure: Object
+ 🔧 [PROVIDERS] Transformed providers for dropdown: Array(7)
+ 🔧 [PROVIDERS] Providers count: 7
+ 🔧 [PROVIDERS] Sample provider: Object
+ 🔧 [PROVIDERS] Loading state: false
+ 🔧 [PROVIDERS] Error state: null
+ 🔧 [AI-MODEL-TEMPLATES] Response received - Status: 200
+ 🔧 [AI-MODEL-TEMPLATES] Response headers: Headers
+ ✅ [AI-MODEL-TEMPLATES] SUCCESS - Loaded templates count: 10
+ 🔍 [AI-MODEL-TEMPLATES] Sample template data: {
+  "id": 1,
+  "name": "GPT-4o",
+  "provider": "openai",
+  "modelId": "gpt-4o",
+  "description": "Latest GPT-4 model with advanced capabilities",
+  "contextWindow": 128000,
+  "isEnabled": true,
+  "capabilities": [
+    "text-generation",
+    "code-generation",
+    "multimodal"
+  ],
+  "apiEndpoint": "https://api.openai.com/v1/chat/completions",
+  "authMethod": "bearer",
+  "requestHeaders": {
+    "Content-Type": "application/json"
+  },
+  "maxTokens": 1000,
+  "temperature": 0.7,
+  "maxRetries": 3,
+  "timeout": 30000,
+  "rateLimit": 100,
+  "createdAt": "2025-08-01T19:18:19.000Z"
+}
+ 🔍 [AI-MODEL-TEMPLATES] Field name check on first template: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔍 [EDIT TEMPLATE] Raw template data received: {
+  "id": 14,
+  "name": "Valid Token Test",
+  "provider": "openai",
+  "modelId": "gpt-3.5-turbo",
+  "description": null,
+  "contextWindow": 4096,
+  "isEnabled": true,
+  "capabilities": null,
+  "apiEndpoint": "https://api.openai.com/v1/completions",
+  "authMethod": "bearer",
+  "requestHeaders": null,
+  "maxTokens": 1000,
+  "temperature": 0.7,
+  "maxRetries": 3,
+  "timeout": 30000,
+  "rateLimit": 100,
+  "createdAt": "2025-08-04T19:52:28.238Z"
+}
+ 🔍 [EDIT TEMPLATE] Field check: Object
+ 🔍 [EDIT TEMPLATE] Formatted form data: {
+  "name": "Valid Token Test",
+  "provider": "openai",
+  "modelId": "gpt-3.5-turbo",
+  "description": "",
+  "contextWindow": 4096,
+  "isEnabled": true,
+  "capabilities": []
+}
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔧 [PROVIDER-DROPDOWN] Field value: openai
+ 🔧 [PROVIDER-DROPDOWN] Available providers: Array(7)
+ 🔥 Button clicked - triggering form submission
+ 🚀 Form submission triggered with data: Object
+ 🚀 Form validation state: Object
+ 🚀 Form errors: Object
+ 🔐 Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔧 [PROVIDER-DROPDOWN] Field value: openai
+ 🔧 [PROVIDER-DROPDOWN] Available providers: Array(7)
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔧 [PROVIDER-DROPDOWN] Field value: openai
+ 🔧 [PROVIDER-DROPDOWN] Available providers: Array(7)
+ 🔧 [TEMPLATE UPDATE] Starting update for template ID: 14
+ 🔧 [TEMPLATE UPDATE] Update data: Object
+ 🔧 [TEMPLATE UPDATE] Session token found: true
+ 🔧 [TEMPLATE UPDATE] Auth headers set with token: prod-17540...
+ 🔧 [TEMPLATE UPDATE] Making PUT request to: /api/admin/ai-model-templates/14
+ 🔧 [TEMPLATE UPDATE] Response status: 500
+ 🔧 [TEMPLATE UPDATE] Response ok: false
+ ❌ [TEMPLATE UPDATE] Request failed with status 500
+mutationFn @ index-GLbZZSTd.js:628
+ ❌ [TEMPLATE UPDATE] Error data: Object
+mutationFn @ index-GLbZZSTd.js:628
+ ❌ [TEMPLATE UPDATE] Error callback executed: 
+onError @ index-GLbZZSTd.js:628
+ ❌ [TEMPLATE UPDATE] Error message: HTTP 500
+onError @ index-GLbZZSTd.js:628
+ ❌ [TEMPLATE UPDATE] Full error object: 
+onError @ index-GLbZZSTd.js:628
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔧 [PROVIDER-DROPDOWN] Field value: openai
+ 🔧 [PROVIDER-DROPDOWN] Available providers: Array(7)
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔧 [PROVIDER-DROPDOWN] Field value: openai
+ 🔧 [PROVIDER-DROPDOWN] Available providers: Array(7)
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔧 [PROVIDER-DROPDOWN] Field value: openai
+ 🔧 [PROVIDER-DROPDOWN] Available providers: Array(7)
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔧 [AI-MODEL-TEMPLATES] QUERY STARTING - Fetching templates with token: prod-1754052835575-2...
+ 🔧 [AI-MODEL-TEMPLATES] Current URL: https://aisentinel-40ym0m969-ed-duvals-projects.vercel.app/admin/create-models
+ 🔧 [AI-MODEL-TEMPLATES] Making request to: /api/admin/ai-model-templates
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔧 [AI-MODEL-TEMPLATES] Response received - Status: 200
+ 🔧 [AI-MODEL-TEMPLATES] Response headers: Headers
+ ✅ [AI-MODEL-TEMPLATES] SUCCESS - Loaded templates count: 9
+ 🔍 [AI-MODEL-TEMPLATES] Sample template data: {
+  "id": 1,
+  "name": "GPT-4o",
+  "provider": "openai",
+  "modelId": "gpt-4o",
+  "description": "Latest GPT-4 model with advanced capabilities",
+  "contextWindow": 128000,
+  "isEnabled": true,
+  "capabilities": [
+    "text-generation",
+    "code-generation",
+    "multimodal"
+  ],
+  "apiEndpoint": "https://api.openai.com/v1/chat/completions",
+  "authMethod": "bearer",
+  "requestHeaders": {
+    "Content-Type": "application/json"
+  },
+  "maxTokens": 1000,
+  "temperature": 0.7,
+  "maxRetries": 3,
+  "timeout": 30000,
+  "rateLimit": 100,
+  "createdAt": "2025-08-01T19:18:19.000Z"
+}
+ 🔍 [AI-MODEL-TEMPLATES] Field name check on first template: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔧 [PROVIDER-DROPDOWN] Field value: openai
+ 🔧 [PROVIDER-DROPDOWN] Available providers: Array(7)
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔧 [PROVIDER-DROPDOWN] Field value: openai
+ 🔧 [PROVIDER-DROPDOWN] Available providers: Array(7)
+ 🔥 Button clicked - triggering form submission
+ 🚀 Form submission triggered with data: Object
+ 🚀 Form validation state: Object
+ 🚀 Form errors: Object
+ 🔐 Authentication check: Object
+ 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+index-GLbZZSTd.js:428 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+index-GLbZZSTd.js:428 Authentication check: Object
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] Role check: Object
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] Section visibility: Object
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] Rendering with sections: Object
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] Role detection: Object
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+index-GLbZZSTd.js:628 🔧 [PROVIDER-DROPDOWN] Field value: openai
+index-GLbZZSTd.js:628 🔧 [PROVIDER-DROPDOWN] Available providers: Array(7)
+index-GLbZZSTd.js:428 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+index-GLbZZSTd.js:428 Authentication check: Object
+index-GLbZZSTd.js:428 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+index-GLbZZSTd.js:428 Authentication check: Object
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] Role check: Object
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] Section visibility: Object
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] Rendering with sections: Object
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] Role detection: Object
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+index-GLbZZSTd.js:628 🔧 [PROVIDER-DROPDOWN] Field value: openai
+index-GLbZZSTd.js:628 🔧 [PROVIDER-DROPDOWN] Available providers: Array(7)
+index-GLbZZSTd.js:628 🔧 [CREATE-TEMPLATE] Starting template creation with data: Object
+index-GLbZZSTd.js:628 🔧 [CREATE-TEMPLATE] Request headers: Array(3)
+index-GLbZZSTd.js:628 🔧 [CREATE-TEMPLATE] Request body: {
+  "name": "Valid Token Test",
+  "provider": "openai",
+  "modelId": "gpt-3.5-turbo",
+  "description": "",
+  "contextWindow": 4096,
+  "isEnabled": true,
+  "capabilities": []
+}
+index-GLbZZSTd.js:628 🔧 [CREATE-TEMPLATE] Response status: 201
+index-GLbZZSTd.js:628 🔧 [CREATE-TEMPLATE] Response headers: Headers
+index-GLbZZSTd.js:628 🔧 [CREATE-TEMPLATE] Success response: Object
+index-GLbZZSTd.js:628 ✅ [TEMPLATE CREATE] Success callback executed with data: Object
+index-GLbZZSTd.js:628 ✅ [TEMPLATE CREATE] Invalidating queries...
+index-GLbZZSTd.js:628 🔧 [AI-MODEL-TEMPLATES] QUERY STARTING - Fetching templates with token: prod-1754052835575-2...
+index-GLbZZSTd.js:628 🔧 [AI-MODEL-TEMPLATES] Current URL: https://aisentinel-40ym0m969-ed-duvals-projects.vercel.app/admin/create-models
+index-GLbZZSTd.js:628 🔧 [AI-MODEL-TEMPLATES] Making request to: /api/admin/ai-model-templates
+index-GLbZZSTd.js:628 🔧 [AI-MODEL-TEMPLATES] Response received - Status: 200
+index-GLbZZSTd.js:628 🔧 [AI-MODEL-TEMPLATES] Response headers: Headers
+index-GLbZZSTd.js:628 ✅ [AI-MODEL-TEMPLATES] SUCCESS - Loaded templates count: 10
+index-GLbZZSTd.js:628 🔍 [AI-MODEL-TEMPLATES] Sample template data: {
+  "id": 1,
+  "name": "GPT-4o",
+  "provider": "openai",
+  "modelId": "gpt-4o",
+  "description": "Latest GPT-4 model with advanced capabilities",
+  "contextWindow": 128000,
+  "isEnabled": true,
+  "capabilities": [
+    "text-generation",
+    "code-generation",
+    "multimodal"
+  ],
+  "apiEndpoint": "https://api.openai.com/v1/chat/completions",
+  "authMethod": "bearer",
+  "requestHeaders": {
+    "Content-Type": "application/json"
+  },
+  "maxTokens": 1000,
+  "temperature": 0.7,
+  "maxRetries": 3,
+  "timeout": 30000,
+  "rateLimit": 100,
+  "createdAt": "2025-08-01T19:18:19.000Z"
+}
+index-GLbZZSTd.js:628 🔍 [AI-MODEL-TEMPLATES] Field name check on first template: Object
+index-GLbZZSTd.js:628 ✅ [TEMPLATE CREATE] Refetching templates manually...
+index-GLbZZSTd.js:628 🔧 [AI-MODEL-TEMPLATES] QUERY STARTING - Fetching templates with token: prod-1754052835575-2...
+index-GLbZZSTd.js:628 🔧 [AI-MODEL-TEMPLATES] Current URL: https://aisentinel-40ym0m969-ed-duvals-projects.vercel.app/admin/create-models
+index-GLbZZSTd.js:628 🔧 [AI-MODEL-TEMPLATES] Making request to: /api/admin/ai-model-templates
+index-GLbZZSTd.js:428 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+index-GLbZZSTd.js:428 Authentication check: Object
+index-GLbZZSTd.js:428 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+index-GLbZZSTd.js:428 Authentication check: Object
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] Role check: Object
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] Section visibility: Object
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] Rendering with sections: Object
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] Role detection: Object
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+index-GLbZZSTd.js:628 🔧 [PROVIDER-DROPDOWN] Field value: openai
+index-GLbZZSTd.js:628 🔧 [PROVIDER-DROPDOWN] Available providers: Array(7)
+index-GLbZZSTd.js:628 🔧 [AI-MODEL-TEMPLATES] Response received - Status: 200
+index-GLbZZSTd.js:628 🔧 [AI-MODEL-TEMPLATES] Response headers: Headers
+index-GLbZZSTd.js:628 ✅ [AI-MODEL-TEMPLATES] SUCCESS - Loaded templates count: 10
+index-GLbZZSTd.js:628 🔍 [AI-MODEL-TEMPLATES] Sample template data: {
+  "id": 1,
+  "name": "GPT-4o",
+  "provider": "openai",
+  "modelId": "gpt-4o",
+  "description": "Latest GPT-4 model with advanced capabilities",
+  "contextWindow": 128000,
+  "isEnabled": true,
+  "capabilities": [
+    "text-generation",
+    "code-generation",
+    "multimodal"
+  ],
+  "apiEndpoint": "https://api.openai.com/v1/chat/completions",
+  "authMethod": "bearer",
+  "requestHeaders": {
+    "Content-Type": "application/json"
+  },
+  "maxTokens": 1000,
+  "temperature": 0.7,
+  "maxRetries": 3,
+  "timeout": 30000,
+  "rateLimit": 100,
+  "createdAt": "2025-08-01T19:18:19.000Z"
+}
+index-GLbZZSTd.js:628 🔍 [AI-MODEL-TEMPLATES] Field name check on first template: Object
+index-GLbZZSTd.js:628 ✅ [TEMPLATE CREATE] Setting showCreateDialog to false...
+index-GLbZZSTd.js:628 ✅ [TEMPLATE CREATE] Resetting form...
+index-GLbZZSTd.js:628 ✅ [TEMPLATE CREATE] Showing success toast...
+index-GLbZZSTd.js:628 ✅ [TEMPLATE CREATE] Success callback completed - modal should close
+index-GLbZZSTd.js:428 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+index-GLbZZSTd.js:428 Authentication check: Object
+index-GLbZZSTd.js:428 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+index-GLbZZSTd.js:428 Authentication check: Object
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] Role check: Object
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] Section visibility: Object
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] Rendering with sections: Object
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] Role detection: Object
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+index-GLbZZSTd.js:628 🔧 [PROVIDER-DROPDOWN] Field value: openai
+index-GLbZZSTd.js:628 🔧 [PROVIDER-DROPDOWN] Available providers: Array(7)
+index-GLbZZSTd.js:628 🔍 [EDIT TEMPLATE] Raw template data received: {
+  "id": 6,
+  "name": "Gemini Pro",
+  "provider": "google",
+  "modelId": "gemini-pro",
+  "description": "Google's advanced multimodal AI model",
+  "contextWindow": 128000,
+  "isEnabled": true,
+  "capabilities": [
+    "text-generation",
+    "code-generation",
+    "multimodal"
+  ],
+  "apiEndpoint": "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent",
+  "authMethod": "api-key",
+  "requestHeaders": {
+    "Content-Type": "application/json"
+  },
+  "maxTokens": 1000,
+  "temperature": 0.7,
+  "maxRetries": 3,
+  "timeout": 30000,
+  "rateLimit": 100,
+  "createdAt": "2025-08-01T23:18:19.584Z"
+}
+index-GLbZZSTd.js:628 🔍 [EDIT TEMPLATE] Field check: Object
+index-GLbZZSTd.js:628 🔍 [EDIT TEMPLATE] Formatted form data: {
+  "name": "Gemini Pro",
+  "provider": "google",
+  "modelId": "gemini-pro",
+  "description": "Google's advanced multimodal AI model",
+  "contextWindow": 128000,
+  "isEnabled": true,
+  "capabilities": [
+    "text-generation",
+    "code-generation",
+    "multimodal"
+  ]
+}
+index-GLbZZSTd.js:428 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+index-GLbZZSTd.js:428 Authentication check: Object
+index-GLbZZSTd.js:428 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+index-GLbZZSTd.js:428 Authentication check: Object
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] Role check: Object
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] Section visibility: Object
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] Rendering with sections: Object
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] Role detection: Object
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+index-GLbZZSTd.js:628 🔧 [PROVIDER-DROPDOWN] Field value: google
+index-GLbZZSTd.js:628 🔧 [PROVIDER-DROPDOWN] Available providers: Array(7)
+index-GLbZZSTd.js:428 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+index-GLbZZSTd.js:428 Authentication check: Object
+index-GLbZZSTd.js:428 🔒 [SECURE AUTH] Header-based authentication - DATABASE VALIDATION ONLY
+index-GLbZZSTd.js:428 Authentication check: Object
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] Role check: Object
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] Section visibility: Object
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] Rendering with sections: Object
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] Role detection: Object
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-GLbZZSTd.js:428 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+index-GLbZZSTd.js:628 🔧 [PROVIDER-DROPDOWN] Field value: google
+index-GLbZZSTd.js:628 🔧 [PROVIDER-DROPDOWN] Available providers: Array(7)

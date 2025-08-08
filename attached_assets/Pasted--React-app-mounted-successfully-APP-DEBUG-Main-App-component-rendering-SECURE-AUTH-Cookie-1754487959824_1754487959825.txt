@@ -1,0 +1,706 @@
+ React app mounted successfully
+ [APP DEBUG] Main App component rendering
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ [APP DEBUG] Router component rendering...
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ [APP DEBUG] Router state: Object
+ [APP DEBUG] Authentication check: Object
+ [APP DEBUG] useAuth hook returned: Object
+ 🔒 [SECURE AUTH] Starting secure database authentication...
+ 🔍 [AUTH DEBUG] Starting authentication with detailed logging...
+ 🔍 [AUTH DEBUG] Current URL: https://aisentinel-i2sssbjjq-ed-duvals-projects.vercel.app/chat
+ 🔍 [AUTH DEBUG] Current domain: aisentinel-i2sssbjjq-ed-duvals-projects.vercel.app
+ 🔍 [AUTH DEBUG] Saved accounts raw: [{"email":"ed.duval15@gmail.com","sessionToken":"prod-1754052835575-289kvxqgl42h","role":"super-user","roleLevel":1000,"companyName":"Duval Solutions","companyId":1,"lastUsed":"2025-08-06T13:45:36.704Z"}]
+ 🔍 [AUTH DEBUG] Parsed accounts: 1 accounts found
+ 🔍 [AUTH DEBUG] Account emails: Array(1)
+ 🔍 [AUTH DEBUG] Selected account: ed.duval15@gmail.com
+ 🔍 [AUTH DEBUG] Session token found: prod-1754052835575-2...
+ 🔍 [AUTH DEBUG] Making API request with headers...
+ 🔍 [AUTH DEBUG] Authorization header: Bearer prod-1754052835575-2...
+ 🔍 [AUTH DEBUG] X-Session-Token header: prod-1754052835575-2...
+ Checking saved accounts: 1
+ Single account found, auto-selecting
+ Selecting account with token: prod-1754052835575-2...
+ Unauthenticated user: No company context
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔍 [AUTH DEBUG] Response status: 200
+ 🔍 [AUTH DEBUG] Response headers: Object
+ 🔍 [AUTH DEBUG] Response data: Object
+ ✅ [SECURE AUTH] Database validation successful for: ed.duval15@gmail.com
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ [APP DEBUG] Router component rendering...
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ [APP DEBUG] Router state: Object
+ [APP DEBUG] Authentication check: Object
+ [APP DEBUG] useAuth hook returned: Object
+ [APP DEBUG] User is authenticated, proceeding with route-based navigation
+ [APP DEBUG] Chat access granted - showing Home component
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [HOME] Authentication status: Object
+ 🔧 [HOME] Sidebar access check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+ 🔧 [DEVELOPER CONTROLS] Visible for super user
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 0 models
+ Selected Model ID: null
+ Selected Model Object: undefined
+ Select Model Value (string): undefined
+ AI Models for Select: undefined
+ Activity Types loaded: 0 types
+ Selected Activity Type ID: null
+ Selected Activity Type Object: undefined
+ Select Activity Type Value (string): undefined
+ Activity Types for Select: undefined
+ 🔄 [QUERY] /api/user/current-company - Start
+ 🔄 [QUERY] Full URL: https://aisentinel-i2sssbjjq-ed-duvals-projects.vercel.app/api/user/current-company
+ 🔄 [QUERY] /api/ai-models - Start
+ 🔄 [QUERY] Full URL: https://aisentinel-i2sssbjjq-ed-duvals-projects.vercel.app/api/ai-models
+ 🔄 [QUERY] /api/activity-types - Start
+ 🔄 [QUERY] Full URL: https://aisentinel-i2sssbjjq-ed-duvals-projects.vercel.app/api/activity-types
+ 🔄 [ACCOUNT DROPDOWN] Loading saved accounts...
+ 🔄 [ACCOUNT DROPDOWN] Loaded accounts from AccountManager: 1
+ 🔄 [ACCOUNT DROPDOWN] Set saved accounts: 1 accounts
+ 🔄 [QUERY] /api/version/current - Start
+ 🔄 [QUERY] Full URL: https://aisentinel-i2sssbjjq-ed-duvals-projects.vercel.app/api/version/current
+ 🔄 [QUERY] /api/model-fusion-config - Start
+ 🔄 [QUERY] Full URL: https://aisentinel-i2sssbjjq-ed-duvals-projects.vercel.app/api/model-fusion-config
+ ✅ WebSocket connected successfully
+ WebSocket readyState: 1
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: false
+ Should create session: true
+ AI Models loaded: 0 models
+ Activity Types loaded: 0 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔄 [SESSION CREATE] No current session found, creating new session for user: ed.duval15@gmail.com
+ 🔄 [QUERY] /api/chat/sessions - Start
+ 🔄 [QUERY] Full URL: https://aisentinel-i2sssbjjq-ed-duvals-projects.vercel.app/api/chat/sessions
+ 🔄 [QUERY] /api/auth/developer-status - Start
+ 🔄 [QUERY] Full URL: https://aisentinel-i2sssbjjq-ed-duvals-projects.vercel.app/api/auth/developer-status
+ 🔄 [QUERY] /api/admin/companies - Start
+ 🔄 [QUERY] Full URL: https://aisentinel-i2sssbjjq-ed-duvals-projects.vercel.app/api/admin/companies
+ Authentication bypassed - direct access to main interface
+ Checking saved accounts: 1
+ 🔄 [SESSION CREATE] Starting chat session creation...
+ 🔄 [SESSION CREATE] User auth status: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ [APP DEBUG] Router component rendering...
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ [APP DEBUG] Router state: Object
+ [APP DEBUG] Authentication check: Object
+ [APP DEBUG] useAuth hook returned: Object
+ [APP DEBUG] User is authenticated, proceeding with route-based navigation
+ [APP DEBUG] Chat access granted - showing Home component
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [HOME] Authentication status: Object
+ 🔧 [HOME] Sidebar access check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+ 🔧 [DEVELOPER CONTROLS] Visible for super user
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 0 models
+ Selected Model ID: null
+ Selected Model Object: undefined
+ Select Model Value (string): undefined
+ AI Models for Select: undefined
+ Activity Types loaded: 0 types
+ Selected Activity Type ID: null
+ Selected Activity Type Object: undefined
+ Select Activity Type Value (string): undefined
+ Activity Types for Select: undefined
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: true
+ Should create session: false
+ AI Models loaded: 0 models
+ Activity Types loaded: 0 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔍 [AUTH HEADERS] Getting authentication headers...
+ ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+ 🔍 [AUTH HEADERS] Getting authentication headers...
+ ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+ 🔍 [AUTH HEADERS] Getting authentication headers...
+ ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+ 🔍 [AUTH HEADERS] Getting authentication headers...
+ ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+index-CMiyRs4p.js:658 Error selecting account: TypeError: g is not a function
+    at d (index-CMiyRs4p.js:658:4780)
+    at async index-CMiyRs4p.js:658:1016
+d @ index-CMiyRs4p.js:658
+ 🔍 [AUTH HEADERS] Getting authentication headers...
+ ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+ 🔍 [AUTH HEADERS] Getting authentication headers...
+ ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+ 🔍 [AUTH HEADERS] Getting authentication headers...
+ ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+ 🔍 [AUTH HEADERS] Getting authentication headers...
+ ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+ 🔍 [AUTH HEADERS] Getting authentication headers...
+ ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+ 🔄 [SESSION CREATE] Using header-based authentication
+ 🔄 [SESSION CREATE] Auth headers prepared: Array(2)
+ 🔄 [SESSION CREATE] Making POST request to /api/chat/session
+ 📊 [QUERY] /api/version/current - Status: 500 (241ms)
+ 📊 [QUERY] Headers: Object
+index-CMiyRs4p.js:48 ❌ [QUERY] /api/version/current - Failed (243ms): Error: 500: 
+    at hj (index-CMiyRs4p.js:48:42957)
+    at async index-CMiyRs4p.js:48:45163
+(anonymous) @ index-CMiyRs4p.js:48
+ 📊 [QUERY] /api/auth/developer-status - Status: 200 (278ms)
+ 📊 [QUERY] Headers: Object
+ 📊 [QUERY] Content-Type: application/json; charset=utf-8
+ ✅ [QUERY] /api/auth/developer-status - Success: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [HOME] Authentication status: Object
+ 🔧 [HOME] Sidebar access check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+ 🔧 [DEVELOPER CONTROLS] Visible for super user
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 0 models
+ Selected Model ID: null
+ Selected Model Object: undefined
+ Select Model Value (string): undefined
+ AI Models for Select: undefined
+ Activity Types loaded: 0 types
+ Selected Activity Type ID: null
+ Selected Activity Type Object: undefined
+ Select Activity Type Value (string): undefined
+ Activity Types for Select: undefined
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: true
+ Should create session: false
+ AI Models loaded: 0 models
+ Activity Types loaded: 0 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 📊 [QUERY] /api/model-fusion-config - Status: 200 (307ms)
+ 📊 [QUERY] Headers: Object
+ 📊 [QUERY] Content-Type: application/json; charset=utf-8
+ ✅ [QUERY] /api/model-fusion-config - Success: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 0 models
+ Selected Model ID: null
+ Selected Model Object: undefined
+ Select Model Value (string): undefined
+ AI Models for Select: undefined
+ Activity Types loaded: 0 types
+ Selected Activity Type ID: null
+ Selected Activity Type Object: undefined
+ Select Activity Type Value (string): undefined
+ Activity Types for Select: undefined
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: true
+ Should create session: false
+ AI Models loaded: 0 models
+ Activity Types loaded: 0 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 📊 [QUERY] /api/user/current-company - Status: 200 (400ms)
+ 📊 [QUERY] Headers: Object
+ 📊 [QUERY] Content-Type: application/json; charset=utf-8
+ ✅ [QUERY] /api/user/current-company - Success: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🎨 CompanyInfoLarge - Logo settings: Object
+ 📊 [QUERY] /api/ai-models - Status: 200 (429ms)
+ 📊 [QUERY] Headers: Object
+ 📊 [QUERY] Content-Type: application/json; charset=utf-8
+ ✅ [QUERY] /api/ai-models - Success: Array(11)
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+ 🔧 [DEVELOPER CONTROLS] Visible for super user
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 11 models
+ Selected Model ID: null
+ Selected Model Object: undefined
+ Select Model Value (string): undefined
+ AI Models for Select: Array(11)
+ Activity Types loaded: 0 types
+ Selected Activity Type ID: null
+ Selected Activity Type Object: undefined
+ Select Activity Type Value (string): undefined
+ Activity Types for Select: undefined
+ Auto-selecting first model: Claude 3 Haiku ID: 5
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: true
+ Should create session: false
+ AI Models loaded: 11 models
+ Activity Types loaded: 0 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 11 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(11)
+ Activity Types loaded: 0 types
+ Selected Activity Type ID: null
+ Selected Activity Type Object: undefined
+ Select Activity Type Value (string): undefined
+ Activity Types for Select: undefined
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: true
+ Should create session: false
+ AI Models loaded: 11 models
+ Activity Types loaded: 0 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 📊 [QUERY] /api/admin/companies - Status: 200 (439ms)
+ 📊 [QUERY] Headers: Object
+ 📊 [QUERY] Content-Type: application/json; charset=utf-8
+ ✅ [QUERY] /api/admin/companies - Success: Array(6)
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [HOME] Authentication status: Object
+ 🔧 [HOME] Sidebar access check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🎨 CompanyInfoLarge - Logo settings: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+ 🔧 [DEVELOPER CONTROLS] Visible for super user
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 11 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(11)
+ Activity Types loaded: 0 types
+ Selected Activity Type ID: null
+ Selected Activity Type Object: undefined
+ Select Activity Type Value (string): undefined
+ Activity Types for Select: undefined
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: null
+ createSessionMutation.isPending: true
+ Should create session: false
+ AI Models loaded: 11 models
+ Activity Types loaded: 0 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔄 [SESSION CREATE] Response status: 201
+ 🔄 [SESSION CREATE] Response headers: Object
+ ✅ [SESSION CREATE] Session created successfully: Object
+ ✅ Setting current session to: 2291
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [HOME] Authentication status: Object
+ 🔧 [HOME] Sidebar access check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [SIDEBAR] Role check: Object
+ 🔧 [SIDEBAR] Section visibility: Object
+ 🔧 [SIDEBAR] Rendering with sections: Object
+ 🔧 [SIDEBAR] Role detection: Object
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+ 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🎨 CompanyInfoLarge - Logo settings: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+ 🔧 [DEVELOPER CONTROLS] Visible for super user
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 11 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(11)
+ Activity Types loaded: 0 types
+ Selected Activity Type ID: null
+ Selected Activity Type Object: undefined
+ Select Activity Type Value (string): undefined
+ Activity Types for Select: undefined
+ 🔄 [API GET] /api/chat/session/2291/messages - Start
+ 🔄 [API GET] Full URL: https://aisentinel-i2sssbjjq-ed-duvals-projects.vercel.app/api/chat/session/2291/messages
+ 🔄 [API GET] Data type: undefined
+ 🔄 [API GET] Environment: production
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: 2291
+ createSessionMutation.isPending: false
+ Should create session: false
+ AI Models loaded: 11 models
+ Activity Types loaded: 0 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔍 [AUTH HEADERS] Getting authentication headers...
+ ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+ 🔄 [API GET] Auth headers added: Array(2)
+ 📊 [QUERY] /api/chat/sessions - Status: 200 (589ms)
+ 📊 [QUERY] Headers: Object
+ 📊 [QUERY] Content-Type: application/json; charset=utf-8
+ ✅ [QUERY] /api/chat/sessions - Success: Array(20)
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+ 🔧 [DEVELOPER CONTROLS] Visible for super user
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 11 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(11)
+ Activity Types loaded: 0 types
+ Selected Activity Type ID: null
+ Selected Activity Type Object: undefined
+ Select Activity Type Value (string): undefined
+ Activity Types for Select: undefined
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: 2291
+ createSessionMutation.isPending: false
+ Should create session: false
+ AI Models loaded: 11 models
+ Activity Types loaded: 0 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 📊 [API GET] /api/chat/session/2291/messages - Status: 200 (132ms)
+ 📊 [API GET] Headers: Object
+ 📊 [API GET] Content-Type: application/json; charset=utf-8
+ ✅ [API GET] /api/chat/session/2291/messages - Success: Array(0)
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 11 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(11)
+ Activity Types loaded: 0 types
+ Selected Activity Type ID: null
+ Selected Activity Type Object: undefined
+ Select Activity Type Value (string): undefined
+ Activity Types for Select: undefined
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: 2291
+ createSessionMutation.isPending: false
+ Should create session: false
+ AI Models loaded: 11 models
+ Activity Types loaded: 0 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 11 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(11)
+ Activity Types loaded: 0 types
+ Selected Activity Type ID: null
+ Selected Activity Type Object: undefined
+ Select Activity Type Value (string): undefined
+ Activity Types for Select: undefined
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: 2291
+ createSessionMutation.isPending: false
+ Should create session: false
+ AI Models loaded: 11 models
+ Activity Types loaded: 0 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 📊 [QUERY] /api/activity-types - Status: 200 (1018ms)
+ 📊 [QUERY] Headers: Object
+ 📊 [QUERY] Content-Type: application/json; charset=utf-8
+ ✅ [QUERY] /api/activity-types - Success: Array(4)
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+ 🔧 [DEVELOPER CONTROLS] Visible for super user
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 11 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(11)
+ Activity Types loaded: 4 types
+ Selected Activity Type ID: null
+ Selected Activity Type Object: undefined
+ Select Activity Type Value (string): undefined
+ Activity Types for Select: Array(4)
+ Auto-selecting activity type: Brainstorming ID: 1
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: 2291
+ createSessionMutation.isPending: false
+ Should create session: false
+ AI Models loaded: 11 models
+ Activity Types loaded: 4 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ AI Models loaded: 11 models
+ Selected Model ID: 5
+ Selected Model Object: Object
+ Select Model Value (string): 5
+ AI Models for Select: Array(11)
+ Activity Types loaded: 4 types
+ Selected Activity Type ID: 1
+ Selected Activity Type Object: Object
+ Select Activity Type Value (string): 1
+ Activity Types for Select: Array(4)
+ === SESSION CREATION TRIGGER DEBUG ===
+ currentSession: 2291
+ createSessionMutation.isPending: false
+ Should create session: false
+ AI Models loaded: 11 models
+ Activity Types loaded: 4 types
+ User auth: Object
+ === END SESSION TRIGGER DEBUG ===
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+ Authentication check: Object
+ 🔧 [HOME] Authentication status: Object
+index-CMiyRs4p.js:523 🔧 [HOME] Sidebar access check: Object
+index-CMiyRs4p.js:428 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-CMiyRs4p.js:428 Authentication check: Object
+index-CMiyRs4p.js:428 🔧 [SIDEBAR] Role check: Object
+index-CMiyRs4p.js:428 🔧 [SIDEBAR] Section visibility: Object
+index-CMiyRs4p.js:428 🔧 [SIDEBAR] Rendering with sections: Object
+index-CMiyRs4p.js:428 🔧 [SIDEBAR] Role detection: Object
+index-CMiyRs4p.js:428 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-CMiyRs4p.js:428 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-CMiyRs4p.js:428 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+index-CMiyRs4p.js:428 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-CMiyRs4p.js:428 Authentication check: Object
+index-CMiyRs4p.js:523 🎨 CompanyInfoLarge - Logo settings: Object
+index-CMiyRs4p.js:428 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-CMiyRs4p.js:428 Authentication check: Object
+index-CMiyRs4p.js:517 🔧 [DEVELOPER CONTROLS] Rendering - User: ed.duval15@gmail.com Role Level: 1000
+index-CMiyRs4p.js:517 🔧 [DEVELOPER CONTROLS] Visible for super user
+index-CMiyRs4p.js:428 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-CMiyRs4p.js:428 Authentication check: Object
+index-CMiyRs4p.js:428 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-CMiyRs4p.js:428 Authentication check: Object
+index-CMiyRs4p.js:428 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-CMiyRs4p.js:428 Authentication check: Object
+index-CMiyRs4p.js:505 AI Models loaded: 11 models
+index-CMiyRs4p.js:505 Selected Model ID: 5
+index-CMiyRs4p.js:505 Selected Model Object: Object
+index-CMiyRs4p.js:505 Select Model Value (string): 5
+index-CMiyRs4p.js:505 AI Models for Select: Array(11)
+index-CMiyRs4p.js:505 Activity Types loaded: 4 types
+index-CMiyRs4p.js:505 Selected Activity Type ID: 1
+index-CMiyRs4p.js:505 Selected Activity Type Object: Object
+index-CMiyRs4p.js:505 Select Activity Type Value (string): 1
+index-CMiyRs4p.js:505 Activity Types for Select: Array(4)
+index-CMiyRs4p.js:505 === SESSION CREATION TRIGGER DEBUG ===
+index-CMiyRs4p.js:505 currentSession: 2291
+index-CMiyRs4p.js:505 createSessionMutation.isPending: false
+index-CMiyRs4p.js:505 Should create session: false
+index-CMiyRs4p.js:505 AI Models loaded: 11 models
+index-CMiyRs4p.js:505 Activity Types loaded: 4 types
+index-CMiyRs4p.js:505 User auth: Object
+index-CMiyRs4p.js:505 === END SESSION TRIGGER DEBUG ===
+index-CMiyRs4p.js:428 🔧 [SIDEBAR] Button clicked: Create AI Model Templates href: /admin/create-models
+index-CMiyRs4p.js:428 🔧 [SIDEBAR] Navigating to: /admin/create-models
+index-CMiyRs4p.js:658 [APP DEBUG] Router component rendering...
+index-CMiyRs4p.js:428 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-CMiyRs4p.js:428 Authentication check: Object
+index-CMiyRs4p.js:658 [APP DEBUG] Router state: Object
+index-CMiyRs4p.js:658 [APP DEBUG] Authentication check: Object
+index-CMiyRs4p.js:658 [APP DEBUG] useAuth hook returned: Object
+index-CMiyRs4p.js:658 [APP DEBUG] User is authenticated, proceeding with route-based navigation
+index-CMiyRs4p.js:658 🔐 [ROLE GUARD] Checking access for super-user (level 1000): Object
+index-CMiyRs4p.js:658 [ROLE GUARD] Access granted - user level 1000 >= required level 1000
+index-CMiyRs4p.js:428 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-CMiyRs4p.js:428 Authentication check: Object
+index-CMiyRs4p.js:428 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-CMiyRs4p.js:428 Authentication check: Object
+index-CMiyRs4p.js:428 🔧 [SIDEBAR] Role check: Object
+index-CMiyRs4p.js:428 🔧 [SIDEBAR] Section visibility: Object
+index-CMiyRs4p.js:428 🔧 [SIDEBAR] Rendering with sections: Object
+index-CMiyRs4p.js:428 🔧 [SIDEBAR] Role detection: Object
+index-CMiyRs4p.js:428 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-CMiyRs4p.js:428 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-CMiyRs4p.js:428 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+index-CMiyRs4p.js:628 🔧 [AI-MODEL-TEMPLATES] Fetching templates with token: prod-1754052835575-2...
+index-CMiyRs4p.js:48 🔄 [QUERY] /api/admin/ai-providers - Start
+index-CMiyRs4p.js:48 🔄 [QUERY] Full URL: https://aisentinel-i2sssbjjq-ed-duvals-projects.vercel.app/api/admin/ai-providers
+index-CMiyRs4p.js:628 🔧 [CREATE-MODELS] Providers query state: Object
+index-CMiyRs4p.js:658 [APP DEBUG] Router component rendering...
+index-CMiyRs4p.js:428 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-CMiyRs4p.js:428 Authentication check: Object
+index-CMiyRs4p.js:658 [APP DEBUG] Router state: Object
+index-CMiyRs4p.js:658 [APP DEBUG] Authentication check: Object
+index-CMiyRs4p.js:658 [APP DEBUG] useAuth hook returned: Object
+index-CMiyRs4p.js:658 [APP DEBUG] User is authenticated, proceeding with route-based navigation
+authHeaders-CIshTAes.js:1 🔍 [AUTH HEADERS] Getting authentication headers...
+authHeaders-CIshTAes.js:1 ✅ [AUTH HEADERS] Headers created with token: prod-1754052835575-2...
+index-CMiyRs4p.js:48 📊 [QUERY] /api/admin/ai-providers - Status: 200 (330ms)
+index-CMiyRs4p.js:48 📊 [QUERY] Headers: Object
+index-CMiyRs4p.js:48 📊 [QUERY] Content-Type: application/json; charset=utf-8
+index-CMiyRs4p.js:48 ✅ [QUERY] /api/admin/ai-providers - Success: Array(7)
+index-CMiyRs4p.js:428 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-CMiyRs4p.js:428 Authentication check: Object
+index-CMiyRs4p.js:428 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-CMiyRs4p.js:428 Authentication check: Object
+index-CMiyRs4p.js:428 🔧 [SIDEBAR] Role check: Object
+index-CMiyRs4p.js:428 🔧 [SIDEBAR] Section visibility: Object
+index-CMiyRs4p.js:428 🔧 [SIDEBAR] Rendering with sections: Object
+index-CMiyRs4p.js:428 🔧 [SIDEBAR] Role detection: Object
+index-CMiyRs4p.js:428 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-CMiyRs4p.js:428 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-CMiyRs4p.js:428 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models
+index-CMiyRs4p.js:628 🔧 [CREATE-MODELS] Providers query state: Object
+index-CMiyRs4p.js:628 🔧 [AI-MODEL-TEMPLATES] Response status: 200
+index-CMiyRs4p.js:628 ✅ [AI-MODEL-TEMPLATES] Loaded templates: 11
+index-CMiyRs4p.js:628 🔍 [AI-MODEL-TEMPLATES] Sample template data: {
+  "id": 1,
+  "name": "GPT-4o",
+  "provider": "openai",
+  "model_id": "gpt-4o",
+  "description": "Latest GPT-4 model with advanced capabilities",
+  "context_window": 128000,
+  "is_enabled": true,
+  "capabilities": [
+    "text-generation",
+    "code-generation",
+    "multimodal"
+  ],
+  "api_endpoint": "https://api.openai.com/v1/chat/completions",
+  "auth_method": "bearer",
+  "request_headers": {
+    "Content-Type": "application/json"
+  },
+  "max_tokens": 1000,
+  "temperature": 0.7,
+  "max_retries": 3,
+  "timeout": 30000,
+  "rate_limit": 100,
+  "created_at": "2025-08-01T19:18:19.000Z"
+}
+index-CMiyRs4p.js:628 🔍 [AI-MODEL-TEMPLATES] Field name check on first template: Object
+index-CMiyRs4p.js:428 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-CMiyRs4p.js:428 Authentication check: Object
+index-CMiyRs4p.js:628 🎨 [TEMPLATES RENDER] Rendering 11 templates: Array(11)
+index-CMiyRs4p.js:428 🔒 [SECURE AUTH] Cookie-only authentication - DATABASE VALIDATION ONLY
+index-CMiyRs4p.js:428 Authentication check: Object
+index-CMiyRs4p.js:428 🔧 [SIDEBAR] Role check: Object
+index-CMiyRs4p.js:428 🔧 [SIDEBAR] Section visibility: Object
+index-CMiyRs4p.js:428 🔧 [SIDEBAR] Rendering with sections: Object
+index-CMiyRs4p.js:428 🔧 [SIDEBAR] Role detection: Object
+index-CMiyRs4p.js:428 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Company Management company-management
+index-CMiyRs4p.js:428 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Providers create-providers
+index-CMiyRs4p.js:428 🔧 [SIDEBAR] PRODUCTION - Rendering super-user section: Create AI Model Templates create-models

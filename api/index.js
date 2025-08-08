@@ -212,6 +212,204 @@ app.delete('/api/admin/ai-providers/:id', async (req, res) => {
   }
 });
 
+// AI Model Templates Routes
+app.get('/api/admin/ai-model-templates', async (req, res) => {
+  try {
+    console.log('🌐 [AI-MODEL-TEMPLATES] GET request received');
+    
+    const auth = authenticateToken(req);
+    if (!auth.authenticated) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const result = await pool.query('SELECT * FROM ai_model_templates ORDER BY id ASC');
+    const templates = result.rows.map(template => {
+      console.log(`🔍 [ADMIN-AI-MODEL-TEMPLATES] Processing template ID ${template.id}: ${template.name}`);
+      const transformed = {
+        id: template.id,
+        name: template.name,
+        provider: template.provider,
+        modelId: template.model_id,                     // snake_case to camelCase
+        description: template.description,
+        contextWindow: template.context_window,         // snake_case to camelCase
+        isEnabled: template.is_enabled,                 // snake_case to camelCase
+        capabilities: template.capabilities,
+        apiEndpoint: template.api_endpoint,             // snake_case to camelCase
+        authMethod: template.auth_method,               // snake_case to camelCase
+        requestHeaders: template.request_headers,       // snake_case to camelCase
+        maxTokens: template.max_tokens,                 // snake_case to camelCase
+        temperature: template.temperature,
+        maxRetries: template.max_retries,               // snake_case to camelCase
+        timeout: template.timeout,
+        rateLimit: template.rate_limit,                 // snake_case to camelCase
+        createdAt: template.created_at                  // snake_case to camelCase
+      };
+      console.log(`✅ [ADMIN-AI-MODEL-TEMPLATES] Transformed template ${template.id}: modelId=${transformed.modelId}, contextWindow=${transformed.contextWindow}`);
+      return transformed;
+    });
+    
+    console.log(`✅ [AI-MODEL-TEMPLATES] Returning ${templates.length} templates`);
+    res.json(templates);
+  } catch (error) {
+    console.error('❌ [AI-MODEL-TEMPLATES] Error:', error);
+    res.status(500).json({ error: 'Failed to fetch templates' });
+  }
+});
+
+app.post('/api/admin/ai-model-templates', async (req, res) => {
+  try {
+    console.log('🌐 [AI-MODEL-TEMPLATES] POST request received');
+    
+    const auth = authenticateToken(req);
+    if (!auth.authenticated || auth.user.roleLevel < 1000) {
+      return res.status(401).json({ error: 'Super-user access required' });
+    }
+
+    const { 
+      name, provider, modelId, description, contextWindow, isEnabled, 
+      capabilities, apiEndpoint, authMethod, requestHeaders, maxTokens, 
+      temperature, maxRetries, timeout, rateLimit 
+    } = req.body;
+    
+    const result = await pool.query(
+      `INSERT INTO ai_model_templates (
+        name, provider, model_id, description, context_window, is_enabled, 
+        capabilities, api_endpoint, auth_method, request_headers, max_tokens, 
+        temperature, max_retries, timeout, rate_limit, created_at
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, NOW()) 
+      RETURNING *`,
+      [
+        name, provider, modelId, description, contextWindow, isEnabled !== false,
+        capabilities, apiEndpoint, authMethod, requestHeaders, maxTokens,
+        temperature, maxRetries, timeout, rateLimit
+      ]
+    );
+    
+    const template = result.rows[0];
+    const formattedTemplate = {
+      id: template.id,
+      name: template.name,
+      provider: template.provider,
+      modelId: template.model_id,
+      description: template.description,
+      contextWindow: template.context_window,
+      isEnabled: template.is_enabled,
+      capabilities: template.capabilities,
+      apiEndpoint: template.api_endpoint,
+      authMethod: template.auth_method,
+      requestHeaders: template.request_headers,
+      maxTokens: template.max_tokens,
+      temperature: template.temperature,
+      maxRetries: template.max_retries,
+      timeout: template.timeout,
+      rateLimit: template.rate_limit,
+      createdAt: template.created_at
+    };
+    
+    console.log(`✅ [AI-MODEL-TEMPLATES] Created template: ${template.name}`);
+    res.status(201).json(formattedTemplate);
+  } catch (error) {
+    console.error('❌ [AI-MODEL-TEMPLATES] Create error:', error);
+    res.status(500).json({ error: 'Failed to create template' });
+  }
+});
+
+app.put('/api/admin/ai-model-templates/:id', async (req, res) => {
+  try {
+    console.log(`🌐 [AI-MODEL-TEMPLATES] PUT request received for ID: ${req.params.id}`);
+    
+    const auth = authenticateToken(req);
+    if (!auth.authenticated || auth.user.roleLevel < 1000) {
+      return res.status(401).json({ error: 'Super-user access required' });
+    }
+
+    const templateId = parseInt(req.params.id);
+    if (isNaN(templateId)) {
+      return res.status(400).json({ error: 'Invalid template ID' });
+    }
+
+    const { 
+      name, provider, modelId, description, contextWindow, isEnabled, 
+      capabilities, apiEndpoint, authMethod, requestHeaders, maxTokens, 
+      temperature, maxRetries, timeout, rateLimit 
+    } = req.body;
+    
+    const result = await pool.query(
+      `UPDATE ai_model_templates 
+       SET name = $1, provider = $2, model_id = $3, description = $4, context_window = $5, 
+           is_enabled = $6, capabilities = $7, api_endpoint = $8, auth_method = $9, 
+           request_headers = $10, max_tokens = $11, temperature = $12, max_retries = $13, 
+           timeout = $14, rate_limit = $15
+       WHERE id = $16 
+       RETURNING *`,
+      [
+        name, provider, modelId, description, contextWindow, isEnabled !== false,
+        capabilities, apiEndpoint, authMethod, requestHeaders, maxTokens,
+        temperature, maxRetries, timeout, rateLimit, templateId
+      ]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Template not found' });
+    }
+    
+    const template = result.rows[0];
+    const formattedTemplate = {
+      id: template.id,
+      name: template.name,
+      provider: template.provider,
+      modelId: template.model_id,
+      description: template.description,
+      contextWindow: template.context_window,
+      isEnabled: template.is_enabled,
+      capabilities: template.capabilities,
+      apiEndpoint: template.api_endpoint,
+      authMethod: template.auth_method,
+      requestHeaders: template.request_headers,
+      maxTokens: template.max_tokens,
+      temperature: template.temperature,
+      maxRetries: template.max_retries,
+      timeout: template.timeout,
+      rateLimit: template.rate_limit,
+      createdAt: template.created_at
+    };
+    
+    console.log(`✅ [AI-MODEL-TEMPLATES] Updated template: ${template.name}`);
+    res.json(formattedTemplate);
+  } catch (error) {
+    console.error('❌ [AI-MODEL-TEMPLATES] Update error:', error);
+    res.status(500).json({ error: 'Failed to update template' });
+  }
+});
+
+app.delete('/api/admin/ai-model-templates/:id', async (req, res) => {
+  try {
+    console.log(`🌐 [AI-MODEL-TEMPLATES] DELETE request received for ID: ${req.params.id}`);
+    
+    const auth = authenticateToken(req);
+    if (!auth.authenticated || auth.user.roleLevel < 1000) {
+      return res.status(401).json({ error: 'Super-user access required' });
+    }
+
+    const templateId = parseInt(req.params.id);
+    if (isNaN(templateId)) {
+      return res.status(400).json({ error: 'Invalid template ID' });
+    }
+
+    const result = await pool.query('DELETE FROM ai_model_templates WHERE id = $1 RETURNING *', [templateId]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Template not found' });
+    }
+    
+    console.log(`✅ [AI-MODEL-TEMPLATES] Deleted template: ${result.rows[0].name}`);
+    res.json({ success: true, message: 'Template deleted successfully' });
+  } catch (error) {
+    console.error('❌ [AI-MODEL-TEMPLATES] Delete error:', error);
+    res.status(500).json({ error: 'Failed to delete template' });
+  }
+});
+
 // Companies routes
 app.get('/api/admin/companies', async (req, res) => {
   try {
@@ -241,9 +439,322 @@ app.get('/api/admin/companies', async (req, res) => {
   }
 });
 
-// Health check
+// Chat Sessions Routes
+app.get('/api/chat/sessions', async (req, res) => {
+  try {
+    console.log('🌐 [CHAT-SESSIONS] GET request received');
+    
+    const auth = authenticateToken(req);
+    if (!auth.authenticated) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const result = await pool.query(
+      'SELECT * FROM chat_sessions WHERE company_id = $1 ORDER BY created_at DESC',
+      [auth.user.companyId]
+    );
+    
+    const sessions = result.rows.map(session => ({
+      id: session.id,
+      userId: session.user_id,
+      companyId: session.company_id,
+      title: session.title,
+      activityTypeId: session.activity_type_id,
+      modelId: session.model_id,
+      isActive: session.is_active,
+      createdAt: session.created_at,
+      updatedAt: session.updated_at
+    }));
+    
+    console.log(`✅ [CHAT-SESSIONS] Returning ${sessions.length} sessions`);
+    res.json(sessions);
+  } catch (error) {
+    console.error('❌ [CHAT-SESSIONS] Error:', error);
+    res.status(500).json({ error: 'Failed to fetch chat sessions' });
+  }
+});
+
+app.post('/api/chat/session', async (req, res) => {
+  try {
+    console.log('🌐 [CHAT-SESSION] POST request received');
+    console.log(`🔍 [CHAT-SESSION] Request body:`, JSON.stringify(req.body, null, 2));
+    
+    const auth = authenticateToken(req);
+    if (!auth.authenticated) {
+      console.log('❌ [CHAT-SESSION] Authentication failed');
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    console.log(`🔍 [CHAT-SESSION] Authenticated user: ${auth.user.email}, ID: ${auth.user.id}, Company: ${auth.user.companyId}`);
+
+    const { title = 'New Chat', activityTypeId, modelId } = req.body;
+    console.log(`🔍 [CHAT-SESSION] Parsed parameters: title="${title}", activityTypeId=${activityTypeId}, modelId=${modelId}`);
+    
+    // Check if we have the required schema fields
+    console.log('🔍 [CHAT-SESSION] Checking database schema compatibility...');
+    
+    // Based on the schema, chat_sessions only has: id, user_id, company_id, created_at, updated_at
+    // The activityTypeId and modelId might be causing the issue
+    const result = await pool.query(
+      `INSERT INTO chat_sessions (user_id, company_id, created_at, updated_at)
+       VALUES ($1, $2, NOW(), NOW())
+       RETURNING *`,
+      [auth.user.id, auth.user.companyId]
+    );
+    
+    console.log(`📊 [CHAT-SESSION] Database insert result:`, JSON.stringify(result.rows[0], null, 2));
+    
+    const session = result.rows[0];
+    const formattedSession = {
+      id: session.id,
+      userId: session.user_id,                      // snake_case to camelCase
+      companyId: session.company_id,                // snake_case to camelCase
+      createdAt: session.created_at,                // snake_case to camelCase
+      updatedAt: session.updated_at                 // snake_case to camelCase
+    };
+    
+    console.log(`📊 [CHAT-SESSION] Formatted response:`, JSON.stringify(formattedSession, null, 2));
+    console.log(`✅ [CHAT-SESSION] Created session: ${session.id}`);
+    res.status(201).json(formattedSession);
+  } catch (error) {
+    console.error('❌ [CHAT-SESSION] Create error:', error);
+    console.error('❌ [CHAT-SESSION] Error stack:', error.stack);
+    res.status(500).json({ error: 'Failed to create chat session' });
+  }
+});
+
+// AI Models Routes  
+app.get('/api/ai-models', async (req, res) => {
+  try {
+    console.log('🌐 [AI-MODELS] GET request received');
+    
+    const auth = authenticateToken(req);
+    if (!auth.authenticated) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const result = await pool.query('SELECT * FROM ai_model_templates WHERE is_enabled = true ORDER BY name ASC');
+    const models = result.rows.map(model => ({
+      id: model.id,
+      name: model.name,
+      provider: model.provider,
+      modelId: model.model_id,
+      description: model.description,
+      contextWindow: model.context_window,
+      isEnabled: model.is_enabled,
+      capabilities: model.capabilities,
+      createdAt: model.created_at
+    }));
+    
+    console.log(`✅ [AI-MODELS] Returning ${models.length} models`);
+    res.json(models);
+  } catch (error) {
+    console.error('❌ [AI-MODELS] Error:', error);
+    res.status(500).json({ error: 'Failed to fetch AI models' });
+  }
+});
+
+// Activity Types Routes
+app.get('/api/activity-types', async (req, res) => {
+  try {
+    console.log('🌐 [ACTIVITY-TYPES] GET request received');
+    
+    const auth = authenticateToken(req);
+    if (!auth.authenticated) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const result = await pool.query(
+      'SELECT * FROM activity_types WHERE company_id = $1 AND is_enabled = true ORDER BY name ASC',
+      [auth.user.companyId]
+    );
+    
+    const activityTypes = result.rows.map(type => ({
+      id: type.id,
+      companyId: type.company_id,
+      name: type.name,
+      description: type.description,
+      prePrompt: type.pre_prompt,
+      riskLevel: type.risk_level,
+      permissions: type.permissions,
+      isEnabled: type.is_enabled,
+      createdAt: type.created_at
+    }));
+    
+    console.log(`✅ [ACTIVITY-TYPES] Returning ${activityTypes.length} activity types`);
+    res.json(activityTypes);
+  } catch (error) {
+    console.error('❌ [ACTIVITY-TYPES] Error:', error);
+    res.status(500).json({ error: 'Failed to fetch activity types' });
+  }
+});
+
+// AI Model Templates Routes (Production Universal Templates)
+app.get('/api/ai-model-templates', async (req, res) => {
+  try {
+    console.log('🌐 [AI-MODEL-TEMPLATES] GET request received');
+    
+    const auth = authenticateToken(req);
+    if (!auth.authenticated) {
+      console.log('❌ [AI-MODEL-TEMPLATES] Authentication failed');
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    console.log(`🔍 [AI-MODEL-TEMPLATES] Authenticated user: ${auth.user.email}, role: ${auth.user.roleLevel}`);
+
+    const result = await pool.query('SELECT * FROM ai_model_templates WHERE is_enabled = true ORDER BY name ASC');
+    console.log(`📊 [AI-MODEL-TEMPLATES] Raw database results: ${result.rows.length} templates`);
+    console.log(`📊 [AI-MODEL-TEMPLATES] Sample raw row:`, result.rows[0] ? JSON.stringify(result.rows[0], null, 2) : 'No data');
+    
+    const templates = result.rows.map(template => {
+      const transformed = {
+        id: template.id,
+        name: template.name,
+        provider: template.provider,
+        modelId: template.model_id,                     // snake_case to camelCase
+        description: template.description,
+        contextWindow: template.context_window,         // snake_case to camelCase
+        isEnabled: template.is_enabled,                 // snake_case to camelCase
+        capabilities: template.capabilities,
+        apiEndpoint: template.api_endpoint,             // snake_case to camelCase
+        authMethod: template.auth_method,               // snake_case to camelCase
+        requestHeaders: template.request_headers,       // snake_case to camelCase
+        maxTokens: template.max_tokens,                 // snake_case to camelCase
+        temperature: template.temperature,
+        maxRetries: template.max_retries,               // snake_case to camelCase
+        timeout: template.timeout,
+        rateLimit: template.rate_limit,                 // snake_case to camelCase
+        createdAt: template.created_at                  // snake_case to camelCase
+      };
+      return transformed;
+    });
+    
+    console.log(`📊 [AI-MODEL-TEMPLATES] Sample transformed template:`, templates[0] ? JSON.stringify(templates[0], null, 2) : 'No data');
+    console.log(`✅ [AI-MODEL-TEMPLATES] Returning ${templates.length} templates with proper camelCase conversion`);
+    res.json(templates);
+  } catch (error) {
+    console.error('❌ [AI-MODEL-TEMPLATES] Error:', error);
+    res.status(500).json({ error: 'Failed to fetch AI model templates' });
+  }
+});
+
+// Missing API endpoints that are causing 404 errors
+app.get('/api/chat/session/:sessionId/messages', async (req, res) => {
+  try {
+    console.log('🌐 [CHAT-MESSAGES] GET request received');
+    
+    const auth = authenticateToken(req);
+    if (!auth.authenticated) {
+      console.log('❌ [CHAT-MESSAGES] Authentication failed');
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const sessionId = parseInt(req.params.sessionId);
+    console.log(`🔍 [CHAT-MESSAGES] Fetching messages for session ${sessionId}`);
+    
+    const result = await pool.query(
+      'SELECT * FROM chat_messages WHERE session_id = $1 AND company_id = $2 ORDER BY timestamp ASC',
+      [sessionId, auth.user.companyId]
+    );
+    
+    console.log(`✅ [CHAT-MESSAGES] Found ${result.rows.length} messages for session ${sessionId}`);
+    res.json(result.rows);
+  } catch (error) {
+    console.error('❌ [CHAT-MESSAGES] Error:', error);
+    res.status(500).json({ error: 'Failed to fetch messages' });
+  }
+});
+
+app.post('/api/chat/message', async (req, res) => {
+  try {
+    console.log('🌐 [CHAT-MESSAGE] POST request received');
+    console.log(`🔍 [CHAT-MESSAGE] Request body:`, JSON.stringify(req.body, null, 2));
+    
+    const auth = authenticateToken(req);
+    if (!auth.authenticated) {
+      console.log('❌ [CHAT-MESSAGE] Authentication failed');
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const { sessionId, message, aiModelId, activityTypeId } = req.body;
+    console.log(`🔍 [CHAT-MESSAGE] Parsed: sessionId=${sessionId}, aiModelId=${aiModelId}, activityTypeId=${activityTypeId}`);
+    
+    const result = await pool.query(
+      `INSERT INTO chat_messages (company_id, session_id, user_id, ai_model_id, activity_type_id, message, status, timestamp)
+       VALUES ($1, $2, $3, $4, $5, $6, 'pending', NOW())
+       RETURNING *`,
+      [auth.user.companyId, sessionId, auth.user.id, aiModelId, activityTypeId, message]
+    );
+    
+    console.log(`✅ [CHAT-MESSAGE] Created message: ${result.rows[0].id}`);
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error('❌ [CHAT-MESSAGE] Error:', error);
+    res.status(500).json({ error: 'Failed to create message' });
+  }
+});
+
+app.get('/api/admin/api-keys', async (req, res) => {
+  try {
+    console.log('🌐 [ADMIN-API-KEYS] GET request received');
+    
+    const auth = authenticateToken(req);
+    if (!auth.authenticated || auth.user.roleLevel < 999) {
+      return res.status(401).json({ error: 'Owner access required' });
+    }
+
+    const result = await pool.query(
+      'SELECT * FROM company_api_keys WHERE company_id = $1 ORDER BY id ASC',
+      [auth.user.companyId]
+    );
+    
+    console.log(`✅ [ADMIN-API-KEYS] Returning ${result.rows.length} API keys`);
+    res.json(result.rows);
+  } catch (error) {
+    console.error('❌ [ADMIN-API-KEYS] Error:', error);
+    res.status(500).json({ error: 'Failed to fetch API keys' });
+  }
+});
+
+app.get('/api/version/current', async (req, res) => {
+  try {
+    console.log('🌐 [VERSION] GET request received');
+    res.json({ 
+      version: '1.0.0',
+      buildDate: new Date().toISOString(),
+      environment: 'production'
+    });
+  } catch (error) {
+    console.error('❌ [VERSION] Error:', error);
+    res.status(500).json({ error: 'Failed to fetch version' });
+  }
+});
+
+// Health check and debug endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  console.log('🌐 [HEALTH] Health check endpoint called');
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    version: '2025-08-06-update'
+  });
+});
+
+// Debug endpoint to check API deployment
+app.get('/api/debug', (req, res) => {
+  console.log('🌐 [DEBUG] Debug endpoint called');
+  res.json({ 
+    message: 'API is working',
+    timestamp: new Date().toISOString(),
+    endpoints: [
+      '/api/admin/ai-model-templates',
+      '/api/ai-model-templates',
+      '/api/chat/session/:id/messages',
+      '/api/chat/message',
+      '/api/admin/api-keys',
+      '/api/version/current'
+    ]
+  });
 });
 
 // Default export for Vercel
