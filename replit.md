@@ -18,11 +18,12 @@ Demo mode identification: Demo mode uses role level 0, shows orange "DEMO" badge
 
 ## Recent Changes
 **August 8, 2025**: Render deployment configuration fixed and deployed
+- **Explicit Build Commands**: Updated render.yaml with direct build/start commands to bypass npm script caching issues (commit 489ed44)
+- **Build Process**: `cp package-render.json package.json && npm install && vite build --config vite.config.production.ts && esbuild server/production.ts`
+- **Start Command**: Direct execution of `NODE_ENV=production node dist/production.js`
 - **Merge Conflicts Resolved**: Fixed conflicts in render.yaml and package-render.json during main branch integration
-- **Build Process Fixed**: Updated configuration to build server/production.ts (no vite.config imports) instead of server/index.ts
-- **GitHub Push Complete**: All fixed deployment files successfully pushed to main branch (commit 99934c3)
-- **Render Auto-Deploy**: Platform configured to automatically redeploy from GitHub with corrected build process
 - **Production Server**: Created dedicated server/production.ts without development dependencies for clean Render deployment
+- **GitHub Integration**: All deployment fixes pushed to main branch with automatic Render redeployment
 
 **August 7, 2025**: Render migration files successfully uploaded to GitHub
 - **Database Migration**: Successfully migrated complete AI Sentinel database from Railway PostgreSQL to Render PostgreSQL
