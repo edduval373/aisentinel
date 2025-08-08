@@ -3,8 +3,8 @@ services:
     name: aisentinel-app
     runtime: node
     plan: starter
-    buildCommand: cp package-render.json package.json && npm install && npm run build
-    startCommand: NODE_ENV=production node server/render-start.js
+    buildCommand: cp package-render.json package.json && cat package.json && npm install && npm run build
+    startCommand: NODE_ENV=production node start-production.js
     envVars:
       - key: NODE_ENV
         value: production
