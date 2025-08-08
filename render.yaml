@@ -4,7 +4,7 @@ services:
     runtime: node
     plan: starter
     buildCommand: cp package-render.json package.json && npm install && npm run build
-    startCommand: NODE_ENV=production node dist/production.js
+    startCommand: NODE_ENV=production node server/render-start.js
     envVars:
       - key: NODE_ENV
         value: production
